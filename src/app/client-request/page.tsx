@@ -58,7 +58,7 @@ export default function ClientRequestForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const payload = {
+    const mappedPayload = {
       full_name: form.fullName,
       email: form.email,
       phone: form.phone,
@@ -73,7 +73,7 @@ export default function ClientRequestForm() {
 
     const { data: inserted, error: insertError } = await supabase
       .from('client_requests')
-      .insert([payload])
+      .insert([mappedPayload])
       .select()
       .single();
 
@@ -91,11 +91,13 @@ export default function ClientRequestForm() {
       console.error('Fetch freelancers error:', fetchError);
     }
 
-    const match = matchFreelancerToClient(payload, freelancers);
+    // after
+const match = await matchFreelancerToClient(mappedPayload, freelancers);
     if (match) {
       await supabase
         .from('client_requests')
-        .update({ status: 'matched', assigned_freelancer_id: match.id })
+        .update({ status: 'matched', 
+          assigned_freelancer_id: match!.id })
         .eq('id', inserted.id);
     }
 

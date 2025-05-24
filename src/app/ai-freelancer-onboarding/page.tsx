@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabaseClient'
 import { useRouter } from 'next/navigation';
 
@@ -17,8 +17,8 @@ export default function AIFreelancerOnboarding() {
     otherTool: ''
   });
   const [step, setStep] = useState(1);
-  const [domains, setDomains] = useState([]);
-  const [tools, setTools] = useState([]);
+  const [domains, setDomains] = useState<string[]>([]);
+  const [tools, setTools]   = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const router = useRouter();
 
@@ -39,19 +39,28 @@ export default function AIFreelancerOnboarding() {
     'Figma AI plugins', 'Uizard', 'Adobe Firefly', 'Synthesia'
   ];
 
-  const toggleSelection = (list, setList, option) => {
+  const toggleSelection = (
+    list: string[],
+    setList: React.Dispatch<React.SetStateAction<string[]>>,
+    option: string
+  ) => {
     if (list.includes(option)) {
       setList(list.filter((item) => item !== option));
     } else {
       setList([...list, option]);
     }
   };
+  
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
-  const handleSubmit = async (e) => {
+  
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
 
     const { error } = await supabase.from('ai_freelancers').insert([
@@ -79,13 +88,13 @@ export default function AIFreelancerOnboarding() {
   };
 
   useEffect(() => {
-    const required = ['fullName', 'email', 'phone'];
-    let filled = required.filter((key) => form[key]).length;
+    const required: Array<keyof typeof form> = ['fullName','email','phone'];
+    let filled = required.filter(key => Boolean(form[key])).length;
     if (domains.length || form.otherDomain) filled++;
-    if (tools.length || form.otherTool) filled++;
+    if (tools.length   || form.otherTool)   filled++;
     setProgress(Math.round((filled / 5) * 100));
   }, [form, domains, tools]);
-
+  
   return (
     <main className="min-h-screen bg-[#241C15] text-white">
       <header className="bg-[#241C15] text-white py-4 text-center text-lg font-bold">
