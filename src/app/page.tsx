@@ -20,7 +20,7 @@ export default function ClientLandingPage() {
   }, []);
 
   return (
-    <main className="relative min-h-screen bg-[#241C15] text-white flex flex-col justify-center items-center px-4">
+    <main className="relative min-h-screen bg-[#241C15] text-white flex flex-col justify-center items-center px-4 overflow-x-hidden">
       {/* Top-right Freelancer button */}
       <header className="absolute top-6 right-6">
         <Link href="/freelancer">
@@ -31,8 +31,8 @@ export default function ClientLandingPage() {
       </header>
 
       {/* Typewriter Text */}
-      <div className="w-full text-center">
-        <h1 className="text-2xl md:text-4xl font-playfair whitespace-nowrap overflow-x-auto">
+      <div className="w-full text-center max-w-[90%]">
+        <h1 className="text-2xl md:text-4xl font-playfair break-words text-balance">
           {displayText}
         </h1>
       </div>
