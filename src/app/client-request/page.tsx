@@ -101,7 +101,7 @@ const match = await matchFreelancerToClient(mappedPayload, freelancers);
         .eq('id', inserted.id);
     }
 
-    router.push('/client-request/thank-you');
+    router.push('/thank-you-client');
   };
 
   return (
