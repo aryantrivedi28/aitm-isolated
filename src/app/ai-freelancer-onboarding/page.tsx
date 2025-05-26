@@ -13,6 +13,7 @@ export default function AIFreelancerOnboarding() {
     portfolio: '',
     company: '',
     college: '',
+    projects: '',
     otherDomain: '',
     otherTool: ''
   });
@@ -72,6 +73,7 @@ export default function AIFreelancerOnboarding() {
         portfolio: form.portfolio,
         company: form.company,
         college: form.college,
+        projects: form.projects,
         domains,
         other_domain: form.otherDomain,
         tools,
@@ -118,9 +120,10 @@ export default function AIFreelancerOnboarding() {
               <input type="email" name="email" required placeholder="Email*" onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 text-white placeholder-gray-400 bg-transparent" />
               <input type="text" name="phone" required placeholder="Phone Number (WhatsApp preferred)*" onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 text-white placeholder-gray-400 bg-transparent" />
               <input type="text" name="linkedin" placeholder="LinkedIn Profile (optional)" onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 text-white placeholder-gray-400 bg-transparent" />
-              <input type="text" name="portfolio" placeholder="Portfolio (optional)" onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 text-white placeholder-gray-400 bg-transparent" />
+              <input type="text" name="portfolio" placeholder="Portfolio (optional but highly recommended)" onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 text-white placeholder-gray-400 bg-transparent" />
               <input type="text" name="company" placeholder="Company (optional)" onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 text-white placeholder-gray-400 bg-transparent" />
               <input type="text" name="college" placeholder="College (optional)" onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 text-white placeholder-gray-400 bg-transparent" />
+              <input type="text" name="projects" placeholder="Have you done any AI-related projects? (briefly describe)" onChange={handleChange} className="w-full border border-gray-300 rounded px-3 py-2 text-white placeholder-gray-400 bg-transparent"/>
               <div className="flex justify-end">
                 <button type="submit" className="bg-yellow-400 text-black px-6 py-2 rounded hover:bg-yellow-300">Next</button>
               </div>

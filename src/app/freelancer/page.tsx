@@ -24,7 +24,7 @@ export default function FreelancerLandingPage() {
       <header className="absolute top-6 right-6">
         <Link href="/">
           <button className="bg-[#FFE01B] hover:bg-yellow-300 text-black font-body font-bold py-2 px-4 rounded">
-            For Business
+            For Businesses
           </button>
         </Link>
       </header>
@@ -37,7 +37,7 @@ export default function FreelancerLandingPage() {
 
       {/* Start Onboarding Button */}
       <Link href="/ai-freelancer-onboarding">
-        <button className="mt-6 bg-[#FFE01B] hover:bg-yellow-300 text-black font-body font-semibold px-6 py-3 rounded transition-all duration-200">
+        <button className=" bg-[#FFE01B] hover:bg-yellow-300 text-black font-body font-semibold px-6 py-3 rounded transition-all duration-200">
           Start Onboarding
         </button>
       </Link>

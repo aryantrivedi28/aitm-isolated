@@ -7,12 +7,12 @@ import { useState, useEffect } from 'react';
 const fullText = 'One AI-powered freelancer can do the work of ten.';
 
 export default function ClientLandingPage() {
-  const [displayText, setDisplayText] = useState('');
+  const [displayedText, setDisplayedText] = useState('');
 
   useEffect(() => {
     let idx = 0;
     const timer = setInterval(() => {
-      setDisplayText(fullText.slice(0, idx + 1));
+      setDisplayedText(fullText.slice(0, idx + 1));
       idx++;
       if (idx >= fullText.length) clearInterval(timer);
     }, 50); // typing speed (ms)
@@ -20,27 +20,28 @@ export default function ClientLandingPage() {
   }, []);
 
   return (
-    <main className="relative min-h-screen bg-[#241C15] text-white flex flex-col justify-center items-center px-4 overflow-x-hidden">
+    <main className="relative min-h-screen bg-[#241C15] text-white flex flex-col items-center justify-center px-4 text-center">
       {/* Top-right Freelancer button */}
       <header className="absolute top-6 right-6">
         <Link href="/freelancer">
           <button className="bg-[#FFE01B] hover:bg-yellow-300 text-black font-bold py-2 px-4 rounded">
-            Freelancer
+            For Freelancers
           </button>
         </Link>
       </header>
 
       {/* Typewriter Text */}
       <div className="w-full text-center max-w-[90%]">
-        <h1 className="text-2xl md:text-4xl font-playfair break-words text-balance">
-          {displayText}
-        </h1>
+      <h1 className="text-2xl md:text-3xl font-playfair mb-2">
+      <span>{displayedText}</span>
+      <span className="animate-pulse">|</span>
+      </h1>
       </div>
 
       {/* Always-present Post a Request button below typewriter */}
-      <div className="mt-6">
+      <div className="mt-4">
         <Link href="/client-request">
-          <button className="bg-[#FFE01B] hover:bg-yellow-300 text-black font-bold py-3 px-8 rounded-xl">
+        <button className=" bg-[#FFE01B] hover:bg-yellow-300 text-black font-body font-semibold px-6 py-3 rounded transition-all duration-200">
             Post a Request
           </button>
         </Link>
