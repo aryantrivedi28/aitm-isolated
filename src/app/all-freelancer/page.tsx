@@ -122,22 +122,12 @@ export default function AdminABCPage() {
           : payload.tech_stack.length > 0
       ) filled++;
     }
-    // tools for Growth/Designers
-    if (['Growth','Designers'].includes(payload.category)) {
-      if (
-        payload.tools.includes('Other')
-          ? Boolean(payload.tools_other)
-          : payload.tools.length > 0
-      ) filled++;
-    }
     if (payload.employment_status) filled++;
     if (payload.experience_level)  filled++;
 
     // calculate total fields
     let total = 3 /*name,email,phone*/ + 1 /*category*/ + 1 /*domains*/ + 2 /*employment,experience*/;
     if (['Developers','AI'].includes(payload.category))    total++;
-    if (['Growth','Designers'].includes(payload.category)) total++;
-
     setProgress(Math.round((filled / total) * 100));
   }, [payload]);
 
@@ -350,7 +340,7 @@ export default function AdminABCPage() {
             {/* Tools */}
             {payload.category && toolMap[payload.category] && (
               <div>
-                <label className="block mb-1">Tools*</label>
+                <label className="block mb-1">Tools</label>
                 <div className="flex flex-wrap gap-2">
                   {toolMap[payload.category]!.map(t => (
                     <button
