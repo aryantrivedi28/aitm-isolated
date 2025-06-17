@@ -22,6 +22,7 @@ type Payload = {
   employment_status: string;
   employment_other: string;
   experience_level: string;
+  experience_other: string;
 };
 
 export default function AdminABCPage() {
@@ -45,6 +46,7 @@ export default function AdminABCPage() {
     employment_status: '',
     employment_other: '',
     experience_level: '',
+    experience_other: '',
   });
 
   // Mappings
@@ -423,6 +425,15 @@ export default function AdminABCPage() {
             {payload.experience_level === 'Other' && (
               <input
                 name="employment_other"
+                value={payload.experience_other}
+                onChange={change}
+                placeholder="Enter other experience"
+                className="w-full border rounded px-3 py-2 bg-transparent text-white"
+              />
+            )}
+            {payload.experience_level === 'Other' && (
+              <input
+                name="experience_other"                   
                 value={payload.experience_other}
                 onChange={change}
                 placeholder="Enter other experience"
