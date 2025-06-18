@@ -50,18 +50,23 @@ export default function AdminABCPage() {
   });
 
   // Mappings
-  const categoryOptions = ['Developers','Growth','Designers','AI','Other'];
+  const categoryOptions = ['Developers','Growth','Designers','AI','VideoEditors','Other'];
   const domainMap: Record<string,string[]> = {
-    Developers: ['Frontend','Backend','Fullstack','Mobile','DevOps','Other'],
-    Growth:     ['SEO','Content','Paid Ads','Email Marketing','Analytics','Other'],
-    Designers:  ['UI/UX','Graphic','Motion / Video Editor','Illustration','Product','Other'],
-    AI:         ['Prompt Engineering','Agent Dev','ML Ops','Data','NLP','Other'],
-  };
+    Developers:           ['Frontend','Backend','Fullstack','Mobile','DevOps','Other'],
+    Growth:               ['SEO','Content','Paid Ads','Email Marketing','Analytics','Other'],
+    Designers:            ['UI/UX','Graphic','Motion / Video Editor','Illustration','Product','Other'],
+    AI:                   ['Prompt Engineering','Agent Dev','ML Ops','Data','NLP','Other'],
+    VideoEditors:        ['Video Editing','Motion Graphics','2D Animation','3D Animation','VFX','Other'],
+};
   const techMap: Record<string,string[]> = {
     Developers: [
-      'React','Next.js','Vue','Angular','Svelte','Ember',
-      'Node.js','Django','Ruby on Rails','Laravel','Spring Boot','Go',
-      'Other'
+      'React','Angular','Vue','Svelte','Ember','Next.js',
+  'Nuxt.js','Gatsby','Remix','Electron','Node.js','Deno',
+  'Express','NestJS','Django','Flask','Ruby on Rails','Laravel',
+  'Spring Boot','ASP.NET Core','Go','Rust','C','C++',
+  'Python','Java','PHP','Elixir','GraphQL','gRPC',
+  'WebAssembly','MERN','MEAN','MEVN','LAMP','JAMstack',
+  'Serverless','Other'
     ],
     AI: [
       'OpenAI API','LangChain','HuggingFace Transformers','Stable Diffusion','DALL·E',
@@ -94,8 +99,13 @@ export default function AdminABCPage() {
     ],
     AI: [
       'ChatGPT','GPT-4 Playground','LangChain','AutoGPT','RAG Frameworks',
-      'Jupyter','Colab','Weights & Biases','Airflow','Label Studio',
+      'Jupyter','Colab','Weights & Biases','Airflow','Make.com','n8n','Label Studio',
       'Other'
+    ],
+    VideoEditors: [
+      'Adobe Premiere Pro','Adobe After Effects','DaVinci Resolve','Final Cut Pro',
+      'Avid Media Composer','Blackmagic Fusion','Adobe Media Encoder','Frame.io',
+      'HandBrake','Other'
     ],
   };
   const employmentOptions = ['Student','Full-time Employee','Full-time Freelancer','Other'];
