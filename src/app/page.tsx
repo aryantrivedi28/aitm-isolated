@@ -38,7 +38,7 @@ export default function ClientLandingPage() {
         </div>
         <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8">
           <div className="text-center">
-            <img src="share.png" alt="Share your requirements" className="mx-auto rounded-lg w-full h-40 object-contain" />
+            <img src="xyz.png" alt="Share your requirements" className="mx-auto rounded-lg w-full h-40 object-contain" />
             <h3 className="mt-4 font-semibold text-lg">Share your requirements</h3>
             <p className="mt-2 text-gray-600">
               Fill out our simple form, and our team will reach out to clarify your project’s requirements
