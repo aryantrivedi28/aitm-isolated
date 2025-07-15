@@ -13,6 +13,12 @@ export default function Header() {
       >
         About Us
       </button>
+      <button
+        onClick={() => router.push('/case-studies')}
+        className="text-[#241C15] bg-[#FFE01B] font-semibold px-6 py-2 rounded-lg transition-all duration-200"
+      >
+        Case Studies
+      </button>
       {/* <button
         onClick={() => router.push('/why')}
         className="bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-semibold px-6 py-2 rounded-lg transition-all duration-200"
