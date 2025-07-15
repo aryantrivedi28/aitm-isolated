@@ -149,13 +149,13 @@ export default function ClientLandingPage() {
           ].map((service, index) => (
             <div
               key={index}
-              className="bg-[#2E251B] rounded-xl p-6 border border-gray-500 hover:border-yellow-400 hover:shadow-lg transition"
+              className=" rounded-xl p-6 border-[3px] border-black hover:border-yellow-400 hover:shadow-lg transition"
             >
               <div className="flex items-center mb-4 justify-center">
-                <span className="text-2xl mr-2 text-blue-100">{service.icon}</span>
-                <h3 className="text-lg font-semibold text-blue-50">{service.title}</h3>
+                <span className="text-2xl mr-2 text-black/75">{service.icon}</span>
+                <h3 className="text-lg font-semibold text-black/75">{service.title}</h3>
               </div>
-              <ul className="text-gray-300 list-disc list-inside space-y-1 text-sm">
+              <ul className="text-black/75 list-disc list-inside space-y-1 text-sm">
                 {service.items.map((item, idx) => (
                   <li key={idx}>{item}</li>
                 ))}
