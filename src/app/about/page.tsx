@@ -76,17 +76,17 @@ export default function AboutPage() {
             img: '/aryan_t.jpg'
           }, {
             name: 'Aryan Verma',
-            role: 'Head of Operations',
+            role: 'OPS Manager',
             desc: 'Expert in workflow automation and operations, ensuring seamless delivery for every client.',
-            img: '/team/jane.jpg'
+            img: '/aryan_verma.HEIC'
           }, {
             name: 'Kunal Sharma',
-            role: 'Lead Developer',
+            role: 'Product Manager',
             desc: 'Full-stack engineer with a focus on scalable architecture and rapid MVP delivery.',
             img: '/kunal.png'
           }].map((member, idx) => (
             <motion.div key={idx} variants={fadeUp} className="bg-white rounded-lg shadow p-6 text-center hover:shadow-lg transition-shadow duration-200">
-              <img src={member.img} alt={member.name} className="w-24 h-24 rounded-full mx-auto object-cover mb-4" />
+              <img src={member.img} alt={member.name} className="w-32 h-32 rounded-full mx-auto object-cover mb-4" />
               <h3 className="font-semibold text-lg">{member.name}</h3>
               <p className="text-black/70 text-sm">{member.role}</p>
               <p className="text-black/70 mt-2 text-sm">{member.desc}</p>
