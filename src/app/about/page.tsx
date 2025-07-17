@@ -3,7 +3,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-
+import Image from "next/image";
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
@@ -27,7 +27,7 @@ export default function AboutPage() {
           variants={staggerContainer}
         >
           <motion.h1 variants={fadeUp} className="text-4xl md:text-5xl font-bold mb-4">
-            About <span className="text-yellow-300">Finzie</span>
+            About <span className="text-[#FFE01B]">Finzie</span>
           </motion.h1>
           <motion.p variants={fadeUp} className="text-lg md:text-xl text-gray-100 mb-6">
             We connect startups with pre-vetted freelancers and AI-driven teams, making it easy to build, design, and scale your projects rapidly.
@@ -38,7 +38,7 @@ export default function AboutPage() {
           <motion.a
             variants={fadeUp}
             href="/client-request"
-            className="bg-yellow-400 hover:bg-yellow-300 text-black font-semibold px-6 py-3 rounded transition duration-200 inline-block"
+            className="bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-6 py-3 rounded transition duration-200 inline-block"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
           >
@@ -185,36 +185,76 @@ export default function AboutPage() {
 
 
       {/* Our Mission and Vision */}
-      <section className="py-12 bg-white">
-        <motion.div
-          className="max-w-6xl mx-auto px-4"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
-        >
-          <div className="flex flex-col md:flex-row items-center md:items-stretch justify-between relative">
-            {/* Mission */}
-            <motion.div variants={fadeUp} className="w-full md:w-1/2 p-6 text-center md:text-right">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">Our Mission</h2>
-              <p className="text-gray-600">
-                To empower communities through education, technology, and sustainable solutions, creating opportunities for every individual to thrive and contribute to a better world.
-              </p>
-            </motion.div>
+<section className="py-16 bg-gradient-to-b from-white to-gray-50">
+      <motion.div
+        className="max-w-6xl mx-auto px-6"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={staggerContainer}
+      >
+        {/* Mission */}
+        <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-12 mb-16">
+          {/* Text */}
+          <motion.div
+            variants={fadeUp}
+            className="w-full md:w-1/2 text-center md:text-left"
+          >
+            <h2 className="text-3xl font-bold mb-4 text-yellow-500">Our Mission</h2>
+            <p className="text-gray-700 leading-relaxed max-w-md mx-auto md:mx-0">
+              To empower communities through education, technology, and sustainable solutions,
+              creating opportunities for every individual to thrive and contribute to a better world.
+            </p>
+          </motion.div>
 
-            {/* Vertical Line */}
-            <div className="hidden md:block w-[2px] bg-gray-400 h-40 absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+          {/* SVG Illustration */}
+          <motion.div
+            variants={fadeUp}
+            className="w-full md:w-1/2 flex justify-center"
+          >
+            <Image
+              src="/mission.png"
+              alt="Our Mission"
+              width={320}
+              height={320}
+              className="w-64 h-64 object-contain"
+              priority
+            />
+          </motion.div>
+        </div>
 
-            {/* Vision */}
-            <motion.div variants={fadeUp} className="w-full md:w-1/2 p-6 text-center md:text-left">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">Our Vision</h2>
-              <p className="text-gray-600">
-                To build a future where innovation and inclusivity drive societal progress, ensuring that technology and education are accessible to all, regardless of background.
-              </p>
-            </motion.div>
-          </div>
-        </motion.div>
-      </section>
+        {/* Vision */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+          {/* SVG Illustration */}
+          <motion.div
+            variants={fadeUp}
+            className="w-full md:w-1/2 flex justify-center"
+          >
+            <Image
+              src="/vision.svg"
+              alt="Our Vision"
+              width={320}
+              height={320}
+              className="w-64 h-64 object-contain"
+              priority
+            />
+          </motion.div>
+
+          {/* Text */}
+          <motion.div
+            variants={fadeUp}
+            className="w-full md:w-1/2 text-center md:text-left"
+          >
+            <h2 className="text-3xl font-bold mb-4 text-yellow-500">Our Vision</h2>
+            <p className="text-gray-700 leading-relaxed max-w-md mx-auto md:mx-0">
+              To build a future where innovation and inclusivity drive societal progress,
+              ensuring that technology and education are accessible to all, regardless of background.
+            </p>
+          </motion.div>
+        </div>
+      </motion.div>
+    </section>
+
     </div>
   );
 }
