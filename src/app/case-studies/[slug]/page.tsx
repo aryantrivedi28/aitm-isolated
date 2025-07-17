@@ -36,9 +36,9 @@ interface CaseStudy {
 export default async function CaseStudyPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>
 }) {
-  console.log(params.slug)
+  const { slug } = await params
   const study: CaseStudy = await client.fetch(
     `
       *[_type == "caseStudy" && slug.current == $slug][0]{
@@ -57,7 +57,7 @@ export default async function CaseStudyPage({
         mainImage { asset->{ url } }
       }
     `,
-    { slug: params.slug }
+    { slug }
   );
 
   if (!study) {
