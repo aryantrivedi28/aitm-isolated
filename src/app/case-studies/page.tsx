@@ -82,7 +82,7 @@ export default async function CaseStudiesPage() {
                 )}
               </div>
               <div className="p-5 flex flex-col flex-grow">
-                <h2 className="text-xl font-semibold mb-2 text-gray-800 group-hover:text-yellow-600 transition">
+                <h2 className="text-xl font-semibold mb-2 text-gray-800 group-hover:text-[#FFE01B] transition">
                   {study.title}
                 </h2>
                 <p className="text-gray-600 text-sm line-clamp-3">
@@ -91,7 +91,7 @@ export default async function CaseStudiesPage() {
               </div>
               <Link
                 href={`/case-studies/${study.slug.current}`}
-                className="mt-auto inline-block text-center bg-yellow-400 hover:bg-yellow-300 text-black font-medium py-2 px-4 rounded transition"
+                className="mt-auto inline-block text-center bg-[#FFE01B] hover:bg-yellow-300 text-black font-medium py-2 px-4 rounded transition"
               >
                 View Case Study →
               </Link>
