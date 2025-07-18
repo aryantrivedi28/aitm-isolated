@@ -2,49 +2,60 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { motion, useAnimation } from "framer-motion"
+import { motion, useAnimation, type Variants } from "framer-motion"
 import { useState, useEffect } from "react"
 import { ChevronDown, Star, Quote, ArrowRight, CheckCircle, Users, Zap, Shield, Clock } from "lucide-react"
 
-// Animation variants
-const fadeUp = {
-  hidden: { opacity: 0, y: 60 },
+// Animation variants with proper typing
+const fadeUp: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 60,
+  },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
       duration: 0.8,
-      ease: "easeOut",
+      ease: [0.6, -0.05, 0.01, 0.99], // Custom cubic-bezier easing
     },
   },
 }
 
-const fadeInLeft = {
-  hidden: { opacity: 0, x: -60 },
+const fadeInLeft: Variants = {
+  hidden: {
+    opacity: 0,
+    x: -60,
+  },
   visible: {
     opacity: 1,
     x: 0,
     transition: {
       duration: 0.8,
-      ease: "easeOut",
+      ease: [0.6, -0.05, 0.01, 0.99],
     },
   },
 }
 
-const fadeInRight = {
-  hidden: { opacity: 0, x: 60 },
+const fadeInRight: Variants = {
+  hidden: {
+    opacity: 0,
+    x: 60,
+  },
   visible: {
     opacity: 1,
     x: 0,
     transition: {
       duration: 0.8,
-      ease: "easeOut",
+      ease: [0.6, -0.05, 0.01, 0.99],
     },
   },
 }
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
+const staggerContainer: Variants = {
+  hidden: {
+    opacity: 0,
+  },
   visible: {
     opacity: 1,
     transition: {
@@ -54,14 +65,17 @@ const staggerContainer = {
   },
 }
 
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.8 },
+const scaleIn: Variants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.8,
+  },
   visible: {
     opacity: 1,
     scale: 1,
     transition: {
       duration: 0.6,
-      ease: "easeOut",
+      ease: [0.6, -0.05, 0.01, 0.99],
     },
   },
 }
@@ -79,7 +93,7 @@ export default function ClientLandingPage() {
       content:
         "Finzie connected us with an amazing full-stack developer who delivered our MVP in just 3 weeks. The quality exceeded our expectations!",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "Marcus Rodriguez",
@@ -87,7 +101,7 @@ export default function ClientLandingPage() {
       content:
         "The AI-powered matching was spot on. We found the perfect designer who understood our vision immediately. Highly recommend!",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "Emily Watson",
@@ -95,7 +109,7 @@ export default function ClientLandingPage() {
       content:
         "Working with Finzie's team was seamless. They handled everything from contracts to delivery. We'll definitely use them again.",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "David Kim",
@@ -103,7 +117,7 @@ export default function ClientLandingPage() {
       content:
         "The freelancer we got through Finzie became an integral part of our team. The vetting process really shows - top-tier talent only!",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "Lisa Thompson",
@@ -111,7 +125,7 @@ export default function ClientLandingPage() {
       content:
         "Our video marketing campaign was delivered ahead of schedule and exceeded all our KPIs. Finzie's talent pool is incredible!",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "Alex Johnson",
@@ -119,7 +133,7 @@ export default function ClientLandingPage() {
       content:
         "From AI automation to full-stack development, Finzie has been our go-to for scaling our technical team quickly and efficiently.",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "Maria Garcia",
@@ -127,7 +141,7 @@ export default function ClientLandingPage() {
       content:
         "The UI/UX designer we worked with transformed our entire product experience. Professional, creative, and delivered on time!",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "James Wilson",
@@ -135,7 +149,7 @@ export default function ClientLandingPage() {
       content:
         "Finzie's AI matching algorithm is impressive. We got exactly the machine learning expert we needed for our complex project.",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "Sophie Brown",
@@ -143,7 +157,7 @@ export default function ClientLandingPage() {
       content:
         "The blockchain developer we hired through Finzie helped us launch our DeFi platform successfully. Exceptional technical skills!",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
     {
       name: "Michael Davis",
@@ -151,7 +165,7 @@ export default function ClientLandingPage() {
       content:
         "Our e-commerce platform redesign was flawless. The developer understood our requirements perfectly and delivered beyond expectations.",
       rating: 5,
-      avatar: "/placeholder.svg?height=60&width=60",
+      // avatar: "/placeholder.svg?height=60&width=60",
     },
   ]
 
@@ -230,7 +244,7 @@ export default function ClientLandingPage() {
             rotate: { duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
             scale: { duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B] opacity-3 rounded-full"
+          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B]/60 backdrop-blur-md rounded-full"
         />
       </div>
 
@@ -437,7 +451,180 @@ export default function ClientLandingPage() {
         </motion.div>
       </section>
 
-      
+      {/* Testimonials Section */}
+      <section className="py-16 px-4 bg-gray-50 overflow-hidden">
+        <motion.div
+          className="max-w-6xl mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+        >
+          <motion.div className="text-center mb-12" initial="hidden" animate="visible" variants={fadeUp}>
+            <motion.div
+              className="flex items-center justify-center gap-3 mb-6"
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+            >
+              <motion.div
+                className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                whileHover={{ scale: 1.1, rotate: 10 }}
+              >
+                <Quote className="w-6 h-6 text-[#FFE01B]" />
+              </motion.div>
+              <span className="text-[#FFE01B] font-semibold text-lg">Testimonials</span>
+            </motion.div>
+            <h2 className="text-4xl font-bold text-[#241C15] mb-4">What Our Clients Say</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Don't just take our word for it. Here's what our satisfied clients have to say about working with Finzie.
+            </p>
+          </motion.div>
+
+          {/* Moving Testimonials Container */}
+          <div className="relative">
+            <motion.div
+              className="flex gap-6"
+              animate={controls}
+              style={{
+                width: `${testimonials.length * 400}px`,
+              }}
+              onHoverStart={() => setIsHovered(true)}
+              onHoverEnd={() => setIsHovered(false)}
+            >
+              {/* First set of testimonials */}
+              {testimonials.map((testimonial, index) => (
+                <motion.div
+                  key={`first-${index}`}
+                  className="group bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0"
+                  style={{ width: "380px" }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="relative">
+                    {/* Rating Stars */}
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: i * 0.1 }}
+                        >
+                          <Star className="w-5 h-5 fill-[#FFE01B] text-[#FFE01B]" />
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Quote */}
+                    <blockquote className="text-gray-700 mb-6 leading-relaxed italic min-h-[80px]">
+                      "{testimonial.content}"
+                    </blockquote>
+
+                    {/* Author */}
+                    <div className="flex items-center gap-4">
+                      <motion.div whileHover={{ scale: 1.1 }} className="relative">
+                        <div className="absolute inset-0 bg-[#FFE01B] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+                        {/* <img
+                          src={testimonial.avatar || "/placeholder.svg"}
+                          alt={testimonial.name}
+                          className="relative w-12 h-12 rounded-full object-cover border-2 border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-500"
+                        /> */}
+                      </motion.div>
+                      <div>
+                        <h4 className="font-bold text-[#241C15] group-hover:text-[#FFE01B] transition-colors duration-500">
+                          {testimonial.name}
+                        </h4>
+                        <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+
+              {/* Duplicate set for seamless loop */}
+              {testimonials.map((testimonial, index) => (
+                <motion.div
+                  key={`second-${index}`}
+                  className="group bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0"
+                  style={{ width: "380px" }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  <div className="relative">
+                    {/* Rating Stars */}
+                    <div className="flex gap-1 mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ delay: i * 0.1 }}
+                        >
+                          <Star className="w-5 h-5 fill-[#FFE01B] text-[#FFE01B]" />
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Quote */}
+                    <blockquote className="text-gray-700 mb-6 leading-relaxed italic min-h-[80px]">
+                      "{testimonial.content}"
+                    </blockquote>
+
+                    {/* Author */}
+                    <div className="flex items-center gap-4">
+                      <motion.div whileHover={{ scale: 1.1 }} className="relative">
+                        <div className="absolute inset-0 bg-[#FFE01B] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+                        {/* <img
+                          src={testimonial.avatar || "/placeholder.svg"}
+                          alt={testimonial.name}
+                          className="relative w-12 h-12 rounded-full object-cover border-2 border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-500"
+                        /> */}
+                      </motion.div>
+                      <div>
+                        <h4 className="font-bold text-[#241C15] group-hover:text-[#FFE01B] transition-colors duration-500">
+                          {testimonial.name}
+                        </h4>
+                        <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Gradient Overlays for smooth edges */}
+            <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
+          </div>
+
+          {/* Pause instruction */}
+          <motion.div
+            className="text-center mt-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
+            <p className="text-gray-500 text-sm flex items-center justify-center gap-2">
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+              >
+                👆
+              </motion.span>
+              Hover over testimonials to pause and read
+            </p>
+          </motion.div>
+        </motion.div>
+      </section>
 
       {/* Service Categories */}
       <section className="py-16 px-4 bg-white">
@@ -519,185 +706,11 @@ export default function ClientLandingPage() {
           ))}
         </motion.div>
       </section>
-      {/* Testimonials Section */}
-      <section className="py-16 px-4 bg-gray-50 overflow-hidden">
-        <motion.div
-          className="max-w-6xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
-        >
-          <motion.div className="text-center mb-12" initial="hidden" animate="visible" variants={fadeUp}>
-            <motion.div
-              className="flex items-center justify-center gap-3 mb-6"
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-            >
-              <motion.div
-                className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
-                whileHover={{ scale: 1.1, rotate: 10 }}
-              >
-                <Quote className="w-6 h-6 text-[#FFE01B]" />
-              </motion.div>
-              <span className="text-[#FFE01B] font-semibold text-lg">Testimonials</span>
-            </motion.div>
-            <h2 className="text-4xl font-bold text-[#241C15] mb-4">What Our Clients Say</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Don't just take our word for it. Here's what our satisfied clients have to say about working with Finzie.
-            </p>
-          </motion.div>
-
-          {/* Moving Testimonials Container */}
-          <div className="relative">
-            <motion.div
-              className="flex gap-6"
-              animate={controls}
-              style={{
-                width: `${testimonials.length * 400}px`,
-              }}
-              onHoverStart={() => setIsHovered(true)}
-              onHoverEnd={() => setIsHovered(false)}
-            >
-              {/* First set of testimonials */}
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={`first-${index}`}
-                  className="group bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0"
-                  style={{ width: "380px" }}
-                  whileHover={{ y: -10, scale: 1.02 }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="relative">
-                    {/* Rating Stars */}
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <Star className="w-5 h-5 fill-[#FFE01B] text-[#FFE01B]" />
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {/* Quote */}
-                    <blockquote className="text-gray-700 mb-6 leading-relaxed italic min-h-[80px]">
-                      "{testimonial.content}"
-                    </blockquote>
-
-                    {/* Author */}
-                    <div className="flex items-center gap-4">
-                      <motion.div whileHover={{ scale: 1.1 }} className="relative">
-                        <div className="absolute inset-0 bg-[#FFE01B] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-                        <img
-                          src={testimonial.avatar || "/placeholder.svg"}
-                          alt={testimonial.name}
-                          className="relative w-12 h-12 rounded-full object-cover border-2 border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-500"
-                        />
-                      </motion.div>
-                      <div>
-                        <h4 className="font-bold text-[#241C15] group-hover:text-[#FFE01B] transition-colors duration-500">
-                          {testimonial.name}
-                        </h4>
-                        <p className="text-gray-600 text-sm">{testimonial.role}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-
-              {/* Duplicate set for seamless loop */}
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={`second-${index}`}
-                  className="group bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0"
-                  style={{ width: "380px" }}
-                  whileHover={{ y: -10, scale: 1.02 }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="relative">
-                    {/* Rating Stars */}
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ delay: i * 0.1 }}
-                        >
-                          <Star className="w-5 h-5 fill-[#FFE01B] text-[#FFE01B]" />
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {/* Quote */}
-                    <blockquote className="text-gray-700 mb-6 leading-relaxed italic min-h-[80px]">
-                      "{testimonial.content}"
-                    </blockquote>
-
-                    {/* Author */}
-                    <div className="flex items-center gap-4">
-                      <motion.div whileHover={{ scale: 1.1 }} className="relative">
-                        <div className="absolute inset-0 bg-[#FFE01B] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-                        <img
-                          src={testimonial.avatar || "/placeholder.svg"}
-                          alt={testimonial.name}
-                          className="relative w-12 h-12 rounded-full object-cover border-2 border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-500"
-                        />
-                      </motion.div>
-                      <div>
-                        <h4 className="font-bold text-[#241C15] group-hover:text-[#FFE01B] transition-colors duration-500">
-                          {testimonial.name}
-                        </h4>
-                        <p className="text-gray-600 text-sm">{testimonial.role}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Gradient Overlays for smooth edges */}
-            <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
-          </div>
-
-          {/* Pause instruction */}
-          <motion.div
-            className="text-center mt-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-          >
-            <p className="text-gray-500 text-sm flex items-center justify-center gap-2">
-              <motion.span
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-              >
-                👆
-              </motion.span>
-              Hover over testimonials to pause and read
-            </p>
-          </motion.div>
-        </motion.div>
-      </section>
 
       {/* FAQ Section */}
       <section className="py-16 px-4 bg-[#241C15] text-white">
         <motion.div
-          className="max-w-4xl mx-auto"
+          className="max-w-6xl mx-auto"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
