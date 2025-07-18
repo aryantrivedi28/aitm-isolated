@@ -217,7 +217,7 @@ export default function AboutPage() {
               alt="Our Mission"
               width={320}
               height={320}
-              className="w-64 h-64 object-contain"
+              className="w-60 h-60 object-contain"
               priority
             />
           </motion.div>
@@ -231,7 +231,7 @@ export default function AboutPage() {
             className="w-full md:w-1/2 flex justify-center"
           >
             <Image
-              src="/vision.svg"
+              src="/vision.png"
               alt="Our Vision"
               width={320}
               height={320}
