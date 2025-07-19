@@ -88,34 +88,34 @@ export default function ClientLandingPage() {
 
   const testimonials = [
     {
-      name: "Sarah Chen",
-      role: "CTO, TechStart Inc.",
+      name: "Apratim Sinha",
+      role: "founder Alevia Wellness",
       content:
-        "Finzie connected us with an amazing full-stack developer who delivered our MVP in just 3 weeks. The quality exceeded our expectations!",
+        "I had the pleasure of working with the Finzie team for the development of our new website, and I couldn’t be more impressed with the results. They sourced the best-fit talent for the project and ensured everything was executed smoothly through their project management support. The team demonstrated professionalism, creativity, and a clear understanding of our brand’s needs throughout the process. The final website is not only visually impressive but also user-friendly, optimized for speed, and fully responsive across all devices. Their structured approach and timely delivery made the entire experience seamless.",
       rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
+      avatar: "/apratim.jpeg?height=60&width=60",
     },
     {
-      name: "Marcus Rodriguez",
-      role: "Founder, GrowthLab",
+      name: "Mohmad Zakariya",
+      role: "Founder, NYU Stern",
       content:
-        "The AI-powered matching was spot on. We found the perfect designer who understood our vision immediately. Highly recommend!",
+        "The team at Finzie has helped me bring to life several ideas that were a manifestation of my personal intellectual evolution and ambition to contribute to society. Since I graduated from NYU Stern, I have been interested in launching a platform along the realms of media, research, and sociology. One of the key ways Finzie has supported me is by identifying and onboarding the best-fit resources for each project, ensuring both quality and alignment with my vision. My accumulated technical exposure through academic and professional experience has enabled me to form a strong partnership with Finzie, where we have collaborated on multiple projects now, with a push for commercial markets coming in 2025. I plan to continue my relationship with Finzie — a team that is reliable, trustworthy, and capable of delivering on projects of varying complexities.",
       rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
+      avatar: "/zakariya.jpeg?height=60&width=60",
     },
     {
-      name: "Emily Watson",
+      name: "Minakshi Samant",
       role: "Product Manager, InnovateCorp",
       content:
-        "Working with Finzie's team was seamless. They handled everything from contracts to delivery. We'll definitely use them again.",
+        "It was wonderful working with Finzie for our SEO-related needs. They quickly understood the deliverables and provided us with a highly skilled SEO resource who not only optimized but also redesigned key pages of our website. The quality of work, thought process, and overall execution far exceeded our expectations. The results spoke for themselves, and we’re very happy with the outcome.",
       rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
+      avatar: "/Minakshi.jpeg?height=60&width=60",
     },
     {
       name: "David Kim",
-      role: "CEO, StartupFlow",
+      role: "Founder, Kalayansparsh",
       content:
-        "The freelancer we got through Finzie became an integral part of our team. The vetting process really shows - top-tier talent only!",
+        "It’s been a great experience working with Finzie on our social media efforts. They helped us build a strong foundation by bringing in the right resources who understood our brand and consistently delivered high-quality content. With their support, we were able to scale our social media presence significantly. Our collaboration has now lasted over a year, and throughout, the Finzie team has been proactive, reliable, and focused on driving real results for us.",
       rating: 5,
       // avatar: "/placeholder.svg?height=60&width=60",
     },
@@ -529,11 +529,11 @@ export default function ClientLandingPage() {
                     <div className="flex items-center gap-4">
                       <motion.div whileHover={{ scale: 1.1 }} className="relative">
                         <div className="absolute inset-0 bg-[#FFE01B] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-                        {/* <img
+                        <img
                           src={testimonial.avatar || "/placeholder.svg"}
                           alt={testimonial.name}
                           className="relative w-12 h-12 rounded-full object-cover border-2 border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-500"
-                        /> */}
+                        />
                       </motion.div>
                       <div>
                         <h4 className="font-bold text-[#241C15] group-hover:text-[#FFE01B] transition-colors duration-500">
@@ -602,8 +602,8 @@ export default function ClientLandingPage() {
             </motion.div>
 
             {/* Gradient Overlays for smooth edges */}
-            <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" />
+            {/* <div className="absolute left-0 top-0 w-20 h-full bg-gradient-to-r from-gray-50 to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 w-20 h-full bg-gradient-to-l from-gray-50 to-transparent z-10 pointer-events-none" /> */}
           </div>
 
           {/* Pause instruction */}
