@@ -319,7 +319,7 @@ export default function AboutPage() {
                 name: "Aryan Verma",
                 role: "OPS Manager",
                 desc: "Expert in workflow automation and operations, ensuring seamless delivery for every client.",
-                img: "/aryan_verma.jpg",
+                img: "/aryan_v.png",
               },
               {
                 name: "Kunal Sharma",
@@ -402,7 +402,7 @@ export default function AboutPage() {
               </div>
             </motion.div>
 
-            <motion.div initial="hidden" animate="visible" variants={fadeInRight} className="relative">
+            {/* <motion.div initial="hidden" animate="visible" variants={fadeInRight} className="relative">
               <motion.div
                 className="absolute inset-0 bg-gradient-to-tr from-[#FFE01B] to-yellow-400 rounded-3xl transform -rotate-6"
                 animate={{ rotate: [-6, -4, -6] }}
@@ -441,7 +441,7 @@ export default function AboutPage() {
                   </motion.div>
                 </div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </div>
         </motion.div>
       </section>
