@@ -99,7 +99,7 @@ export default function Header() {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white/5 backdrop-blur-xl border-t border-white/10 shadow-2xl shadow-black/20">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white backdrop-blur-xl border-t border-white/10 shadow-2xl shadow-black/20">
           {/* Glass effect overlay for mobile menu */}
           <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/5 to-transparent pointer-events-none"></div>
 

@@ -105,68 +105,68 @@ export default function ClientLandingPage() {
     },
     {
       name: "Minakshi Samant",
-      role: "Product Manager, InnovateCorp",
+      role: "",
       content:
         "It was wonderful working with Finzie for our SEO-related needs. They quickly understood the deliverables and provided us with a highly skilled SEO resource who not only optimized but also redesigned key pages of our website. The quality of work, thought process, and overall execution far exceeded our expectations. The results spoke for themselves, and we’re very happy with the outcome.",
       rating: 5,
       avatar: "/Minakshi.jpeg?height=60&width=60",
     },
     {
-      name: "David Kim",
+      name: "Akshadeep",
       role: "Founder, Kalayansparsh",
       content:
         "It’s been a great experience working with Finzie on our social media efforts. They helped us build a strong foundation by bringing in the right resources who understood our brand and consistently delivered high-quality content. With their support, we were able to scale our social media presence significantly. Our collaboration has now lasted over a year, and throughout, the Finzie team has been proactive, reliable, and focused on driving real results for us.",
       rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
+      avatar: "/akshadeep.jpeg?height=60&width=60",
     },
-    {
-      name: "Lisa Thompson",
-      role: "Marketing Director, BrandBoost",
-      content:
-        "Our video marketing campaign was delivered ahead of schedule and exceeded all our KPIs. Finzie's talent pool is incredible!",
-      rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      name: "Alex Johnson",
-      role: "Founder, DevTools Pro",
-      content:
-        "From AI automation to full-stack development, Finzie has been our go-to for scaling our technical team quickly and efficiently.",
-      rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      name: "Maria Garcia",
-      role: "Head of Design, CreativeHub",
-      content:
-        "The UI/UX designer we worked with transformed our entire product experience. Professional, creative, and delivered on time!",
-      rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      name: "James Wilson",
-      role: "CTO, DataDriven",
-      content:
-        "Finzie's AI matching algorithm is impressive. We got exactly the machine learning expert we needed for our complex project.",
-      rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      name: "Sophie Brown",
-      role: "Product Owner, FinTech Solutions",
-      content:
-        "The blockchain developer we hired through Finzie helped us launch our DeFi platform successfully. Exceptional technical skills!",
-      rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
-    },
-    {
-      name: "Michael Davis",
-      role: "Founder, EcomGrowth",
-      content:
-        "Our e-commerce platform redesign was flawless. The developer understood our requirements perfectly and delivered beyond expectations.",
-      rating: 5,
-      // avatar: "/placeholder.svg?height=60&width=60",
-    },
+    // {
+    //   name: "Lisa Thompson",
+    //   role: "Marketing Director, BrandBoost",
+    //   content:
+    //     "Our video marketing campaign was delivered ahead of schedule and exceeded all our KPIs. Finzie's talent pool is incredible!",
+    //   rating: 5,
+    //   // avatar: "/placeholder.svg?height=60&width=60",
+    // },
+    // {
+    //   name: "Alex Johnson",
+    //   role: "Founder, DevTools Pro",
+    //   content:
+    //     "From AI automation to full-stack development, Finzie has been our go-to for scaling our technical team quickly and efficiently.",
+    //   rating: 5,
+    //   // avatar: "/placeholder.svg?height=60&width=60",
+    // },
+    // {
+    //   name: "Maria Garcia",
+    //   role: "Head of Design, CreativeHub",
+    //   content:
+    //     "The UI/UX designer we worked with transformed our entire product experience. Professional, creative, and delivered on time!",
+    //   rating: 5,
+    //   // avatar: "/placeholder.svg?height=60&width=60",
+    // },
+    // {
+    //   name: "James Wilson",
+    //   role: "CTO, DataDriven",
+    //   content:
+    //     "Finzie's AI matching algorithm is impressive. We got exactly the machine learning expert we needed for our complex project.",
+    //   rating: 5,
+    //   // avatar: "/placeholder.svg?height=60&width=60",
+    // },
+    // {
+    //   name: "Sophie Brown",
+    //   role: "Product Owner, FinTech Solutions",
+    //   content:
+    //     "The blockchain developer we hired through Finzie helped us launch our DeFi platform successfully. Exceptional technical skills!",
+    //   rating: 5,
+    //   // avatar: "/placeholder.svg?height=60&width=60",
+    // },
+    // {
+    //   name: "Michael Davis",
+    //   role: "Founder, EcomGrowth",
+    //   content:
+    //     "Our e-commerce platform redesign was flawless. The developer understood our requirements perfectly and delivered beyond expectations.",
+    //   rating: 5,
+    //   // avatar: "/placeholder.svg?height=60&width=60",
+    // },
   ]
 
   const faqs = [
@@ -249,7 +249,7 @@ export default function ClientLandingPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-[#241C15] text-white py-20 px-4">
+      <section className="relative bg-[#241C15] text-white py-28 px-4">
         <div className="absolute inset-0 bg-gradient-to-br from-[#241C15] via-[#2a1f16] to-[#241C15]" />
 
         <motion.div
