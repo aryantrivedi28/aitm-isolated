@@ -138,7 +138,7 @@ export default function CaseStudiesPage() {
               rotate: { duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
               scale: { duration: 12, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
             }}
-            className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE01B] opacity-5 rounded-full"
+            className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE01B] opacity-10 rounded-full"
           />
         </div>
 
@@ -181,7 +181,7 @@ export default function CaseStudiesPage() {
             rotate: { duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
             scale: { duration: 12, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE01B] opacity-5 rounded-full"
+          className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE01B] opacity-10 rounded-full"
         />
         <motion.div
           animate={{
@@ -192,7 +192,7 @@ export default function CaseStudiesPage() {
             rotate: { duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
             scale: { duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B] opacity-3 rounded-full"
+          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B] opacity-5 rounded-full"
         />
         <motion.div
           animate={{
@@ -203,7 +203,7 @@ export default function CaseStudiesPage() {
             rotate: { duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
             scale: { duration: 10, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FFE01B] opacity-4 rounded-full"
+          className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FFE01B] opacity-10 rounded-full"
         />
       </div>
 
