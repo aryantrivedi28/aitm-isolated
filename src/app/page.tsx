@@ -97,7 +97,7 @@ export default function ClientLandingPage() {
     },
     {
       name: "Mohmad Zakariya",
-      role: "Founder, NYU Stern",
+      role: "Student, NYU Stern",
       content:
         "The team at Finzie has helped me bring to life several ideas that were a manifestation of my personal intellectual evolution and ambition to contribute to society. Since I graduated from NYU Stern, I have been interested in launching a platform along the realms of media, research, and sociology. One of the key ways Finzie has supported me is by identifying and onboarding the best-fit resources for each project, ensuring both quality and alignment with my vision. My accumulated technical exposure through academic and professional experience has enabled me to form a strong partnership with Finzie, where we have collaborated on multiple projects now, with a push for commercial markets coming in 2025. I plan to continue my relationship with Finzie — a team that is reliable, trustworthy, and capable of delivering on projects of varying complexities.",
       rating: 5,
@@ -223,7 +223,7 @@ export default function ClientLandingPage() {
   return (
     <main className="flex flex-col bg-white overflow-hidden">
       {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <motion.div
           animate={{
             rotate: 360,
@@ -238,18 +238,18 @@ export default function ClientLandingPage() {
         <motion.div
           animate={{
             rotate: -360,
-            scale: [1, 1.1, 1],
+            scale: [1, 1.2, 1],
           }}
           transition={{
             rotate: { duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
-            scale: { duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
+            scale: { duration: 10, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B]/60 backdrop-blur-md rounded-full"
+          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B]/50 backdrop-blur-md rounded-full"
         />
       </div>
 
       {/* Hero Section */}
-      <section className="relative bg-[#241C15] text-white py-28 px-4">
+      <section className="relative bg-[#241C15] text-white py-32 px-4">
         <div className="absolute inset-0 bg-gradient-to-br from-[#241C15] via-[#2a1f16] to-[#241C15]" />
 
         <motion.div
@@ -333,7 +333,7 @@ export default function ClientLandingPage() {
         </motion.div>
 
         <motion.div
-          className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8"
+          className="relative max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
@@ -356,7 +356,7 @@ export default function ClientLandingPage() {
               desc: "We assign the right freelancer, manage delivery end to end & integrate our agile teams into your stack",
             },
           ].map((step, index) => (
-            <motion.div key={index} initial="hidden" animate="visible" variants={scaleIn} className="text-center group">
+            <motion.div key={index} initial="hidden" animate="visible" whileInView="visible" variants={scaleIn} viewport={{ once: true, amount: 0.2 }} className="text-center group">
               <motion.div className="relative mb-6" whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
                 <div className="absolute inset-0 bg-[#FFE01B] rounded-lg blur-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
                 <img
@@ -377,7 +377,7 @@ export default function ClientLandingPage() {
       {/* Why Us Section */}
       <section className="bg-[#241C15] text-white py-16 px-4">
         <motion.div
-          className="max-w-6xl mx-auto"
+          className="relative max-w-6xl mx-auto"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}

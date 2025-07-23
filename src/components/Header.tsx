@@ -50,7 +50,7 @@ export default function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden lg:flex items-center space-x-8">
           <a
             onClick={() => handleNavigation("/")}
             className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
@@ -90,7 +90,7 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMobileMenu}
-          className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm border border-white/10"
+          className="lg:hidden p-2 rounded-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm border border-white/10"
           aria-label="Toggle mobile menu"
         >
           {isMobileMenuOpen ? <X className="w-6 h-6 text-[#FFE01B]" /> : <Menu className="w-6 h-6 text-white" />}
@@ -99,7 +99,7 @@ export default function Header() {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white backdrop-blur-xl border-t border-white/10 shadow-2xl shadow-black/20">
+        <div className="lg:hidden absolute top-full left-0 right-0 bg-white backdrop-blur-xl border-t border-white/10 shadow-2xl shadow-black/20 rounded-b-3xl">
           {/* Glass effect overlay for mobile menu */}
           <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/5 to-transparent pointer-events-none"></div>
 
