@@ -150,7 +150,7 @@ export default function AdminQueryPanel() {
   const experienceLevelOptions = [
     "",
     "Less than 1 Year of Experience",
-    "1-2 Years of Experience",
+    "1-3 Years of Experience",
     "3-5 Years of Experience",
     "5+ Years of Experience",
     "Fresher",
