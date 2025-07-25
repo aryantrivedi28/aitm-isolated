@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase } from '@/src/lib/SupabaseAuthClient'; // Adjust the import path as necessary
 import { useRouter } from 'next/navigation';
 
 type Payload = {
