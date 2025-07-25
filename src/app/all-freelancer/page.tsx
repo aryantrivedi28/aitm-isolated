@@ -114,7 +114,6 @@ export default function AdminABCPage() {
       "ElevenLabs",
       "TensorFlow",
       "PyTorch",
-      "Other",
     ],
   }
 
@@ -139,7 +138,6 @@ export default function AdminABCPage() {
       "CircleCI",
       "Prometheus",
       "Grafana",
-      "Other",
     ],
     Growth: [
       "Ahrefs",
@@ -167,7 +165,6 @@ export default function AdminABCPage() {
       "Amplitude",
       "Hotjar",
       "Tableau",
-      "Other",
     ],
     Designers: [
       "InVision",
@@ -186,7 +183,6 @@ export default function AdminABCPage() {
       "Jira",
       "Confluence",
       "Abstract",
-      "Other",
     ],
     AI: [
       "ChatGPT",
@@ -201,7 +197,6 @@ export default function AdminABCPage() {
       "Make.com",
       "n8n",
       "Label Studio",
-      "Other",
     ],
     VideoEditors: [
       "Adobe Premiere Pro",
@@ -213,7 +208,6 @@ export default function AdminABCPage() {
       "Adobe Media Encoder",
       "Frame.io",
       "HandBrake",
-      "Other",
     ],
   }
 
