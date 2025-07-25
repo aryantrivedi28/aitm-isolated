@@ -3,7 +3,7 @@
 console.log('🚀 LOADED client-request/page.tsx')
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase } from '../../lib/SupabaseAuthClient';
 import { matchFreelancerToClient } from '../../lib/matchmaker';
 
 export default function ClientRequestForm() {

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabaseClient'
+import { supabase } from '../../lib/SupabaseAuthClient'
 import { useRouter } from 'next/navigation';
 
 export default function AIFreelancerOnboarding() {
@@ -63,6 +63,11 @@ export default function AIFreelancerOnboarding() {
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
+
+    if (!supabase) {
+      alert('Supabase client is not initialized.');
+      return;
+    }
 
     const { error } = await supabase.from('ai_freelancers').insert([
       {
