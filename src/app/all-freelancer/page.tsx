@@ -55,11 +55,11 @@ export default function AdminABCPage() {
   // Mappings
   const categoryOptions = ["Developers", "Growth", "Designers", "AI", "VideoEditors", "Other"]
   const domainMap: Record<string, string[]> = {
-    Developers: ["Frontend", "Backend", "Fullstack", "Mobile", "DevOps", "Other"],
-    Growth: ["SEO", "Content", "Paid Ads", "Email Marketing", "Analytics", "Other"],
-    Designers: ["UI/UX", "Graphic", "Motion / Video Editor", "Illustration", "Product", "Other"],
-    AI: ["Prompt Engineering", "Agent Dev", "ML Ops", "Data", "NLP", "Other"],
-    VideoEditors: ["Video Editing", "Motion Graphics", "2D Animation", "3D Animation", "VFX", "Other"],
+    Developers: ["Frontend", "Backend", "Fullstack", "Mobile", "DevOps"],
+    Growth: ["SEO", "Content", "Paid Ads", "Email Marketing", "Analytics"],
+    Designers: ["UI/UX", "Graphic", "Motion / Video Editor", "Illustration", "Product"],
+    AI: ["Prompt Engineering", "Agent Dev", "ML Ops", "Data", "NLP"],
+    VideoEditors: ["Video Editing", "Motion Graphics", "2D Animation", "3D Animation", "VFX"],
   }
 
   const techMap: Record<string, string[]> = {
@@ -101,7 +101,6 @@ export default function AdminABCPage() {
       "LAMP",
       "JAMstack",
       "Serverless",
-      "Other",
     ],
     AI: [
       "OpenAI API",

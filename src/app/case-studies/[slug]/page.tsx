@@ -18,8 +18,8 @@ interface CaseStudy {
   snapshot: string[]
   challenge: any
   finzieAdvantage: any
-  callToActionText: string
-  callToActionLink: string
+  callToActionText?: string // Make optional
+  callToActionLink?: string // Make optional
   teamMember: {
     name: string
     role: string
@@ -103,6 +103,12 @@ export default function CaseStudyPage({
       }
 
       setStudy(fetchedStudy)
+
+      // Debug: Check if CTA data exists
+      console.log("CTA Text:", fetchedStudy.callToActionText)
+      console.log("CTA Link:", fetchedStudy.callToActionLink)
+      console.log("Full study data:", fetchedStudy)
+
       setLoading(false)
     }
 
@@ -434,7 +440,10 @@ export default function CaseStudyPage({
                     className="w-12 h-12 bg-[#FFE01B] rounded-full flex items-center justify-center"
                     whileHover={{ scale: 1.1 }}
                   >
-                    <span className="text-[#241C15] font-bold text-lg">{study.testimonial.authorName.charAt(0)}</span>
+                    <span className="text-[#241C15] font-bold text-lg">
+                      {study?.testimonial?.authorName?.charAt(0) || ''}
+                    </span>
+
                   </motion.div>
                   <div>
                     <p className="font-bold text-white text-lg">{study.testimonial.authorName}</p>
@@ -446,8 +455,8 @@ export default function CaseStudyPage({
           )}
         </div>
 
-        {/* Call to Action */}
-        {study.callToActionText && study.callToActionLink && (
+        {/* Call to Action - Show if either text or link exists */}
+        {(study.callToActionText || study.callToActionLink) && (
           <motion.section
             initial="initial"
             whileInView="animate"
@@ -469,19 +478,22 @@ export default function CaseStudyPage({
 
               <div className="relative z-10">
                 <motion.h3 className="text-3xl lg:text-4xl font-bold mb-6" variants={fadeInUp}>
-                  Ready to Transform Your Business?
+                  {study.callToActionText || "Ready to Transform Your Business?"}
                 </motion.h3>
                 <motion.p className="text-xl opacity-80 mb-10 max-w-3xl mx-auto" variants={fadeInUp}>
                   Join the success story. Let Finzie help you achieve remarkable results like our featured client.
                 </motion.p>
                 <motion.div variants={fadeInUp}>
-                  <Link href={study.callToActionLink} className="group inline-flex items-center gap-3">
+                  <Link
+                    href={study.callToActionLink || "/client-request"}
+                    className="group inline-flex items-center gap-3"
+                  >
                     <motion.div
                       whileHover={{ scale: 1.05, x: 5 }}
                       whileTap={{ scale: 0.95 }}
                       className="bg-[#241C15] text-[#FFE01B] font-bold px-10 py-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3"
                     >
-                      {study.callToActionText}
+                      {study.callToActionText || "Get Started"}
                       <motion.div
                         animate={{ x: [0, 5, 0] }}
                         transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
