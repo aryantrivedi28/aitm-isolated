@@ -580,7 +580,7 @@ export default function AboutPage() {
               >
                 <div className="absolute inset-0 bg-[#FFE01B] rounded-3xl blur-2xl opacity-20" />
                 <Image
-                  src="/mission.png"
+                  src="/mission2.png"
                   alt="Our Mission"
                   width={400}
                   height={400}
