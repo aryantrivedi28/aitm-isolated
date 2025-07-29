@@ -193,13 +193,13 @@ export default function AboutPage() {
                     </motion.div>
                   </Link>
 
-                  <motion.button
+                  {/* <motion.button
                     className="px-8 py-4 border-2 border-[#FFE01B]/30 text-white rounded-2xl font-semibold hover:border-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-300"
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     Learn More
-                  </motion.button>
+                  </motion.button> */}
                 </motion.div>
               </motion.div>
             </motion.div>
