@@ -496,7 +496,7 @@ export default function CaseStudyPage({
                     <motion.div
                       whileHover={{ scale: 1.05, x: 5 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`font-bold px-10 py-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3 ${getButtonStyles(study.callToActionButton?.style || "primary")}`}
+                      className={`font-bold px-10 py-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3`}
                     >
                       {study.callToActionButton?.text || "Get Started"}
                       <motion.div
