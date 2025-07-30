@@ -87,9 +87,23 @@ export default defineType({
       type: 'string',
     }),
     defineField({
-      name: 'callToActionLink',
-      title: 'Call to Action Link',
-      type: 'url',
+      name: 'callToActionButton',
+      title: 'CTA Button',
+      type: 'object',
+      fields: [
+        {
+          name: 'text',
+          title: 'Button Text',
+          type: 'string',
+          validation: Rule => Rule.required()
+        },
+        {
+          name: 'link',
+          title: 'Button Link',
+          type: 'url',
+          validation: Rule => Rule.required()
+        },
+      ]
     }),
   ],
 })
