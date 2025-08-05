@@ -40,4 +40,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /finzei-7d6407661068.json
-/src/lib/config.ts
+
