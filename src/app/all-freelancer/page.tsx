@@ -53,7 +53,7 @@ export default function AdminABCPage() {
   })
 
   // Mappings
-  const categoryOptions = ["Developers", "Growth", "Designers", "AI", "VideoEditors", "Other"]
+  const categoryOptions = ["Developers", "Growth", "Designers", "AI", "VideoEditors"]
   const domainMap: Record<string, string[]> = {
     Developers: ["Frontend", "Backend", "Fullstack", "Mobile", "DevOps"],
     Growth: ["SEO", "Content", "Paid Ads", "Email Marketing", "Analytics"],
@@ -210,7 +210,7 @@ export default function AdminABCPage() {
     ],
   }
 
-  const employmentOptions = ["Student", "Full-time Employee", "Full-time Freelancer", "Other"]
+  const employmentOptions = ["Student", "Full-time Employee", "Full-time Freelancer"]
   const experienceOptions = [
     "Less than 1 Year of Experience",
     "1-3 Years of Experience",
@@ -602,15 +602,6 @@ export default function AdminABCPage() {
                 </select>
               </div>
 
-              {payload.employment_status === "Other" && (
-                <input
-                  name="employment_other"
-                  value={payload.employment_other}
-                  onChange={change}
-                  placeholder="Enter your employment status"
-                  className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-[#FFE01B] focus:bg-white/15 transition-all duration-300"
-                />
-              )}
 
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-[#FFE01B] mb-2">Experience Level*</label>
@@ -632,15 +623,6 @@ export default function AdminABCPage() {
                 </select>
               </div>
 
-              {payload.experience_level === "Other" && (
-                <input
-                  name="experience_other"
-                  value={payload.experience_other}
-                  onChange={change}
-                  placeholder="Enter your experience level"
-                  className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-[#FFE01B] focus:bg-white/15 transition-all duration-300"
-                />
-              )}
             </div>
 
             <div className="flex justify-between pt-4">
