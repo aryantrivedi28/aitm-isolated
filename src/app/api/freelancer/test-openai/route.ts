@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { CONFIG, isOpenAIConfigured, validateConfig } from "../../../../config/config"
+import { CONFIG, isOpenAIConfigured, validateConfig } from "../../../../lib/config"
 import OpenAI from "openai"
 
 export async function GET(request: NextRequest) {
