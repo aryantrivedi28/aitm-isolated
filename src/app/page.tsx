@@ -126,7 +126,27 @@ export default function ClientLandingPage() {
     {
       question: "How quickly can I get matched with a freelancer?",
       answer:
-        "Our AI-powered matching system typically finds and verifies the perfect freelancer for your project within 24 hours. For urgent projects, we can often match you even faster.",
+        "Our AI-powered matching system typically finds and verifies the perfect freelancer for your international freelance jobs within 24 hours. For urgent projects, we can also match you even faster.",
+    },
+    {
+      question: "How much do freelancers charge per hour?",
+      answer: "Freelance hourly rates vary based on expertise and project scope. Finzie provides transparent freelancer quotes, allowing you to connect with freelancers needed for diverse roles at a price tailored to your budget.",
+    },
+    {
+      question: "Do freelancers earn more than employees?",
+      answer:
+        "Freelancers often enjoy higher earning potential due to the flexibility of freelance work. By joining Finzie’s freelancers hub, you can earn competitive pay from international freelance jobs, often surpassing traditional employee salaries.",
+    },
+    {
+      question: "What are the advantages of hiring freelancers?",
+      answer:
+        "The benefits of hiring freelancers include cost-efficiency, access to specialized skills, and scalability. Finzie’s freelancers portal connects you with freelance web developers, freelancers graphic designers, and more, ensuring high-quality results for your projects.",
+    },
+    
+    {
+      question: "How do you ensure quality in your freelancers?",
+      answer:
+        "We have a rigorous vetting process that includes technical assessments, portfolio reviews, and interviews. Only the top 5% of applicants make it onto our platform, ensuring you work with the best freelancers.",
     },
     {
       question: "What if I'm not satisfied with the freelancer's work?",
