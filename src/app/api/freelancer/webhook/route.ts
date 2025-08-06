@@ -4,8 +4,9 @@ import { ProcessingService } from "../../../../lib/services/processingService"
 export async function POST(request: NextRequest) {
   try {
     console.log("🔔 Webhook triggered - New form submission detected")
-
-    const processingService = new ProcessingService()
+const body = await request.json()
+   const sheetUrl = body.sheetUrl
+    const processingService = new ProcessingService(sheetUrl)
     await processingService.processNewSubmissions()
 
     return NextResponse.json({
@@ -31,8 +32,9 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     console.log("🔄 Manual processing triggered")
-
-    const processingService = new ProcessingService()
+const body = await request.json()
+   const sheetUrl = body.sheetUrl
+    const processingService = new ProcessingService(sheetUrl)
     await processingService.processNewSubmissions()
 
     return NextResponse.json({

@@ -18,7 +18,7 @@ interface CaseStudy {
   snapshot: string[]
   challenge: any
   finzieAdvantage: any
-  callToActionText?: string 
+  callToActionText?: string
   callToActionButton?: {
     text: string
     link: string
@@ -82,29 +82,40 @@ export default function CaseStudyPage({
     async function fetchStudy() {
       const { slug } = await params
       const fetchedStudy: CaseStudy = await client.fetch(
-        `
-          *[_type == "caseStudy" && slug.current == $slug][0]{
-            _id,
-            title,
-            subtitle,
-            description,
-            tags,
-            snapshot,
-            challenge,
-            finzieAdvantage,
-            callToActionText,
-            callToActionLink,
-            callToActionButton {
-              text,
-              link,
-            },
-            teamMember->{name, role, bio, image { asset->{ url } }},
-            testimonial { quote, authorName, authorRole },
-            mainImage { asset->{ url } }
-          }
-        `,
-        { slug },
-      )
+        `*[_type == "caseStudy" && slug.current == $slug][0]{
+    title,
+    subtitle,
+    slug,
+    description,
+    tags,
+    mainImage {
+      asset -> { url }
+    },
+    challenge,
+    finzieAdvantage,
+    teamMember {
+      name,
+      role,
+      bio,
+      image {
+        asset -> { url }
+      }
+    },
+    snapshot,
+    testimonial {
+      quote,
+      authorName,
+      authorRole
+    },
+    callToActionText,
+    callToActionButton {
+      text,
+      link
+    }
+  }`,
+        { slug }
+      );
+
 
       if (!fetchedStudy) {
         notFound()
@@ -113,15 +124,17 @@ export default function CaseStudyPage({
       setStudy(fetchedStudy)
 
       // Debug: Check if CTA data exists
-      console.log("CTA Text:", fetchedStudy.callToActionText)
-      console.log("CTA Link:", fetchedStudy.callToActionLink)
-      console.log("Full study data:", fetchedStudy)
+      console.log("Fetched Study:", fetchedStudy);
+      console.log("Team Member:", fetchedStudy.teamMember);
+
+
 
       setLoading(false)
     }
 
     fetchStudy()
   }, [params])
+
 
   if (loading) {
     return (
@@ -464,7 +477,7 @@ export default function CaseStudyPage({
         </div>
 
         {/* Call to Action - Show if either text or link exists */}
-         {study && (
+        {study && (
           <motion.section
             initial="initial"
             whileInView="animate"

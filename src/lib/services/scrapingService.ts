@@ -548,7 +548,7 @@ Current file ID: ${fileId}`
     }
 
     const directUrl = `https://drive.google.com/uc?export=download&id=${fileId}`
-    console.log(`🔗 Trying direct download: ${directUrl}`)
+    console.log(`Trying direct download: ${directUrl}`)
 
     const response = await fetch(directUrl, {
       headers: {
@@ -562,7 +562,7 @@ Current file ID: ${fileId}`
     }
 
     const contentType = response.headers.get("content-type") || ""
-    console.log(`📋 Direct download content type: ${contentType}`)
+    console.log(`Direct download content type: ${contentType}`)
 
     if (contentType.includes("text/html")) {
       throw new Error("Received HTML instead of file - file may not be publicly accessible")
@@ -588,7 +588,7 @@ Current file ID: ${fileId}`
 
     for (const altUrl of alternativeUrls) {
       try {
-        console.log(`🔄 Trying alternative URL: ${altUrl}`)
+        console.log(`Trying alternative URL: ${altUrl}`)
 
         const response = await fetch(altUrl, {
           headers: {
@@ -606,7 +606,7 @@ Current file ID: ${fileId}`
           }
         }
       } catch (error) {
-        console.log(`❌ Alternative URL failed: ${error}`)
+        console.log(`Alternative URL failed: ${error}`)
         continue
       }
     }

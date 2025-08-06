@@ -2,7 +2,9 @@ import { type NextRequest, NextResponse } from "next/server"
 import { ProcessingService } from "../../../../lib/services/processingService"
 
 export async function POST(request: NextRequest) {
-  const processingService = new ProcessingService()
+const body = await request.json()
+   const sheetUrl = body.sheetUrl
+    const processingService = new ProcessingService(sheetUrl)
 
   try {
     console.log("🧪 Testing improved sheet processing...")

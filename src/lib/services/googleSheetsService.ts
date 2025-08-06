@@ -3,25 +3,26 @@ import { JWT } from "google-auth-library"
 import { CONFIG } from "../config"
 
 export class GoogleSheetsService {
-  private doc: GoogleSpreadsheet | null = null
+  private doc: GoogleSpreadsheet
   private serviceAccountAuth: JWT
 
-  constructor() {
+  constructor(sheetId: string) {
     this.serviceAccountAuth = new JWT({
       email: CONFIG.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       key: CONFIG.GOOGLE_PRIVATE_KEY,
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     })
+
+    this.doc = new GoogleSpreadsheet(sheetId, this.serviceAccountAuth)
   }
 
   async initialize(): Promise<boolean> {
     try {
-      this.doc = new GoogleSpreadsheet(CONFIG.SPREADSHEET_ID, this.serviceAccountAuth)
       await this.doc.loadInfo()
-      console.log(`Connected to sheet: ${this.doc.title}`)
+      console.log(`✅ Connected to sheet: ${this.doc.title}`)
       return true
     } catch (error) {
-      console.error("Failed to initialize Google Sheets:", error)
+      console.error("❌ Failed to initialize Google Sheets:", error)
       return false
     }
   }
@@ -30,12 +31,11 @@ export class GoogleSheetsService {
     if (!this.doc) throw new Error("Google Sheets not initialized")
 
     try {
-      // Get the first sheet (usually "Form Responses 1")
       const sheet = this.doc.sheetsByIndex[0]
-      console.log(`Using sheet: ${sheet.title}`)
+      console.log(`📄 Using sheet: ${sheet.title}`)
       return sheet
     } catch (error) {
-      console.error("Error getting main sheet:", error)
+      console.error("❌ Error getting main sheet:", error)
       return null
     }
   }
@@ -43,111 +43,75 @@ export class GoogleSheetsService {
   async getUnprocessedRows() {
     try {
       const sheet = await this.getMainSheet()
-      if (!sheet) {
-        console.log(`⚠️  No sheet found`)
-        return []
-      }
+      if (!sheet) return []
 
-      // Load the sheet data
       await sheet.loadHeaderRow()
       const rows = await sheet.getRows()
 
-      if (rows.length === 0) {
-        console.log(`ℹ️  No rows found in sheet`)
-        return []
-      }
-
-      console.log(`📊 Total rows in sheet: ${rows.length}`)
-      console.log(`📋 Headers: ${sheet.headerValues.join(", ")}`)
-
-      // Find the rating column name
-      const ratingColumnName = sheet.headerValues.find((header) => header && header.toLowerCase().includes("rating"))
-
-      console.log(`🎯 Rating column name: ${ratingColumnName || "Not found"}`)
-
-      if (!ratingColumnName) {
-        console.log(`⚠️  No rating column found in headers: ${sheet.headerValues.join(", ")}`)
-        // If no rating column, consider all rows as unprocessed
-        return rows
-      }
+      const ratingColumnName = sheet.headerValues.find(h =>
+        h?.toLowerCase().includes("rating")
+      )
 
       const unprocessedRows = rows.filter((row, index) => {
-        try {
-          // Use the proper row.get() method with the rating column name
-          const ratingValue = row.get(ratingColumnName)
-          const isEmpty = !ratingValue || ratingValue.toString().trim() === ""
-
-          if (!isEmpty) {
-            console.log(`✅ Row ${index + 1}: ${row.get("Name") || "Unknown"} - Already processed`)
-          } else {
-            console.log(`📝 Row ${index + 1}: ${row.get("Name") || "Unknown"} - Needs processing`)
-          }
-
-          return isEmpty
-        } catch (error) {
-          console.error(`Error checking row ${index + 1}:`, error)
-          // If there's an error, assume it needs processing
-          return true
-        }
+        const ratingValue = ratingColumnName ? row.get(ratingColumnName) : ""
+        const isUnprocessed = !ratingValue || ratingValue.toString().trim() === ""
+        console.log(
+          `${isUnprocessed ? "📝 Needs processing" : "✅ Already processed"} — Row ${
+            index + 2
+          }: ${row.get("Name") || "Unnamed"}`
+        )
+        return isUnprocessed
       })
 
-      console.log(`Found ${unprocessedRows.length} unprocessed rows out of ${rows.length} total rows`)
       return unprocessedRows
     } catch (error) {
-      console.error(`Error getting unprocessed rows:`, error)
+      console.error("❌ Error loading unprocessed rows:", error)
       return []
     }
   }
 
-async updateRowWithRating(rowIndex: number, rating: number, review: string): Promise<boolean> {
-  try {
-    const sheet = await this.getMainSheet()
-    if (!sheet) return false
+  async updateRowWithRating(rowIndex: number, rating: number, review: string): Promise<boolean> {
+    try {
+      const sheet = await this.getMainSheet()
+      if (!sheet) return false
 
-    await sheet.loadHeaderRow()
-    const rows = await sheet.getRows()
+      await sheet.loadHeaderRow()
+      const rows = await sheet.getRows()
+      const dataRowIndex = rowIndex - 2
 
-    const dataRowIndex = rowIndex - 2 // Subtract 2: one for 0-based array, one for header row
+      if (dataRowIndex < 0 || dataRowIndex >= rows.length) {
+        console.error(`❌ Invalid row index: ${rowIndex}`)
+        return false
+      }
 
-    if (dataRowIndex < 0 || dataRowIndex >= rows.length) {
-      console.error(`Row index ${rowIndex} is out of bounds (valid: 2 to ${rows.length + 1})`)
-      return false
-    }
+      const row = rows[dataRowIndex]
 
-    const row = rows[dataRowIndex]
+      const ratingColumnName = sheet.headerValues.find(h =>
+        h?.toLowerCase().includes("rating")
+      )
 
-    const ratingColumnName = sheet.headerValues.find(
-      (header) => header && header.toLowerCase().includes("rating")
-    )
+      if (!ratingColumnName) {
+        console.error("❌ No 'Rating' column found in sheet.")
+        return false
+      }
 
-    if (ratingColumnName) {
       row.set(ratingColumnName, review)
       await row.save()
-      console.log(`✅ Updated row ${rowIndex} (actual row ${dataRowIndex + 2}) with rating: ${rating}/10`)
+
+      console.log(`✅ Updated row ${rowIndex} with rating: ${rating}/10`)
       return true
-    } else {
-      console.error(`❌ Could not find rating column in headers: ${sheet.headerValues.join(", ")}`)
+    } catch (error) {
+      console.error("❌ Error updating row:", error)
       return false
     }
-  } catch (error) {
-    console.error(`❌ Error updating row:`, error)
-    return false
   }
-}
 
-
-  // Method to get sheet info for debugging
   async getSheetInfo() {
-    if (!this.doc) {
-      await this.initialize()
-    }
-    if (!this.doc) return null
-
     try {
+      await this.initialize()
       const sheet = await this.getMainSheet()
       if (!sheet) return null
 
-      // Load header row to get column names
       await sheet.loadHeaderRow()
 
       return {
@@ -156,19 +120,9 @@ async updateRowWithRating(rowIndex: number, rating: number, review: string): Pro
         rowCount: sheet.rowCount,
         columnCount: sheet.columnCount,
         headerRow: sheet.headerValues,
-        expectedColumns: [
-          "Timestamp",
-          "Name",
-          "Email",
-          "Portfolio Link",
-          "Resume",
-          "Proposal",
-          "Github Link",
-          "Rating",
-        ],
       }
     } catch (error) {
-      console.error("Error getting sheet info:", error)
+      console.error("❌ Error getting sheet info:", error)
       return null
     }
   }

@@ -8,6 +8,10 @@ export class OpenAIService {
   private fallbackService: FallbackRatingService
 
   constructor() {
+    if (!CONFIG.OPENAI_API_KEY || !CONFIG.OPENAI_API_KEY.startsWith("sk-")) {
+      throw new Error("❌ Missing or invalid OpenAI API key.")
+    }
+
     this.openai = new OpenAI({ apiKey: CONFIG.OPENAI_API_KEY })
     this.fallbackService = new FallbackRatingService()
   }
@@ -24,11 +28,12 @@ export class OpenAIService {
 
   async analyzeFreelancer(candidateData: FreelancerData): Promise<AIAnalysisResult> {
     const MAX_TRIES = 3
-    const RETRY_DELAY = 2000 // 2 seconds
+    const RETRY_DELAY = 2000
 
     for (let attempt = 1; attempt <= MAX_TRIES; attempt++) {
       try {
         console.log(`🤖 Running DevOps analysis for candidate...`)
+
         const sanitizedContent = {
           resume: (candidateData.resumeContent || "").slice(0, 2000),
           portfolio: (candidateData.portfolioContent || "").slice(0, 1500),
@@ -66,7 +71,7 @@ export class OpenAIService {
           console.warn("❌ All retries failed. Falling back to local analysis.")
           return this.fallbackService.analyzeFreelancer(candidateData)
         }
-        await new Promise((r) => setTimeout(r, RETRY_DELAY * attempt)) // exponential backoff
+        await new Promise((r) => setTimeout(r, RETRY_DELAY * attempt))
       }
     }
 
@@ -129,7 +134,7 @@ Proposal: ${data.proposalContent || "No proposal provided"}
       }
 
       const totalScore = signals.reduce((sum, val) => sum + val, 0)
-      const displayRating = Math.round((totalScore / 90) * 10) // 10-point scale
+      const displayRating = Math.round((totalScore / 90) * 10)
       const verdict = this.calculateVerdict(totalScore)
       const review = parsed.REVIEW || "No review provided"
 
@@ -165,5 +170,50 @@ Proposal: ${data.proposalContent || "No proposal provided"}
     if (score >= 70) return "Strong"
     if (score >= 45) return "Moderate"
     return "Weak"
+  }
+
+  /**
+   * ✅ NEW: Analyze with a custom prompt from user
+   */
+  async analyzeWithCustomPrompt(prompt: string, data: FreelancerData): Promise<AIAnalysisResult> {
+    const fullPrompt = `
+${prompt}
+
+Candidate Info:
+Resume: ${data.resumeContent}
+Portfolio: ${data.portfolioContent}
+Proposal: ${data.proposalContent}
+Github: ${data.github}
+
+Give rating out of 10 and 1 line review in JSON format:
+{
+  "rating": number,
+  "review": "short summary"
+}
+    `.trim()
+
+    try {
+      console.log(this.openai)
+      const response = await this.openai.chat.completions.create({
+        model: CONFIG.OPENAI_MODEL,
+        messages: [{ role: "user", content: fullPrompt }],
+        max_tokens: CONFIG.OPENAI_MAX_TOKENS,
+        temperature: CONFIG.OPENAI_TEMPERATURE,
+      })
+
+      const content = response.choices[0].message.content || ""
+      const parsed = JSON.parse(content.match(/\{[\s\S]*?\}/)?.[0] || "{}")
+
+      return {
+        rating: parsed.rating || 0,
+        review: parsed.review || "No review",
+      }
+    } catch (error) {
+      console.error("❌ analyzeWithCustomPrompt failed:", error)
+      return {
+        rating: 0,
+        review: "Custom prompt analysis failed. Using fallback.",
+      }
+    }
   }
 }

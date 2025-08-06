@@ -1,7 +1,7 @@
 export interface FreelancerData {
-  timestamp: string
+  timestamp?: string
   name: string
-  email: string
+  email?: string
   portfolioUrl?: string
   resumeFile?: string
   proposalText?: string

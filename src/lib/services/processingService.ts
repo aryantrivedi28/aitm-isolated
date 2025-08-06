@@ -13,10 +13,18 @@ export interface ProcessingResult {
   error?: string
 }
 
+function extractSheetId(sheetUrl: string): string | null {
+  const match = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/)
+  return match ? match[1] : null
+}
+
+
+
 export class ProcessingService {
-  private sheetsService: GoogleSheetsService
+   private sheetsService: GoogleSheetsService
   private scrapingService: ScrapingService
   private openaiService: OpenAIService
+  private sheetId: string
 
   private status = {
     isRunning: false,
@@ -25,12 +33,17 @@ export class ProcessingService {
     errors: [] as string[],
   }
 
-  constructor() {
-    this.sheetsService = new GoogleSheetsService()
+  constructor(sheetUrl: string) {
+    const sheetId = extractSheetId(sheetUrl)
+    if (!sheetId) {
+      throw new Error("Invalid Google Sheet URL")
+    }
+
+    this.sheetId = sheetId
+    this.sheetsService = new GoogleSheetsService(sheetId)
     this.scrapingService = new ScrapingService()
     this.openaiService = new OpenAIService()
   }
-
   getStatus() {
     return this.status
   }
