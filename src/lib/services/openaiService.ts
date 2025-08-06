@@ -8,11 +8,11 @@ export class OpenAIService {
   private fallbackService: FallbackRatingService
 
   constructor() {
-    if (!CONFIG.OPENAI_API_KEY || !CONFIG.OPENAI_API_KEY.startsWith("sk-")) {
+    if (!process.env.OPENAI_API_KEY2 || !process.env.OPENAI_API_KEY2.startsWith("sk-")) {
       throw new Error("❌ Missing or invalid OpenAI API key.")
     }
 
-    this.openai = new OpenAI({ apiKey: CONFIG.OPENAI_API_KEY })
+    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY2 })
     this.fallbackService = new FallbackRatingService()
   }
 

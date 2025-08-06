@@ -1,6 +1,5 @@
 export const CONFIG = {
   // OpenAI Configuration (use defaults unless overridden)
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY2,
   OPENAI_MODEL: "gpt-3.5-turbo",
   OPENAI_MAX_TOKENS: 800,
   OPENAI_TEMPERATURE: 0.2,
@@ -34,7 +33,7 @@ export const CONFIG = {
 // --- ✅ Utility Functions ---
 
 export function isOpenAIConfigured(): boolean {
-  return !!CONFIG.OPENAI_API_KEY && CONFIG.OPENAI_API_KEY.startsWith("sk-")
+  return !!process.env.OPENAI_API_KEY2 && process.env.OPENAI_API_KEY2.startsWith("sk-")
 }
 
 export function isGoogleSheetsConfigured(): boolean {
