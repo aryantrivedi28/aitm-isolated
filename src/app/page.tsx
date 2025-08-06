@@ -233,7 +233,7 @@ export default function ClientLandingPage() {
               variants={fadeUp}
               className="text-4xl md:text-5xl font-semibold mb-4"
             >
-              On-demand talent for fast-moving startups
+              Finzie – Managed Freelancers Hub for Scaling Organizations
             </motion.h2>
             <motion.p
               initial="hidden"
@@ -241,8 +241,7 @@ export default function ClientLandingPage() {
               variants={fadeUp}
               className="text-lg md:text-xl mb-10 max-w-xl text-gray-300"
             >
-              Pre-vetted freelancers & AI-smart teams for development, design, video & more. Match and onboard in 24
-              hours
+              Join Finzie, the premier freelancers' hub for top-tier freelance work. Enjoy the benefits of a seamless candidate hiring experience and access to international freelance jobs.
             </motion.p>
             <motion.div
               initial="hidden"
@@ -296,17 +295,17 @@ export default function ClientLandingPage() {
             {
               img: "/xyz.png",
               title: "Share your requirements",
-              desc: "Fill out our simple form, and our team will reach out to clarify your project's requirements",
+              desc: "Fill out our simple form to outline your project needs & our crew will reach out to clarify details, ensuring a tailored candidate hiring experience aligning with your goals.",
             },
             {
               img: "/match.png",
               title: "Get matched",
-              desc: "Our AI engine analyzes your project profile & finds the perfect expert with manual verification within the next 24 hours",
+              desc: "Our matchmaking algorithm digs through our pool of pre-vetted talent to find your perfect freelancer fit; no more endless scrolling for freelancers on Fiverr, Upwork or anywhere else!",
             },
             {
               img: "/manage.png",
               title: "Deliver & manage",
-              desc: "We assign the right freelancer, manage delivery end to end & integrate our agile teams into your stack",
+              desc: "We don’t just leave you there. Holding your hand, we ensure timely delivery with the highest quality, managing the process end-to-end so you can focus on outcomes.",
             },
           ].map((step, index) => (
             <motion.div
@@ -347,6 +346,14 @@ export default function ClientLandingPage() {
           <motion.h2 initial="hidden" animate="visible" variants={fadeUp} className="text-3xl font-semibold mb-10">
             Why Us?
           </motion.h2>
+          <motion.p
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+              className="text-lg md:text-xl mb-10 max-w-3xl text-gray-300"
+            >
+              Our diverse talent pool supports freelance WFH jobs and international freelance jobs, ensuring flexibility and access to global expertise with zero hassles
+            </motion.p>
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 gap-8"
             initial="hidden"
@@ -357,7 +364,7 @@ export default function ClientLandingPage() {
               {
                 icon: Shield,
                 title: "Pre-vetted experts ready to jump in",
-                desc: "Rigorous screening ensures top-tier talent every time",
+                desc: "Only the best freelancers make the cut - our rigorous screening ensures you can access the most appropriate freelancers portfolios who excel in their craft.",
               },
               {
                 icon: Zap,
@@ -367,12 +374,12 @@ export default function ClientLandingPage() {
               {
                 icon: Users,
                 title: "Integrated agile teams",
-                desc: "Our freelancers become part of your team in the communication channel of your choice",
+                desc: "Our freelancers seamlessly join your team in your preferred communication channels, enhancing the candidate hiring experience for freelance work.",
               },
               {
                 icon: Clock,
                 title: "Flexible pricing that adapts to your budget",
-                desc: "Tailored quotes with no hidden fees",
+                desc: "Get tailored freelancers quotes with no hidden fees, making Finzie the best site for hiring freelancers online.",
               },
               {
                 icon: Star,
@@ -381,8 +388,8 @@ export default function ClientLandingPage() {
               },
               {
                 icon: CheckCircle,
-                title: "We handle the dirty work",
-                desc: "From agreements and onboarding to invoicing, Finzie takes care of it all so you can focus on growing your business",
+                title: "Matchmaking System that Ensures Exact Match",
+                desc: "Our proprietary system guarantees the perfect freelancer for your requirements, every time.",
               },
             ].map((feature, index) => (
               <motion.div
@@ -437,7 +444,7 @@ export default function ClientLandingPage() {
             </motion.div>
             <h2 className="text-4xl font-bold text-[#241C15] mb-4">What Our Clients Say</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Don't just take our word for it. Here's what our satisfied clients have to say about working with Finzie.
+              We’ll make you fall in love with our offering—at least, that’s what our existing clients say!
             </p>
           </motion.div>
 
@@ -667,7 +674,7 @@ export default function ClientLandingPage() {
             </h2>
 
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Explore a diverse range of services to empower your business, executed by{" "}
+              We offer Diverse Temporary Contract Hiring Services to Supercharge Your Business{" "}
               <span className="font-semibold text-[#241C15]">skilled freelancers</span> across categories.
             </p>
           </motion.div>
