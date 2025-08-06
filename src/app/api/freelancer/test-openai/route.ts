@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     // Test OpenAI connection
     const openai = new OpenAI({
-      apiKey: CONFIG.OPENAI_API_KEY,
+      apiKey: process.env.OPENAI_API_KEY2,
     })
 
     console.log("📡 Testing OpenAI API connection...")
