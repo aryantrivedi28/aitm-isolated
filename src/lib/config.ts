@@ -1,6 +1,6 @@
 export const CONFIG = {
   // OpenAI Configuration (use defaults unless overridden)
-  OPENAI_API_KEY: 'REMOVED_API_KEY',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   // OPENAI_API_KEY:'REMOVED_API_KEY',
   OPENAI_MODEL: "gpt-3.5-turbo",
   OPENAI_MAX_TOKENS: 800,
