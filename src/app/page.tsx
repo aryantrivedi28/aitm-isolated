@@ -142,32 +142,47 @@ export default function ClientLandingPage() {
       answer:
         "The benefits of hiring freelancers include cost-efficiency, access to specialized skills, and scalability. Finzie’s freelancers portal connects you with freelance web developers, freelancers graphic designers, and more, ensuring high-quality results for your projects.",
     },
-    
+
     {
-      question: "How do you ensure quality in your freelancers?",
+      question: "What action will you take next to create a positive hiring experience for your new employees?",
       answer:
-        "We have a rigorous vetting process that includes technical assessments, portfolio reviews, and interviews. Only the top 5% of applicants make it onto our platform, ensuring you work with the best freelancers.",
+        "At Finzie, we enhance the new employee hiring experience by offering tools to streamline communication, freelancers review, and match clients with the right talent for freelance work.",
     },
     {
-      question: "What if I'm not satisfied with the freelancer's work?",
+      question: "What is an outsourced team?",
       answer:
-        "We offer a satisfaction guarantee. If you're not happy with the work, we'll find you a replacement freelancer at no additional cost and ensure your project gets completed to your standards.",
+        "An outsourced team consists of freelancers hired for specific projects or roles, often remotely. Finzie connects you with freelancers needed for tasks like freelance writing jobs remote or freelancers photographers, creating efficient teams for your needs.",
+    },
+    {
+      question: "What are the outsourcing benefits?",
+      answer:
+        "Outsourcing through Finzie’s offers cost savings, global talent access, and flexibility. Businesses can leverage international freelance jobs to tap into diverse skill sets, such as freelancer 3d modeling, freelancers for branding, or freelance writing gigs, without traditional hiring overhead.",
+    },
+    {
+      question: "What does it mean to outsource staff?",
+      answer:
+        "Outsourcing staff means hiring freelancers for freelance work instead of in-house employees.",
+    },
+    {
+      question: "What if I’m not satisfied with the freelancer’s work?",
+      answer:
+        "We prioritize your satisfaction. If the work doesn’t meet expectations, Finzie’s team will re-evaluate your needs and match you with another freelancer to ensure project success.",
     },
     {
       question: "How does your pricing work?",
       answer:
-        "Our pricing is flexible and transparent. We provide custom quotes based on your project requirements with no hidden fees. You only pay for the work delivered, and we handle all invoicing and payments.",
+        "Our pricing is flexible and tailored to your project. You’ll receive transparent freelancers quotes based on the scope of freelance work, with no hidden fees.",
     },
     {
       question: "Do you offer ongoing support after project completion?",
       answer:
-        "Yes! We provide ongoing support and can help you scale your team as needed. Many of our clients work with the same freelancers on multiple projects through our platform.",
+        "Yes, Finzie provides ongoing support to ensure your project’s success, from post-delivery tweaks to scaling your team with additional freelancers required.",
     },
     {
       question: "What makes Finzie different from other freelance platforms?",
       answer:
-        "We're the world's first AI talent aggregator with rigorous vetting, 24-hour matching, integrated team management, and end-to-end project handling. We become part of your team, not just a marketplace.",
-    },
+        "Finzie stands out as the easiest platform for hiring freelancers, combining AI-driven matching, pre-vetted talent, and end-to-end project management for an unparalleled candidate hiring experience.",
+    }
   ]
 
   // Function to truncate text
@@ -367,13 +382,13 @@ export default function ClientLandingPage() {
             Why Us?
           </motion.h2>
           <motion.p
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-              className="text-lg md:text-xl mb-10 max-w-3xl text-gray-300"
-            >
-              Our diverse talent pool supports freelance WFH jobs and international freelance jobs, ensuring flexibility and access to global expertise with zero hassles
-            </motion.p>
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="text-lg md:text-xl mb-10 max-w-3xl text-gray-300"
+          >
+            Our diverse talent pool supports freelance WFH jobs and international freelance jobs, ensuring flexibility and access to global expertise with zero hassles
+          </motion.p>
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 gap-8"
             initial="hidden"

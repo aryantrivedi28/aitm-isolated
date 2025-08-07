@@ -2,6 +2,7 @@ import puppeteer, { type Browser } from "puppeteer"
 import * as cheerio from "cheerio"
 import mammoth from "mammoth"
 import PDFParser from "pdf2json"
+import axios from "axios";
 
 // Configuration constants
 const CONFIG = {
@@ -181,42 +182,42 @@ Current file ID: ${fileId}`
     }
   }
 
-  private async tryPdf2JsonParsing(fileUrl: string): Promise<string> {
-    const fileId = this.extractFileId(fileUrl)
-    if (!fileId) {
-      throw new Error("Could not extract file ID")
+private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const fileId = this.extractFileId(fileUrl);
+      const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+      const response = await axios.get(downloadUrl, {
+        responseType: "arraybuffer",
+      });
+
+      const buffer = Buffer.from(response.data, "utf-8");
+
+      const pdfParser = new PDFParser();
+      pdfParser.on("pdfParser_dataError", (errData) => reject(errData.parserError));
+      pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
+        const texts: string[] = [];
+
+        const pages = pdfData?.FormImage?.Pages ?? [];
+        pages.forEach((page: any) => {
+          page.Texts.forEach((textItem: any) => {
+            const rawText = textItem.R.map((r: any) => decodeURIComponent(r.T)).join(" ");
+            texts.push(rawText);
+          });
+        });
+
+        const fullText = texts.join(" ").replace(/\s+/g, " ").trim();
+        resolve(fullText);
+      });
+
+      pdfParser.parseBuffer(buffer);
+    } catch (error) {
+      reject(error);
     }
+  });
+};
 
-    console.log(`📄 Trying pdf2json parsing for file ID: ${fileId}`)
-
-    // Try to download the PDF file first
-    const directUrl = `https://drive.google.com/uc?export=download&id=${fileId}`
-
-    const response = await fetch(directUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-      },
-      redirect: "follow",
-    })
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-    }
-
-    const contentType = response.headers.get("content-type") || ""
-    console.log(`📋 Content type: ${contentType}`)
-
-    // Check if it's actually a PDF
-    if (!contentType.includes("pdf") && !fileUrl.toLowerCase().includes(".pdf")) {
-      throw new Error("File is not a PDF, trying other methods")
-    }
-
-    const arrayBuffer = await response.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-
-    // Use pdf2json to parse the PDF
-    return await this.extractTextWithPdf2Json(buffer)
-  }
 
   private async extractTextWithPdf2Json(buffer: Buffer): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -689,6 +690,74 @@ Current file ID: ${fileId}`
     }
 
     return cleaned
+  }
+
+private extractDriveFileId(url: string): string | null {
+    const match = url.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+    return match ? match[1] : null;
+  }
+
+  private async fetchPdfBufferFromDrive(url: string): Promise<Buffer | null> {
+    const fileId = this.extractDriveFileId(url);
+    if (!fileId) return null;
+
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+    try {
+      const response = await axios.get(downloadUrl, {
+        responseType: "arraybuffer",
+      });
+      return Buffer.from(response.data);
+    } catch (error: any) {
+      console.error("Failed to fetch PDF buffer:", error.message);
+      return null;
+    }
+  }
+
+  private parsePdfBuffer(buffer: Buffer): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const pdfParser = new PDFParser();
+
+      pdfParser.on("pdfParser_dataError", (errData) => {
+        console.error("PDF parse error:", errData.parserError);
+        resolve(""); // Fallback
+      });
+
+pdfParser.on("pdfParser_dataReady", (pdfData) => {
+  const texts: string[] = [];
+
+  const pages = (pdfData as any).FormImage.Pages;
+  pages.forEach((page: any) => {
+    page.Texts.forEach((textItem: any) => {
+      const rawText = textItem.R.map((r: any) => decodeURIComponent(r.T)).join(" ");
+      texts.push(rawText);
+    });
+  });
+
+  const fullText = texts.join(" ").replace(/\s+/g, " ").trim();
+  resolve(fullText);
+});
+
+
+      pdfParser.parseBuffer(buffer);
+    });
+  }
+
+
+  async parsePortfolio(url: string): Promise<string> {
+    try {
+      if (!url) return "No portfolio provided.";
+
+      const response = await axios.get(url);
+      const html = response.data;
+      const $ = cheerio.load(html);
+      const text = $('body').text().replace(/\s+/g, ' ').trim();
+
+      return text.length > 100 ? text.slice(0, 3000) : "Portfolio too short or empty.";
+    } catch (error: any) {
+      console.error("Error parsing portfolio:", error.message);
+      return "Portfolio fetch failed.";
+    }
   }
 
   async scrapePortfolio(url: string | undefined): Promise<string> {

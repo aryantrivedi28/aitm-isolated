@@ -56,8 +56,7 @@ export class GoogleSheetsService {
         const ratingValue = ratingColumnName ? row.get(ratingColumnName) : ""
         const isUnprocessed = !ratingValue || ratingValue.toString().trim() === ""
         console.log(
-          `${isUnprocessed ? "📝 Needs processing" : "✅ Already processed"} — Row ${
-            index + 2
+          `${isUnprocessed ? "📝 Needs processing" : "✅ Already processed"} — Row ${index + 2
           }: ${row.get("Name") || "Unnamed"}`
         )
         return isUnprocessed
@@ -70,41 +69,49 @@ export class GoogleSheetsService {
     }
   }
 
-  async updateRowWithRating(rowIndex: number, rating: number, review: string): Promise<boolean> {
-    try {
-      const sheet = await this.getMainSheet()
-      if (!sheet) return false
+async updateRowWithRating(rowIndex: number, rating: number, review: string): Promise<boolean> {
+  try {
+    const sheet = await this.getMainSheet()
+    if (!sheet) return false
 
-      await sheet.loadHeaderRow()
-      const rows = await sheet.getRows()
-      const dataRowIndex = rowIndex - 2
+    await sheet.loadHeaderRow()
+    const rows = await sheet.getRows()
+    const dataRowIndex = rowIndex - 2
 
-      if (dataRowIndex < 0 || dataRowIndex >= rows.length) {
-        console.error(`❌ Invalid row index: ${rowIndex}`)
-        return false
-      }
-
-      const row = rows[dataRowIndex]
-
-      const ratingColumnName = sheet.headerValues.find(h =>
-        h?.toLowerCase().includes("rating")
-      )
-
-      if (!ratingColumnName) {
-        console.error("❌ No 'Rating' column found in sheet.")
-        return false
-      }
-
-      row.set(ratingColumnName, review)
-      await row.save()
-
-      console.log(`✅ Updated row ${rowIndex} with rating: ${rating}/10`)
-      return true
-    } catch (error) {
-      console.error("❌ Error updating row:", error)
+    if (dataRowIndex < 0 || dataRowIndex >= rows.length) {
+      console.error(`❌ Invalid row index: ${rowIndex}`)
       return false
     }
+
+    const row = rows[dataRowIndex]
+
+    const ratingColumn = sheet.headerValues.find(h =>
+      h?.toLowerCase().includes("rating")
+    )
+
+    const reviewColumn = sheet.headerValues.find(h =>
+      h?.toLowerCase().includes("review")
+    )
+
+    if (!ratingColumn || !reviewColumn) {
+      console.error("❌ Missing 'Rating' or 'Review' columns in the sheet.")
+      return false
+    }
+
+    row.set(ratingColumn, rating)
+    row.set(reviewColumn, review)
+
+    await row.save()
+
+    console.log(`✅ Row ${rowIndex} updated — Rating: ${rating}, Review: ${review}`)
+    return true
+  } catch (error) {
+    console.error("❌ Error updating row:", error)
+    return false
   }
+}
+
+
 
   async getSheetInfo() {
     try {

@@ -66,7 +66,7 @@ export class ProcessingService {
 
   async processNewSubmissions(): Promise<void> {
     if (this.status.isRunning) {
-      console.log("⚠️ Processing already in progress")
+      console.log("Processing already in progress")
       return
     }
 
@@ -75,8 +75,8 @@ export class ProcessingService {
     this.status.totalCount = 0
     this.status.errors = []
 
-    console.log("🚀 Starting automatic processing of new submissions...")
-    console.log("⏰ Time:", new Date().toISOString())
+    console.log("Starting automatic processing of new submissions...")
+    console.log("Time:", new Date().toISOString())
 
     try {
       await this.initialize()

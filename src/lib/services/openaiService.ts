@@ -193,7 +193,6 @@ Give rating out of 10 and 1 line review in JSON format:
     `.trim()
 
     try {
-      console.log(this.openai)
       const response = await this.openai.chat.completions.create({
         model: CONFIG.OPENAI_MODEL,
         messages: [{ role: "user", content: fullPrompt }],
