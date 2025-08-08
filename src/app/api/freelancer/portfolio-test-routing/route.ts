@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { PortfolioScrapingService } from "../../../../lib/services/porfolioScrapingService"
+import { ScrapingService } from "../../../../lib/services/scrapingService"
 
 export async function POST(request: NextRequest) {
-  const scrapingService = new PortfolioScrapingService()
+  const scrapingService = new ScrapingService()
 
   try {
     console.log("🧪 Testing portfolio parsing...")

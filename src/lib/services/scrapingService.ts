@@ -745,18 +745,22 @@ pdfParser.on("pdfParser_dataReady", (pdfData) => {
 
 
   async parsePortfolio(url: string): Promise<string> {
+    if (!this.browser) throw new Error("Browser not initialized")
+
+    const page = await this.browser.newPage()
+
     try {
-      if (!url) return "No portfolio provided.";
-
-      const response = await axios.get(url);
-      const html = response.data;
-      const $ = cheerio.load(html);
-      const text = $('body').text().replace(/\s+/g, ' ').trim();
-
-      return text.length > 100 ? text.slice(0, 3000) : "Portfolio too short or empty.";
-    } catch (error: any) {
-      console.error("Error parsing portfolio:", error.message);
-      return "Portfolio fetch failed.";
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 })
+      const content = await page.evaluate(() => {
+        const bodyText = document.body?.innerText || ""
+        return bodyText.trim()
+      })
+      return content
+    } catch (err) {
+      console.error("❌ Error scraping portfolio:", err)
+      throw err
+    } finally {
+      await page.close()
     }
   }
 
