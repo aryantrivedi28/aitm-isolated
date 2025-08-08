@@ -19,6 +19,9 @@ export async function POST(req: NextRequest) {
 
     const sheetService = new GoogleSheetsService(sheetId)
     await sheetService.initialize()
+    // Optional: Check access for a specific column like "Resume", "Portfolio", etc.
+    await sheetService.checkDriveLinkAccess("Resume") // Or "Portfolio", "Proposal", etc.
+
 
     const openaiService = new OpenAIService()
     const scrapingService = new ScrapingService()

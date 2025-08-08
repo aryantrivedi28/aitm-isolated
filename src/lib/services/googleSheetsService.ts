@@ -1,6 +1,7 @@
 import { GoogleSpreadsheet } from "google-spreadsheet"
 import { JWT } from "google-auth-library"
 import { CONFIG } from "../config"
+  import axios from "axios"
 
 export class GoogleSheetsService {
   private doc: GoogleSpreadsheet
@@ -68,6 +69,58 @@ export class GoogleSheetsService {
       return []
     }
   }
+
+
+
+// Add inside your class
+async checkDriveLinkAccess(columnName = "Drive Link") {
+  try {
+    const sheet = await this.getMainSheet()
+    if (!sheet) return []
+
+    await sheet.loadHeaderRow()
+    const rows = await sheet.getRows()
+
+    const results = []
+
+    for (const row of rows) {
+      const link = row.get(columnName)
+
+      if (!link) {
+        results.push({ name: row.get("Name"), link, status: "❌ No link" })
+        continue
+      }
+
+      try {
+        const res = await axios.get(link, {
+          maxRedirects: 5,
+          validateStatus: status => status < 500,
+        })
+
+        const isPublic = res.status === 200
+
+        results.push({
+          name: row.get("Name"),
+          link,
+          status: isPublic ? "✅ Public" : `⚠️ Not Public (${res.status})`,
+        })
+      } catch (err: any) {
+        results.push({
+          name: row.get("Name"),
+          link,
+          status: `❌ Error (${err.response?.status || "Network"})`,
+        })
+      }
+    }
+
+    console.table(results)
+    return results
+  } catch (error) {
+    console.error("❌ Error checking Drive links:", error)
+    return []
+  }
+}
+
 
 async updateRowWithRating(rowIndex: number, rating: number, review: string): Promise<boolean> {
   try {
