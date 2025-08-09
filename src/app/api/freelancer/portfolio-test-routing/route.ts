@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const content = await scrapingService.parsePortfolio(portfolioUrl)
+    const content = await scrapingService.scrapePortfolio(portfolioUrl)
 
     console.log(`✅ Portfolio parsed: ${content.length} characters`)
     console.log(`📝 First 500 chars: ${content.substring(0, 500)}...`)

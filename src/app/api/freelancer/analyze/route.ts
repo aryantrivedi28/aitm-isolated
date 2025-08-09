@@ -44,7 +44,7 @@ for (let i = 0; i < rows.length; i++) {
   const scrapingService = new ScrapingService()
 
   const resumeText = data.resumeLink ? await scrapingService.parseResume(data.resumeLink) : ""
-  const portfolioText = data.portfolioLink ? await scrapingService.parsePortfolio(data.portfolioLink) : ""
+  const portfolioText = data.portfolioLink ? await scrapingService.scrapePortfolio(data.portfolioLink) : ""
   const proposalText = data.proposalLink ? await scrapingService.parseResume(data.proposalLink) : ""
   const githubText = data.githubLink?.includes("drive.google.com")
     ? await scrapingService.parseResume(data.githubLink)
