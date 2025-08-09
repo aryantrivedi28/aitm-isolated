@@ -20,6 +20,12 @@ const fadeUp: Variants = {
   },
 }
 
+type FilterBarProps = {
+  selectedIndustry: string
+  setSelectedIndustry: (value: string) => void
+  selectedService: string
+  setSelectedService: (value: string) => void
+}
 const fadeInLeft: Variants = {
   hidden: { opacity: 0, x: -60 },
   visible: {
@@ -55,6 +61,40 @@ const scaleIn: Variants = {
   },
 }
 
+const industryOptions = [
+  "All",
+  "Finance",
+  "Healthcare",
+  "E-commerce",
+  "Education",
+  "Travel",
+  "Technology",
+  "Real Estate",
+  "Retail",
+  "Logistics",
+  "Insurance",
+  "Entertainment",
+  "Automotive",
+  "Food & Beverage",
+  "Energy",
+  "Telecom",
+  "Legal",
+  "Media",
+]
+
+const serviceOptions = [
+  "All",
+  "Design",
+  "Development",
+  "AI",
+  "Marketing",
+  "Video",
+  "Branding",
+  "Consulting",
+  "SEO",
+  "Strategy",
+]
+
 interface CaseStudy {
   _id: string
   title: string
@@ -70,6 +110,8 @@ export default function CaseStudiesPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
+  const [selectedIndustry, setSelectedIndustry] = useState("All")
+  const [selectedService, setSelectedService] = useState("All")
 
   const categories = ["All", "Development", "Design", "AI", "Marketing", "Video"]
 
@@ -102,15 +144,39 @@ export default function CaseStudiesPage() {
     fetchCaseStudies()
   }, [])
 
+  // const filteredStudies = caseStudies.filter((study) => {
+  //   const matchesSearch =
+  //     study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     study.description.toLowerCase().includes(searchTerm.toLowerCase())
+  //   const matchesCategory =
+  //     selectedCategory === "All" ||
+  //     (study.tags && study.tags.some((tag) => tag.toLowerCase().includes(selectedCategory.toLowerCase())))
+  //   return matchesSearch && matchesCategory
+  // })
+
   const filteredStudies = caseStudies.filter((study) => {
+    const tags = study.tags?.map((tag) => tag.toLowerCase()) || []
+
     const matchesSearch =
       study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       study.description.toLowerCase().includes(searchTerm.toLowerCase())
+
     const matchesCategory =
       selectedCategory === "All" ||
-      (study.tags && study.tags.some((tag) => tag.toLowerCase().includes(selectedCategory.toLowerCase())))
-    return matchesSearch && matchesCategory
+      tags.includes(selectedCategory.toLowerCase())
+
+    const matchesIndustry =
+      selectedIndustry === "All" ||
+      tags.includes(selectedIndustry.toLowerCase())
+
+    const matchesService =
+      selectedService === "All" ||
+      tags.includes(selectedService.toLowerCase())
+
+    return matchesSearch && matchesCategory && matchesIndustry && matchesService
   })
+
+
 
   if (loading) {
     return (
@@ -305,50 +371,58 @@ export default function CaseStudiesPage() {
       </section>
 
       {/* Search and Filter Section */}
-      <section className="relative py-12 px-4">
+      <section className="relative py-16 px-4 max-w-6xl mx-auto">
         <motion.div
-          className="max-w-6xl mx-auto"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-xl"
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.2 }}
           variants={staggerContainer}
         >
-          <div className="bg-white/15 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-            <div className="flex flex-col lg:flex-row gap-6 items-center">
-              {/* Search Bar */}
-              <motion.div className="relative flex-1" initial="hidden" animate="visible" variants={fadeInLeft}>
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-900 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search case studies..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-900 focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
-                />
-              </motion.div>
+          {/* Industry Filter */}
+          <motion.div
+            className="flex flex-col gap-2"
+            variants={fadeUp}
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 200 }}
+          >
+            <label className="text-sm text-white font-medium">Industry</label>
+            <select
+              value={selectedIndustry}
+              onChange={(e) => setSelectedIndustry(e.target.value)}
+              className="px-4 py-3 bg-[#241C15] border border-white/20 text-white rounded-xl focus:outline-none focus:border-[#FFE01B] transition-all duration-300 w-full"
+            >
+              {industryOptions.map((industry) => (
+                <option key={industry} value={industry}>
+                  {industry}
+                </option>
+              ))}
+            </select>
+          </motion.div>
 
-              {/* Category Filter */}
-              <motion.div className="flex gap-2 flex-wrap" initial="hidden" animate="visible" variants={fadeInLeft}>
-                {categories.map((category) => (
-                  <motion.button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${
-                      selectedCategory === category
-                        ? "bg-[#FFE01B] text-[#241C15]"
-                        : "bg-white/10 text-gray-900 hover:bg-black/50 hover:text-white"
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {category}
-                  </motion.button>
-                ))}
-              </motion.div>
-            </div>
-          </div>
+          {/* Service Filter */}
+          <motion.div
+            className="flex flex-col gap-2"
+            variants={fadeUp}
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 200 }}
+          >
+            <label className="text-sm text-white font-medium">Service</label>
+            <select
+              value={selectedService}
+              onChange={(e) => setSelectedService(e.target.value)}
+              className="px-4 py-3 bg-[#241C15] border border-white/20 text-white rounded-xl focus:outline-none focus:border-[#FFE01B] transition-all duration-300 w-full"
+            >
+              {serviceOptions.map((service) => (
+                <option key={service} value={service}>
+                  {service}
+                </option>
+              ))}
+            </select>
+          </motion.div>
         </motion.div>
       </section>
+
 
       {/* Case Studies Grid */}
       <section className="relative py-12 px-4">
