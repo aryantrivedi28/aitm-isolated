@@ -4,7 +4,7 @@ import { client } from "../../sanity/lib/client"
 import Image from "next/image"
 import Link from "next/link"
 import { motion, type Variants } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Search, ArrowRight, Calendar, Eye, Sparkles, TrendingUp, Users, Target } from "lucide-react"
 
 // Animation variants
@@ -68,8 +68,40 @@ interface CaseStudy {
 export default function CaseStudiesPage() {
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
+
+  const industries = ["Technology", "Healthcare", "Finance", "Education"];
+  const services = ["Web Development","SEO", "CRO", "Social Media Management", "Paid Ads","Email Marketing", "Marketing Strategy", "SMS Marketing", "Google Shopping","Branding", "Content Marketing", "Apple Optimization", "Copywriting", "public relations", "Video Production", "Graphic Design", "UI/UX Design", "App Development"];
+
+
+
+  // Filtering logic
+  const filteredCaseStudies = caseStudies.filter(study => {
+    const matchesIndustry = selectedIndustry
+      ? (
+        study.tags?.some(tag => tag.toLowerCase().includes(selectedIndustry.toLowerCase())) ||
+        study.title?.toLowerCase().includes(selectedIndustry.toLowerCase()) ||
+        study.description?.toLowerCase().includes(selectedIndustry.toLowerCase())
+      )
+      : true;
+
+    const matchesService = selectedService
+      ? (
+        study.tags?.some(tag => tag.toLowerCase().includes(selectedService.toLowerCase())) ||
+        study.title?.toLowerCase().includes(selectedService.toLowerCase()) ||
+        study.description?.toLowerCase().includes(selectedService.toLowerCase())
+      )
+      : true;
+
+    return matchesIndustry && matchesService;
+  });
+
+
+
+
 
   const categories = ["All", "Development", "Design", "AI", "Marketing", "Video"]
 
@@ -102,15 +134,15 @@ export default function CaseStudiesPage() {
     fetchCaseStudies()
   }, [])
 
-  const filteredStudies = caseStudies.filter((study) => {
-    const matchesSearch =
-      study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      study.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory =
-      selectedCategory === "All" ||
-      (study.tags && study.tags.some((tag) => tag.toLowerCase().includes(selectedCategory.toLowerCase())))
-    return matchesSearch && matchesCategory
-  })
+  // const filteredStudies = caseStudies.filter((study) => {
+  //   const matchesSearch =
+  //     study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     study.description.toLowerCase().includes(searchTerm.toLowerCase())
+  //   const matchesCategory =
+  //     selectedCategory === "All" ||
+  //     (study.tags && study.tags.some((tag) => tag.toLowerCase().includes(selectedCategory.toLowerCase())))
+  //   return matchesSearch && matchesCategory
+  // })
 
   if (loading) {
     return (
@@ -306,49 +338,37 @@ export default function CaseStudiesPage() {
 
       {/* Search and Filter Section */}
       <section className="relative py-12 px-4">
-        <motion.div
-          className="max-w-6xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={staggerContainer}
-        >
-          <div className="bg-white/15 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-            <div className="flex flex-col lg:flex-row gap-6 items-center">
-              {/* Search Bar */}
-              <motion.div className="relative flex-1" initial="hidden" animate="visible" variants={fadeInLeft}>
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-900 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search case studies..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-900 focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
-                />
-              </motion.div>
+        <div className="max-w-6xl mx-auto bg-white/15 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+          {/* Dropdown Filters */}
+          <div className="grid grid-cols-2 gap-6">
+            {/* Industry Dropdown */}
+            <select
+              value={selectedIndustry || ""}
+              onChange={(e) => setSelectedIndustry(e.target.value || null)}
+              className="px-4 py-2 rounded-xl bg-white/10 text-gray-900 border border-white/20 focus:outline-none focus:border-[#FFE01B]"
+            >
+              <option value="">Industries</option>
+              {industries.map(industry => (
+                <option key={industry} value={industry}>{industry}</option>
+              ))}
+            </select>
 
-              {/* Category Filter */}
-              <motion.div className="flex gap-2 flex-wrap" initial="hidden" animate="visible" variants={fadeInLeft}>
-                {categories.map((category) => (
-                  <motion.button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 ${
-                      selectedCategory === category
-                        ? "bg-[#FFE01B] text-[#241C15]"
-                        : "bg-white/10 text-gray-900 hover:bg-black/50 hover:text-white"
-                    }`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {category}
-                  </motion.button>
-                ))}
-              </motion.div>
-            </div>
+            {/* Services Dropdown */}
+            <select
+              value={selectedService || ""}
+              onChange={(e) => setSelectedService(e.target.value || null)}
+              className="px-4 py-2 rounded-xl bg-white/10 text-gray-900 border border-white/20 focus:outline-none focus:border-[#FFE01B]"
+            >
+              <option value="">Services</option>
+              {services.map(service => (
+                <option key={service} value={service}>{service}</option>
+              ))}
+            </select>
           </div>
-        </motion.div>
+        </div>
       </section>
+
+
 
       {/* Case Studies Grid */}
       <section className="relative py-12 px-4">
@@ -359,7 +379,7 @@ export default function CaseStudiesPage() {
           viewport={{ once: true, amount: 0.2 }}
           variants={staggerContainer}
         >
-          {filteredStudies.length === 0 ? (
+          {filteredCaseStudies.length === 0 ? (
             <motion.div className="text-center py-20" initial="hidden" animate="visible" variants={fadeUp}>
               <div className="w-20 h-20 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                 <Search className="w-10 h-10 text-[#FFE01B]" />
@@ -380,7 +400,7 @@ export default function CaseStudiesPage() {
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredStudies.map((study, index) => (
+              {filteredCaseStudies.map((study, index) => (
                 <motion.div
                   key={study._id}
                   initial="hidden"
