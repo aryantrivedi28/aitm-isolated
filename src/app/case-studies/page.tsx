@@ -20,6 +20,12 @@ const fadeUp: Variants = {
   },
 }
 
+type FilterBarProps = {
+  selectedIndustry: string
+  setSelectedIndustry: (value: string) => void
+  selectedService: string
+  setSelectedService: (value: string) => void
+}
 const fadeInLeft: Variants = {
   hidden: { opacity: 0, x: -60 },
   visible: {
@@ -54,6 +60,40 @@ const scaleIn: Variants = {
     },
   },
 }
+
+const industryOptions = [
+  "All",
+  "Finance",
+  "Healthcare",
+  "E-commerce",
+  "Education",
+  "Travel",
+  "Technology",
+  "Real Estate",
+  "Retail",
+  "Logistics",
+  "Insurance",
+  "Entertainment",
+  "Automotive",
+  "Food & Beverage",
+  "Energy",
+  "Telecom",
+  "Legal",
+  "Media",
+]
+
+const serviceOptions = [
+  "All",
+  "Design",
+  "Development",
+  "AI",
+  "Marketing",
+  "Video",
+  "Branding",
+  "Consulting",
+  "SEO",
+  "Strategy",
+]
 
 interface CaseStudy {
   _id: string
@@ -133,6 +173,16 @@ export default function CaseStudiesPage() {
 
     fetchCaseStudies()
   }, [])
+
+  // const filteredStudies = caseStudies.filter((study) => {
+  //   const matchesSearch =
+  //     study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     study.description.toLowerCase().includes(searchTerm.toLowerCase())
+  //   const matchesCategory =
+  //     selectedCategory === "All" ||
+  //     (study.tags && study.tags.some((tag) => tag.toLowerCase().includes(selectedCategory.toLowerCase())))
+  //   return matchesSearch && matchesCategory
+  // })
 
   // const filteredStudies = caseStudies.filter((study) => {
   //   const matchesSearch =
