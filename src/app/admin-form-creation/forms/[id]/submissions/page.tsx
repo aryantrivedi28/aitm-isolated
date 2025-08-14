@@ -6,9 +6,9 @@ import Link from "next/link"
 import type { Form, FreelancerSubmission } from "../../../../../types/database"
 
 interface SubmissionsPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function SubmissionsPage({ params }: SubmissionsPageProps) {
@@ -16,11 +16,21 @@ export default function SubmissionsPage({ params }: SubmissionsPageProps) {
   const [submissions, setSubmissions] = useState<FreelancerSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [formId, setFormId] = useState<string>("")
 
   useEffect(() => {
+    const resolveParams = async () => {
+      const resolvedParams = await params
+      setFormId(resolvedParams.id)
+    }
+    resolveParams()
+  }, [params])
+
+  useEffect(() => {
+    if (!formId) return
+
     const fetchData = async () => {
       try {
-        // Fetch form details
         const formResponse = await fetch("/api/forms")
         const formData = await formResponse.json()
 
@@ -28,14 +38,13 @@ export default function SubmissionsPage({ params }: SubmissionsPageProps) {
           throw new Error(formData.error || "Failed to fetch form")
         }
 
-        const currentForm = formData.forms.find((f: Form) => f.form_id === params.id)
+        const currentForm = formData.forms.find((f: Form) => f.form_id === formId)
         if (!currentForm) {
           throw new Error("Form not found")
         }
         setForm(currentForm)
 
-        // Fetch submissions
-        const submissionsResponse = await fetch(`/api/submissions?form_id=${params.id}`)
+        const submissionsResponse = await fetch(`/api/submissions?form_id=${formId}`)
         const submissionsData = await submissionsResponse.json()
 
         if (!submissionsResponse.ok) {
@@ -52,7 +61,7 @@ export default function SubmissionsPage({ params }: SubmissionsPageProps) {
     }
 
     fetchData()
-  }, [params.id])
+  }, [formId])
 
   if (loading) {
     return (
@@ -122,7 +131,7 @@ export default function SubmissionsPage({ params }: SubmissionsPageProps) {
               <button
                 onClick={() => {
                   const baseUrl = window.location.origin
-                  const formUrl = `${baseUrl}/form/${params.id}`
+                  const formUrl = `${baseUrl}/form/${formId}`
                   navigator.clipboard.writeText(formUrl)
                 }}
                 className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black font-semibold py-3 px-6 rounded-lg transition-all duration-200"
