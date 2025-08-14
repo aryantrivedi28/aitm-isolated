@@ -606,15 +606,6 @@ export default function AdminPanel() {
     }
   }
 
-  const handleToolsChangeOld = (tools: string) => {
-    if (tools === "other") {
-      setShowOtherTools(true)
-      return
-    }
-
-    setShowOtherTools(false)
-    setNewForm((prev) => ({ ...prev, tools }))
-  }
 
   const validateFormCreation = () => {
     const missingFields: string[] = []
