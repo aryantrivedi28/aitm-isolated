@@ -601,24 +601,40 @@ export default function AdminPanel() {
       setSelectedTools((prev) => (prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]))
       setNewForm((prev) => ({
         ...prev,
-        tools: selectedTools.includes(value)
-          ? selectedTools.filter((item) => item !== value)
-          : [...selectedTools, value],
+        tools: prev.tools.includes(value) ? prev.tools.filter((item) => item !== value) : [...prev.tools, value],
       }))
     }
   }
 
-  const createForm = async () => {
-    if (
-      !newForm.form_id ||
-      !newForm.form_name ||
-      !newForm.industry ||
-      !newForm.category ||
-      !selectedSubcategories.length ||
-      !selectedTechStacks.length ||
-      !selectedTools.length
-    ) {
-      setError("Please fill in all required fields")
+  const handleToolsChangeOld = (tools: string) => {
+    if (tools === "other") {
+      setShowOtherTools(true)
+      return
+    }
+
+    setShowOtherTools(false)
+    setNewForm((prev) => ({ ...prev, tools }))
+  }
+
+  const validateFormCreation = () => {
+    const missingFields: string[] = []
+
+    if (!newForm.form_id.trim()) missingFields.push("Form ID")
+    if (!newForm.form_name.trim()) missingFields.push("Form Name")
+    if (!newForm.industry.trim()) missingFields.push("Industry")
+    if (!newForm.category.trim()) missingFields.push("Category")
+    if (!selectedSubcategories.length) missingFields.push("At least one Subcategory")
+    if (!selectedTechStacks.length) missingFields.push("At least one Tech Stack")
+    if (!selectedTools.length) missingFields.push("At least one Tool")
+
+    return missingFields
+  }
+
+  const handleCreateForm = async () => {
+    const missingFields = validateFormCreation()
+
+    if (missingFields.length > 0) {
+      setError(`Missing required fields: ${missingFields.join(", ")}`)
       return
     }
 
@@ -1714,7 +1730,7 @@ export default function AdminPanel() {
                   </div>
                   <div className="flex gap-4 mt-6">
                     <motion.button
-                      onClick={createForm}
+                      onClick={handleCreateForm}
                       disabled={createFormLoading}
                       className="bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold px-6 py-3 rounded-xl transition-all duration-300 disabled:opacity-50 flex items-center gap-2"
                       whileHover={{ scale: createFormLoading ? 1 : 1.05 }}
