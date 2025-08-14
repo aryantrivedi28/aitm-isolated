@@ -8,12 +8,13 @@ import { supabase } from "../../../lib/SupabaseAuthClient"
 import type { Form } from "../../../types/database"
 
 interface FormPageProps {
-  params: {
+  params: Promise<{
     id: string
-  } // Changed back to synchronous params
+  }> // Updated to Promise type for Next.js 15+
 }
 
 export default function FormPage({ params }: FormPageProps) {
+  const [formId, setFormId] = useState<string | null>(null) // Added state to store resolved form ID
   const [form, setForm] = useState<Form | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -23,11 +24,21 @@ export default function FormPage({ params }: FormPageProps) {
   const [formData, setFormData] = useState<Record<string, any>>({})
   const [customResponses, setCustomResponses] = useState<Record<string, any>>({})
 
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolvedParams = await params
+      setFormId(resolvedParams.id)
+    }
+    resolveParams()
+  }, [params])
+
   // Fetch form details
   useEffect(() => {
+    if (!formId) return // Wait for formId to be resolved
+
     const fetchForm = async () => {
       try {
-        const { data, error } = await supabase.from("forms").select("*").eq("id", params.id).single() // Use params.id directly
+        const { data, error } = await supabase.from("forms").select("*").eq("id", formId).single() // Use resolved formId
 
         if (error) throw error
 
@@ -57,7 +68,7 @@ export default function FormPage({ params }: FormPageProps) {
     }
 
     fetchForm()
-  }, [params.id]) // Use params.id directly
+  }, [formId]) // Use formId instead of params.id
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -66,7 +77,7 @@ export default function FormPage({ params }: FormPageProps) {
 
     try {
       const submissionData: Record<string, any> = {
-        form_id: params.id, // Use params.id directly
+        form_id: formId, // Use resolved formId
         custom_responses: customResponses,
       }
 
@@ -285,12 +296,12 @@ export default function FormPage({ params }: FormPageProps) {
           <p className="text-gray-600 mb-6">
             Thank you for your interest. We'll review your application and get back to you soon.
           </p>
-          <button
+          {/* <button
             onClick={() => window.location.reload()}
             className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black font-semibold py-2 px-6 rounded-lg transition-all duration-200"
           >
             Submit Another Application
-          </button>
+          </button> */}
         </motion.div>
       </div>
     )
@@ -309,7 +320,7 @@ export default function FormPage({ params }: FormPageProps) {
           <h1 className="text-4xl font-bold text-white mb-4">{form?.form_name}</h1>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <span className="bg-[#FFE01B] text-black px-3 py-1 rounded-full font-medium">{form?.category}</span>
-            {Array.isArray(form?.subcategory) ? (
+            {/* {Array.isArray(form?.subcategory) ? (
               form.subcategory.map((sub: string, index: number) => (
                 <span key={index} className="bg-white/10 text-white px-3 py-1 rounded-full">
                   {sub}
@@ -317,7 +328,7 @@ export default function FormPage({ params }: FormPageProps) {
               ))
             ) : (
               <span className="bg-white/10 text-white px-3 py-1 rounded-full">{form?.subcategory}</span>
-            )}
+            )} */}
             <span className="bg-white/10 text-white px-3 py-1 rounded-full">{form?.industry}</span>
           </div>
         </motion.div>
