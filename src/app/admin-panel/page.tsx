@@ -7,7 +7,6 @@ import {
   Download,
   Users,
   Filter,
-  Database,
   FileText,
   Eye,
   Mail,
@@ -16,8 +15,15 @@ import {
   ExternalLink,
   FileDown,
   Calendar,
+  Plus,
+  Settings,
+  BarChart3,
+  Copy,
+  CheckCircle,
+  X,
 } from "lucide-react"
-import { supabase } from "@/src/lib/SupabaseAuthClient"
+import { supabase } from "../../lib/SupabaseAuthClient"
+import { supabaseAdmin } from "../../lib/supabase-admin"
 
 // Animation variants
 const fadeUp: Variants = {
@@ -92,14 +98,145 @@ type Freelancer = {
   [key: string]: any
 }
 
+type Form = {
+  id: string
+  form_name: string
+  category: string
+  subcategory: string[]
+  industry: string
+  tech_stack?: string[]
+  tools?: string[]
+  created_at: string
+  submission_count?: number
+}
+
+type FormSubmission = {
+  id: string
+  form_id: string
+  name: string
+  email: string
+  phone: string
+  portfolio_url?: string
+  github_url?: string
+  resume_url?: string
+  years_experience: number
+  proposal: string
+  created_at: string
+}
+
 type SearchFilters = {
   category: string
   experience_level: string
   search_text: string
 }
 
-export default function AdminQueryPanel() {
+type IndustryData = {
+  [key: string]: string[]
+}
+
+type IndustryOptions = {
+  Technology: IndustryData
+  Marketing: IndustryData
+  Finance: FinanceData
+  Healthcare: HealthcareData
+}
+
+type CategoryData = {
+  subcategories: string[]
+  techStacks: string[]
+  tools: { [key: string]: string[] }
+}
+
+type CategoryOptions = {
+  [key: string]: CategoryData
+}
+
+const categoryOptions: CategoryOptions = {
+  Development: {
+    subcategories: ["Frontend", "Backend", "Full Stack", "Mobile", "DevOps"],
+    techStacks: ["React", "Vue", "Angular", "Node.js", "Python", "Java", "PHP", ".NET", "React Native", "Flutter"],
+    tools: {
+      React: ["Redux", "Next.js", "Material-UI", "Styled Components", "TypeScript"],
+      Vue: ["Vuex", "Nuxt.js", "Vuetify", "Vue Router", "TypeScript"],
+      Angular: ["NgRx", "Angular Material", "TypeScript", "RxJS", "Ionic"],
+      "Node.js": ["Express", "MongoDB", "PostgreSQL", "Redis", "Socket.io"],
+      Python: ["Django", "Flask", "FastAPI", "PostgreSQL", "MongoDB"],
+      Java: ["Spring Boot", "Hibernate", "Maven", "PostgreSQL", "Redis"],
+      PHP: ["Laravel", "Symfony", "MySQL", "PostgreSQL", "Redis"],
+      ".NET": ["ASP.NET Core", "Entity Framework", "SQL Server", "Azure", "C#"],
+      "React Native": ["Expo", "Redux", "AsyncStorage", "React Navigation", "TypeScript"],
+      Flutter: ["Dart", "Firebase", "Provider", "Bloc", "GetX"],
+    },
+  },
+  Design: {
+    subcategories: ["UI/UX", "Graphic Design", "Web Design", "Product Design"],
+    techStacks: ["Figma", "Adobe XD", "Sketch", "Photoshop", "Illustrator", "InVision", "Principle"],
+    tools: {
+      Figma: ["Auto Layout", "Components", "Prototyping", "Design Systems", "Plugins"],
+      "Adobe XD": ["Prototyping", "Voice Prototyping", "Auto-Animate", "Repeat Grid", "Plugins"],
+      Sketch: ["Symbols", "Libraries", "Prototyping", "Plugins", "Abstract"],
+      Photoshop: ["Layer Styles", "Smart Objects", "Actions", "Brushes", "Filters"],
+      Illustrator: ["Vector Graphics", "Typography", "Logos", "Icons", "Illustrations"],
+    },
+  },
+  Data: {
+    subcategories: ["Data Science", "Data Analysis", "Machine Learning", "AI"],
+    techStacks: ["Python", "R", "SQL", "Tableau", "Power BI", "TensorFlow", "PyTorch"],
+    tools: {
+      Python: ["Pandas", "NumPy", "Matplotlib", "Seaborn", "Scikit-learn"],
+      R: ["ggplot2", "dplyr", "tidyr", "Shiny", "RMarkdown"],
+      SQL: ["PostgreSQL", "MySQL", "MongoDB", "BigQuery", "Snowflake"],
+      Tableau: ["Dashboard", "Stories", "Calculations", "Parameters", "Actions"],
+      TensorFlow: ["Keras", "TensorBoard", "TFX", "TensorFlow Lite", "TensorFlow.js"],
+    },
+  },
+  QA: {
+    subcategories: ["Manual Testing", "Automation Testing", "Performance Testing"],
+    techStacks: ["Selenium", "Cypress", "Jest", "Postman", "JMeter", "TestRail"],
+    tools: {
+      Selenium: ["WebDriver", "Grid", "IDE", "Page Object Model", "TestNG"],
+      Cypress: ["Test Runner", "Dashboard", "Plugins", "Custom Commands", "Fixtures"],
+      Jest: ["Mocking", "Snapshots", "Coverage", "Matchers", "Setup"],
+      Postman: ["Collections", "Environments", "Tests", "Monitors", "Mock Servers"],
+    },
+  },
+}
+
+type FinanceData = {
+  [key: string]: string[]
+}
+
+type HealthcareData = {
+  [key: string]: string[]
+}
+
+const industryOptions: IndustryOptions = {
+  Technology: {
+    Development: ["Frontend", "Backend", "Full Stack", "Mobile", "DevOps"],
+    Design: ["UI/UX", "Graphic Design", "Web Design", "Product Design"],
+    Data: ["Data Science", "Data Analysis", "Machine Learning", "AI"],
+    QA: ["Manual Testing", "Automation Testing", "Performance Testing"],
+  },
+  Marketing: {
+    "Digital Marketing": ["SEO", "SEM", "Social Media", "Content Marketing"],
+    Creative: ["Copywriting", "Video Production", "Photography"],
+    Analytics: ["Marketing Analytics", "Growth Hacking", "Conversion Optimization"],
+  },
+  Finance: {
+    Accounting: ["Bookkeeping", "Tax Preparation", "Financial Analysis"],
+    Investment: ["Portfolio Management", "Financial Planning", "Risk Assessment"],
+  },
+  Healthcare: {
+    Medical: ["Telemedicine", "Medical Writing", "Healthcare IT"],
+    Wellness: ["Nutrition", "Fitness", "Mental Health"],
+  },
+}
+
+export default function AdminPanel() {
   const [mounted, setMounted] = useState(false)
+  const [activeTab, setActiveTab] = useState<"freelancers" | "forms">("freelancers")
+
+  // Freelancer search state
   const [filters, setFilters] = useState<SearchFilters>({
     category: "",
     experience_level: "",
@@ -109,15 +246,84 @@ export default function AdminQueryPanel() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Form management state
+  const [forms, setForms] = useState<Form[]>([])
+  const [formSubmissions, setFormSubmissions] = useState<FormSubmission[]>([])
+  const [selectedForm, setSelectedForm] = useState<string | null>(null)
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [newForm, setNewForm] = useState({
+    form_id: "",
+    form_name: "",
+    industry: "",
+    category: "",
+    subcategory: [] as string[],
+    tech_stack: [] as string[],
+    tools: [] as string[],
+  })
+
+  const [createFormLoading, setCreateFormLoading] = useState(false)
+  const [copiedFormId, setCopiedFormId] = useState<string | null>(null)
+
+  const [selectedIndustry, setSelectedIndustry] = useState("")
+  // const [selectedCategory, setSelectedCategory] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("")
+  const [selectedSubcategory, setSelectedSubcategory] = useState("")
+  const [selectedTechStack, setSelectedTechStack] = useState("")
+  const [availableSubcategories, setAvailableSubcategories] = useState<string[]>([])
+  const [availableTechStacks, setAvailableTechStacks] = useState<string[]>([])
+  const [availableTools, setAvailableTools] = useState<string[]>([])
+  const [availableCategories, setAvailableCategories] = useState<string[]>([])
+
+  // Other options state
+  const [showOtherCategory, setShowOtherCategory] = useState(false)
+  const [showOtherSubcategory, setShowOtherSubcategory] = useState(false)
+  const [showOtherTechStack, setShowOtherTechStack] = useState(false)
+  const [showOtherTools, setShowOtherTools] = useState(false)
+
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
+  const [selectedTechStacks, setSelectedTechStacks] = useState<string[]>([])
+  const [selectedTools, setSelectedTools] = useState<string[]>([])
+
+  const [selectedRequiredFields, setSelectedRequiredFields] = useState<string[]>([
+    "name",
+    "email",
+    "phone",
+    "resume_url",
+  ])
+  const [customQuestions, setCustomQuestions] = useState<
+    Array<{
+      id: string
+      type: "text" | "textarea" | "select" | "radio" | "checkbox"
+      label: string
+      required: boolean
+      options?: string[]
+    }>
+  >([])
+
+  const availableStandardFields = [
+    { key: "name", label: "Full Name" },
+    { key: "email", label: "Email Address" },
+    { key: "phone", label: "Phone Number" },
+    { key: "portfolio_url", label: "Portfolio URL" },
+    { key: "github_url", label: "GitHub URL" },
+    { key: "resume_url", label: "Resume URL" },
+    { key: "years_experience", label: "Years of Experience" },
+    { key: "proposal", label: "Proposal/Cover Letter" },
+  ]
+
   useEffect(() => {
     setMounted(true)
   }, [])
 
   useEffect(() => {
     if (mounted && typeof window !== "undefined") {
-      loadAllFreelancers()
+      if (activeTab === "freelancers") {
+        loadAllFreelancers()
+      } else {
+        loadForms()
+      }
     }
-  }, [mounted])
+  }, [mounted, activeTab])
 
   if (!mounted) {
     return (
@@ -132,7 +338,7 @@ export default function AdminQueryPanel() {
   }
 
   // Available options for dropdowns
-  const categoryOptions = [
+  const categoryOptionsOld = [
     "",
     "Developers",
     "Design",
@@ -156,14 +362,14 @@ export default function AdminQueryPanel() {
     "Fresher",
   ]
 
+  // Freelancer search functions
   const handleSearch = async () => {
-    if (typeof window === "undefined") return // Prevent server-side execution
+    if (typeof window === "undefined") return
 
     setLoading(true)
     setError(null)
 
     try {
-      // Use the correct table name with hyphen
       if (!supabase) {
         setError("Database client is not initialized.")
         setFreelancers([])
@@ -172,7 +378,6 @@ export default function AdminQueryPanel() {
       }
       let query = supabase.from("all-freelancer").select("*")
 
-      // Apply filters based on form inputs
       if (filters.category) {
         query = query.eq("category", filters.category)
       }
@@ -181,7 +386,6 @@ export default function AdminQueryPanel() {
         query = query.eq("experience_level", filters.experience_level)
       }
 
-      // Text search across name and email
       if (filters.search_text.trim()) {
         query = query.or(`full_name.ilike.%${filters.search_text}%,email.ilike.%${filters.search_text}%`)
       }
@@ -210,12 +414,11 @@ export default function AdminQueryPanel() {
   }
 
   const loadAllFreelancers = async () => {
-    if (typeof window === "undefined") return // Prevent server-side execution
+    if (typeof window === "undefined") return
 
     setLoading(true)
     setError(null)
     try {
-      // Use the correct table name with hyphen
       if (!supabase) {
         setError("Database client is not initialized.")
         setFreelancers([])
@@ -304,6 +507,230 @@ export default function AdminQueryPanel() {
     document.body.removeChild(a)
   }
 
+  // Form management functions
+  const loadForms = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const { data, error } = await supabaseAdmin
+        .from("forms")
+        .select(`
+          *,
+          freelancer_submissions(count)
+        `)
+        .order("created_at", { ascending: false })
+
+      if (error) {
+        setError("Error loading forms: " + error.message)
+        setForms([])
+      } else {
+        const formsWithCounts =
+          data?.map((form) => ({
+            ...form,
+            submission_count: form.freelancer_submissions?.[0]?.count || 0,
+          })) || []
+        setForms(formsWithCounts)
+      }
+    } catch (err: any) {
+      setError("Error loading forms: " + err.message)
+      setForms([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCategoryChange = (category: string) => {
+    if (category === "other") {
+      setShowOtherCategory(true)
+      setSelectedCategory("")
+      setAvailableSubcategories([])
+      setAvailableTechStacks([])
+      setAvailableTools([])
+      return
+    }
+
+    setShowOtherCategory(false)
+    setSelectedCategory(category)
+    setNewForm((prev) => ({ ...prev, category, subcategory: [], tech_stack: [], tools: [] }))
+
+    if (categoryOptions[category]) {
+      setAvailableSubcategories(categoryOptions[category].subcategories)
+      setAvailableTechStacks(categoryOptions[category].techStacks)
+    }
+    setAvailableTools([])
+    setSelectedSubcategory("")
+    setSelectedTechStack("")
+  }
+
+  const handleSubcategoryChange = (value: string) => {
+    if (value === "other") {
+      setShowOtherSubcategory(true)
+    } else {
+      setSelectedSubcategories((prev) =>
+        prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value],
+      )
+      setNewForm((prev) => ({
+        ...prev,
+        subcategory: selectedSubcategories.includes(value)
+          ? selectedSubcategories.filter((item) => item !== value)
+          : [...selectedSubcategories, value],
+      }))
+    }
+  }
+
+  const handleTechStackChange = (value: string) => {
+    if (value === "other") {
+      setShowOtherTechStack(true)
+    } else {
+      const newTechStacks = selectedTechStacks.includes(value)
+        ? selectedTechStacks.filter((item) => item !== value)
+        : [...selectedTechStacks, value]
+
+      setSelectedTechStacks(newTechStacks)
+      setNewForm((prev) => ({
+        ...prev,
+        tech_stack: newTechStacks,
+      }))
+    }
+  }
+
+  const handleToolsChange = (value: string) => {
+    if (value === "other") {
+      setShowOtherTools(true)
+    } else {
+      setSelectedTools((prev) => (prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]))
+      setNewForm((prev) => ({
+        ...prev,
+        tools: selectedTools.includes(value)
+          ? selectedTools.filter((item) => item !== value)
+          : [...selectedTools, value],
+      }))
+    }
+  }
+
+  const createForm = async () => {
+    if (
+      !newForm.form_id ||
+      !newForm.form_name ||
+      !newForm.industry ||
+      !newForm.category ||
+      !selectedSubcategories.length ||
+      !selectedTechStacks.length ||
+      !selectedTools.length
+    ) {
+      setError("Please fill in all required fields")
+      return
+    }
+
+    setCreateFormLoading(true)
+    setError(null)
+
+    try {
+      const formData = {
+        ...newForm,
+        subcategory: selectedSubcategories,
+        tech_stack: selectedTechStacks,
+        tools: selectedTools,
+        required_fields: selectedRequiredFields,
+        custom_questions: customQuestions,
+      }
+
+      const { data, error } = await supabaseAdmin.from("forms").insert([formData]).select().single()
+
+      if (error) {
+        if (error.code === "23505") {
+          setError("Form ID already exists. Please choose a different ID.")
+        } else {
+          setError("Error creating form: " + error.message)
+        }
+      } else {
+        setForms((prev) => [{ ...data, submission_count: 0 }, ...prev])
+        setNewForm({
+          form_id: "",
+          form_name: "",
+          industry: "",
+          category: "",
+          subcategory: [],
+          tech_stack: [],
+          tools: [],
+        })
+        setSelectedRequiredFields(["name", "email", "phone", "resume_url"])
+        setCustomQuestions([])
+        setShowCreateForm(false)
+        // Reset all selections
+        setSelectedCategory("")
+        setSelectedSubcategory("")
+        setSelectedTechStack("")
+        setSelectedSubcategories([])
+        setSelectedTechStacks([])
+        setSelectedTools([])
+        setShowOtherCategory(false)
+        setShowOtherSubcategory(false)
+        setShowOtherTechStack(false)
+        setShowOtherTools(false)
+      }
+    } catch (err: any) {
+      setError("Error creating form: " + err.message)
+    } finally {
+      setCreateFormLoading(false)
+    }
+  }
+
+  const addCustomQuestion = () => {
+    const newQuestion = {
+      id: Date.now().toString(),
+      type: "text" as const,
+      label: "",
+      required: false,
+      options: [],
+    }
+    setCustomQuestions((prev) => [...prev, newQuestion])
+  }
+
+  const updateCustomQuestion = (id: string, updates: Partial<(typeof customQuestions)[0]>) => {
+    setCustomQuestions((prev) => prev.map((q) => (q.id === id ? { ...q, ...updates } : q)))
+  }
+
+  const removeCustomQuestion = (id: string) => {
+    setCustomQuestions((prev) => prev.filter((q) => q.id !== id))
+  }
+
+  const handleRequiredFieldChange = (fieldKey: string) => {
+    setSelectedRequiredFields((prev) =>
+      prev.includes(fieldKey) ? prev.filter((f) => f !== fieldKey) : [...prev, fieldKey],
+    )
+  }
+
+  const loadFormSubmissions = async (formId: string) => {
+    setLoading(true)
+    try {
+      const { data, error } = await supabaseAdmin
+        .from("freelancer_submissions")
+        .select("*")
+        .eq("form_id", formId)
+        .order("created_at", { ascending: false })
+
+      if (error) {
+        setError("Error loading submissions: " + error.message)
+        setFormSubmissions([])
+      } else {
+        setFormSubmissions(data || [])
+      }
+    } catch (err: any) {
+      setError("Error loading submissions: " + err.message)
+      setFormSubmissions([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const copyFormLink = async (formId: string) => {
+    const url = `${window.location.origin}/form/${formId}`
+    await navigator.clipboard.writeText(url)
+    setCopiedFormId(formId)
+    setTimeout(() => setCopiedFormId(null), 2000)
+  }
+
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "student":
@@ -336,6 +763,27 @@ export default function AdminQueryPanel() {
       return "bg-gray-500/20 text-gray-400"
     }
   }
+
+  const handleIndustryChange = (industry: string) => {
+    setSelectedIndustry(industry)
+    setSelectedCategory("")
+    setNewForm((prev) => ({ ...prev, industry, category: "", subcategory: [] }))
+
+    const industryKey = industry as keyof IndustryOptions
+    const categories = industryOptions[industryKey] ? Object.keys(industryOptions[industryKey]) : []
+    setAvailableCategories(categories)
+    setAvailableSubcategories([])
+  }
+
+  // const handleCategoryChange = (category: string) => {
+  //   setSelectedCategory(category)
+  //   setNewForm((prev) => ({ ...prev, category, subcategory: "" }))
+
+  //   const industryKey = selectedIndustry as keyof IndustryOptions
+  //   const industryData = industryOptions[industryKey]
+  //   const subcategories = industryData && industryData[category] ? industryData[category] : []
+  //   setAvailableSubcategories(subcategories)
+  // }
 
   return (
     <div className="min-h-screen bg-[#241C15] text-white overflow-hidden">
@@ -397,7 +845,7 @@ export default function AdminQueryPanel() {
                 className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
                 whileHover={{ scale: 1.1, rotate: 10 }}
               >
-                <Database className="w-6 h-6 text-[#FFE01B]" />
+                <Settings className="w-6 h-6 text-[#FFE01B]" />
               </motion.div>
               <span className="text-[#FFE01B] font-semibold text-lg">Admin Panel</span>
             </motion.div>
@@ -409,7 +857,7 @@ export default function AdminQueryPanel() {
               className="text-5xl lg:text-7xl font-bold leading-tight"
             >
               <span className="bg-gradient-to-r from-white to-[#FFE01B] bg-clip-text text-transparent">
-                Freelancer Database
+                Management Dashboard
               </span>
             </motion.h1>
 
@@ -419,8 +867,37 @@ export default function AdminQueryPanel() {
               variants={fadeUp}
               className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
             >
-              Search and filter freelancer profiles by category and experience level
+              Manage freelancer database and create custom gig forms
             </motion.p>
+
+            {/* Tab Navigation */}
+            <motion.div
+              className="flex justify-center gap-4 mt-12"
+              initial="hidden"
+              animate="visible"
+              variants={fadeUp}
+            >
+              <button
+                onClick={() => setActiveTab("freelancers")}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  activeTab === "freelancers"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                }`}
+              >
+                <Users className="w-5 h-5" />
+                Freelancer Search
+              </button>
+              <button
+                onClick={() => setActiveTab("forms")}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  activeTab === "forms" ? "bg-[#FFE01B] text-[#241C15]" : "bg-white/10 text-white hover:bg-white/20"
+                }`}
+              >
+                <FileText className="w-5 h-5" />
+                Form Management
+              </button>
+            </motion.div>
 
             {/* Stats */}
             <motion.div
@@ -449,10 +926,10 @@ export default function AdminQueryPanel() {
                 variants={scaleIn}
               >
                 <div className="flex items-center justify-center mb-3">
-                  <Filter className="w-8 h-8 text-[#FFE01B]" />
+                  <FileText className="w-8 h-8 text-[#FFE01B]" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">Simple</h3>
-                <p className="text-gray-400 text-sm">Filtering</p>
+                <h3 className="text-2xl font-bold text-white">{forms.length}</h3>
+                <p className="text-gray-400 text-sm">Active Forms</p>
               </motion.div>
 
               <motion.div
@@ -462,501 +939,1021 @@ export default function AdminQueryPanel() {
                 variants={scaleIn}
               >
                 <div className="flex items-center justify-center mb-3">
-                  <Database className="w-8 h-8 text-[#FFE01B]" />
+                  <BarChart3 className="w-8 h-8 text-[#FFE01B]" />
                 </div>
-                <h3 className="text-2xl font-bold text-white">Real-time</h3>
-                <p className="text-gray-400 text-sm">Database</p>
+                <h3 className="text-2xl font-bold text-white">
+                  {forms.reduce((sum, form) => sum + (form.submission_count || 0), 0)}
+                </h3>
+                <p className="text-gray-400 text-sm">Total Submissions</p>
               </motion.div>
             </motion.div>
           </div>
         </motion.div>
       </section>
 
-      {/* Search Form Section */}
-      <section className="relative py-12 px-4 z-10">
-        <motion.div
-          className="max-w-6xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={staggerContainer}
-        >
-          <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-            <motion.div className="space-y-8" initial="hidden" animate="visible" variants={fadeInLeft}>
-              <div className="flex items-center gap-3 mb-6">
-                <motion.div
-                  className="w-10 h-10 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <Filter className="w-5 h-5 text-[#FFE01B]" />
-                </motion.div>
-                <h2 className="text-2xl font-bold text-white">Search Filters</h2>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-                {/* Category */}
-                <div className="space-y-4">
-                  <label className="block text-sm font-semibold text-[#FFE01B]">Category</label>
-                  <select
-                    value={filters.category}
-                    onChange={(e) => setFilters((prev) => ({ ...prev, category: e.target.value }))}
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
-                  >
-                    <option value="">All Categories</option>
-                    {categoryOptions.slice(1).map((category) => (
-                      <option key={category} value={category} className="bg-[#241C15]">
-                        {category}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Experience Level */}
-                <div className="space-y-4">
-                  <label className="block text-sm font-semibold text-[#FFE01B]">Experience Level</label>
-                  <select
-                    value={filters.experience_level}
-                    onChange={(e) => setFilters((prev) => ({ ...prev, experience_level: e.target.value }))}
-                    className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
-                  >
-                    <option value="">All Levels</option>
-                    {experienceLevelOptions.slice(1).map((level) => (
-                      <option key={level} value={level} className="bg-[#241C15]">
-                        {level}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/10">
-                <motion.button
-                  onClick={handleSearch}
-                  disabled={loading}
-                  className="flex-1 bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold py-4 px-8 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
-                  whileHover={{ scale: loading ? 1 : 1.02, y: loading ? 0 : -2 }}
-                  whileTap={{ scale: loading ? 1 : 0.98 }}
-                >
-                  {loading ? (
-                    <>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                        className="w-5 h-5 border-2 border-[#241C15] border-t-transparent rounded-full"
-                      />
-                      Searching...
-                    </>
-                  ) : (
-                    <>
-                      <Search className="w-5 h-5" />
-                      Search Freelancers
-                    </>
-                  )}
-                </motion.button>
-
-                <motion.button
-                  onClick={resetFilters}
-                  className="bg-white/10 hover:bg-white/20 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 border border-white/20 hover:border-white/40"
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Reset Filters
-                </motion.button>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Error Message */}
-      {error && (
-        <section className="relative py-6 px-4 z-10">
-          <motion.div
-            className="max-w-6xl mx-auto bg-red-500/20 border border-red-500/30 rounded-xl p-4 text-center"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <p className="text-red-300">{error}</p>
-          </motion.div>
-        </section>
-      )}
-
-      {/* Results Section */}
-      {freelancers.length > 0 && (
-        <section className="relative py-12 px-4 z-10">
-          <motion.div
-            className="max-w-7xl mx-auto"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={staggerContainer}
-          >
-            {/* Results Header */}
+      {/* Content based on active tab */}
+      {activeTab === "freelancers" ? (
+        <>
+          {/* Search Form Section */}
+          <section className="relative py-12 px-4 z-10">
             <motion.div
-              className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8"
+              className="max-w-6xl mx-auto"
               initial="hidden"
-              animate="visible"
-              variants={fadeUp}
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={staggerContainer}
             >
-              <div className="flex items-center gap-3 mb-4 sm:mb-0">
-                <motion.div
-                  className="w-10 h-10 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
-                  whileHover={{ scale: 1.1, rotate: -5 }}
-                >
-                  <Eye className="w-5 h-5 text-[#FFE01B]" />
-                </motion.div>
-                <div>
-                  <h2 className="text-2xl font-bold text-white">Search Results</h2>
-                  <p className="text-gray-400">Found {freelancers.length} matching freelancers</p>
-                </div>
-              </div>
+              <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+                <motion.div className="space-y-8" initial="hidden" animate="visible" variants={fadeInLeft}>
+                  <div className="flex items-center gap-3 mb-6">
+                    <motion.div
+                      className="w-10 h-10 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                    >
+                      <Filter className="w-5 h-5 text-[#FFE01B]" />
+                    </motion.div>
+                    <h2 className="text-2xl font-bold text-white">Search Filters</h2>
+                  </div>
 
-              <motion.button
-                onClick={downloadCSV}
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-2"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Download className="w-5 h-5" />
-                Download CSV
-              </motion.button>
-            </motion.div>
-
-            {/* Freelancer Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {freelancers.map((freelancer, index) => (
-                <motion.div
-                  key={freelancer.id}
-                  initial="hidden"
-                  animate="visible"
-                  variants={scaleIn}
-                  transition={{ delay: index * 0.1 }}
-                  className="group relative bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10 hover:border-[#FFE01B]/50 transition-all duration-500"
-                  whileHover={{ y: -10, scale: 1.02 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="relative space-y-4">
-                    {/* Header */}
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white group-hover:text-[#FFE01B] transition-colors duration-300 truncate">
-                          {freelancer.full_name}
-                        </h3>
-                        <p className="text-gray-400 text-sm truncate">{freelancer.email}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Calendar className="w-3 h-3 text-gray-500" />
-                          <span className="text-gray-500 text-xs">
-                            {new Date(freelancer.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                      <div
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                          freelancer.employment_status || "N/A",
-                        )}`}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Category */}
+                    <div className="space-y-4">
+                      <label className="block text-sm font-semibold text-[#FFE01B]">Category</label>
+                      <select
+                        value={filters.category}
+                        onChange={(e) => setFilters((prev) => ({ ...prev, category: e.target.value }))}
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
                       >
-                        {freelancer.employment_status || "N/A"}
-                      </div>
+                        <option value="">All Categories</option>
+                        {categoryOptionsOld.slice(1).map((category) => (
+                          <option key={category} value={category} className="bg-[#241C15]">
+                            {category}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
-                    {/* Category & Experience */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-1 bg-[#FFE01B]/20 text-[#FFE01B] text-xs rounded-lg border border-[#FFE01B]/30">
-                          {freelancer.category}
-                        </span>
-                        {freelancer.experience_level && (
-                          <span
-                            className={`px-2 py-1 text-xs rounded-lg ${getExperienceColor(
-                              freelancer.experience_level,
-                            )}`}
-                          >
-                            {freelancer.experience_level}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Skills Preview */}
-                    <div className="space-y-2">
-                      {Array.isArray(freelancer.domains) && freelancer.domains.length > 0 && (
-                        <div>
-                          <p className="text-gray-400 text-xs mb-1">Domains:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {freelancer.domains.slice(0, 3).map((domain, idx) => (
-                              <span
-                                key={idx}
-                                className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded border border-blue-500/20"
-                              >
-                                {domain}
-                              </span>
-                            ))}
-                            {freelancer.domains.length > 3 && (
-                              <span className="px-2 py-1 bg-white/10 text-gray-400 text-xs rounded">
-                                +{freelancer.domains.length - 3}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {Array.isArray(freelancer.tech_stack) && freelancer.tech_stack.length > 0 && (
-                        <div>
-                          <p className="text-gray-400 text-xs mb-1">Tech:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {freelancer.tech_stack.slice(0, 3).map((tech, idx) => (
-                              <span
-                                key={idx}
-                                className="px-2 py-1 bg-green-500/10 text-green-400 text-xs rounded border border-green-500/20"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                            {freelancer.tech_stack.length > 3 && (
-                              <span className="px-2 py-1 bg-white/10 text-gray-400 text-xs rounded">
-                                +{freelancer.tech_stack.length - 3}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Contact Info */}
-                    <div className="space-y-2 pt-4 border-t border-white/10">
-                      <div className="flex items-center gap-2 text-gray-300 text-sm">
-                        <Phone className="w-4 h-4" />
-                        <span className="truncate">{freelancer.phone}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-300 text-sm">
-                        <Mail className="w-4 h-4" />
-                        <span className="truncate">{freelancer.email}</span>
-                      </div>
-                    </div>
-
-                    {/* Links */}
-                    <div className="flex gap-2 pt-2">
-                      {freelancer.portfolio_url && (
-                        <motion.a
-                          href={freelancer.portfolio_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-blue-500/30 hover:border-blue-500 text-center text-sm flex items-center justify-center gap-1"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                          Portfolio
-                        </motion.a>
-                      )}
-                      {freelancer.linkedin_url && (
-                        <motion.a
-                          href={freelancer.linkedin_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 bg-blue-600/10 hover:bg-blue-600/20 text-blue-300 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-blue-600/30 hover:border-blue-600 text-center text-sm flex items-center justify-center gap-1"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <Linkedin className="w-3 h-3" />
-                          LinkedIn
-                        </motion.a>
-                      )}
-                      {freelancer.resume_url && (
-                        <motion.a
-                          href={freelancer.resume_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-green-500/30 hover:border-green-500 text-center text-sm flex items-center justify-center gap-1"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <FileDown className="w-3 h-3" />
-                          Resume
-                        </motion.a>
-                      )}
+                    {/* Experience Level */}
+                    <div className="space-y-4">
+                      <label className="block text-sm font-semibold text-[#FFE01B]">Experience Level</label>
+                      <select
+                        value={filters.experience_level}
+                        onChange={(e) => setFilters((prev) => ({ ...prev, experience_level: e.target.value }))}
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                      >
+                        <option value="">All Levels</option>
+                        {experienceLevelOptions.slice(1).map((level) => (
+                          <option key={level} value={level} className="bg-[#241C15]">
+                            {level}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
 
-            {/* Detailed Table */}
-            <motion.div
-              className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10 overflow-hidden"
-              initial="hidden"
-              animate="visible"
-              variants={fadeUp}
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <motion.div
-                  className="w-10 h-10 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <FileText className="w-5 h-5 text-[#FFE01B]" />
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/10">
+                    <motion.button
+                      onClick={handleSearch}
+                      disabled={loading}
+                      className="flex-1 bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold py-4 px-8 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                      whileHover={{ scale: loading ? 1 : 1.02, y: loading ? 0 : -2 }}
+                      whileTap={{ scale: loading ? 1 : 0.98 }}
+                    >
+                      {loading ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                            className="w-5 h-5 border-2 border-[#241C15] border-t-transparent rounded-full"
+                          />
+                          Searching...
+                        </>
+                      ) : (
+                        <>
+                          <Search className="w-5 h-5" />
+                          Search Freelancers
+                        </>
+                      )}
+                    </motion.button>
+
+                    <motion.button
+                      onClick={resetFilters}
+                      className="bg-white/10 hover:bg-white/20 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 border border-white/20 hover:border-white/40"
+                      whileHover={{ scale: 1.02, y: -2 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Reset Filters
+                    </motion.button>
+                  </div>
                 </motion.div>
-                <h3 className="text-xl font-bold text-white">Detailed View</h3>
               </div>
+            </motion.div>
+          </section>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Name</th>
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Email</th>
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Phone</th>
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Category</th>
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Status</th>
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Experience</th>
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Domains</th>
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Tech Stack</th>
-                      <th className="text-left py-3 px-4 text-[#FFE01B] font-semibold">Links</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {freelancers.map((freelancer, idx) => (
-                      <motion.tr
-                        key={idx}
-                        className="border-b border-white/5 hover:bg-white/5 transition-colors duration-300"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.1 }}
-                      >
-                        <td className="py-3 px-4 text-gray-300 font-medium">{freelancer.full_name}</td>
-                        <td className="py-3 px-4 text-gray-300">{freelancer.email}</td>
-                        <td className="py-3 px-4 text-gray-300">{freelancer.phone}</td>
-                        <td className="py-3 px-4">
-                          <span className="px-2 py-1 bg-[#FFE01B]/10 text-[#FFE01B] text-xs rounded">
-                            {freelancer.category}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4">
-                          <span
-                            className={`px-2 py-1 text-xs rounded ${getStatusColor(
+          {/* Error Message */}
+          {error && (
+            <section className="relative py-6 px-4 z-10">
+              <motion.div
+                className="max-w-6xl mx-auto bg-red-500/20 border border-red-500/30 rounded-xl p-4 text-center"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <p className="text-red-300">{error}</p>
+              </motion.div>
+            </section>
+          )}
+
+          {/* Results Section */}
+          {freelancers.length > 0 && (
+            <section className="relative py-12 px-4 z-10">
+              <motion.div
+                className="max-w-7xl mx-auto"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                variants={staggerContainer}
+              >
+                {/* Results Header */}
+                <motion.div
+                  className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8"
+                  initial="hidden"
+                  animate="visible"
+                  variants={fadeUp}
+                >
+                  <div className="flex items-center gap-3 mb-4 sm:mb-0">
+                    <motion.div
+                      className="w-10 h-10 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                      whileHover={{ scale: 1.1, rotate: -5 }}
+                    >
+                      <Eye className="w-5 h-5 text-[#FFE01B]" />
+                    </motion.div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">Search Results</h2>
+                      <p className="text-gray-400">Found {freelancers.length} matching freelancers</p>
+                    </div>
+                  </div>
+
+                  <motion.button
+                    onClick={downloadCSV}
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-2"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Download className="w-5 h-5" />
+                    Download CSV
+                  </motion.button>
+                </motion.div>
+
+                {/* Freelancer Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {freelancers.map((freelancer, index) => (
+                    <motion.div
+                      key={freelancer.id}
+                      initial="hidden"
+                      animate="visible"
+                      variants={scaleIn}
+                      transition={{ delay: index * 0.1 }}
+                      className="group relative bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10 hover:border-[#FFE01B]/50 transition-all duration-500"
+                      whileHover={{ y: -10, scale: 1.02 }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                      <div className="relative space-y-4">
+                        {/* Header */}
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="text-xl font-bold text-white group-hover:text-[#FFE01B] transition-colors duration-300 truncate">
+                              {freelancer.full_name}
+                            </h3>
+                            <p className="text-gray-400 text-sm truncate">{freelancer.email}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Calendar className="w-3 h-3 text-gray-500" />
+                              <span className="text-gray-500 text-xs">
+                                {new Date(freelancer.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          <div
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
                               freelancer.employment_status || "N/A",
                             )}`}
                           >
                             {freelancer.employment_status || "N/A"}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4">
-                          {freelancer.experience_level && (
-                            <span
-                              className={`px-2 py-1 text-xs rounded ${getExperienceColor(freelancer.experience_level)}`}
-                            >
-                              {freelancer.experience_level}
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex flex-wrap gap-1 max-w-32">
-                            {Array.isArray(freelancer.domains) &&
-                              freelancer.domains.slice(0, 2).map((domain, i) => (
-                                <span
-                                  key={i}
-                                  className="px-1 py-0.5 bg-blue-500/10 text-blue-400 text-xs rounded"
-                                  title={domain}
-                                >
-                                  {domain.length > 8 ? `${domain.substring(0, 8)}...` : domain}
-                                </span>
-                              ))}
-                            {Array.isArray(freelancer.domains) && freelancer.domains.length > 2 && (
-                              <span className="px-1 py-0.5 bg-white/10 text-gray-400 text-xs rounded">
-                                +{freelancer.domains.length - 2}
-                              </span>
-                            )}
                           </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex flex-wrap gap-1 max-w-32">
-                            {Array.isArray(freelancer.tech_stack) &&
-                              freelancer.tech_stack.slice(0, 2).map((tech, i) => (
-                                <span
-                                  key={i}
-                                  className="px-1 py-0.5 bg-green-500/10 text-green-400 text-xs rounded"
-                                  title={tech}
-                                >
-                                  {tech.length > 8 ? `${tech.substring(0, 8)}...` : tech}
-                                </span>
-                              ))}
-                            {Array.isArray(freelancer.tech_stack) && freelancer.tech_stack.length > 2 && (
-                              <span className="px-1 py-0.5 bg-white/10 text-gray-400 text-xs rounded">
-                                +{freelancer.tech_stack.length - 2}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-1">
-                            {freelancer.portfolio_url && (
-                              <a
-                                href={freelancer.portfolio_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-400 hover:text-blue-300 transition-colors"
-                                title="Portfolio"
-                              >
-                                <ExternalLink className="w-4 h-4" />
-                              </a>
-                            )}
-                            {freelancer.linkedin_url && (
-                              <a
-                                href={freelancer.linkedin_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-300 hover:text-blue-200 transition-colors"
-                                title="LinkedIn"
-                              >
-                                <Linkedin className="w-4 h-4" />
-                              </a>
-                            )}
-                            {freelancer.resume_url && (
-                              <a
-                                href={freelancer.resume_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-green-400 hover:text-green-300 transition-colors"
-                                title="Resume"
-                              >
-                                <FileDown className="w-4 h-4" />
-                              </a>
-                            )}
-                          </div>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-          </motion.div>
-        </section>
-      )}
+                        </div>
 
-      {/* Empty State */}
-      {!loading && freelancers.length === 0 && (
-        <section className="relative py-20 px-4 z-10">
-          <motion.div className="max-w-2xl mx-auto text-center" initial="hidden" animate="visible" variants={fadeUp}>
-            <div className="w-20 h-20 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Search className="w-10 h-10 text-[#FFE01B]" />
-            </div>
-            <h3 className="text-2xl font-bold text-white mb-4">No Freelancers Found</h3>
-            <p className="text-gray-400 mb-8">
-              {error || "Try adjusting your search filters or check if data exists in the database"}
-            </p>
-            <motion.button
-              onClick={resetFilters}
-              className="bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold px-6 py-3 rounded-xl transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+                        {/* Category & Experience */}
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-1 bg-[#FFE01B]/20 text-[#FFE01B] text-xs rounded-lg border border-[#FFE01B]/30">
+                              {freelancer.category}
+                            </span>
+                            {freelancer.experience_level && (
+                              <span
+                                className={`px-2 py-1 text-xs rounded-lg ${getExperienceColor(
+                                  freelancer.experience_level,
+                                )}`}
+                              >
+                                {freelancer.experience_level}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Skills Preview */}
+                        <div className="space-y-2">
+                          {Array.isArray(freelancer.domains) && freelancer.domains.length > 0 && (
+                            <div>
+                              <p className="text-gray-400 text-xs mb-1">Domains:</p>
+                              <div className="flex flex-wrap gap-1">
+                                {freelancer.domains.slice(0, 3).map((domain, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="px-2 py-1 bg-blue-500/10 text-blue-400 text-xs rounded border border-blue-500/20"
+                                  >
+                                    {domain}
+                                  </span>
+                                ))}
+                                {freelancer.domains.length > 3 && (
+                                  <span className="px-2 py-1 bg-white/10 text-gray-400 text-xs rounded">
+                                    +{freelancer.domains.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {Array.isArray(freelancer.tech_stack) && freelancer.tech_stack.length > 0 && (
+                            <div>
+                              <p className="text-gray-400 text-xs mb-1">Tech:</p>
+                              <div className="flex flex-wrap gap-1">
+                                {freelancer.tech_stack.slice(0, 3).map((tech, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="px-2 py-1 bg-green-500/10 text-green-400 text-xs rounded border border-green-500/20"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                                {freelancer.tech_stack.length > 3 && (
+                                  <span className="px-2 py-1 bg-white/10 text-gray-400 text-xs rounded">
+                                    +{freelancer.tech_stack.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Contact Info */}
+                        <div className="space-y-2 pt-4 border-t border-white/10">
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <Phone className="w-4 h-4" />
+                            <span className="truncate">{freelancer.phone}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-gray-300 text-sm">
+                            <Mail className="w-4 h-4" />
+                            <span className="truncate">{freelancer.email}</span>
+                          </div>
+                        </div>
+
+                        {/* Links */}
+                        <div className="flex gap-2 pt-2">
+                          {freelancer.portfolio_url && (
+                            <motion.a
+                              href={freelancer.portfolio_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-blue-500/30 hover:border-blue-500 text-center text-sm flex items-center justify-center gap-1"
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              Portfolio
+                            </motion.a>
+                          )}
+                          {freelancer.linkedin_url && (
+                            <motion.a
+                              href={freelancer.linkedin_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 bg-blue-600/10 hover:bg-blue-600/20 text-blue-300 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-blue-600/30 hover:border-blue-600 text-center text-sm flex items-center justify-center gap-1"
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <Linkedin className="w-3 h-3" />
+                              LinkedIn
+                            </motion.a>
+                          )}
+                          {freelancer.resume_url && (
+                            <motion.a
+                              href={freelancer.resume_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-green-500/30 hover:border-green-500 text-center text-sm flex items-center justify-center gap-1"
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                            >
+                              <FileDown className="w-3 h-3" />
+                              Resume
+                            </motion.a>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </section>
+          )}
+
+          {/* Empty State for Freelancers */}
+          {!loading && freelancers.length === 0 && activeTab === "freelancers" && (
+            <section className="relative py-20 px-4 z-10">
+              <motion.div
+                className="max-w-2xl mx-auto text-center"
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp}
+              >
+                <div className="w-20 h-20 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Search className="w-10 h-10 text-[#FFE01B]" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">No Freelancers Found</h3>
+                <p className="text-gray-400 mb-8">
+                  {error || "Try adjusting your search filters or check if data exists in the database"}
+                </p>
+                <motion.button
+                  onClick={resetFilters}
+                  className="bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold px-6 py-3 rounded-xl transition-all duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Reset Filters
+                </motion.button>
+              </motion.div>
+            </section>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Form Management Section */}
+          <section className="relative py-12 px-4 z-10">
+            <motion.div
+              className="max-w-6xl mx-auto"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={staggerContainer}
             >
-              Reset Filters
-            </motion.button>
-          </motion.div>
-        </section>
+              {/* Create Form Button */}
+              <motion.div
+                className="flex justify-between items-center mb-8"
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp}
+              >
+                <div className="flex items-center gap-3">
+                  <motion.div
+                    className="w-10 h-10 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                  >
+                    <FileText className="w-5 h-5 text-[#FFE01B]" />
+                  </motion.div>
+                  <h2 className="text-2xl font-bold text-white">Form Management</h2>
+                </div>
+
+                <motion.button
+                  onClick={() => setShowCreateForm(!showCreateForm)}
+                  className="bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-2"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Plus className="w-5 h-5" />
+                  Create New Form
+                </motion.button>
+              </motion.div>
+
+              {showCreateForm && (
+                <motion.div
+                  className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 mb-8"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <h3 className="text-xl font-bold text-white mb-6">Create New Form</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">Form ID</label>
+                      <input
+                        type="text"
+                        value={newForm.form_id}
+                        onChange={(e) => setNewForm((prev) => ({ ...prev, form_id: e.target.value }))}
+                        placeholder="e.g., reactjs1, nodejs2"
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">Form Name</label>
+                      <input
+                        type="text"
+                        value={newForm.form_name}
+                        onChange={(e) => setNewForm((prev) => ({ ...prev, form_name: e.target.value }))}
+                        placeholder="e.g., React.js Developer Position"
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">Industry</label>
+                      <input
+                        type="text"
+                        value={newForm.industry}
+                        onChange={(e) => setNewForm((prev) => ({ ...prev, industry: e.target.value }))}
+                        placeholder="e.g., Technology, Healthcare, Finance"
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">Category</label>
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => handleCategoryChange(e.target.value)}
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                      >
+                        <option value="" className="bg-[#241C15] text-white">
+                          Select Category
+                        </option>
+                        {Object.keys(categoryOptions).map((category) => (
+                          <option key={category} value={category} className="bg-[#241C15] text-white">
+                            {category}
+                          </option>
+                        ))}
+                        <option value="other" className="bg-[#241C15] text-white">
+                          Other
+                        </option>
+                      </select>
+                      {showOtherCategory && (
+                        <input
+                          type="text"
+                          value={newForm.category}
+                          onChange={(e) => setNewForm((prev) => ({ ...prev, category: e.target.value }))}
+                          placeholder="Enter custom category"
+                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300 mt-2"
+                        />
+                      )}
+                    </div>
+                    {/* Updated form interface to show multiple selections with checkboxes */}
+                    <div>
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">
+                        Subcategories (Select Multiple)
+                      </label>
+                      <div className="bg-white/10 border border-white/20 rounded-xl p-4 max-h-40 overflow-y-auto">
+                        {availableSubcategories.map((subcategory) => (
+                          <label key={subcategory} className="flex items-center space-x-2 mb-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedSubcategories.includes(subcategory)}
+                              onChange={() => handleSubcategoryChange(subcategory)}
+                              className="w-4 h-4 text-[#FFE01B] bg-transparent border-white/20 rounded focus:ring-[#FFE01B]"
+                            />
+                            <span className="text-white text-sm">{subcategory}</span>
+                          </label>
+                        ))}
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={showOtherSubcategory}
+                            onChange={() => setShowOtherSubcategory(!showOtherSubcategory)}
+                            className="w-4 h-4 text-[#FFE01B] bg-transparent border-white/20 rounded focus:ring-[#FFE01B]"
+                          />
+                          <span className="text-white text-sm">Other</span>
+                        </label>
+                      </div>
+                      {selectedSubcategories.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {selectedSubcategories.map((item) => (
+                            <span key={item} className="bg-[#FFE01B] text-black px-2 py-1 rounded-lg text-xs">
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {showOtherSubcategory && (
+                        <input
+                          type="text"
+                          placeholder="Enter custom subcategory and press Enter"
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                              const customValue = e.currentTarget.value.trim()
+                              setSelectedSubcategories((prev) => [...prev, customValue])
+                              setNewForm((prev) => ({
+                                ...prev,
+                                subcategory: [...(prev.subcategory || []), customValue],
+                              }))
+                              e.currentTarget.value = ""
+                            }
+                          }}
+                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300 mt-2"
+                        />
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">
+                        Tech Stack (Select Multiple)
+                      </label>
+                      <div className="bg-white/10 border border-white/20 rounded-xl p-4 max-h-40 overflow-y-auto">
+                        {availableTechStacks.map((techStack) => (
+                          <label key={techStack} className="flex items-center space-x-2 mb-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedTechStacks.includes(techStack)}
+                              onChange={() => handleTechStackChange(techStack)}
+                              className="w-4 h-4 text-[#FFE01B] bg-transparent border-white/20 rounded focus:ring-[#FFE01B]"
+                            />
+                            <span className="text-white text-sm">{techStack}</span>
+                          </label>
+                        ))}
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={showOtherTechStack}
+                            onChange={() => setShowOtherTechStack(!showOtherTechStack)}
+                            className="w-4 h-4 text-[#FFE01B] bg-transparent border-white/20 rounded focus:ring-[#FFE01B]"
+                          />
+                          <span className="text-white text-sm">Other</span>
+                        </label>
+                      </div>
+                      {selectedTechStacks.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {selectedTechStacks.map((item) => (
+                            <span key={item} className="bg-[#FFE01B] text-black px-2 py-1 rounded-lg text-xs">
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {showOtherTechStack && (
+                        <input
+                          type="text"
+                          placeholder="Enter custom tech stack and press Enter"
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                              const customValue = e.currentTarget.value.trim()
+                              const newTechStacks = [...selectedTechStacks, customValue]
+                              setSelectedTechStacks(newTechStacks)
+                              setNewForm((prev) => ({
+                                ...prev,
+                                tech_stack: newTechStacks,
+                              }))
+                              e.currentTarget.value = ""
+                            }
+                          }}
+                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300 mt-2"
+                        />
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">Tools (Select Multiple)</label>
+                      <div className="bg-white/10 border border-white/20 rounded-xl p-4 max-h-40 overflow-y-auto">
+                        {availableTools.map((tool) => (
+                          <label key={tool} className="flex items-center space-x-2 mb-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={selectedTools.includes(tool)}
+                              onChange={() => handleToolsChange(tool)}
+                              className="w-4 h-4 text-[#FFE01B] bg-transparent border-white/20 rounded focus:ring-[#FFE01B]"
+                            />
+                            <span className="text-white text-sm">{tool}</span>
+                          </label>
+                        ))}
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={showOtherTools}
+                            onChange={() => setShowOtherTools(!showOtherTools)}
+                            className="w-4 h-4 text-[#FFE01B] bg-transparent border-white/20 rounded focus:ring-[#FFE01B]"
+                          />
+                          <span className="text-white text-sm">Other</span>
+                        </label>
+                      </div>
+                      {selectedTools.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {selectedTools.map((item) => (
+                            <span key={item} className="bg-[#FFE01B] text-black px-2 py-1 rounded-lg text-xs">
+                              {item}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {showOtherTools && (
+                        <input
+                          type="text"
+                          placeholder="Enter custom tool and press Enter"
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter" && e.currentTarget.value.trim()) {
+                              const customValue = e.currentTarget.value.trim()
+                              setSelectedTools((prev) => [...prev, customValue])
+                              setNewForm((prev) => ({
+                                ...prev,
+                                tools: [...(prev.tools || []), customValue],
+                              }))
+                              e.currentTarget.value = ""
+                            }
+                          }}
+                          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300 mt-2"
+                        />
+                      )}
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">
+                        Required Standard Fields
+                      </label>
+                      <div className="bg-white/10 border border-white/20 rounded-xl p-4">
+                        <div className="grid grid-cols-2 gap-2">
+                          {availableStandardFields.map((field) => (
+                            <label key={field.key} className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={selectedRequiredFields.includes(field.key)}
+                                onChange={() => handleRequiredFieldChange(field.key)}
+                                className="w-4 h-4 text-[#FFE01B] bg-transparent border-white/20 rounded focus:ring-[#FFE01B]"
+                              />
+                              <span className="text-white text-sm">{field.label}</span>
+                            </label>
+                          ))}
+                        </div>
+                        {selectedRequiredFields.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {selectedRequiredFields.map((fieldKey) => {
+                              const field = availableStandardFields.find((f) => f.key === fieldKey)
+                              return (
+                                <span key={fieldKey} className="bg-[#FFE01B] text-black px-2 py-1 rounded-lg text-xs">
+                                  {field?.label}
+                                </span>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <div className="flex items-center justify-between mb-4">
+                        <label className="block text-sm font-semibold text-[#FFE01B]">Custom Questions</label>
+                        <motion.button
+                          onClick={addCustomQuestion}
+                          className="bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-semibold px-4 py-2 rounded-lg transition-all duration-300 text-sm"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Plus className="w-4 h-4 inline mr-1" />
+                          Add Question
+                        </motion.button>
+                      </div>
+
+                      {customQuestions.length > 0 && (
+                        <div className="space-y-4">
+                          {customQuestions.map((question, index) => (
+                            <div key={question.id} className="bg-white/5 border border-white/10 rounded-xl p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="text-white font-semibold">Question {index + 1}</span>
+                                <button
+                                  onClick={() => removeCustomQuestion(question.id)}
+                                  className="text-red-400 hover:text-red-300 transition-colors"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                  <label className="block text-xs text-gray-300 mb-1">Question Type</label>
+                                  <select
+                                    value={question.type}
+                                    onChange={(e) =>
+                                      updateCustomQuestion(question.id, {
+                                        type: e.target.value as any,
+                                        options:
+                                          e.target.value === "select" ||
+                                          e.target.value === "radio" ||
+                                          e.target.value === "checkbox"
+                                            ? [""]
+                                            : undefined,
+                                      })
+                                    }
+                                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#FFE01B]"
+                                  >
+                                    <option value="text" className="bg-[#241C15]">
+                                      Text Input
+                                    </option>
+                                    <option value="textarea" className="bg-[#241C15]">
+                                      Textarea
+                                    </option>
+                                    <option value="select" className="bg-[#241C15]">
+                                      Dropdown
+                                    </option>
+                                    <option value="radio" className="bg-[#241C15]">
+                                      Radio Buttons
+                                    </option>
+                                    <option value="checkbox" className="bg-[#241C15]">
+                                      Checkboxes
+                                    </option>
+                                  </select>
+                                </div>
+
+                                <div className="md:col-span-2">
+                                  <label className="block text-xs text-gray-300 mb-1">Question Label</label>
+                                  <input
+                                    type="text"
+                                    value={question.label}
+                                    onChange={(e) => updateCustomQuestion(question.id, { label: e.target.value })}
+                                    placeholder="Enter your question..."
+                                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#FFE01B]"
+                                  />
+                                </div>
+                              </div>
+
+                              {(question.type === "select" ||
+                                question.type === "radio" ||
+                                question.type === "checkbox") && (
+                                <div className="mt-3">
+                                  <label className="block text-xs text-gray-300 mb-2">Options (one per line)</label>
+                                  <textarea
+                                    value={question.options?.join("\n") || ""}
+                                    onChange={(e) =>
+                                      updateCustomQuestion(question.id, {
+                                        options: e.target.value.split("\n").filter((opt) => opt.trim()),
+                                      })
+                                    }
+                                    placeholder="Option 1&#10;Option 2&#10;Option 3"
+                                    rows={3}
+                                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#FFE01B]"
+                                  />
+                                </div>
+                              )}
+
+                              <div className="mt-3">
+                                <label className="flex items-center space-x-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={question.required}
+                                    onChange={(e) => updateCustomQuestion(question.id, { required: e.target.checked })}
+                                    className="w-4 h-4 text-[#FFE01B] bg-transparent border-white/20 rounded focus:ring-[#FFE01B]"
+                                  />
+                                  <span className="text-white text-sm">Required field</span>
+                                </label>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex gap-4 mt-6">
+                    <motion.button
+                      onClick={createForm}
+                      disabled={createFormLoading}
+                      className="bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold px-6 py-3 rounded-xl transition-all duration-300 disabled:opacity-50 flex items-center gap-2"
+                      whileHover={{ scale: createFormLoading ? 1 : 1.05 }}
+                      whileTap={{ scale: createFormLoading ? 1 : 0.95 }}
+                    >
+                      {createFormLoading ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                            className="w-4 h-4 border-2 border-[#241C15] border-t-transparent rounded-full"
+                          />
+                          Creating...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-4 h-4" />
+                          Create Form
+                        </>
+                      )}
+                    </motion.button>
+                    <motion.button
+                      onClick={() => setShowCreateForm(false)}
+                      className="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Cancel
+                    </motion.button>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Error Message */}
+              {error && (
+                <motion.div
+                  className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 text-center mb-8"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <p className="text-red-300">{error}</p>
+                </motion.div>
+              )}
+
+              {/* Forms List */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {forms.map((form, index) => (
+                  <motion.div
+                    key={form.id}
+                    initial="hidden"
+                    animate="visible"
+                    variants={scaleIn}
+                    transition={{ delay: index * 0.1 }}
+                    className="group relative bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10 hover:border-[#FFE01B]/50 transition-all duration-500"
+                    whileHover={{ y: -10, scale: 1.02 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                    <div className="relative space-y-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-white group-hover:text-[#FFE01B] transition-colors duration-300">
+                            {form.form_name}
+                          </h3>
+                          <p className="text-gray-400 text-sm">ID: {form.id}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Calendar className="w-3 h-3 text-gray-500" />
+                            <span className="text-gray-500 text-xs">
+                              {new Date(form.created_at).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="px-3 py-1 bg-[#FFE01B]/20 text-[#FFE01B] text-xs rounded-full border border-[#FFE01B]/30">
+                          {form.submission_count || 0} submissions
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded border border-blue-500/30">
+                            {form.category}
+                          </span>
+                          <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded border border-green-500/30">
+                            {form.subcategory}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="px-2 py-1 bg-purple-500/20 text-purple-400 text-xs rounded border border-purple-500/30">
+                            {form.industry}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 pt-4 border-t border-white/10">
+                        <motion.button
+                          onClick={() => copyFormLink(form.id)}
+                          className="flex-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-blue-500/30 hover:border-blue-500 text-center text-sm flex items-center justify-center gap-1"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          {copiedFormId === form.id ? (
+                            <>
+                              <CheckCircle className="w-3 h-3" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3" />
+                              Copy Link
+                            </>
+                          )}
+                        </motion.button>
+                        <motion.button
+                          onClick={() => {
+                            setSelectedForm(form.id)
+                            loadFormSubmissions(form.id)
+                          }}
+                          className="flex-1 bg-green-500/10 hover:bg-green-500/20 text-green-400 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-green-500/30 hover:border-green-500 text-center text-sm flex items-center justify-center gap-1"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Eye className="w-3 h-3" />
+                          View Submissions
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Form Submissions Modal/Section */}
+              {selectedForm && (
+                <motion.div
+                  className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  onClick={() => setSelectedForm(null)}
+                >
+                  <motion.div
+                    className="bg-[#241C15] rounded-3xl p-8 max-w-6xl w-full max-h-[80vh] overflow-y-auto border border-white/10"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-white">Form Submissions</h3>
+                      <button
+                        onClick={() => setSelectedForm(null)}
+                        className="text-gray-400 hover:text-white transition-colors"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    {formSubmissions.length > 0 ? (
+                      <div className="space-y-4">
+                        {formSubmissions.map((submission, index) => (
+                          <motion.div
+                            key={submission.id}
+                            className="bg-white/5 rounded-2xl p-6 border border-white/10"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                          >
+                            <h4 className="text-lg font-semibold text-white mb-2">Submission #{index + 1}</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <p className="text-gray-400 text-sm mb-1">Name:</p>
+                                <p className="text-white">{submission.name}</p>
+                              </div>
+                              <div>
+                                <p className="text-gray-400 text-sm mb-1">Email:</p>
+                                <p className="text-white">{submission.email}</p>
+                              </div>
+                              <div>
+                                <p className="text-gray-400 text-sm mb-1">Phone:</p>
+                                <p className="text-white">{submission.phone}</p>
+                              </div>
+                              {submission.portfolio_url && (
+                                <div>
+                                  <p className="text-gray-400 text-sm mb-1">Portfolio:</p>
+                                  <a
+                                    href={submission.portfolio_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                                  >
+                                    View Portfolio
+                                  </a>
+                                </div>
+                              )}
+                              {submission.github_url && (
+                                <div>
+                                  <p className="text-gray-400 text-sm mb-1">GitHub:</p>
+                                  <a
+                                    href={submission.github_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                                  >
+                                    View GitHub
+                                  </a>
+                                </div>
+                              )}
+                              {submission.resume_url && (
+                                <div>
+                                  <p className="text-gray-400 text-sm mb-1">Resume:</p>
+                                  <a
+                                    href={submission.resume_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                                  >
+                                    View Resume
+                                  </a>
+                                </div>
+                              )}
+                              <div>
+                                <p className="text-gray-400 text-sm mb-1">Years of Experience:</p>
+                                <p className="text-white">{submission.years_experience}</p>
+                              </div>
+                            </div>
+                            <div>
+                              <p className="text-gray-400 text-sm mb-1">Proposal:</p>
+                              <p className="text-white">{submission.proposal}</p>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <p className="text-gray-400">No submissions found for this form.</p>
+                      </div>
+                    )}
+                  </motion.div>
+                </motion.div>
+              )}
+            </motion.div>
+          </section>
+        </>
       )}
     </div>
   )
