@@ -28,22 +28,22 @@ export default function SubmissionsPage({ params }: SubmissionsPageProps) {
 
   useEffect(() => {
     if (!formId) return
-
+    console.log("Fetching data for form ID:", formId)
     const fetchData = async () => {
       try {
         const formResponse = await fetch("/api/forms")
         const formData = await formResponse.json()
-
+        console.log("Form data fetched:", formData)
         if (!formResponse.ok) {
           throw new Error(formData.error || "Failed to fetch form")
         }
-
+        
         const currentForm = formData.forms.find((f: Form) => f.form_id === formId)
         if (!currentForm) {
           throw new Error("Form not found")
         }
         setForm(currentForm)
-
+        console.log("Current form set:", currentForm)
         const submissionsResponse = await fetch(`/api/submissions?form_id=${formId}`)
         const submissionsData = await submissionsResponse.json()
 

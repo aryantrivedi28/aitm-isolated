@@ -712,13 +712,15 @@ export default function AdminPanel() {
 
   const loadFormSubmissions = async (formId: string) => {
     setLoading(true)
+    console.log("Loading submissions for form ID:", formId)
     try {
       // Get the UUID id from forms table using text form_id
       const { data: formData, error: formError } = await supabaseAdmin
         .from("forms")
         .select("id")
-        .eq("form_id", formId)
+        .eq("id", formId)
         .single()
+      console.log("Form data fetched:", formData)
 
       if (formError || !formData) {
         setError("Form not found")
