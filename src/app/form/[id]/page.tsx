@@ -340,12 +340,12 @@ export default function FormPage({ params }: FormPageProps) {
           <p className="text-gray-600 mb-6">
             Thank you for your interest. We'll review your application and get back to you soon.
           </p>
-          <button
+          {/* <button
             onClick={() => window.location.reload()}
             className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black font-semibold py-2 px-6 rounded-lg transition-all duration-200"
           >
             Submit Another Application
-          </button>
+          </button> */}
         </motion.div>
       </div>
     )
