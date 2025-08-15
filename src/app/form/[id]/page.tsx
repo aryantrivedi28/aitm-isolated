@@ -38,10 +38,35 @@ export default function FormPage({ params }: FormPageProps) {
 
     const fetchForm = async () => {
       try {
-        const { data, error } = await supabase.from("forms").select("*").eq("id", formId).single() // Use resolved formId
+        console.log("[v0] Attempting to fetch form with formId:", formId)
 
-        if (error) throw error
+        const { data: allForms, error: listError } = await supabase.from("forms").select("*")
+        console.log("[v0] All forms in database:", allForms)
+        console.log("[v0] Total forms found:", allForms?.length || 0)
 
+        if (allForms && allForms.length > 0) {
+          console.log(
+            "[v0] Available form_ids:",
+            allForms.map((f) => f.form_id),
+          )
+        } else {
+          console.log("[v0] No forms found in database!")
+        }
+
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(formId)
+        const queryField = isUUID ? "id" : "form_id"
+
+        console.log("[v0] Detected parameter type:", isUUID ? "UUID" : "text")
+        console.log("[v0] Querying by field:", queryField)
+
+        const { data, error } = await supabase.from("forms").select("*").eq(queryField, formId).single()
+
+        if (error) {
+          console.log("[v0] Supabase error:", error)
+          throw error
+        }
+
+        console.log("[v0] Successfully fetched form:", data)
         setForm(data)
 
         const initialData: Record<string, any> = {}
@@ -60,8 +85,14 @@ export default function FormPage({ params }: FormPageProps) {
         })
         setCustomResponses(initialCustomResponses)
       } catch (err: any) {
-        console.error("Error fetching form:", err)
-        setError("Form not found or no longer available")
+        console.error("[v0] Error fetching form:", err)
+        if (err.code === "PGRST116") {
+          setError(
+            `Form with ID "${formId}" not found. Please check the URL or contact the administrator. Check browser console for available forms.`,
+          )
+        } else {
+          setError("Form not found or no longer available")
+        }
       } finally {
         setLoading(false)
       }
@@ -81,14 +112,27 @@ export default function FormPage({ params }: FormPageProps) {
         custom_responses: customResponses,
       }
 
-      // Add required fields to submission
-      form?.required_fields?.forEach((field: string) => {
+      // Add all standard fields to submission data
+      const standardFields = [
+        "name",
+        "email",
+        "phone",
+        "portfolio_link",
+        "github_link",
+        "resume_link",
+        "years_experience",
+        "proposal_link",
+      ]
+
+      standardFields.forEach((field: string) => {
         if (field === "years_experience") {
           submissionData[field] = formData[field] ? Number(formData[field]) : null
         } else {
           submissionData[field] = formData[field] || null
         }
       })
+
+      console.log("[v0] Submitting data:", submissionData) // Debug log to see what's being sent
 
       const response = await fetch("/api/submissions", {
         method: "POST",
@@ -131,11 +175,11 @@ export default function FormPage({ params }: FormPageProps) {
       name: "Full Name",
       email: "Email Address",
       phone: "Phone Number",
-      portfolio_url: "Portfolio URL",
-      github_url: "GitHub Profile",
-      resume_url: "Resume URL",
+      portfolio_link: "Portfolio URL",
+      github_link: "GitHub Profile",
+      resume_link: "Resume URL",
       years_experience: "Years of Experience",
-      proposal: "Proposal/Cover Letter",
+      proposal_link: "Proposal/Cover Letter",
     }
     return fieldLabels[fieldKey] || fieldKey
   }
@@ -296,12 +340,12 @@ export default function FormPage({ params }: FormPageProps) {
           <p className="text-gray-600 mb-6">
             Thank you for your interest. We'll review your application and get back to you soon.
           </p>
-          {/* <button
+          <button
             onClick={() => window.location.reload()}
             className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black font-semibold py-2 px-6 rounded-lg transition-all duration-200"
           >
             Submit Another Application
-          </button> */}
+          </button>
         </motion.div>
       </div>
     )
@@ -320,15 +364,9 @@ export default function FormPage({ params }: FormPageProps) {
           <h1 className="text-4xl font-bold text-white mb-4">{form?.form_name}</h1>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <span className="bg-[#FFE01B] text-black px-3 py-1 rounded-full font-medium">{form?.category}</span>
-            {/* {Array.isArray(form?.subcategory) ? (
-              form.subcategory.map((sub: string, index: number) => (
-                <span key={index} className="bg-white/10 text-white px-3 py-1 rounded-full">
-                  {sub}
-                </span>
-              ))
-            ) : (
-              <span className="bg-white/10 text-white px-3 py-1 rounded-full">{form?.subcategory}</span>
-            )} */}
+            {form?.subcategory && (
+              <span className="bg-white/10 text-white px-3 py-1 rounded-full">{form.subcategory}</span>
+            )}
             <span className="bg-white/10 text-white px-3 py-1 rounded-full">{form?.industry}</span>
           </div>
         </motion.div>
@@ -367,7 +405,7 @@ export default function FormPage({ params }: FormPageProps) {
                 )
               }
 
-              if (fieldKey === "proposal") {
+              if (fieldKey === "proposal_link") {
                 return (
                   <div key={fieldKey}>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -388,7 +426,7 @@ export default function FormPage({ params }: FormPageProps) {
               const inputType =
                 fieldKey === "email"
                   ? "email"
-                  : fieldKey.includes("url")
+                  : fieldKey.includes("link")
                     ? "url"
                     : fieldKey === "phone"
                       ? "tel"
@@ -412,8 +450,8 @@ export default function FormPage({ params }: FormPageProps) {
                           ? "your.email@example.com"
                           : fieldKey === "phone"
                             ? "+1 (555) 123-4567"
-                            : fieldKey.includes("url")
-                              ? `https://your${fieldKey.replace("_url", "")}.com`
+                            : fieldKey.includes("link")
+                              ? `https://your${fieldKey.replace("link", "")}.com`
                               : `Enter your ${label.toLowerCase()}`
                     }
                   />

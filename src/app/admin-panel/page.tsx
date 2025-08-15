@@ -102,12 +102,14 @@ type Form = {
   id: string
   form_name: string
   category: string
-  subcategory: string[]
+  subcategory: string // Changed from string[] to string to match database
   industry: string
-  tech_stack?: string[]
-  tools?: string[]
+  tech_stack?: string // Changed from string[] to string to match database
+  tools?: string // Changed from string[] to string to match database
   created_at: string
   submission_count?: number
+  required_fields?: string[]
+  custom_questions?: any[]
 }
 
 type FormSubmission = {
@@ -116,11 +118,12 @@ type FormSubmission = {
   name: string
   email: string
   phone: string
-  portfolio_url?: string
-  github_url?: string
-  resume_url?: string
-  years_experience: number
-  proposal: string
+  portfolio_link?: string // Fixed field name to match database
+  github_link?: string // Fixed field name to match database
+  resume_link?: string // Fixed field name to match database
+  years_experience?: number
+  proposal_link?: string
+  custom_responses?: any
   created_at: string
 }
 
@@ -288,7 +291,7 @@ export default function AdminPanel() {
     "name",
     "email",
     "phone",
-    "resume_url",
+    "resume_link",
   ])
   const [customQuestions, setCustomQuestions] = useState<
     Array<{
@@ -304,11 +307,11 @@ export default function AdminPanel() {
     { key: "name", label: "Full Name" },
     { key: "email", label: "Email Address" },
     { key: "phone", label: "Phone Number" },
-    { key: "portfolio_url", label: "Portfolio URL" },
-    { key: "github_url", label: "GitHub URL" },
-    { key: "resume_url", label: "Resume URL" },
+    { key: "portfolio_link", label: "Portfolio URL" }, // Fixed field name
+    { key: "github_link", label: "GitHub URL" }, // Fixed field name
+    { key: "resume_link", label: "Resume URL" }, // Fixed field name
     { key: "years_experience", label: "Years of Experience" },
-    { key: "proposal", label: "Proposal/Cover Letter" },
+    { key: "proposal_link", label: "Proposal/Cover Letter" }, // Fixed field name
   ]
 
   useEffect(() => {
@@ -606,7 +609,6 @@ export default function AdminPanel() {
     }
   }
 
-
   const validateFormCreation = () => {
     const missingFields: string[] = []
 
@@ -634,10 +636,13 @@ export default function AdminPanel() {
 
     try {
       const formData = {
-        ...newForm,
-        subcategory: selectedSubcategories,
-        tech_stack: selectedTechStacks,
-        tools: selectedTools,
+        form_id: newForm.form_id,
+        form_name: newForm.form_name,
+        industry: newForm.industry,
+        category: newForm.category,
+        subcategory: selectedSubcategories.join(", "), // Convert array to comma-separated string
+        tech_stack: selectedTechStacks.join(", "), // Convert array to comma-separated string
+        tools: selectedTools.join(", "), // Convert array to comma-separated string
         required_fields: selectedRequiredFields,
         custom_questions: customQuestions,
       }
@@ -661,7 +666,7 @@ export default function AdminPanel() {
           tech_stack: [],
           tools: [],
         })
-        setSelectedRequiredFields(["name", "email", "phone", "resume_url"])
+        setSelectedRequiredFields(["name", "email", "phone", "resume_link"]) // Fixed field name
         setCustomQuestions([])
         setShowCreateForm(false)
         // Reset all selections
@@ -671,10 +676,7 @@ export default function AdminPanel() {
         setSelectedSubcategories([])
         setSelectedTechStacks([])
         setSelectedTools([])
-        setShowOtherCategory(false)
-        setShowOtherSubcategory(false)
-        setShowOtherTechStack(false)
-        setShowOtherTools(false)
+        await loadForms()
       }
     } catch (err: any) {
       setError("Error creating form: " + err.message)
@@ -711,10 +713,25 @@ export default function AdminPanel() {
   const loadFormSubmissions = async (formId: string) => {
     setLoading(true)
     try {
+      // Get the UUID id from forms table using text form_id
+      const { data: formData, error: formError } = await supabaseAdmin
+        .from("forms")
+        .select("id")
+        .eq("form_id", formId)
+        .single()
+
+      if (formError || !formData) {
+        setError("Form not found")
+        setFormSubmissions([])
+        setLoading(false)
+        return
+      }
+
+      // Query submissions using UUID id
       const { data, error } = await supabaseAdmin
         .from("freelancer_submissions")
         .select("*")
-        .eq("form_id", formId)
+        .eq("form_id", formData.id) // Use UUID id
         .order("created_at", { ascending: false })
 
       if (error) {
@@ -1899,11 +1916,11 @@ export default function AdminPanel() {
                                 <p className="text-gray-400 text-sm mb-1">Phone:</p>
                                 <p className="text-white">{submission.phone}</p>
                               </div>
-                              {submission.portfolio_url && (
+                              {submission.portfolio_link && (
                                 <div>
                                   <p className="text-gray-400 text-sm mb-1">Portfolio:</p>
                                   <a
-                                    href={submission.portfolio_url}
+                                    href={submission.portfolio_link}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-400 hover:text-blue-300 transition-colors"
@@ -1912,11 +1929,11 @@ export default function AdminPanel() {
                                   </a>
                                 </div>
                               )}
-                              {submission.github_url && (
+                              {submission.github_link && (
                                 <div>
                                   <p className="text-gray-400 text-sm mb-1">GitHub:</p>
                                   <a
-                                    href={submission.github_url}
+                                    href={submission.github_link}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-400 hover:text-blue-300 transition-colors"
@@ -1925,11 +1942,11 @@ export default function AdminPanel() {
                                   </a>
                                 </div>
                               )}
-                              {submission.resume_url && (
+                              {submission.resume_link && (
                                 <div>
                                   <p className="text-gray-400 text-sm mb-1">Resume:</p>
                                   <a
-                                    href={submission.resume_url}
+                                    href={submission.resume_link}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-400 hover:text-blue-300 transition-colors"
@@ -1945,7 +1962,7 @@ export default function AdminPanel() {
                             </div>
                             <div>
                               <p className="text-gray-400 text-sm mb-1">Proposal:</p>
-                              <p className="text-white">{submission.proposal}</p>
+                              <p className="text-white">{submission.proposal_link}</p>
                             </div>
                           </motion.div>
                         ))}
