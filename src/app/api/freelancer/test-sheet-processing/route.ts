@@ -3,7 +3,7 @@ import { ProcessingService } from "../../../../lib/services/processingService"
 
 export async function POST(request: NextRequest) {
 const body = await request.json()
-   const sheetUrl = body.sheetUrl
+   const {sheetUrl, sheetName} = body.sheetUrl
     const processingService = new ProcessingService(sheetUrl)
 
   try {
@@ -15,7 +15,7 @@ const body = await request.json()
 
     // Get sheet info first
     const sheetsService = processingService["sheetsService"]
-    const sheetInfo = await sheetsService.getSheetInfo()
+    const sheetInfo = await sheetsService.getSheetInfo(sheetName)
 
     console.log("📋 Sheet Information:")
     console.log("  Title:", sheetInfo?.spreadsheetTitle)
@@ -26,7 +26,7 @@ const body = await request.json()
 
     // Get unprocessed rows for testing
     console.log("\n🔍 Getting unprocessed rows...")
-    const unprocessedRows = await sheetsService.getUnprocessedRows()
+    const unprocessedRows = await sheetsService.getUnprocessedRows(sheetName)
     console.log(`📊 Found ${unprocessedRows.length} unprocessed rows`)
 
     if (unprocessedRows.length === 0) {
