@@ -2,11 +2,11 @@ import puppeteer, { type Browser } from "puppeteer"
 import * as cheerio from "cheerio"
 import mammoth from "mammoth"
 import PDFParser from "pdf2json"
-import axios from "axios";
+import axios from "axios"
 
 // Configuration constants
 const CONFIG = {
-  MAX_PORTFOLIO_CHARS: 5000,
+  MAX_PORTFOLIO_CHARS: 50000,
   SCRAPING_TIMEOUT: 15000,
   FETCH_TIMEOUT: 10000,
 }
@@ -182,56 +182,125 @@ Current file ID: ${fileId}`
     }
   }
 
-private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const fileId = this.extractFileId(fileUrl);
-      const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+  private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const fileId = this.extractFileId(fileUrl)
+        const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`
 
-      const response = await axios.get(downloadUrl, {
-        responseType: "arraybuffer",
-      });
+        const response = await axios.get(downloadUrl, {
+          responseType: "arraybuffer",
+          timeout: 10000, // Added timeout to prevent hanging
+        })
 
-      const buffer = Buffer.from(response.data, "utf-8");
+        const buffer = Buffer.from(response.data)
 
-      const pdfParser = new PDFParser();
-      pdfParser.on("pdfParser_dataError", (errData) => reject(errData.parserError));
-      pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
-        const texts: string[] = [];
+        if (!buffer || buffer.length === 0) {
+          throw new Error("Empty or invalid PDF buffer")
+        }
 
-        const pages = pdfData?.FormImage?.Pages ?? [];
-        pages.forEach((page: any) => {
-          page.Texts.forEach((textItem: any) => {
-            const rawText = textItem.R.map((r: any) => decodeURIComponent(r.T)).join(" ");
-            texts.push(rawText);
-          });
-        });
+        const pdfHeader = buffer.toString("hex", 0, 4)
+        if (pdfHeader !== "25504446") {
+          // %PDF in hex
+          throw new Error("File is not a valid PDF")
+        }
 
-        const fullText = texts.join(" ").replace(/\s+/g, " ").trim();
-        resolve(fullText);
-      });
+        const pdfParser = new PDFParser()
 
-      pdfParser.parseBuffer(buffer);
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
+        const parseTimeout = setTimeout(() => {
+          reject(new Error("PDF parsing timeout - file may be corrupted"))
+        }, 15000)
 
+        pdfParser.on("pdfParser_dataError", (errData) => {
+          clearTimeout(parseTimeout)
+          console.error("PDF parsing error:", errData.parserError)
+          reject(new Error(`PDF parsing failed: ${errData.parserError}`))
+        })
+
+        pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
+          clearTimeout(parseTimeout)
+          try {
+            const texts: string[] = []
+
+            if (!pdfData || !pdfData.FormImage || !pdfData.FormImage.Pages) {
+              throw new Error("Invalid PDF data structure")
+            }
+
+            const pages = pdfData.FormImage.Pages
+            pages.forEach((page: any) => {
+              if (page && page.Texts && Array.isArray(page.Texts)) {
+                page.Texts.forEach((textItem: any) => {
+                  if (textItem && textItem.R && Array.isArray(textItem.R)) {
+                    const rawText = textItem.R.map((r: any) => {
+                      try {
+                        return decodeURIComponent(r.T || "")
+                      } catch (e) {
+                        return r.T || ""
+                      }
+                    }).join(" ")
+                    if (rawText.trim()) {
+                      texts.push(rawText)
+                    }
+                  }
+                })
+              }
+            })
+
+            const fullText = texts.join(" ").replace(/\s+/g, " ").trim()
+
+            if (fullText.length < 10) {
+              throw new Error("No readable text extracted from PDF")
+            }
+
+            resolve(fullText)
+          } catch (error) {
+            reject(new Error(`Error processing PDF data: ${error instanceof Error ? error.message : "Unknown error"}`))
+          }
+        })
+
+        try {
+          pdfParser.parseBuffer(buffer)
+        } catch (error) {
+          clearTimeout(parseTimeout)
+          reject(new Error(`Failed to start PDF parsing: ${error instanceof Error ? error.message : "Unknown error"}`))
+        }
+      } catch (error) {
+        reject(new Error(`PDF download failed: ${error instanceof Error ? error.message : "Unknown error"}`))
+      }
+    })
+  }
 
   private async extractTextWithPdf2Json(buffer: Buffer): Promise<string> {
     return new Promise((resolve, reject) => {
       console.log("🔍 Using pdf2json for PDF parsing...")
 
-      const pdfParser = new PDFParser(null) // null for this context, 1 for verbosity
+      if (!buffer || buffer.length === 0) {
+        reject(new Error("Empty or invalid PDF buffer"))
+        return
+      }
+
+      const pdfHeader = buffer.toString("hex", 0, 4)
+      if (pdfHeader !== "25504446") {
+        // %PDF in hex
+        reject(new Error("File is not a valid PDF"))
+        return
+      }
+
+      const pdfParser = new PDFParser()
+
+      const parseTimeout = setTimeout(() => {
+        reject(new Error("PDF parsing timeout - file may be corrupted or too large"))
+      }, 20000)
 
       // Set up event handlers
       pdfParser.on("pdfParser_dataError", (errData: any) => {
+        clearTimeout(parseTimeout)
         console.error("❌ pdf2json parsing error:", errData.parserError)
         reject(new Error(`PDF parsing failed: ${errData.parserError}`))
       })
 
       pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
+        clearTimeout(parseTimeout)
         try {
           console.log("✅ pdf2json parsing successful")
 
@@ -254,8 +323,11 @@ private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
       try {
         pdfParser.parseBuffer(buffer)
       } catch (error) {
+        clearTimeout(parseTimeout)
         console.error("❌ Error starting PDF parsing:", error)
-        reject(error)
+        reject(
+          new Error(`Failed to initialize PDF parser: ${error instanceof Error ? error.message : "Unknown error"}`),
+        )
       }
     })
   }
@@ -264,30 +336,47 @@ private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
     const textParts: string[] = []
 
     try {
-      // pdf2json structure: pdfData.Pages is an array of pages
-      if (pdfData && pdfData.Pages && Array.isArray(pdfData.Pages)) {
-        console.log(`📄 Processing ${pdfData.Pages.length} pages`)
-
-        pdfData.Pages.forEach((page: any, pageIndex: number) => {
-          console.log(`📄 Processing page ${pageIndex + 1}`)
-
-          if (page.Texts && Array.isArray(page.Texts)) {
-            page.Texts.forEach((textItem: any) => {
-              if (textItem.R && Array.isArray(textItem.R)) {
-                textItem.R.forEach((textRun: any) => {
-                  if (textRun.T) {
-                    // Decode the text (pdf2json uses URI encoding)
-                    const decodedText = decodeURIComponent(textRun.T)
-                    if (decodedText && decodedText.trim().length > 0) {
-                      textParts.push(decodedText)
-                    }
-                  }
-                })
-              }
-            })
-          }
-        })
+      if (!pdfData) {
+        throw new Error("PDF data is null or undefined")
       }
+
+      if (!pdfData.Pages || !Array.isArray(pdfData.Pages)) {
+        throw new Error("PDF data does not contain valid pages array")
+      }
+
+      console.log(`📄 Processing ${pdfData.Pages.length} pages`)
+
+      pdfData.Pages.forEach((page: any, pageIndex: number) => {
+        console.log(`📄 Processing page ${pageIndex + 1}`)
+
+        if (!page || !page.Texts || !Array.isArray(page.Texts)) {
+          console.warn(`⚠️ Page ${pageIndex + 1} has no valid text data`)
+          return
+        }
+
+        page.Texts.forEach((textItem: any) => {
+          if (!textItem || !textItem.R || !Array.isArray(textItem.R)) {
+            return
+          }
+
+          textItem.R.forEach((textRun: any) => {
+            if (textRun && textRun.T) {
+              try {
+                // Decode the text (pdf2json uses URI encoding)
+                const decodedText = decodeURIComponent(textRun.T)
+                if (decodedText && decodedText.trim().length > 0) {
+                  textParts.push(decodedText)
+                }
+              } catch (decodeError) {
+                // If decoding fails, use raw text
+                if (textRun.T && textRun.T.trim().length > 0) {
+                  textParts.push(textRun.T)
+                }
+              }
+            }
+          })
+        })
+      })
 
       const fullText = textParts.join(" ")
       console.log(`📊 Extracted text parts: ${textParts.length}, Total length: ${fullText.length}`)
@@ -297,16 +386,6 @@ private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
       console.error("❌ Error extracting text from PDF data:", error)
       throw error
     }
-  }
-
-  private isReadableText(text: string): boolean {
-    // Check if text contains mostly readable characters
-    const readableChars = text.match(/[a-zA-Z0-9\s.,!?@-]/g)
-    const totalChars = text.length
-    const readableRatio = readableChars ? readableChars.length / totalChars : 0
-
-    console.log(`📊 Text readability: ${Math.round(readableRatio * 100)}% readable characters`)
-    return readableRatio > 0.7 // At least 70% readable characters
   }
 
   private async tryGoogleDocsExport(fileUrl: string): Promise<string> {
@@ -512,6 +591,20 @@ private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
     return keywordCount >= 2 && text.length < 200
   }
 
+  private isReadableText(text: string): boolean {
+    if (!text || text.length < 20) return false
+
+    // Check for meaningful content patterns
+    const hasLetters = /[a-zA-Z]/.test(text)
+    const hasWords = text.split(/\s+/).length > 5
+    const notJustSymbols = !/^[^a-zA-Z0-9\s]*$/.test(text)
+
+    // Check if it's not just interface text
+    const notInterfaceText = !this.isDriveInterfaceText(text)
+
+    return hasLetters && hasWords && notJustSymbols && notInterfaceText
+  }
+
   private async checkFileAccess(fileId: string): Promise<{ accessible: boolean; message: string }> {
     try {
       // Try a simple HEAD request to check if file is accessible
@@ -692,57 +785,55 @@ private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
     return cleaned
   }
 
-private extractDriveFileId(url: string): string | null {
-    const match = url.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
-    return match ? match[1] : null;
+  private extractDriveFileId(url: string): string | null {
+    const match = url.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/)
+    return match ? match[1] : null
   }
 
   private async fetchPdfBufferFromDrive(url: string): Promise<Buffer | null> {
-    const fileId = this.extractDriveFileId(url);
-    if (!fileId) return null;
+    const fileId = this.extractDriveFileId(url)
+    if (!fileId) return null
 
-    const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+    const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`
 
     try {
       const response = await axios.get(downloadUrl, {
         responseType: "arraybuffer",
-      });
-      return Buffer.from(response.data);
+      })
+      return Buffer.from(response.data)
     } catch (error: any) {
-      console.error("Failed to fetch PDF buffer:", error.message);
-      return null;
+      console.error("Failed to fetch PDF buffer:", error.message)
+      return null
     }
   }
 
   private parsePdfBuffer(buffer: Buffer): Promise<string> {
     return new Promise((resolve, reject) => {
-      const pdfParser = new PDFParser();
+      const pdfParser = new PDFParser()
 
       pdfParser.on("pdfParser_dataError", (errData) => {
-        console.error("PDF parse error:", errData.parserError);
-        resolve(""); // Fallback
-      });
+        console.error("PDF parse error:", errData.parserError)
+        resolve("") // Fallback
+      })
 
-pdfParser.on("pdfParser_dataReady", (pdfData) => {
-  const texts: string[] = [];
+      pdfParser.on("pdfParser_dataReady", (pdfData) => {
+        const texts: string[] = []
 
-  const pages = (pdfData as any).FormImage.Pages;
-  pages.forEach((page: any) => {
-    page.Texts.forEach((textItem: any) => {
-      const rawText = textItem.R.map((r: any) => decodeURIComponent(r.T)).join(" ");
-      texts.push(rawText);
-    });
-  });
+        const pages = (pdfData as any).FormImage.Pages
+        pages.forEach((page: any) => {
+          page.Texts.forEach((textItem: any) => {
+            const rawText = textItem.R.map((r: any) => decodeURIComponent(r.T)).join(" ")
+            texts.push(rawText)
+          })
+        })
 
-  const fullText = texts.join(" ").replace(/\s+/g, " ").trim();
-  resolve(fullText);
-});
+        const fullText = texts.join(" ").replace(/\s+/g, " ").trim()
+        resolve(fullText)
+      })
 
-
-      pdfParser.parseBuffer(buffer);
-    });
+      pdfParser.parseBuffer(buffer)
+    })
   }
-
 
   async parsePortfolio(url: string): Promise<string> {
     if (!this.browser) throw new Error("Browser not initialized")

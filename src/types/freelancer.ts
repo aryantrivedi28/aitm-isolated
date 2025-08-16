@@ -1,36 +1,38 @@
 export interface FreelancerData {
-  timestamp?: string
-  name: string
+  name?: string
   email?: string
-  portfolioUrl?: string
-  resumeFile?: string
-  proposalText?: string
+  phone?: string
   github?: string
-  portfolioContent?: string
   resumeContent?: string
+  portfolioContent?: string
   proposalContent?: string
+  githubContent?: string
+  [key: string]: any // Allow additional dynamic fields
 }
 
 export interface AIAnalysisResult {
-  rating: number // 0-90 for DevOps scoring
+  rating: number
   review: string
 }
 
-export interface ProcessingStatus {
-  isRunning: boolean
-  processedCount: number
-  totalCount: number
-  errors: string[]
+export interface SheetColumnMapping {
+  nameColumn?: string
+  emailColumn?: string
+  phoneColumn?: string
+  resumeColumn?: string
+  portfolioColumn?: string
+  githubColumn?: string
+  proposalColumn?: string
+  ratingColumn?: string
+  reviewColumn?: string
+  experienceColumn?: string
+  [key: string]: string | undefined
 }
 
-export interface DevOpsSignals {
-  releasePipelines: number
-  cicdDesign: number
-  cloudArchitecture: number
-  infrastructureAsCode: number
-  containerization: number
-  observability: number
-  security: number
-  ownership: number
-  experience: number
+export interface SheetInfo {
+  spreadsheetTitle: string
+  sheetTitle: string
+  rowCount: number
+  columnCount: number
+  headerRow: string[]
 }

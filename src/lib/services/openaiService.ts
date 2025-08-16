@@ -128,7 +128,7 @@ Proposal: ${data.proposalContent || "No proposal provided"}
       const signals: number[] = []
 
       for (let i = 1; i <= 9; i++) {
-        let score = parseInt(parsed[`SIGNAL_${i}`])
+        let score = Number.parseInt(parsed[`SIGNAL_${i}`])
         if (isNaN(score)) score = 0
         signals.push(Math.max(0, Math.min(10, score)))
       }
@@ -150,9 +150,7 @@ Proposal: ${data.proposalContent || "No proposal provided"}
         "Experience (Years)",
       ]
 
-      const breakdown = signals
-        .map((s, i) => `${signalNames[i]}: ${s}/10`)
-        .join(", ")
+      const breakdown = signals.map((s, i) => `${signalNames[i]}: ${s}/10`).join(", ")
 
       const detailedReview = `${displayRating}/10 - ${verdict} candidate. Breakdown: ${breakdown}. ${review}`
 

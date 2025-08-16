@@ -82,7 +82,7 @@ export class ProcessingService {
       await this.initialize()
 
       // Get sheet info for debugging
-      const sheetInfo = await this.sheetsService.getSheetInfo()
+      const sheetInfo = await this.sheetsService.getSheetInfo(this.sheetId)
       console.log("📋 Sheet info:", JSON.stringify(sheetInfo, null, 2))
 
       console.log(`\n📂 Processing main sheet...`)
@@ -101,7 +101,7 @@ export class ProcessingService {
 
   private async processMainSheet(): Promise<void> {
     try {
-      const unprocessedRows = await this.sheetsService.getUnprocessedRows()
+      const unprocessedRows = await this.sheetsService.getUnprocessedRows("MainSheet")
 
       if (unprocessedRows.length === 0) {
         console.log(`ℹ️  No new submissions found`)
@@ -173,7 +173,9 @@ export class ProcessingService {
         const errorMessage =
           "❌ INSUFFICIENT DATA: Missing proposal text/file, resume file, and portfolio. Please provide at least one of these for evaluation. Contact support if you need help."
 
-        const success = await this.sheetsService.updateRowWithRating(row.rowNumber - 1, 0, errorMessage)
+        const ratingColumn = "Rating" // Replace with the actual column name for ratings
+        const reviewColumn = "Review" // Replace with the actual column name for reviews
+        const success = await this.sheetsService.updateRowWithRating(row.rowNumber - 1, 0, errorMessage, ratingColumn, reviewColumn)
 
         if (success) {
           console.log(`✅ Updated ${candidateData.name} with data requirement message`)
@@ -225,7 +227,7 @@ export class ProcessingService {
 
         const fileAccessMessage = this.generateFileAccessMessage(candidateData)
 
-        const success = await this.sheetsService.updateRowWithRating(row.rowNumber, 0, fileAccessMessage)
+        const success = await this.sheetsService.updateRowWithRating(row.rowNumber, 0, fileAccessMessage, "Rating", "Review")
 
         if (success) {
           console.log(`✅ Updated ${candidateData.name} with file access guidance`)
@@ -253,7 +255,7 @@ export class ProcessingService {
 
       // Step 5: Update sheet with results
       console.log("💾 Updating sheet with rating...")
-      const success = await this.sheetsService.updateRowWithRating(row.rowNumber - 1, aiResults.rating, finalReview)
+      const success = await this.sheetsService.updateRowWithRating(row.rowNumber - 1, aiResults.rating, finalReview, "Rating", "Review")
 
       if (success) {
         console.log(`✅ Successfully processed ${candidateData.name} - Rating: ${aiResults.rating}/10`)

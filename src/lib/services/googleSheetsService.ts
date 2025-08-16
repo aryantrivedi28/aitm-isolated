@@ -1,7 +1,7 @@
 import { GoogleSpreadsheet } from "google-spreadsheet"
 import { JWT } from "google-auth-library"
 import { CONFIG } from "../config"
-  import axios from "axios"
+import axios from "axios"
 
 export class GoogleSheetsService {
   private doc: GoogleSpreadsheet
@@ -41,7 +41,7 @@ export class GoogleSheetsService {
     }
   }
 
-  async getUnprocessedRows() {
+  async getUnprocessedRows(sheetName: any) {
     try {
       const sheet = await this.getMainSheet()
       if (!sheet) return []
@@ -49,16 +49,15 @@ export class GoogleSheetsService {
       await sheet.loadHeaderRow()
       const rows = await sheet.getRows()
 
-      const ratingColumnName = sheet.headerValues.find(h =>
-        h?.toLowerCase().includes("rating")
-      )
+      const ratingColumnName = sheet.headerValues.find((h) => h?.toLowerCase().includes("rating"))
 
       const unprocessedRows = rows.filter((row, index) => {
         const ratingValue = ratingColumnName ? row.get(ratingColumnName) : ""
         const isUnprocessed = !ratingValue || ratingValue.toString().trim() === ""
         console.log(
-          `${isUnprocessed ? "📝 Needs processing" : "✅ Already processed"} — Row ${index + 2
-          }: ${row.get("Name") || "Unnamed"}`
+          `${isUnprocessed ? "📝 Needs processing" : "✅ Already processed"} — Row ${
+            index + 2
+          }: ${row.get("Name") || "Unnamed"}`,
         )
         return isUnprocessed
       })
@@ -70,103 +69,94 @@ export class GoogleSheetsService {
     }
   }
 
+  // Add inside your class
+  async checkDriveLinkAccess(columnName = "Drive Link") {
+    try {
+      const sheet = await this.getMainSheet()
+      if (!sheet) return []
 
+      await sheet.loadHeaderRow()
+      const rows = await sheet.getRows()
 
-// Add inside your class
-async checkDriveLinkAccess(columnName = "Drive Link") {
-  try {
-    const sheet = await this.getMainSheet()
-    if (!sheet) return []
+      const results = []
 
-    await sheet.loadHeaderRow()
-    const rows = await sheet.getRows()
+      for (const row of rows) {
+        const link = row.get(columnName)
 
-    const results = []
+        if (!link) {
+          results.push({ name: row.get("Name"), link, status: "❌ No link" })
+          continue
+        }
 
-    for (const row of rows) {
-      const link = row.get(columnName)
+        try {
+          const res = await axios.get(link, {
+            maxRedirects: 5,
+            validateStatus: (status) => status < 500,
+          })
 
-      if (!link) {
-        results.push({ name: row.get("Name"), link, status: "❌ No link" })
-        continue
+          const isPublic = res.status === 200
+
+          results.push({
+            name: row.get("Name"),
+            link,
+            status: isPublic ? "✅ Public" : `⚠️ Not Public (${res.status})`,
+          })
+        } catch (err: any) {
+          results.push({
+            name: row.get("Name"),
+            link,
+            status: `❌ Error (${err.response?.status || "Network"})`,
+          })
+        }
       }
 
-      try {
-        const res = await axios.get(link, {
-          maxRedirects: 5,
-          validateStatus: status => status < 500,
-        })
+      console.table(results)
+      return results
+    } catch (error) {
+      console.error("❌ Error checking Drive links:", error)
+      return []
+    }
+  }
 
-        const isPublic = res.status === 200
+  async updateRowWithRating(rowIndex: number, rating: number, review: string, ratingColumn: any, reviewColumn: any): Promise<boolean> {
+    try {
+      const sheet = await this.getMainSheet()
+      if (!sheet) return false
 
-        results.push({
-          name: row.get("Name"),
-          link,
-          status: isPublic ? "✅ Public" : `⚠️ Not Public (${res.status})`,
-        })
-      } catch (err: any) {
-        results.push({
-          name: row.get("Name"),
-          link,
-          status: `❌ Error (${err.response?.status || "Network"})`,
-        })
+      await sheet.loadHeaderRow()
+      const rows = await sheet.getRows()
+      const dataRowIndex = rowIndex - 2
+
+      if (dataRowIndex < 0 || dataRowIndex >= rows.length) {
+        console.error(`❌ Invalid row index: ${rowIndex}`)
+        return false
       }
-    }
 
-    console.table(results)
-    return results
-  } catch (error) {
-    console.error("❌ Error checking Drive links:", error)
-    return []
-  }
-}
+      const row = rows[dataRowIndex]
 
+      const ratingColumn = sheet.headerValues.find((h) => h?.toLowerCase().includes("rating"))
 
-async updateRowWithRating(rowIndex: number, rating: number, review: string): Promise<boolean> {
-  try {
-    const sheet = await this.getMainSheet()
-    if (!sheet) return false
+      const reviewColumn = sheet.headerValues.find((h) => h?.toLowerCase().includes("review"))
 
-    await sheet.loadHeaderRow()
-    const rows = await sheet.getRows()
-    const dataRowIndex = rowIndex - 2
+      if (!ratingColumn || !reviewColumn) {
+        console.error("❌ Missing 'Rating' or 'Review' columns in the sheet.")
+        return false
+      }
 
-    if (dataRowIndex < 0 || dataRowIndex >= rows.length) {
-      console.error(`❌ Invalid row index: ${rowIndex}`)
+      row.set(ratingColumn, rating)
+      row.set(reviewColumn, review)
+
+      await row.save()
+
+      console.log(`✅ Row ${rowIndex} updated — Rating: ${rating}, Review: ${review}`)
+      return true
+    } catch (error) {
+      console.error("❌ Error updating row:", error)
       return false
     }
-
-    const row = rows[dataRowIndex]
-
-    const ratingColumn = sheet.headerValues.find(h =>
-      h?.toLowerCase().includes("rating")
-    )
-
-    const reviewColumn = sheet.headerValues.find(h =>
-      h?.toLowerCase().includes("review")
-    )
-
-    if (!ratingColumn || !reviewColumn) {
-      console.error("❌ Missing 'Rating' or 'Review' columns in the sheet.")
-      return false
-    }
-
-    row.set(ratingColumn, rating)
-    row.set(reviewColumn, review)
-
-    await row.save()
-
-    console.log(`✅ Row ${rowIndex} updated — Rating: ${rating}, Review: ${review}`)
-    return true
-  } catch (error) {
-    console.error("❌ Error updating row:", error)
-    return false
   }
-}
 
-
-
-  async getSheetInfo() {
+  async getSheetInfo(sheetName: any) {
     try {
       await this.initialize()
       const sheet = await this.getMainSheet()
