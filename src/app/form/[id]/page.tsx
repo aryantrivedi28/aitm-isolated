@@ -449,7 +449,7 @@ export default function FormPage({ params }: FormPageProps) {
                         : fieldKey === "email"
                           ? "your.email@example.com"
                           : fieldKey === "phone"
-                            ? "+1 (555) 123-4567"
+                            ? "1234567890"
                             : fieldKey.includes("link")
                               ? `https://your${fieldKey.replace("link", "")}.com`
                               : `Enter your ${label.toLowerCase()}`

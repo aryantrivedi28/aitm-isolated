@@ -1,5 +1,5 @@
 "use client"
-
+import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { motion, type Variants } from "framer-motion"
 import {
@@ -100,6 +100,7 @@ type Freelancer = {
 
 type Form = {
   id: string
+  form_id: string
   form_name: string
   category: string
   subcategory: string // Changed from string[] to string to match database
@@ -236,6 +237,7 @@ const industryOptions: IndustryOptions = {
 }
 
 export default function AdminPanel() {
+  const router = useRouter()
   const [mounted, setMounted] = useState(false)
   const [activeTab, setActiveTab] = useState<"freelancers" | "forms">("freelancers")
 
@@ -286,7 +288,7 @@ export default function AdminPanel() {
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
   const [selectedTechStacks, setSelectedTechStacks] = useState<string[]>([])
   const [selectedTools, setSelectedTools] = useState<string[]>([])
-
+  const [dashboard, setDashboard] =  useState<string>("");
   const [selectedRequiredFields, setSelectedRequiredFields] = useState<string[]>([
     "name",
     "email",
@@ -415,6 +417,11 @@ export default function AdminPanel() {
       setLoading(false)
     }
   }
+
+  const handleNavigation = (path: string) => {
+    setDashboard(path);       // change button color
+    router.push(path);        // navigate to page
+  };
 
   const loadAllFreelancers = async () => {
     if (typeof window === "undefined") return
@@ -824,7 +831,7 @@ export default function AdminPanel() {
             rotate: { duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
             scale: { duration: 12, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE01B] opacity-5 rounded-full"
+          className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE01B] opacity-10 rounded-full"
         />
         <motion.div
           animate={{
@@ -835,7 +842,7 @@ export default function AdminPanel() {
             rotate: { duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
             scale: { duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B] opacity-3 rounded-full"
+          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B] opacity-10 rounded-full"
         />
         <motion.div
           animate={{
@@ -846,7 +853,7 @@ export default function AdminPanel() {
             rotate: { duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
             scale: { duration: 10, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FFE01B] opacity-4 rounded-full"
+          className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FFE01B] opacity-10 rounded-full"
         />
       </div>
 
@@ -922,6 +929,15 @@ export default function AdminPanel() {
               >
                 <FileText className="w-5 h-5" />
                 Form Management
+              </button>
+              <button
+                onClick={() => handleNavigation("/admin-form-creation/dashboard")}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  dashboard === "/admin-form-creation/dashboard" ? "bg-[#FFE01B] text-[#241C15]" : "bg-white/10 text-white hover:bg-white/20"
+                }`}
+              >
+                <FileText className="w-5 h-5" />
+                Form Dashboard
               </button>
             </motion.div>
 
@@ -1805,7 +1821,7 @@ export default function AdminPanel() {
                           <h3 className="text-xl font-bold text-white group-hover:text-[#FFE01B] transition-colors duration-300">
                             {form.form_name}
                           </h3>
-                          <p className="text-gray-400 text-sm">ID: {form.id}</p>
+                          <p className="text-gray-400 text-sm">ID: {form.form_id}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <Calendar className="w-3 h-3 text-gray-500" />
                             <span className="text-gray-500 text-xs">
