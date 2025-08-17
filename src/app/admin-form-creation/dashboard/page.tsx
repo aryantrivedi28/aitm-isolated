@@ -29,7 +29,7 @@ export default function AdminDashboard() {
         const formsWithStats = await Promise.all(
           formsData.forms.map(async (form: Form) => {
             try {
-              const submissionsResponse = await fetch(`/api/submissions?form_id=${form.form_id}`)
+              const submissionsResponse = await fetch(`/api/submissions?form_id=${form.id}`)
               const submissionsData = await submissionsResponse.json()
               return {
                 ...form,
@@ -205,7 +205,7 @@ export default function AdminDashboard() {
                       Copy Link
                     </button>
                     <Link
-                      href={`/admin/forms/${form.form_id}/submissions`}
+                      href={`/admin/forms/${form.id}/submissions`}
                       className="px-4 py-2 bg-[#241C15] text-white rounded-lg hover:bg-[#241C15]/90 transition-all duration-200 text-sm font-medium text-center"
                     >
                       View Submissions ({form.submission_count})

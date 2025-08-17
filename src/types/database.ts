@@ -7,6 +7,7 @@ export interface CustomQuestion {
 }
 
 export interface Form {
+  id: string
   form_id: string // Changed from 'id' to 'form_id' to support custom IDs
   form_name: string
   category: string
