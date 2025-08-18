@@ -157,7 +157,7 @@ type CategoryOptions = {
 
 const categoryOptions: CategoryOptions = {
   Development: {
-    subcategories: ["Frontend", "Backend", "Full Stack", "Mobile", "DevOps"],
+    subcategories: ["Frontend", "Backend", "Full Stack", "Mobile App Development", "DevOps"],
     techStacks: ["React", "Vue", "Angular", "Node.js", "Python", "Java", "PHP", ".NET", "React Native", "Flutter"],
     tools: {
       React: ["Redux", "Next.js", "Material-UI", "Styled Components", "TypeScript"],
@@ -259,6 +259,7 @@ export default function AdminPanel() {
   const [newForm, setNewForm] = useState({
     form_id: "",
     form_name: "",
+    form_description: "",
     industry: "",
     category: "",
     subcategory: [] as string[],
@@ -621,6 +622,7 @@ export default function AdminPanel() {
 
     if (!newForm.form_id.trim()) missingFields.push("Form ID")
     if (!newForm.form_name.trim()) missingFields.push("Form Name")
+    if (!newForm.form_description.trim()) missingFields.push("Form Description")
     if (!newForm.industry.trim()) missingFields.push("Industry")
     if (!newForm.category.trim()) missingFields.push("Category")
     if (!selectedSubcategories.length) missingFields.push("At least one Subcategory")
@@ -645,6 +647,7 @@ export default function AdminPanel() {
       const formData = {
         form_id: newForm.form_id,
         form_name: newForm.form_name,
+        form_description: newForm.form_description,
         industry: newForm.industry,
         category: newForm.category,
         subcategory: selectedSubcategories.join(", "), // Convert array to comma-separated string
@@ -667,11 +670,13 @@ export default function AdminPanel() {
         setNewForm({
           form_id: "",
           form_name: "",
+          form_description: "",
           industry: "",
           category: "",
           subcategory: [],
           tech_stack: [],
           tools: [],
+          
         })
         setSelectedRequiredFields(["name", "email", "phone", "resume_link"]) // Fixed field name
         setCustomQuestions([])
@@ -1403,6 +1408,16 @@ export default function AdminPanel() {
                         value={newForm.form_name}
                         onChange={(e) => setNewForm((prev) => ({ ...prev, form_name: e.target.value }))}
                         placeholder="e.g., React.js Developer Position"
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-[#FFE01B] mb-2">Form Description</label>
+                      <input
+                        type="text"
+                        value={newForm.form_description}
+                        onChange={(e) => setNewForm((prev) => ({ ...prev, form_description: e.target.value }))}
+                        placeholder=""
                         className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
                       />
                     </div>
