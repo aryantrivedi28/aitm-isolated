@@ -113,8 +113,8 @@ export default function CaseStudiesPage() {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
-  const industries = ["Travel & Leisure","Nonprofit & Government","Automotive & Transportation","Technology","Style & Fashion","Sports, Outdoors & Fitness","Real State","Professional Services","Pets","Home & Garden", "Healthcare", "Finance","Food & Drinks","Gamming","Beauty", "Education","Baby","Arts & Entertainment"]
-  const services = ["Web Development","SEO", "CRO", "Social Media Management", "Paid Ads","Email Marketing", "Marketing Strategy", "SMS Marketing", "Google Shopping","Branding", "Content Marketing", "Apple Optimization", "Copywriting", "public relations", "Video Production", "Graphic Design", "UI/UX Design", "App Development"];
+  const industries = ["Travel & Leisure", "Nonprofit & Government", "Automotive & Transportation", "Technology", "Style & Fashion", "Sports, Outdoors & Fitness", "Real State", "Professional Services", "Pets", "Home & Garden", "Healthcare", "Finance", "Food & Drinks", "Gamming", "Beauty", "Education", "Baby", "Arts & Entertainment"]
+  const services = ["Web Development", "SEO", "CRO", "Social Media Management", "Paid Ads", "Email Marketing", "Marketing Strategy", "SMS Marketing", "Google Shopping", "Branding", "Content Marketing", "Apple Optimization", "Copywriting", "public relations", "Video Production", "Graphic Design", "UI/UX Design", "App Development"];
 
 
 
@@ -139,11 +139,6 @@ export default function CaseStudiesPage() {
     return matchesIndustry && matchesService;
   });
 
-
-
-
-
-  const categories = ["All", "Development", "Design", "AI", "Marketing", "Video"]
 
   useEffect(() => {
     async function fetchCaseStudies() {
