@@ -5,7 +5,7 @@ import type { CreateFormData }  from "../../../types/database"
 export async function POST(req: Request) {
   try {
     const body: CreateFormData = await req.json()
-    const { form_id, form_name, category, subcategory, industry, created_by } = body
+const { form_id, form_name, category, subcategory, industry, created_by, is_active } = body
 
     // Validate required fields
     if (!form_id || !form_name || !category || !subcategory || !industry) {
@@ -39,6 +39,7 @@ export async function POST(req: Request) {
           subcategory,
           industry,
           created_by: created_by || "admin",
+          is_active: is_active ?? true, // 👈 respect provided value, fallback true
         },
       ])
       .select()

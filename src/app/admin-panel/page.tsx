@@ -802,26 +802,7 @@ export default function AdminPanel() {
     }
   }
 
-  const handleIndustryChange = (industry: string) => {
-    setSelectedIndustry(industry)
-    setSelectedCategory("")
-    setNewForm((prev) => ({ ...prev, industry, category: "", subcategory: [] }))
 
-    const industryKey = industry as keyof IndustryOptions
-    const categories = industryOptions[industryKey] ? Object.keys(industryOptions[industryKey]) : []
-    setAvailableCategories(categories)
-    setAvailableSubcategories([])
-  }
-
-  // const handleCategoryChange = (category: string) => {
-  //   setSelectedCategory(category)
-  //   setNewForm((prev) => ({ ...prev, category, subcategory: "" }))
-
-  //   const industryKey = selectedIndustry as keyof IndustryOptions
-  //   const industryData = industryOptions[industryKey]
-  //   const subcategories = industryData && industryData[category] ? industryData[category] : []
-  //   setAvailableSubcategories(subcategories)
-  // }
 
   return (
     <div className="min-h-screen bg-[#241C15] text-white overflow-hidden">
