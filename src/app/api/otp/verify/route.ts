@@ -1,20 +1,44 @@
-// app/api/otp/verify/route.ts
 import { NextResponse } from "next/server"
-import { verifyOtp } from "../../../../lib/otpStore"
+import { cookies } from "next/headers"
+import { supabaseAdmin } from "../../../../lib/supabase-admin"
 
 export async function POST(req: Request) {
   try {
     const { email, otp } = await req.json()
-    if (!email || !otp) return NextResponse.json({ error: "Email & OTP required" }, { status: 400 })
 
-    const valid = verifyOtp(email, otp)
-    if (!valid) {
-      return NextResponse.json({ success: false, error: "Invalid OTP" }, { status: 400 })
+    const { data, error } = await supabaseAdmin
+      .from("client_table")
+      .select("otp, expires_at")
+      .eq("email", email)
+      .single()
+
+    if (error || !data) {
+      return NextResponse.json({ error: "Email not found" }, { status: 400 })
     }
 
-    return NextResponse.json({ success: true })
+    if (new Date(data.expires_at) < new Date()) {
+      return NextResponse.json({ error: "OTP expired" }, { status: 400 })
+    }
+
+    if (data.otp !== otp) {
+      return NextResponse.json({ error: "Invalid OTP" }, { status: 400 })
+    }
+
+    // ✅ Mark as verified
+    await supabaseAdmin.from("client_table").update({ verified: true }).eq("email", email)
+
+    // ✅ Set cookie for auth (httpOnly so frontend can't tamper with it)
+    const res = NextResponse.json({ success: true })
+    res.cookies.set("client_auth", "true", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60, // 1 hour
+      path: "/",
+    })
+
+    return res
   } catch (err: any) {
-    console.error("OTP verify error", err)
-    return NextResponse.json({ error: "Failed to verify OTP" }, { status: 500 })
+    console.error("Verify OTP error:", err)
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

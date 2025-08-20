@@ -116,6 +116,12 @@ export default function Header() {
             >
               Case Studies
             </a>
+            <a
+            onClick={() => handleNavigation("/get-hired")}
+            className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
+          >
+            Get Hired
+          </a>
             {/* <a
               onClick={() => handleNavigation("/services")}
               className="block text-black/90 hover:text-[#FFE01B] hover:bg-white/10 font-semibold py-3 px-4 cursor-pointer transition-all duration-300 rounded-lg backdrop-blur-sm border border-transparent hover:border-white/10"

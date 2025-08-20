@@ -34,9 +34,18 @@ interface CaseStudy {
     quote: string
     authorName: string
     authorRole: string
+    image?: { asset: { url: string } }
   }
   mainImage: { asset: { url: string } }
+
+  // ✅ New video section
+  video?: {
+    videoUrl?: string
+    videoFile?: { asset: { url: string } }
+    caption?: string
+  }
 }
+
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -88,8 +97,11 @@ export default function CaseStudyPage({
     slug,
     description,
     tags,
-    mainImage {
-      asset -> { url }
+    mainImage { asset -> { url } },
+    video {
+      videoUrl,
+      caption,
+      videoFile { asset -> { url } }
     },
     challenge,
     finzieAdvantage,
@@ -97,24 +109,21 @@ export default function CaseStudyPage({
       name,
       role,
       bio,
-      image {
-        asset -> { url }
-      }
+      image { asset -> { url } }
     },
     snapshot,
     testimonial {
       quote,
       authorName,
-      authorRole
+      authorRole,
+      image? { asset -> { url } }
     },
     callToActionText,
-    callToActionButton {
-      text,
-      link
-    }
+    callToActionButton { text, link }
   }`,
         { slug }
       );
+
 
 
       if (!fetchedStudy) {
@@ -295,6 +304,58 @@ export default function CaseStudyPage({
         </motion.div>
       </section>
 
+      {/* Video Section */}
+      {study.video && (study.video.videoUrl || study.video.videoFile?.asset?.url) && (
+        <motion.section
+          initial="initial"
+          whileInView="animate"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+          className="relative"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 to-transparent rounded-3xl" />
+          <div className="relative bg-white/5 backdrop-blur-sm rounded-3xl p-8 lg:p-16 border border-white/10">
+            <motion.h3
+              className="text-3xl lg:text-4xl font-bold text-white mb-6"
+              variants={fadeInLeft}
+            >
+              Case Study Video
+            </motion.h3>
+
+            {/* If external video URL (YouTube, Vimeo, etc.) */}
+            {study.video.videoUrl && (
+              <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-xl">
+                <iframe
+                  src={study.video.videoUrl}
+                  title="Case Study Video"
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            )}
+
+            {/* If uploaded video file */}
+            {study.video.videoFile?.asset?.url && (
+              <video
+                src={study.video.videoFile.asset.url}
+                controls
+                className="w-full rounded-2xl shadow-xl"
+              />
+            )}
+
+            {/* Caption */}
+            {study.video.caption && (
+              <p className="mt-4 text-gray-300 text-lg italic">
+                {study.video.caption}
+              </p>
+            )}
+          </div>
+        </motion.section>
+      )}
+
+
       {/* Main Content */}
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-32">
         {/* Challenge Section */}
@@ -454,26 +515,41 @@ export default function CaseStudyPage({
                 </motion.div>
                 <h3 className="text-2xl font-bold text-white">Client Testimonial</h3>
               </div>
+
               <blockquote className="space-y-6">
-                <p className="text-xl text-gray-300 italic leading-relaxed">"{study.testimonial.quote}"</p>
+                <p className="text-xl text-gray-300 italic leading-relaxed">
+                  "{study.testimonial.quote}"
+                </p>
                 <footer className="flex items-center gap-4 pt-6 border-t border-white/10">
                   <motion.div
-                    className="w-12 h-12 bg-[#FFE01B] rounded-full flex items-center justify-center"
+                    className="w-12 h-12 rounded-full bg-[#FFE01B] flex items-center justify-center overflow-hidden"
                     whileHover={{ scale: 1.1 }}
                   >
-                    <span className="text-[#241C15] font-bold text-lg">
-                      {study?.testimonial?.authorName?.charAt(0) || ''}
-                    </span>
-
+                    {study.testimonial.image?.asset?.url ? (
+                      <img
+                        src={study.testimonial.image.asset.url}
+                        alt={study.testimonial.authorName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-[#241C15] font-bold text-lg">
+                        {study?.testimonial?.authorName?.charAt(0) || ""}
+                      </span>
+                    )}
                   </motion.div>
+
                   <div>
-                    <p className="font-bold text-white text-lg">{study.testimonial.authorName}</p>
+                    <p className="font-bold text-white text-lg">
+                      {study.testimonial.authorName}
+                    </p>
                     <p className="text-gray-400">{study.testimonial.authorRole}</p>
                   </div>
                 </footer>
               </blockquote>
             </motion.section>
           )}
+
+
         </div>
 
         {/* Call to Action - Show if either text or link exists */}

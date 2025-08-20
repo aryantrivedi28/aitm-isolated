@@ -7,24 +7,38 @@ import { useRouter } from "next/navigation";
 export default function FindTalentPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [otpSent, setOtpSent] = useState(false); // renamed from 'sent'
   const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [verified, setVerified] = useState(false);
+  const [verified, setVerified] = useState(false); // new state
+  const [error, setError] = useState("");
 
   async function sendOtp() {
-    if (!email) return alert("Enter email");
-    const res = await fetch("/api/otp/send", { method: "POST", body: JSON.stringify({ email }) });
-    if (res.ok) { setOtpSent(true); alert("OTP sent (demo: 1234)"); } else { alert("Failed to send OTP"); }
+    const res = await fetch("/api/otp/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setOtpSent(true);
+      setError("");
+    } else {
+      setError(data.error);
+    }
   }
 
-  async function verify() {
-    const res = await fetch("/api/otp/verify", { method: "POST", body: JSON.stringify({ email, otp }) });
-    if (res.ok) { setVerified(true); } else { alert("Invalid OTP"); }
-  }
-
-  function goNext() {
-    if (!verified) return alert("Please verify email first");
-    router.push("/post-gig/option-select");
+  const verifyOtp = async () => {
+    const res = await fetch("/api/otp/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, otp }),
+    })
+    if (res.ok) {
+      router.push("/find-talent/option")
+    } else {
+      const data = await res.json()
+      alert(data.error || "Invalid OTP")
+    }
   }
 
   return (
@@ -138,7 +152,7 @@ export default function FindTalentPage() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={verify}
+                onClick={verifyOtp}
                 className="bg-[#FFE01B] text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-300"
               >
                 Submit OTP
@@ -147,17 +161,7 @@ export default function FindTalentPage() {
           )}
         </motion.div>
 
-        {/* Submit */}
-        <motion.button
-          whileHover={{
-            scale: 1.05,
-            boxShadow: "0 0 20px #FFE01B",
-          }}
-          whileTap={{ scale: 0.95 }}
-          className="w-full bg-[#FFE01B] text-black font-bold py-3 rounded-lg hover:bg-yellow-300 transition mt-6"
-        >
-          Submit
-        </motion.button>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
       </motion.div>
     </div>
   );

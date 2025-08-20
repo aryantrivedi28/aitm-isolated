@@ -42,6 +42,32 @@ export default defineType({
       type: 'image',
       options: { hotspot: true }
     }),
+
+    // ✅ New Video Section
+    defineField({
+      name: 'video',
+      title: 'Case Study Video',
+      type: 'object',
+      fields: [
+        {
+          name: 'videoUrl',
+          title: 'Video URL (YouTube, Vimeo, etc.)',
+          type: 'url',
+        },
+        {
+          name: 'videoFile',
+          title: 'Upload Video',
+          type: 'file',
+          options: { accept: 'video/*' },
+        },
+        {
+          name: 'caption',
+          title: 'Video Caption',
+          type: 'string',
+        }
+      ]
+    }),
+
     defineField({
       name: 'challenge',
       title: 'The Challenge',
@@ -65,7 +91,6 @@ export default defineType({
         { name: 'image', title: 'Image', type: 'image', options: { hotspot: true } },
       ]
     }),
-
     defineField({
       name: 'snapshot',
       title: 'Snapshot Highlights',
@@ -80,6 +105,7 @@ export default defineType({
         { name: 'quote', title: 'Quote', type: 'text' },
         { name: 'authorName', title: 'Author Name', type: 'string' },
         { name: 'authorRole', title: 'Author Role', type: 'string' },
+        { name: 'image', title: 'Image', type: 'image', options: { hotspot: true } },
       ],
     }),
     defineField({
