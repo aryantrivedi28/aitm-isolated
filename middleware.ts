@@ -2,7 +2,13 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(req: NextRequest) {
-  const protectedRoutes = ["/find-talent/option"]
+  const protectedRoutes = [
+    "/find-talent",
+    "/api/client/details",
+    "/api/client/hiring",
+    "/api/client/me"
+  ];
+
   const { pathname } = req.nextUrl
 
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {

@@ -81,7 +81,8 @@ export default function Header() {
           </a> */}
           <a
             onClick={() => handleNavigation("/get-hired")}
-            className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
+            className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
+            // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
           >
             Get Hired
           </a>
@@ -116,26 +117,20 @@ export default function Header() {
             >
               Case Studies
             </a>
-            <a
-            onClick={() => handleNavigation("/get-hired")}
-            className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
-          >
-            Get Hired
-          </a>
             {/* <a
-              onClick={() => handleNavigation("/services")}
-              className="block text-black/90 hover:text-[#FFE01B] hover:bg-white/10 font-semibold py-3 px-4 cursor-pointer transition-all duration-300 rounded-lg backdrop-blur-sm border border-transparent hover:border-white/10"
+              onClick={() => handleNavigation("/find-talent")}
+              className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
             >
-              Services
+              Find Talent
+              <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-[#FFE01B] transition-all duration-300 group-hover:w-[calc(100%-24px)]"></span>
             </a> */}
-            {/* <div className="pt-4">
-              <a
-                onClick={() => handleNavigation("/contact")}
-                className="block bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold py-3 px-4 rounded-lg transition-all duration-300 cursor-pointer text-center shadow-lg hover:shadow-[#FFE01B]/20 border border-[#FFE01B]/20"
-              >
-                Contact Us
-              </a>
-            </div> */}
+            <a
+              onClick={() => handleNavigation("/get-hired")}
+              className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
+              // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
+            >
+              Get Hired
+            </a>
           </nav>
         </div>
       )}

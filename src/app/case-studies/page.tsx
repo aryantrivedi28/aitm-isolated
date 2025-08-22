@@ -490,14 +490,14 @@ export default function CaseStudiesPage() {
 
                   {/* Content */}
                   <div className="relative p-6 space-y-4">
-                    <div className="flex items-center gap-2 text-sm text-gray-900">
+                    {/* <div className="flex items-center gap-2 text-sm text-gray-900">
                       <Calendar className="w-4 h-4" />
                       {new Date(study._createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "short",
                         day: "numeric",
                       })}
-                    </div>
+                    </div> */}
 
                     <h2 className="text-xl font-bold text-black group-hover:text-[#FFE01B] transition-colors duration-300 line-clamp-2">
                       {study.title}

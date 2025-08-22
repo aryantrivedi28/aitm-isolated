@@ -27,7 +27,7 @@ export default function OptionsPage() {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => router.push("/direct-hiring")}
+          onClick={() => router.push("/find-talent/direct-hiring")}
           className="flex items-center justify-center gap-3 bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-5 py-4 rounded-xl w-full mb-5 shadow-md transition-all duration-200"
         >
           <Briefcase className="w-5 h-5" />
@@ -38,7 +38,7 @@ export default function OptionsPage() {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => router.push("/assisted-hiring")}
+          onClick={() => router.push("/find-talent/assisted-hiring")}
           className="flex items-center justify-center gap-3 bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-5 py-4 rounded-xl w-full shadow-md transition-all duration-200"
         >
           <Users className="w-5 h-5" />

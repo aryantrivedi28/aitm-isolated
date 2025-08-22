@@ -18,10 +18,8 @@ function extractSheetId(sheetUrl: string): string | null {
   return match ? match[1] : null
 }
 
-
-
 export class ProcessingService {
-   private sheetsService: GoogleSheetsService
+  private sheetsService: GoogleSheetsService
   private scrapingService: ScrapingService
   private openaiService: OpenAIService
   private sheetId: string
@@ -44,6 +42,7 @@ export class ProcessingService {
     this.scrapingService = new ScrapingService()
     this.openaiService = new OpenAIService()
   }
+
   getStatus() {
     return this.status
   }
@@ -101,7 +100,7 @@ export class ProcessingService {
 
   private async processMainSheet(): Promise<void> {
     try {
-      const unprocessedRows = await this.sheetsService.getUnprocessedRows("MainSheet")
+      const unprocessedRows = await this.sheetsService.getUnprocessedRows(["Rating", "Review"])
 
       if (unprocessedRows.length === 0) {
         console.log(`ℹ️  No new submissions found`)
@@ -175,7 +174,13 @@ export class ProcessingService {
 
         const ratingColumn = "Rating" // Replace with the actual column name for ratings
         const reviewColumn = "Review" // Replace with the actual column name for reviews
-        const success = await this.sheetsService.updateRowWithRating(row.rowNumber - 1, 0, errorMessage, ratingColumn, reviewColumn)
+        const success = await this.sheetsService.updateRowWithRating(
+          row.rowNumber - 1,
+          0,
+          errorMessage,
+          ratingColumn,
+          reviewColumn,
+        )
 
         if (success) {
           console.log(`✅ Updated ${candidateData.name} with data requirement message`)
@@ -227,7 +232,13 @@ export class ProcessingService {
 
         const fileAccessMessage = this.generateFileAccessMessage(candidateData)
 
-        const success = await this.sheetsService.updateRowWithRating(row.rowNumber, 0, fileAccessMessage, "Rating", "Review")
+        const success = await this.sheetsService.updateRowWithRating(
+          row.rowNumber,
+          0,
+          fileAccessMessage,
+          "Rating",
+          "Review",
+        )
 
         if (success) {
           console.log(`✅ Updated ${candidateData.name} with file access guidance`)
@@ -255,7 +266,13 @@ export class ProcessingService {
 
       // Step 5: Update sheet with results
       console.log("💾 Updating sheet with rating...")
-      const success = await this.sheetsService.updateRowWithRating(row.rowNumber - 1, aiResults.rating, finalReview, "Rating", "Review")
+      const success = await this.sheetsService.updateRowWithRating(
+        row.rowNumber - 1,
+        aiResults.rating,
+        finalReview,
+        "Rating",
+        "Review",
+      )
 
       if (success) {
         console.log(`✅ Successfully processed ${candidateData.name} - Rating: ${aiResults.rating}/10`)
@@ -446,5 +463,180 @@ ${issues.join("\n")}
   async close(): Promise<void> {
     await this.scrapingService.close()
     console.log("🧹 Cleanup completed")
+  }
+
+  async processWithCustomPrompt(customPrompt: string): Promise<void> {
+    if (this.status.isRunning) {
+      console.log("Processing already in progress")
+      return
+    }
+
+    this.status.isRunning = true
+    this.status.processedCount = 0
+    this.status.totalCount = 0
+    this.status.errors = []
+
+    console.log("Starting custom prompt processing...")
+    console.log("Custom Prompt:", customPrompt)
+
+    try {
+      await this.initialize()
+
+      // Step 1: Analyze prompt to determine required fields
+      console.log("🔍 Analyzing prompt for required fields...")
+      const fieldAnalysis = await this.openaiService.analyzePromptForFields(customPrompt)
+      console.log("📋 Required fields:", fieldAnalysis.requiredFields)
+      console.log("📝 Field descriptions:", fieldAnalysis.fieldDescriptions)
+
+      // Step 2: Ensure columns exist in sheet
+      console.log("📊 Ensuring required columns exist in sheet...")
+      const columnsCreated = await this.sheetsService.ensureColumnsExist(
+        fieldAnalysis.requiredFields,
+        fieldAnalysis.fieldDescriptions,
+      )
+
+      if (!columnsCreated) {
+        throw new Error("Failed to create required columns in sheet")
+      }
+
+      // Step 3: Process rows with custom evaluation
+      console.log("🔄 Processing rows with custom evaluation...")
+      await this.processRowsWithCustomPrompt(customPrompt, fieldAnalysis.requiredFields)
+
+      console.log("✅ Custom prompt processing completed successfully!")
+    } catch (error) {
+      console.error("❌ Custom prompt processing failed:", error)
+      this.status.errors.push(error instanceof Error ? error.message : "Unknown error")
+      throw error
+    } finally {
+      this.status.isRunning = false
+      await this.cleanup()
+    }
+  }
+
+  private async processRowsWithCustomPrompt(customPrompt: string, requiredFields: string[]): Promise<void> {
+    try {
+      const unprocessedRows = await this.sheetsService.getUnprocessedRows(requiredFields)
+
+      if (unprocessedRows.length === 0) {
+        console.log("ℹ️ No new submissions found")
+        return
+      }
+
+      this.status.totalCount = unprocessedRows.length
+      console.log(`📝 Processing ${unprocessedRows.length} submissions with custom prompt`)
+
+      for (let i = 0; i < unprocessedRows.length; i++) {
+        const row = unprocessedRows[i]
+        console.log(`\n[${i + 1}/${unprocessedRows.length}] Processing submission...`)
+
+        try {
+          await this.processRowWithCustomPrompt(row, customPrompt, requiredFields)
+          this.status.processedCount++
+        } catch (error) {
+          const errorMsg = `Failed to process row ${i + 1}: ${error instanceof Error ? error.message : "Unknown error"}`
+          console.error(errorMsg)
+          this.status.errors.push(errorMsg)
+        }
+
+        // Add delay to avoid rate limiting
+        await this.delay(2000)
+      }
+    } catch (error) {
+      console.error("❌ Error processing rows with custom prompt:", error)
+      throw error
+    }
+  }
+
+  private async processRowWithCustomPrompt(row: any, customPrompt: string, requiredFields: string[]): Promise<void> {
+    try {
+      // Extract candidate data
+      const candidateData: FreelancerData = {
+        timestamp: this.safeGetRowValue(row, "Timestamp") || new Date().toISOString(),
+        name: this.safeGetRowValue(row, "Name") || "Unknown",
+        email: this.safeGetRowValue(row, "Email") || "No email",
+        portfolioUrl: this.safeGetRowValue(row, "Portfolio Link") || "",
+        resumeFile: this.safeGetRowValue(row, "Resume") || "",
+        proposalText: this.safeGetRowValue(row, "Proposal") || "",
+        github: this.safeGetRowValue(row, "Github Link") || "",
+      }
+
+      console.log(`👤 Processing: ${candidateData.name} (${candidateData.email})`)
+
+      let resumeContent = "No resume provided"
+      if (candidateData.resumeFile && candidateData.resumeFile.includes("drive.google.com")) {
+        console.log("📄 Parsing resume file...")
+        try {
+          resumeContent = await this.scrapingService.parseResume(candidateData.resumeFile)
+          if (resumeContent.includes("Resume parsing failed") || resumeContent.length < 50) {
+            console.warn("⚠️ Resume parsing returned minimal content, trying alternative method...")
+            // Try alternative parsing or provide helpful message
+            resumeContent =
+              "Resume file detected but content could not be extracted. Please ensure file is publicly accessible."
+          }
+        } catch (error) {
+          console.error("Resume parsing error:", error)
+          resumeContent = "Resume parsing failed - please check file accessibility"
+        }
+      }
+
+      // Scrape portfolio
+      let portfolioContent = "No portfolio provided"
+      if (candidateData.portfolioUrl) {
+        console.log("🌐 Scraping portfolio...")
+        try {
+          portfolioContent = await this.scrapingService.scrapePortfolio(candidateData.portfolioUrl)
+        } catch (error) {
+          console.error("Portfolio scraping error:", error)
+          portfolioContent = "Portfolio scraping failed"
+        }
+      }
+
+      // Process proposal
+      let proposalContent = "No proposal provided"
+      if (candidateData.proposalText) {
+        if (this.isFileUrl(candidateData.proposalText)) {
+          console.log("📝 Parsing proposal file...")
+          try {
+            proposalContent = await this.scrapingService.parseResume(candidateData.proposalText)
+          } catch (error) {
+            console.error("Proposal file parsing error:", error)
+            proposalContent = "Proposal file parsing failed"
+          }
+        } else {
+          proposalContent = candidateData.proposalText
+        }
+      }
+
+      // Build comprehensive candidate data
+      candidateData.resumeContent = resumeContent
+      candidateData.portfolioContent = portfolioContent
+      candidateData.proposalContent = proposalContent
+
+      // Get AI analysis with custom prompt
+      console.log("🤖 Analyzing with custom prompt...")
+      const analysisResults = await this.openaiService.analyzeWithCustomPrompt(
+        candidateData,
+        customPrompt,
+        requiredFields,
+      )
+
+      // Update sheet with all field values
+      console.log("💾 Updating sheet with analysis results...")
+      const success = await this.sheetsService.updateRowWithMultipleFields(
+        row.rowNumber - 1,
+        analysisResults,
+        candidateData.name,
+      )
+
+      if (success) {
+        console.log(`✅ Successfully processed ${candidateData.name}`)
+      } else {
+        throw new Error("Failed to update sheet")
+      }
+    } catch (error) {
+      console.error("❌ Error processing row with custom prompt:", error)
+      throw error
+    }
   }
 }

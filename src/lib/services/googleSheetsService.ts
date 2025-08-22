@@ -41,7 +41,7 @@ export class GoogleSheetsService {
     }
   }
 
-  async getUnprocessedRows(sheetName: any) {
+  async getUnprocessedRows(requiredFields: string[] = []) {
     try {
       const sheet = await this.getMainSheet()
       if (!sheet) return []
@@ -49,17 +49,29 @@ export class GoogleSheetsService {
       await sheet.loadHeaderRow()
       const rows = await sheet.getRows()
 
-      const ratingColumnName = sheet.headerValues.find((h) => h?.toLowerCase().includes("rating"))
+      const checkColumns =
+        requiredFields.length > 0
+          ? requiredFields
+          : sheet.headerValues.filter((h) => h?.toLowerCase().includes("rating") || h?.toLowerCase().includes("review"))
+
+      if (checkColumns.length === 0) {
+        console.log("⚠️ No tracking columns found, processing all rows")
+        return rows
+      }
 
       const unprocessedRows = rows.filter((row, index) => {
-        const ratingValue = ratingColumnName ? row.get(ratingColumnName) : ""
-        const isUnprocessed = !ratingValue || ratingValue.toString().trim() === ""
+        // Check if any of the required fields are empty
+        const isEmpty = checkColumns.some((columnName) => {
+          const value = row.get(columnName)
+          return !value || value.toString().trim() === ""
+        })
+
         console.log(
-          `${isUnprocessed ? "📝 Needs processing" : "✅ Already processed"} — Row ${
+          `${isEmpty ? "📝 Needs processing" : "✅ Already processed"} — Row ${
             index + 2
-          }: ${row.get("Name") || "Unnamed"}`,
+          }: ${row.get("Name") || row.get("form_name") || "Unnamed"}`,
         )
-        return isUnprocessed
+        return isEmpty
       })
 
       return unprocessedRows
@@ -118,7 +130,13 @@ export class GoogleSheetsService {
     }
   }
 
-  async updateRowWithRating(rowIndex: number, rating: number, review: string, ratingColumn: any, reviewColumn: any): Promise<boolean> {
+  async updateRowWithRating(
+    rowIndex: number,
+    rating: number,
+    review: string,
+    ratingColumn: string,
+    reviewColumn: string,
+  ): Promise<boolean> {
     try {
       const sheet = await this.getMainSheet()
       if (!sheet) return false
@@ -134,26 +152,64 @@ export class GoogleSheetsService {
 
       const row = rows[dataRowIndex]
 
-      const ratingColumn = sheet.headerValues.find((h) => h?.toLowerCase().includes("rating"))
+      // Check if columns exist, if not create them
+      const finalRatingColumn = ratingColumn
+      const finalReviewColumn = reviewColumn
 
-      const reviewColumn = sheet.headerValues.find((h) => h?.toLowerCase().includes("review"))
-
-      if (!ratingColumn || !reviewColumn) {
-        console.error("❌ Missing 'Rating' or 'Review' columns in the sheet.")
-        return false
+      if (!sheet.headerValues.includes(ratingColumn)) {
+        console.log(`📝 Adding missing rating column: ${ratingColumn}`)
+        await this.addColumnToSheet(ratingColumn)
+        await sheet.loadHeaderRow() // Reload headers after adding column
       }
 
-      row.set(ratingColumn, rating)
-      row.set(reviewColumn, review)
+      if (!sheet.headerValues.includes(reviewColumn)) {
+        console.log(`📝 Adding missing review column: ${reviewColumn}`)
+        await this.addColumnToSheet(reviewColumn)
+        await sheet.loadHeaderRow() // Reload headers after adding column
+      }
+
+      row.set(finalRatingColumn, rating)
+      row.set(finalReviewColumn, review)
 
       await row.save()
 
-      console.log(`✅ Row ${rowIndex} updated — Rating: ${rating}, Review: ${review}`)
+      console.log(`✅ Row ${rowIndex} updated — Rating: ${rating}, Review: ${review.substring(0, 100)}...`)
       return true
     } catch (error) {
       console.error("❌ Error updating row:", error)
       return false
     }
+  }
+
+  async addColumnToSheet(columnName: string): Promise<boolean> {
+    try {
+      const sheet = await this.getMainSheet()
+      if (!sheet) return false
+
+      await sheet.loadHeaderRow()
+
+      // Add the new column header
+      const newColumnIndex = sheet.headerValues.length
+      await sheet.loadCells(`${this.getColumnLetter(newColumnIndex)}1`)
+      const headerCell = sheet.getCell(0, newColumnIndex)
+      headerCell.value = columnName
+      await sheet.saveUpdatedCells()
+
+      console.log(`✅ Added new column: ${columnName}`)
+      return true
+    } catch (error) {
+      console.error(`❌ Error adding column ${columnName}:`, error)
+      return false
+    }
+  }
+
+  private getColumnLetter(index: number): string {
+    let result = ""
+    while (index >= 0) {
+      result = String.fromCharCode(65 + (index % 26)) + result
+      index = Math.floor(index / 26) - 1
+    }
+    return result
   }
 
   async getSheetInfo(sheetName: any) {
@@ -176,4 +232,84 @@ export class GoogleSheetsService {
       return null
     }
   }
+
+  async ensureColumnsExist(columnNames: string[], descriptions?: Record<string, string>): Promise<boolean> {
+    try {
+      const sheet = await this.getMainSheet()
+      if (!sheet) return false
+
+      await sheet.loadHeaderRow()
+      const existingHeaders = sheet.headerValues
+      const missingColumns = columnNames.filter((col) => !existingHeaders.includes(col))
+
+      if (missingColumns.length === 0) {
+        console.log("✅ All required columns already exist")
+        return true
+      }
+
+      console.log(`📝 Adding ${missingColumns.length} missing columns:`, missingColumns)
+
+      for (const columnName of missingColumns) {
+        const success = await this.addColumnToSheet(columnName)
+        if (!success) {
+          console.error(`❌ Failed to add column: ${columnName}`)
+          return false
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      }
+
+      await sheet.loadHeaderRow()
+      console.log("✅ All required columns created successfully")
+      return true
+    } catch (error) {
+      console.error("❌ Error ensuring columns exist:", error)
+      return false
+    }
+  }
+
+  async updateRowWithMultipleFields(
+    rowIndex: number,
+    fieldValues: Record<string, any>,
+    candidateName?: string,
+  ): Promise<boolean> {
+    try {
+      const sheet = await this.getMainSheet()
+      if (!sheet) return false
+
+      await sheet.loadHeaderRow()
+      const rows = await sheet.getRows()
+      const dataRowIndex = rowIndex - 2
+
+      if (dataRowIndex < 0 || dataRowIndex >= rows.length) {
+        console.error(`❌ Invalid row index: ${rowIndex}`)
+        return false
+      }
+
+      const row = rows[dataRowIndex]
+
+      // Update all field values
+      Object.entries(fieldValues).forEach(([fieldName, value]) => {
+        if (sheet.headerValues.includes(fieldName)) {
+          row.set(fieldName, value)
+        } else {
+          console.warn(`⚠️ Column '${fieldName}' not found in sheet`)
+        }
+      })
+
+      await row.save()
+
+      const fieldSummary = Object.entries(fieldValues)
+        .map(([key, value]) => `${key}: ${typeof value === "string" ? value.substring(0, 50) + "..." : value}`)
+        .join(", ")
+
+      console.log(`✅ Row ${rowIndex} updated for ${candidateName || "candidate"} — ${fieldSummary}`)
+      return true
+    } catch (error) {
+      console.error("❌ Error updating row with multiple fields:", error)
+      return false
+    }
+  }
+
+
+  
 }

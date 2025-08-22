@@ -5,7 +5,7 @@ import { ScrapingService } from "../../../lib/services/scrapingService"
 
 export async function POST(req: NextRequest) {
   try {
-    const { sheetUrl, sheetName, prompt, columnMapping } = await req.json()
+    const { sheetUrl, prompt } = await req.json()
 
     if (!sheetUrl || !prompt) {
       return NextResponse.json(
@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
     const sheetService = new GoogleSheetsService(sheetId)
     await sheetService.initialize()
 
-    // Get sheet info and detect columns
-    const sheetInfo = await sheetService.getSheetInfo(sheetName)
+    // Get sheet info
+    const sheetInfo = await sheetService.getSheetInfo("MainSheet")
     if (!sheetInfo) {
       return NextResponse.json(
         {
@@ -44,39 +44,68 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Auto-detect column mapping if not provided
-    const finalColumnMapping = columnMapping || autoDetectColumns(sheetInfo.headerRow)
-
     const openaiService = new OpenAIService()
-    const scrapingService = new ScrapingService()
 
-    const rows = await sheetService.getUnprocessedRows(sheetName)
+    console.log("🔍 Analyzing prompt for required fields...")
+    const fieldAnalysis = await openaiService.analyzePromptForFields(prompt)
+    console.log("📋 Required fields:", fieldAnalysis.requiredFields)
+
+    console.log("📊 Ensuring required columns exist...")
+    const columnsCreated = await sheetService.ensureColumnsExist(
+      fieldAnalysis.requiredFields,
+      fieldAnalysis.fieldDescriptions,
+    )
+
+    if (!columnsCreated) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Failed to create required columns in sheet",
+        },
+        { status: 500 },
+      )
+    }
+
+    // Auto-detect existing column mapping
+    const columnMapping = autoDetectColumns(sheetInfo.headerRow)
+
+    const scrapingService = new ScrapingService()
+    const rows = await sheetService.getUnprocessedRows(fieldAnalysis.requiredFields)
     let processedCount = 0
+
+    console.log(`🔄 Processing ${rows.length} rows with custom prompt analysis`)
 
     for (const row of rows) {
       try {
-        const extractedData = await extractRowData(row, finalColumnMapping, scrapingService)
+        const extractedData = await extractRowData(row, columnMapping, scrapingService)
 
-        const aiResponse = await openaiService.analyzeWithCustomPrompt(prompt, extractedData)
+        console.log(`📊 Processing candidate: ${extractedData.name}`)
 
-        await sheetService.updateRowWithRating(
-          row.rowNumber,
-          aiResponse.rating,
-          aiResponse.review,
-          finalColumnMapping.ratingColumn,
-          finalColumnMapping.reviewColumn,
+        const analysisResults = await openaiService.analyzeWithCustomPrompt(
+          extractedData,
+          prompt,
+          fieldAnalysis.requiredFields,
         )
 
-        processedCount++
+        const success = await sheetService.updateRowWithMultipleFields(
+          row.rowNumber,
+          analysisResults,
+          extractedData.name,
+        )
+
+        if (success) {
+          processedCount++
+          console.log(`✅ Successfully processed ${extractedData.name}`)
+        }
       } catch (error) {
-        console.error(`Error processing row ${row.rowNumber}:`, error)
+        console.error(`❌ Error processing row ${row.rowNumber}:`, error)
       }
     }
 
     return NextResponse.json({
       success: true,
       rowsAnalyzed: processedCount,
-      columnMapping: finalColumnMapping,
+      fieldsCreated: fieldAnalysis.requiredFields,
       sheetInfo,
     })
   } catch (error) {
@@ -105,14 +134,10 @@ function autoDetectColumns(headers: string[]) {
     if (lower.includes("portfolio")) mapping.portfolioColumn = header
     if (lower.includes("github")) mapping.githubColumn = header
     if (lower.includes("proposal")) mapping.proposalColumn = header
-    if (lower.includes("rating")) mapping.ratingColumn = header
-    if (lower.includes("review")) mapping.reviewColumn = header
     if (lower.includes("experience")) mapping.experienceColumn = header
   })
 
-  // Set defaults if not found
-  if (!mapping.ratingColumn) mapping.ratingColumn = "AI Rating"
-  if (!mapping.reviewColumn) mapping.reviewColumn = "AI Review"
+  console.log("[v0] Auto-detected column mapping:", mapping)
 
   return mapping
 }
@@ -124,34 +149,40 @@ async function extractRowData(row: any, columnMapping: any, scrapingService: Scr
     phone: row.get(columnMapping.phoneColumn) || "",
   }
 
-  const resumeLink = row.get(columnMapping.resumeColumn)
-  const portfolioLink = row.get(columnMapping.portfolioColumn)
-  const proposalLink = row.get(columnMapping.proposalColumn)
-  const githubLink = row.get(columnMapping.githubColumn)
-
-  if (resumeLink) {
-    data.resumeContent = await scrapingService.parseResume(resumeLink)
-  }
-
-  if (portfolioLink) {
-    data.portfolioContent = await scrapingService.scrapePortfolio(portfolioLink)
-  }
-
-  if (proposalLink) {
-    data.proposalContent = await scrapingService.parseResume(proposalLink)
-  }
-
-  if (githubLink) {
-    data.githubContent = githubLink.includes("drive.google.com")
-      ? await scrapingService.parseResume(githubLink)
-      : githubLink
-  }
-
+  // Extract all additional columns not in the standard mapping
   Object.keys(row._rawData).forEach((key) => {
     if (!Object.values(columnMapping).includes(key)) {
       data[key] = row.get(key)
     }
   })
+
+  // Process content links
+  const resumeLink = row.get(columnMapping.resumeColumn)
+  const portfolioLink = row.get(columnMapping.portfolioColumn)
+  const proposalLink = row.get(columnMapping.proposalColumn)
+  const githubLink = row.get(columnMapping.githubColumn)
+
+  try {
+    if (resumeLink) {
+      data.resumeContent = await scrapingService.parseResume(resumeLink)
+    }
+
+    if (portfolioLink) {
+      data.portfolioContent = await scrapingService.scrapePortfolio(portfolioLink)
+    }
+
+    if (proposalLink) {
+      data.proposalContent = await scrapingService.parseResume(proposalLink)
+    }
+
+    if (githubLink) {
+      data.githubContent = githubLink.includes("drive.google.com")
+        ? await scrapingService.parseResume(githubLink)
+        : githubLink
+    }
+  } catch (error) {
+    console.error(`⚠️ Content extraction error for ${data.name}:`, error)
+  }
 
   return data
 }

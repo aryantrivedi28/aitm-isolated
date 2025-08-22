@@ -29,12 +29,17 @@ export async function POST(req: Request) {
 
     // ✅ Set cookie for auth (httpOnly so frontend can't tamper with it)
     const res = NextResponse.json({ success: true })
-    res.cookies.set("client_auth", "true", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60, // 1 hour
-      path: "/",
-    })
+    res.cookies.set(
+      "client_auth",
+      JSON.stringify({ email }), // <-- this is key
+      {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60, // 1 hour
+        path: "/",
+      }
+    )
+
 
     return res
   } catch (err: any) {

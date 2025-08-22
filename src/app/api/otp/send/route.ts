@@ -14,10 +14,23 @@ export async function POST(req: Request) {
     const otp = generateOtp()
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000) // 5 min
 
-    // Store OTP in Supabase
-    await supabaseAdmin
+    const { data: existing } = await supabaseAdmin
       .from("client_table")
-      .upsert({ email, otp, expires_at: expiresAt, verified: false })
+      .select("id")
+      .eq("email", email)
+      .single()
+
+    if (existing) {
+      await supabaseAdmin
+        .from("client_table")
+        .update({ otp, expires_at: expiresAt, verified: false })
+        .eq("email", email)
+    } else {
+      await supabaseAdmin
+        .from("client_table")
+        .insert({ email, otp, expires_at: expiresAt, verified: false })
+    }
+
 
     // Send email using nodemailer
     const transporter = nodemailer.createTransport({
@@ -31,7 +44,7 @@ export async function POST(req: Request) {
     })
 
     await transporter.sendMail({
-      from: `"Finzie AI" <${process.env.SMTP_USER}>`,
+      from: `"Finzie" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "Your OTP Code",
       text: `Your OTP is ${otp}. It expires in 5 minutes.`,

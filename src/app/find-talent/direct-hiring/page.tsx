@@ -27,7 +27,7 @@ export default function DirectHiringPage() {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => router.push("/direct-hiring/freelancer")}
+          onClick={() => router.push("/find-talent/direct-hiring/freelancer")}
           className="flex items-center justify-center gap-3 bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-5 py-4 rounded-xl w-full mb-5 shadow-md transition-all duration-200"
         >
           <User className="w-5 h-5" />
@@ -38,7 +38,7 @@ export default function DirectHiringPage() {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => router.push("/direct-hiring/intern")}
+          onClick={() => router.push("/find-talent/direct-hiring/intern")}
           className="flex items-center justify-center gap-3 bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-5 py-4 rounded-xl w-full mb-5 shadow-md transition-all duration-200"
         >
           <GraduationCap className="w-5 h-5" />
@@ -49,7 +49,7 @@ export default function DirectHiringPage() {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          onClick={() => router.push("/direct-hiring/fulltime")}
+          onClick={() => router.push("/find-talent/direct-hiring/fulltime")}
           className="flex items-center justify-center gap-3 bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-5 py-4 rounded-xl w-full shadow-md transition-all duration-200"
         >
           <Briefcase className="w-5 h-5" />

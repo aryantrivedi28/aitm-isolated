@@ -28,18 +28,27 @@ export default function FindTalentPage() {
   }
 
   const verifyOtp = async () => {
+  try {
     const res = await fetch("/api/otp/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, otp }),
-    })
-    if (res.ok) {
-      router.push("/find-talent/option")
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      setVerified(true); // ✅ update frontend state
+      setError("");
+      router.push("/find-talent/option"); // redirect after success
     } else {
-      const data = await res.json()
-      alert(data.error || "Invalid OTP")
+      setError(data.error || "Invalid OTP");
     }
+  } catch (err) {
+    setError("Something went wrong. Please try again.");
   }
+};
+
 
   return (
     <div className="relative min-h-screen bg-[#241C15] text-white overflow-hidden">
