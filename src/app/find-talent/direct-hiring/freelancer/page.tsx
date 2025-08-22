@@ -24,15 +24,14 @@ export default function ClientFormPage() {
   });
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const roleTypeFromUrl = searchParams.get("role"); // freelancer | intern | fulltime
 
-  // ✅ Always set role_type from URL once
-  useEffect(() => {
-    if (roleTypeFromUrl) {
-      setHiringDetails((prev) => ({ ...prev, role_type: roleTypeFromUrl }));
-    }
-  }, [roleTypeFromUrl]);
+
+  // // ✅ Always set role_type from URL once
+  // useEffect(() => {
+  //   if (roleTypeFromUrl) {
+  //     setHiringDetails((prev) => ({ ...prev, role_type: roleTypeFromUrl }));
+  //   }
+  // }, [roleTypeFromUrl]);
 
   // ✅ Skip client step if already exists (check Supabase user)
 // ✅ Skip client step if already exists (check via cookie)
