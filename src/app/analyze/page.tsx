@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 
 export default function AnalyzeSheetPage() {
   const [sheetUrl, setSheetUrl] = useState("")
+  const [sheetName, setSheetName] = useState("")
   const [prompt, setPrompt] = useState("")
   const [status, setStatus] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -23,6 +24,7 @@ export default function AnalyzeSheetPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sheetUrl,
+          sheetName: sheetName.trim() || undefined, // Added sheet name parameter
           prompt,
         }),
       })
@@ -61,6 +63,7 @@ export default function AnalyzeSheetPage() {
             <li>• AI automatically determines what columns/fields are needed</li>
             <li>• Missing columns are created automatically in your sheet</li>
             <li>• Each candidate gets unique, personalized evaluation</li>
+            <li>• Specify sheet name (Sheet1, Sheet2, etc.) or leave blank for first sheet</li>
           </ul>
         </div>
 
@@ -76,6 +79,20 @@ export default function AnalyzeSheetPage() {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
             />
             <p className="text-sm text-gray-500 mt-1">Make sure your sheet is shared with view/edit permissions</p>
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Sheet Name (Optional):</label>
+            <input
+              type="text"
+              value={sheetName}
+              onChange={(e) => setSheetName(e.target.value)}
+              placeholder="Sheet1, Sheet2, Data, etc. (leave blank for first sheet)"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Specify which sheet tab to analyze. If left blank, the first sheet will be used.
+            </p>
           </div>
 
           <div>

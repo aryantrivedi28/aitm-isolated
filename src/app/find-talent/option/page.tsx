@@ -35,7 +35,7 @@ export default function OptionsPage() {
         </motion.button>
 
         {/* Assisted Hiring */}
-        <motion.button
+        {/* <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => router.push("/find-talent/assisted-hiring")}
@@ -43,7 +43,7 @@ export default function OptionsPage() {
         >
           <Users className="w-5 h-5" />
           <span>Assisted Hiring</span>
-        </motion.button>
+        </motion.button> */}
       </motion.div>
     </div>
   )

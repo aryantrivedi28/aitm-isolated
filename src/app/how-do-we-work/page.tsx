@@ -666,7 +666,6 @@ export default function HowWeWork() {
             <motion.div variants={fadeInUp}>
               <motion.div variants={modernButton} initial="initial" whileHover="hover" whileTap="tap">
                 <Button
-                  size="lg"
                   className="hover:scale-105 text-black font-black px-10 sm:px-12 md:px-16 lg:px-20 py-6 sm:py-7 md:py-8 lg:py-10 text-xl sm:text-2xl md:text-3xl lg:text-4xl rounded-2xl sm:rounded-3xl border-2 border-yellow-400/30 group relative overflow-hidden transition-all duration-500"
                   style={{
                     background: "rgba(255, 224, 27, 0.9)",

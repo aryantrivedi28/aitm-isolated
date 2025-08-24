@@ -5,7 +5,7 @@ import { ScrapingService } from "../../../lib/services/scrapingService"
 
 export async function POST(req: NextRequest) {
   try {
-    const { sheetUrl, prompt } = await req.json()
+    const { sheetUrl, sheetName, prompt } = await req.json()
 
     if (!sheetUrl || !prompt) {
       return NextResponse.json(
@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Extract sheet ID from URL
     const sheetId = extractSheetId(sheetUrl)
     if (!sheetId) {
       return NextResponse.json(
@@ -32,13 +31,12 @@ export async function POST(req: NextRequest) {
     const sheetService = new GoogleSheetsService(sheetId)
     await sheetService.initialize()
 
-    // Get sheet info
-    const sheetInfo = await sheetService.getSheetInfo("MainSheet")
+    const sheetInfo = await sheetService.getSheetInfo(sheetName)
     if (!sheetInfo) {
       return NextResponse.json(
         {
           success: false,
-          error: "Could not access sheet",
+          error: `Could not access sheet${sheetName ? ` "${sheetName}"` : ""}`,
         },
         { status: 400 },
       )
@@ -54,6 +52,7 @@ export async function POST(req: NextRequest) {
     const columnsCreated = await sheetService.ensureColumnsExist(
       fieldAnalysis.requiredFields,
       fieldAnalysis.fieldDescriptions,
+      sheetName,
     )
 
     if (!columnsCreated) {
@@ -66,14 +65,13 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Auto-detect existing column mapping
     const columnMapping = autoDetectColumns(sheetInfo.headerRow)
 
     const scrapingService = new ScrapingService()
-    const rows = await sheetService.getUnprocessedRows(fieldAnalysis.requiredFields)
+    const rows = await sheetService.getUnprocessedRows(fieldAnalysis.requiredFields, sheetName)
     let processedCount = 0
 
-    console.log(`🔄 Processing ${rows.length} rows with custom prompt analysis`)
+    console.log(`🔄 Processing ${rows.length} rows with custom prompt analysis on sheet: ${sheetInfo.sheetTitle}`)
 
     for (const row of rows) {
       try {
@@ -91,6 +89,7 @@ export async function POST(req: NextRequest) {
           row.rowNumber,
           analysisResults,
           extractedData.name,
+          sheetName,
         )
 
         if (success) {
@@ -149,14 +148,12 @@ async function extractRowData(row: any, columnMapping: any, scrapingService: Scr
     phone: row.get(columnMapping.phoneColumn) || "",
   }
 
-  // Extract all additional columns not in the standard mapping
   Object.keys(row._rawData).forEach((key) => {
     if (!Object.values(columnMapping).includes(key)) {
       data[key] = row.get(key)
     }
   })
 
-  // Process content links
   const resumeLink = row.get(columnMapping.resumeColumn)
   const portfolioLink = row.get(columnMapping.portfolioColumn)
   const proposalLink = row.get(columnMapping.proposalColumn)

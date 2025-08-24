@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion, useAnimation, type Variants } from "framer-motion"
 import { useState, useEffect } from "react"
-import { ChevronDown, Star, Quote, ArrowRight, CheckCircle, Users, Zap, Shield, Clock } from "lucide-react"
+import { ChevronDown, Star, Quote, ArrowRight, CheckCircle, Users, Zap, Shield, Clock, SearchCheck, Briefcase } from "lucide-react"
 
 // Animation variants with proper typing
 const fadeUp: Variants = {
@@ -86,6 +86,25 @@ export default function ClientLandingPage() {
   const [isHovered, setIsHovered] = useState(false)
   const [expandedTestimonial, setExpandedTestimonial] = useState<number | null>(null)
   const controls = useAnimation()
+
+
+  const services = [
+    {
+      icon: <Users className="w-10 h-10 text-[#FFE01B]" />,
+      title: "Managed Freelancers",
+      desc: "End-to-end execution where we manage the freelancer, delivery, and quality. Perfect for companies who want outcomes, not micro-management.",
+    },
+    {
+      icon: <SearchCheck className="w-10 h-10 text-[#FFE01B]" />,
+      title: "Freelancer Hiring",
+      desc: "Need a specific skill for your team? We connect you with rigorously vetted Indian freelancers across tech, design, marketing & more.",
+    },
+    {
+      icon: <Briefcase className="w-10 h-10 text-[#FFE01B]" />,
+      title: "Full-Time Recruitment",
+      desc: "Hire tier-one Indian professionals for remote or hybrid full-time roles. Faster, cheaper & more reliable than traditional recruiting.",
+    },
+  ];
 
   const testimonials = [
     {
@@ -268,7 +287,7 @@ export default function ClientLandingPage() {
               variants={fadeUp}
               className="text-4xl md:text-5xl font-semibold mb-4"
             >
-              Finzie – Managed Freelancers Hub for Scaling Organizations
+              Tier-One Indian Talent for Global Companies
             </motion.h2>
             <motion.p
               initial="hidden"
@@ -276,7 +295,7 @@ export default function ClientLandingPage() {
               variants={fadeUp}
               className="text-lg md:text-xl mb-10 max-w-xl text-gray-300"
             >
-              Join Finzie, the premier freelancers' hub for top-tier freelance work. Enjoy the benefits of a seamless candidate hiring experience and access to international freelance jobs.
+              Finzie connects you with India’s top freelancers & professionals—pre-vetted, managed, and ready to deliver. Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure world-class talent with zero hassle.
             </motion.p>
             <motion.div
               initial="hidden"
@@ -290,7 +309,7 @@ export default function ClientLandingPage() {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Post a Request
+                  Start Your Project
                   <ArrowRight className="w-4 h-4" />
                 </motion.button>
               </Link>
@@ -300,7 +319,7 @@ export default function ClientLandingPage() {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Join as a Freelancer
+                  Hiring Talent
                 </motion.button>
               </Link>
             </motion.div>
@@ -308,8 +327,44 @@ export default function ClientLandingPage() {
         </motion.div>
       </section>
 
-      {/* How Finzie Works */}
+
+      {/* what we do */}
       <section className="py-16 px-4 bg-gray-50">
+        <motion.div
+          className="max-w-4xl mx-auto text-center mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+        >
+          <h2 className="text-3xl font-semibold text-[#241C15]">What We Do</h2>
+        </motion.div>
+
+        <motion.div
+          className="relative max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {services.map((service, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ y: -6 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-8 text-center border border-gray-100"
+            >
+              <div className="flex justify-center mb-6">{service.icon}</div>
+              <h3 className="font-semibold text-lg text-[#241C15] mb-2 group-hover:text-[#FFE01B]">
+                {service.title}
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed">{service.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+
+      {/* How Finzie Works */}
+      <section className="py-16 px-4 bg-[#241C15]">
         <motion.div
           className="max-w-4xl mx-auto text-center mb-12"
           initial="hidden"
@@ -317,8 +372,9 @@ export default function ClientLandingPage() {
           viewport={{ once: true, amount: 0.3 }}
           variants={fadeUp}
         >
-          <h2 className="text-3xl font-semibold text-[#241C15]">How Finzie Works</h2>
+          <h2 className="text-3xl font-semibold text-white">How Finzie Works</h2>
         </motion.div>
+
         <motion.div
           className="relative max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8"
           initial="hidden"
@@ -330,17 +386,17 @@ export default function ClientLandingPage() {
             {
               img: "/xyz.png",
               title: "Share your requirements",
-              desc: "Fill out our simple form to outline your project needs & our crew will reach out to clarify details, ensuring a tailored candidate hiring experience aligning with your goals.",
+              desc: "Fill Out Our Simple Form",
             },
             {
               img: "/match.png",
-              title: "Get matched",
-              desc: "Our matchmaking algorithm digs through our pool of pre-vetted talent to find your perfect freelancer fit; no more endless scrolling for freelancers on Fiverr, Upwork or anywhere else!",
+              title: "Get matched with pre-vetted talent",
+              desc: "AI + Human Screening",
             },
             {
               img: "/manage.png",
-              title: "Deliver & manage",
-              desc: "We don’t just leave you there. Holding your hand, we ensure timely delivery with the highest quality, managing the process end-to-end so you can focus on outcomes.",
+              title: "Deliver with confidence ",
+              desc: "We Manage Quality & Timelines",
             },
           ].map((step, index) => (
             <motion.div
@@ -357,100 +413,28 @@ export default function ClientLandingPage() {
                 <img
                   src={step.img || "/placeholder.svg"}
                   alt={step.title}
-                  className="relative mx-auto rounded-lg w-full h-40 object-contain border-2 border-gray-200 group-hover:border-[#FFE01B] transition-colors duration-300"
+                  className="relative mx-auto rounded-lg w-full h-40 object-contain border-2 border-gray-200 group-hover:border-[#FFE01B] bg-white transition-colors duration-300"
                 />
               </motion.div>
-              <h3 className="mt-4 font-semibold text-lg text-[#241C15] group-hover:text-[#FFE01B] transition-colors duration-300">
+              <h3 className="mt-4 font-semibold text-lg text-white group-hover:text-[#FFE01B] transition-colors duration-300">
                 {step.title}
               </h3>
-              <p className="mt-2 text-gray-600">{step.desc}</p>
+              <p className="mt-2 font-bold text-xl text-gray-200">{step.desc}</p>
             </motion.div>
           ))}
         </motion.div>
-      </section>
 
-      {/* Why Us Section */}
-      <section className="bg-[#241C15] text-white py-16 px-4">
-        <motion.div
-          className="relative max-w-6xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
-        >
-          <motion.h2 initial="hidden" animate="visible" variants={fadeUp} className="text-3xl font-semibold mb-10">
-            Why Us?
-          </motion.h2>
-          <motion.p
-            initial="hidden"
-            animate="visible"
-            variants={fadeUp}
-            className="text-lg md:text-xl mb-10 max-w-3xl text-gray-300"
+        {/* CTA Button */}
+        <div className="mt-12 flex justify-center">
+          <motion.a
+            href="/how-do-we-work" // change this to your actual route
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-8 py-4 bg-[#FFE01B] text-[#241C15] font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
           >
-            Our diverse talent pool supports freelance WFH jobs and international freelance jobs, ensuring flexibility and access to global expertise with zero hassles
-          </motion.p>
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-8"
-            initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
-          >
-            {[
-              {
-                icon: Shield,
-                title: "Pre-vetted experts ready to jump in",
-                desc: "Only the best freelancers make the cut - our rigorous screening ensures you can access the most appropriate freelancers portfolios who excel in their craft.",
-              },
-              {
-                icon: Zap,
-                title: "AI-driven matching for a perfect fit",
-                desc: "Data-powered pairings deliver the exact skills you need",
-              },
-              {
-                icon: Users,
-                title: "Integrated agile teams",
-                desc: "Our freelancers seamlessly join your team in your preferred communication channels, enhancing the candidate hiring experience for freelance work.",
-              },
-              {
-                icon: Clock,
-                title: "Flexible pricing that adapts to your budget",
-                desc: "Get tailored freelancers quotes with no hidden fees, making Finzie the best site for hiring freelancers online.",
-              },
-              {
-                icon: Star,
-                title: "World's first AI talent aggregator",
-                desc: "Whether it's workflow automation or a full autonomous agent, we've got the specialists to build it",
-              },
-              {
-                icon: CheckCircle,
-                title: "Matchmaking System that Ensures Exact Match",
-                desc: "Our proprietary system guarantees the perfect freelancer for your requirements, every time.",
-              },
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial="hidden"
-                animate="visible"
-                variants={scaleIn}
-                className="group flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors duration-300"
-                whileHover={{ x: 10 }}
-              >
-                <motion.div
-                  className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-300"
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  <feature.icon className="w-12 h-6 text-[#FFE01B]" />
-                </motion.div>
-                <div>
-                  <h3 className="font-semibold text-lg group-hover:text-[#FFE01B] transition-colors duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="mt-1 text-gray-300">{feature.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </motion.div>
+            How We Work
+          </motion.a>
+        </div>
       </section>
 
       {/* Testimonials Section */}
@@ -669,6 +653,93 @@ export default function ClientLandingPage() {
           </motion.div>
         </motion.div>
       </section>
+
+
+      {/* Why Us Section */}
+      <section className="bg-[#241C15] text-white py-16 px-4">
+        <motion.div
+          className="relative max-w-6xl mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerContainer}
+        >
+          <motion.h2 initial="hidden" animate="visible" variants={fadeUp} className="text-3xl font-semibold mb-10">
+            Why Us?
+          </motion.h2>
+          <motion.p
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            className="text-lg md:text-xl mb-10 max-w-3xl text-gray-300"
+          >
+            Our diverse talent pool supports freelance WFH jobs and international freelance jobs, ensuring flexibility and access to global expertise with zero hassles
+          </motion.p>
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-8"
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+          >
+            {[
+              {
+                icon: Shield,
+                title: "Pre-vetted experts ready to jump in",
+                desc: "Only the best freelancers make the cut - our rigorous screening ensures you can access the most appropriate freelancers portfolios who excel in their craft.",
+              },
+              {
+                icon: Zap,
+                title: "AI-driven matching for a perfect fit",
+                desc: "Data-powered pairings deliver the exact skills you need",
+              },
+              {
+                icon: Users,
+                title: "Integrated agile teams",
+                desc: "Our freelancers seamlessly join your team in your preferred communication channels, enhancing the candidate hiring experience for freelance work.",
+              },
+              {
+                icon: Clock,
+                title: "Flexible pricing that adapts to your budget",
+                desc: "Get tailored freelancers quotes with no hidden fees, making Finzie the best site for hiring freelancers online.",
+              },
+              {
+                icon: Star,
+                title: "World's first AI talent aggregator",
+                desc: "Whether it's workflow automation or a full autonomous agent, we've got the specialists to build it",
+              },
+              {
+                icon: CheckCircle,
+                title: "Matchmaking System that Ensures Exact Match",
+                desc: "Our proprietary system guarantees the perfect freelancer for your requirements, every time.",
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                initial="hidden"
+                animate="visible"
+                variants={scaleIn}
+                className="group flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition-colors duration-300"
+                whileHover={{ x: 10 }}
+              >
+                <motion.div
+                  className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-300"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <feature.icon className="w-12 h-6 text-[#FFE01B]" />
+                </motion.div>
+                <div>
+                  <h3 className="font-semibold text-lg group-hover:text-[#FFE01B] transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                  <p className="mt-1 text-gray-300">{feature.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </section>
+
+
 
       {/* Service Categories */}
       <section className="py-20 px-4 bg-white relative overflow-hidden">

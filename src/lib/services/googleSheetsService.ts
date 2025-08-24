@@ -28,22 +28,39 @@ export class GoogleSheetsService {
     }
   }
 
-  async getMainSheet() {
+  async getSheet(sheetName?: string) {
     if (!this.doc) throw new Error("Google Sheets not initialized")
 
     try {
-      const sheet = this.doc.sheetsByIndex[0]
+      let sheet
+      if (sheetName) {
+        // Try to find sheet by name
+        sheet = this.doc.sheetsByTitle[sheetName]
+        if (!sheet) {
+          console.log(`⚠️ Sheet "${sheetName}" not found, available sheets:`, Object.keys(this.doc.sheetsByTitle))
+          // Fallback to first sheet
+          sheet = this.doc.sheetsByIndex[0]
+        }
+      } else {
+        // Default to first sheet
+        sheet = this.doc.sheetsByIndex[0]
+      }
+
       console.log(`📄 Using sheet: ${sheet.title}`)
       return sheet
     } catch (error) {
-      console.error("❌ Error getting main sheet:", error)
+      console.error("❌ Error getting sheet:", error)
       return null
     }
   }
 
-  async getUnprocessedRows(requiredFields: string[] = []) {
+  async getMainSheet() {
+    return this.getSheet()
+  }
+
+  async getUnprocessedRows(requiredFields: string[] = [], sheetName?: string) {
     try {
-      const sheet = await this.getMainSheet()
+      const sheet = await this.getSheet(sheetName)
       if (!sheet) return []
 
       await sheet.loadHeaderRow()
@@ -81,10 +98,9 @@ export class GoogleSheetsService {
     }
   }
 
-  // Add inside your class
-  async checkDriveLinkAccess(columnName = "Drive Link") {
+  async checkDriveLinkAccess(columnName = "Drive Link", sheetName?: string) {
     try {
-      const sheet = await this.getMainSheet()
+      const sheet = await this.getSheet(sheetName)
       if (!sheet) return []
 
       await sheet.loadHeaderRow()
@@ -136,9 +152,10 @@ export class GoogleSheetsService {
     review: string,
     ratingColumn: string,
     reviewColumn: string,
+    sheetName?: string,
   ): Promise<boolean> {
     try {
-      const sheet = await this.getMainSheet()
+      const sheet = await this.getSheet(sheetName)
       if (!sheet) return false
 
       await sheet.loadHeaderRow()
@@ -158,13 +175,13 @@ export class GoogleSheetsService {
 
       if (!sheet.headerValues.includes(ratingColumn)) {
         console.log(`📝 Adding missing rating column: ${ratingColumn}`)
-        await this.addColumnToSheet(ratingColumn)
+        await this.addColumnToSheet(ratingColumn, sheetName)
         await sheet.loadHeaderRow() // Reload headers after adding column
       }
 
       if (!sheet.headerValues.includes(reviewColumn)) {
         console.log(`📝 Adding missing review column: ${reviewColumn}`)
-        await this.addColumnToSheet(reviewColumn)
+        await this.addColumnToSheet(reviewColumn, sheetName)
         await sheet.loadHeaderRow() // Reload headers after adding column
       }
 
@@ -181,9 +198,9 @@ export class GoogleSheetsService {
     }
   }
 
-  async addColumnToSheet(columnName: string): Promise<boolean> {
+  async addColumnToSheet(columnName: string, sheetName?: string): Promise<boolean> {
     try {
-      const sheet = await this.getMainSheet()
+      const sheet = await this.getSheet(sheetName)
       if (!sheet) return false
 
       await sheet.loadHeaderRow()
@@ -212,10 +229,10 @@ export class GoogleSheetsService {
     return result
   }
 
-  async getSheetInfo(sheetName: any) {
+  async getSheetInfo(sheetName?: string) {
     try {
       await this.initialize()
-      const sheet = await this.getMainSheet()
+      const sheet = await this.getSheet(sheetName)
       if (!sheet) return null
 
       await sheet.loadHeaderRow()
@@ -233,9 +250,13 @@ export class GoogleSheetsService {
     }
   }
 
-  async ensureColumnsExist(columnNames: string[], descriptions?: Record<string, string>): Promise<boolean> {
+  async ensureColumnsExist(
+    columnNames: string[],
+    descriptions?: Record<string, string>,
+    sheetName?: string,
+  ): Promise<boolean> {
     try {
-      const sheet = await this.getMainSheet()
+      const sheet = await this.getSheet(sheetName)
       if (!sheet) return false
 
       await sheet.loadHeaderRow()
@@ -250,7 +271,7 @@ export class GoogleSheetsService {
       console.log(`📝 Adding ${missingColumns.length} missing columns:`, missingColumns)
 
       for (const columnName of missingColumns) {
-        const success = await this.addColumnToSheet(columnName)
+        const success = await this.addColumnToSheet(columnName, sheetName)
         if (!success) {
           console.error(`❌ Failed to add column: ${columnName}`)
           return false
@@ -271,9 +292,10 @@ export class GoogleSheetsService {
     rowIndex: number,
     fieldValues: Record<string, any>,
     candidateName?: string,
+    sheetName?: string,
   ): Promise<boolean> {
     try {
-      const sheet = await this.getMainSheet()
+      const sheet = await this.getSheet(sheetName)
       if (!sheet) return false
 
       await sheet.loadHeaderRow()
@@ -310,6 +332,13 @@ export class GoogleSheetsService {
     }
   }
 
-
-  
+  async getAvailableSheets(): Promise<string[]> {
+    try {
+      await this.initialize()
+      return Object.keys(this.doc.sheetsByTitle)
+    } catch (error) {
+      console.error("❌ Error getting available sheets:", error)
+      return []
+    }
+  }
 }

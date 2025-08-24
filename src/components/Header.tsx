@@ -72,13 +72,13 @@ export default function Header() {
             Case Studies
             <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-[#FFE01B] transition-all duration-300 group-hover:w-[calc(100%-24px)]"></span>
           </a>
-          {/* <a
+          <a
             onClick={() => handleNavigation("/find-talent")}
             className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
           >
             Find Talent
             <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-[#FFE01B] transition-all duration-300 group-hover:w-[calc(100%-24px)]"></span>
-          </a> */}
+          </a>
           <a
             onClick={() => handleNavigation("/get-hired")}
             className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
@@ -117,13 +117,13 @@ export default function Header() {
             >
               Case Studies
             </a>
-            {/* <a
+            <a
               onClick={() => handleNavigation("/find-talent")}
               className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
             >
               Find Talent
               <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-[#FFE01B] transition-all duration-300 group-hover:w-[calc(100%-24px)]"></span>
-            </a> */}
+            </a>
             <a
               onClick={() => handleNavigation("/get-hired")}
               className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
