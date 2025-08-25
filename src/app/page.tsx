@@ -90,17 +90,17 @@ export default function ClientLandingPage() {
 
   const services = [
     {
-      icon: <Users className="w-10 h-10 text-[#FFE01B]" />,
+      icon: <Users className="w-12 h-12 text-[#FFE01B]" />,
       title: "Managed Freelancers",
       desc: "End-to-end execution where we manage the freelancer, delivery, and quality. Perfect for companies who want outcomes, not micro-management.",
     },
     {
-      icon: <SearchCheck className="w-10 h-10 text-[#FFE01B]" />,
+      icon: <SearchCheck className="w-12 h-12 text-[#FFE01B]" />,
       title: "Freelancer Hiring",
       desc: "Need a specific skill for your team? We connect you with rigorously vetted Indian freelancers across tech, design, marketing & more.",
     },
     {
-      icon: <Briefcase className="w-10 h-10 text-[#FFE01B]" />,
+      icon: <Briefcase className="w-12 h-12 text-[#FFE01B]" />,
       title: "Full-Time Recruitment",
       desc: "Hire tier-one Indian professionals for remote or hybrid full-time roles. Faster, cheaper & more reliable than traditional recruiting.",
     },
@@ -270,7 +270,7 @@ export default function ClientLandingPage() {
           variants={staggerContainer}
         >
           <motion.div className="text-start space-y-6" initial="hidden" animate="visible" variants={fadeInLeft}>
-            <motion.h1
+            {/* <motion.h1
               initial="hidden"
               animate="visible"
               variants={fadeUp}
@@ -280,7 +280,7 @@ export default function ClientLandingPage() {
               <span className="bg-gradient-to-r from-[#FFE01B] to-yellow-300 bg-clip-text text-transparent font-extrabold text-5xl">
                 Finzie
               </span>
-            </motion.h1>
+            </motion.h1> */}
             <motion.h2
               initial="hidden"
               animate="visible"
@@ -293,7 +293,7 @@ export default function ClientLandingPage() {
               initial="hidden"
               animate="visible"
               variants={fadeUp}
-              className="text-lg md:text-xl mb-10 max-w-xl text-gray-300"
+              className="text-lg md:text-xl mb-10 max-w-3xl text-gray-200"
             >
               Finzie connects you with India’s top freelancers & professionals—pre-vetted, managed, and ready to deliver. Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure world-class talent with zero hassle.
             </motion.p>
@@ -353,10 +353,10 @@ export default function ClientLandingPage() {
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-8 text-center border border-gray-100"
             >
               <div className="flex justify-center mb-6">{service.icon}</div>
-              <h3 className="font-semibold text-lg text-[#241C15] mb-2 group-hover:text-[#FFE01B]">
+              <h3 className="font-semibold text-xl text-[#241C15] mb-2 group-hover:text-[#FFE01B]">
                 {service.title}
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">{service.desc}</p>
+              <p className="text-gray-500 text-sm leading-relaxed">{service.desc}</p>
             </motion.div>
           ))}
         </motion.div>

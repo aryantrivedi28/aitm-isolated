@@ -205,7 +205,7 @@ export default function AdminDashboard() {
                       Copy Link
                     </button>
                     <Link
-                      href={`/admin/forms/${form.id}/submissions`}
+                      href={`/admin-form-creation/forms/${form.id}/submissions`}
                       className="px-4 py-2 bg-[#241C15] text-white rounded-lg hover:bg-[#241C15]/90 transition-all duration-200 text-sm font-medium text-center"
                     >
                       View Submissions ({form.submission_count})
