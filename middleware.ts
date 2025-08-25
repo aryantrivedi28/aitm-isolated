@@ -2,20 +2,14 @@ import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
 export function middleware(req: NextRequest) {
-  const protectedRoutes = [
-    "/find-talent",
-    "/api/client/details",
-    "/api/client/hiring",
-    "/api/client/me"
-  ];
-
   const { pathname } = req.nextUrl
 
-  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
+  // Protect find-talent routes & API client routes
+  if (pathname.startsWith("/find-talent") || pathname.startsWith("/api/client")) {
     const authCookie = req.cookies.get("client_auth")?.value
-    if (!authCookie) {
-      const loginUrl = new URL("/verify", req.url)
-      return NextResponse.redirect(loginUrl)
+    if (!authCookie || authCookie === "") {
+      // Redirect to login or home page
+      return NextResponse.redirect(new URL("/verify", req.url))
     }
   }
 
@@ -23,5 +17,9 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/find-talent/option/:path*"],
+  matcher: [
+    "/find-talent",
+    "/find-talent/:path*",
+    "/api/client/:path*"
+  ],
 }

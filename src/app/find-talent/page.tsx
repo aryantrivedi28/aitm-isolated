@@ -1,58 +1,66 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 export default function FindTalentPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [otpSent, setOtpSent] = useState(false); // renamed from 'sent'
+  const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
-  const [verified, setVerified] = useState(false); // new state
+  const [verified, setVerified] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // ✅ success message
 
   async function sendOtp() {
-    const res = await fetch("/api/otp/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const data = await res.json();
-    if (data.success) {
-      setOtpSent(true);
-      setError("");
-    } else {
-      setError(data.error);
+    setError("");
+    setSuccessMessage("");
+    try {
+      const res = await fetch("/api/otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOtpSent(true);
+        setSuccessMessage("✅ OTP sent successfully! Check your email.");
+      } else {
+        setError(data.error || "Failed to send OTP.");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
     }
   }
 
   const verifyOtp = async () => {
-  try {
-    const res = await fetch("/api/otp/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
-    });
+    setError("");
+    setSuccessMessage("");
+    try {
+      const res = await fetch("/api/otp/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok && data.success) {
-      setVerified(true); // ✅ update frontend state
-      setError("");
-      router.push("/find-talent/option"); // redirect after success
-    } else {
-      setError(data.error || "Invalid OTP");
+      if (res.ok && data.success) {
+        setVerified(true);
+        setSuccessMessage("🎉 Email verified successfully!");
+        setTimeout(() => router.push("/find-talent/option"), 2000); // Redirect after 2s
+      } else {
+        setError(data.error || "Invalid OTP");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
     }
-  } catch (err) {
-    setError("Something went wrong. Please try again.");
-  }
-};
-
+  };
 
   return (
     <div className="relative min-h-screen bg-[#241C15] text-white overflow-hidden">
-      {/* Floating circles */}
+      {/* Background animation */}
       <div className="absolute inset-0 -z-10">
         <motion.div
           className="absolute w-72 h-72 bg-[#FFE01B] rounded-full mix-blend-multiply filter blur-3xl opacity-20"
@@ -170,7 +178,35 @@ export default function FindTalentPage() {
           )}
         </motion.div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {/* ✅ Animated Feedback Messages */}
+        <AnimatePresence>
+          {successMessage && (
+            <motion.p
+              key="success"
+              className="text-green-600 font-medium mt-3"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
+            >
+              {successMessage}
+            </motion.p>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              key="error"
+              className="text-red-500 font-medium mt-3"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
