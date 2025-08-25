@@ -113,8 +113,65 @@ export default function CaseStudiesPage() {
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
-  const industries = ["Travel & Leisure", "Nonprofit & Government", "Automotive & Transportation", "Technology", "Style & Fashion", "Sports, Outdoors & Fitness", "Real State", "Professional Services", "Pets", "Home & Garden", "Healthcare", "Finance", "Food & Drinks", "Gamming", "Beauty", "Education", "Baby", "Arts & Entertainment"]
-  const services = ["Web Development", "SEO", "CRO", "Social Media Management", "Paid Ads", "Email Marketing", "Marketing Strategy", "SMS Marketing", "Google Shopping", "Branding", "Content Marketing", "Apple Optimization", "Copywriting", "public relations", "Video Production", "Graphic Design", "UI/UX Design", "App Development"];
+const industries = [
+  "Technology", 
+  "Healthcare", 
+  "Finance", 
+  "Gaming", 
+  "Education", 
+  "Arts & Entertainment",
+  // "FMCG", // could be used for future brand growth case studies
+  // "Sports, Outdoors & Fitness", // consider later for sports analytics
+  // "EdTech Media", // future use
+  // "FinTech", // already covered under Finance
+  // "Wellness", // could relate to healthcare services
+];
+
+const services = [
+  "Web Development", 
+  "SEO", 
+  "CRO", 
+  "Social Media Management", 
+  // "Email Marketing", 
+  "Marketing Strategy", 
+  // "SMS Marketing", 
+  // "Content Marketing", 
+  "Copywriting", 
+  "Video Production", 
+  "Graphic Design", 
+  "UI/UX Design", 
+  "App Development",
+  // "Instagram Growth", // new
+  "Short-form Content", // new
+  // "Storytelling", // new
+  "Brand Growth", // new
+  "Pitch Deck Design", // new
+  "Investor Pitch Design", // new
+  // "Market Research", // new
+  "Business Communication", // new
+  // "Fundraising Support", // new
+  // "Structured Narrative", // new
+  "Real-time Chat", // new
+  "Mobile UX", // new
+  // "Performance Optimization", // new
+  // "Messaging Integration", // new
+  // "Content Strategy", // new
+  // "Cash Flow Management", // new
+  "Healthcare Services", // new
+  // "Wellness Services", // new
+  "Predictive Modeling", // new
+  "Artificial Intelligence", // new
+  "Machine Learning", // new
+  "Flutter Development", // new
+  "Firebase Integration", // new
+  // "State Management", // new
+  "UI/UX Overhaul", // new
+  // "Conversion Optimization", // new
+  // "Apple Optimization", // future
+  // "Public Relations", // future
+  // "Paid Ads", // future
+  // "Google Shopping", // future
+];
 
 
 
@@ -138,6 +195,24 @@ export default function CaseStudiesPage() {
 
     return matchesIndustry && matchesService;
   });
+
+
+//   const filteredCaseStudies = caseStudies.filter(study => {
+//   const matchesIndustry = selectedIndustry
+//     ? study.tags?.includes(selectedIndustry) || study.title.includes(selectedIndustry) || study.description.includes(selectedIndustry)
+//     : true;
+
+//   const matchesService = selectedService
+//     ? study.tags?.includes(selectedService) || study.title.includes(selectedService) || study.description.includes(selectedService)
+//     : true;
+
+//   const matchesSearch = searchTerm
+//     ? study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//       study.description.toLowerCase().includes(searchTerm.toLowerCase())
+//     : true;
+
+//   return matchesIndustry && matchesService && matchesSearch;
+// });
 
 
   useEffect(() => {
