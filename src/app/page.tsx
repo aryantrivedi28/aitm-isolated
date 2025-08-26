@@ -88,6 +88,17 @@ export default function ClientLandingPage() {
   const controls = useAnimation()
 
 
+
+  const logos = [
+    "/logos/logos1.jpeg",
+    "/logos/logos2.webp",
+    "/logos/logos3.webp",
+    "/logos/logos4.png",
+    "/logos/logos5.png",
+    "/logos/logos6.webp",
+    "/logos/logos7.jpeg",
+  ];
+
   const services = [
     {
       icon: <Users className="w-12 h-12 text-[#FFE01B]" />,
@@ -434,6 +445,41 @@ export default function ClientLandingPage() {
           >
             How We Work
           </motion.a>
+        </div>
+      </section>
+
+      {/* Client Logos section */}
+      <section className="bg-gray-50 py-12">
+        <div className="container mx-auto overflow-hidden">
+          <h2 className="text-center text-2xl font-semibold mb-8 text-gray-800">
+            Trusted by Leading Brands
+          </h2>
+
+          <div className="relative w-full overflow-hidden">
+            <motion.div
+              className="flex space-x-12 w-max"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{
+                repeat: Infinity,
+                duration: 20, // slower for smooth motion
+                ease: "linear",
+              }}
+            >
+              {[...logos, ...logos].map((logo, index) => (
+                <motion.div
+                  key={index}
+                  className="flex-shrink-0 flex items-center justify-center"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <img
+                    src={logo}
+                    alt={`Client Logo ${index + 1}`}
+                    className="object-contain opacity-90 hover:opacity-100 transition w-40 h-24 md:w-52 md:h-32"
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </section>
 
