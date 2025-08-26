@@ -306,7 +306,7 @@ export default function ClientLandingPage() {
               variants={fadeUp}
               className="text-lg md:text-xl mb-10 max-w-3xl text-gray-200"
             >
-              Finzie connects you with India’s top freelancers & professionals—pre-vetted, managed, and ready to deliver. Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure world-class talent with zero hassle.
+              Finzie connects you with India’s top freelancers & professionals pre-vetted, managed, and ready to deliver. Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure world-class talent with zero hassle.
             </motion.p>
             <motion.div
               initial="hidden"
@@ -443,7 +443,7 @@ export default function ClientLandingPage() {
             whileTap={{ scale: 0.95 }}
             className="px-8 py-4 bg-[#FFE01B] text-[#241C15] font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
           >
-            How We Work
+            How We Work ?
           </motion.a>
         </div>
       </section>

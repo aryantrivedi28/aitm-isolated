@@ -1,13 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Clock, Award, Zap, Users, ArrowRight, Sparkles, Star, CheckCircle, TrendingUp, Briefcase } from "lucide-react";
 import { fadeInUp, staggerContainer, modernButton, fadeUp } from "./motion-variants";
 
 // Hero Section
 export function HowWeWorkHero({ heroRef, isHeroInView, style }: any) {
+
   return (
     <motion.section
       ref={heroRef}
@@ -96,7 +96,7 @@ export function HowWeWorkHero({ heroRef, isHeroInView, style }: any) {
           Finzie
         </span>
         , we keep hiring straightforward yet effective. Our process ensures{" "}
-        <span className="text-white font-medium">speed, accuracy, and quality</span>—so you get the right talent
+        <span className="text-white font-medium">speed, accuracy, and quality</span> so you get the right talent
         every time.
       </motion.p>
 
@@ -480,10 +480,13 @@ export function WhyItWorks() {
 }
 
 // CTA Section
+import { useRouter } from "next/navigation";
+
 export function CtaSection() {
+  const router = useRouter();
   return (
     <motion.section
-      className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 lg:py-28 xl:py-32 text-center max-w-6xl mx-auto relative z-10"
+      className="px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 lg:py-28 xl:py-32 text-center max-w-7xl mx-auto relative z-10"
       initial="initial"
       whileInView="animate"
       viewport={{ once: true, margin: "-100px" }}
@@ -577,17 +580,15 @@ export function CtaSection() {
         {/* CTA Button */}
         <motion.div variants={fadeInUp}>
           <motion.div variants={modernButton} initial="initial">
-            <Button
-              size="lg"
-              className=" group relative px-6 sm:px-8 md:px-10 lg:px-12 py-4 sm:py-5 md:py-6 text-base sm:text-lg md:text-xl lg:text-2xl font-black text-[#241C15] rounded-xl sm:rounded-2xl border-2 border-[#FFE01B]/30 bg-[#FFE01B] shadow-md hover:shadow-none hover:scale-105 backdrop-blur-md transition-all duration-500"
+            <button
+              onClick={() => router.push("/find-talent")}
+              className="group relative px-6 sm:px-8 md:px-10 lg:px-12 py-4 sm:py-5 md:py-6 text-base sm:text-lg md:text-xl lg:text-2xl font-black text-[#241C15] rounded-xl sm:rounded-2xl border-2 border-[#FFE01B]/30 bg-[#FFE01B] shadow-md hover:shadow-none hover:scale-105 backdrop-blur-md transition-all duration-500"
             >
               <span className="relative z-10 flex items-center gap-2 sm:gap-3">
                 Get Started
-                <ArrowRight
-                  className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-transform duration-500 group-hover:translate-x-1"
-                />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-transform duration-500 group-hover:translate-x-1" />
               </span>
-            </Button>
+            </button>
           </motion.div>
         </motion.div>
 
