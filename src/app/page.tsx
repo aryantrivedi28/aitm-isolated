@@ -461,27 +461,30 @@ export default function ClientLandingPage() {
               animate={{ x: ["0%", "-50%"] }}
               transition={{
                 repeat: Infinity,
-                duration: 20, // slower for smooth motion
+                duration: 20, // smooth and continuous
                 ease: "linear",
               }}
             >
               {[...logos, ...logos].map((logo, index) => (
                 <motion.div
                   key={index}
-                  className="flex-shrink-0 flex items-center justify-center"
+                  className="flex-shrink-0 flex items-center justify-center bg-transparent"
                   whileHover={{ scale: 1.1 }}
                 >
-                  <img
-                    src={logo}
-                    alt={`Client Logo ${index + 1}`}
-                    className="object-contain opacity-90 hover:opacity-100 transition w-40 h-24 md:w-52 md:h-32"
-                  />
+                  <div className="w-44 h-24 md:w-52 md:h-32 flex items-center justify-center bg-transparent">
+                    <img
+                      src={logo}
+                      alt={`Client Logo ${index + 1}`}
+                      className="object-contain w-full h-full opacity-90 hover:opacity-100 transition"
+                    />
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
           </div>
         </div>
       </section>
+
 
       {/* Testimonials Section */}
       <section className="py-16 px-4 bg-gray-50 overflow-hidden">
