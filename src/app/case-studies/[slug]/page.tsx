@@ -91,12 +91,16 @@ export default function CaseStudyPage({
     async function fetchStudy() {
       const { slug } = await params
       const fetchedStudy: CaseStudy = await client.fetch(
-        `*[_type == "caseStudy" && slug.current == $slug][0]{
+        `*[_type == "caseStudy" && slug.current == $slug && isHidden != true][0]{
+  _id,
   title,
   subtitle,
   slug,
   description,
   tags,
+  order,
+  ranking,
+  isHidden,
   mainImage { asset -> { url } },
   video {
     videoUrl,

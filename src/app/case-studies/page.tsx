@@ -215,34 +215,39 @@ const services = [
 // });
 
 
-  useEffect(() => {
-    async function fetchCaseStudies() {
-      try {
-        const studies = await client.fetch(`
-          *[_type == "caseStudy"] | order(_createdAt desc) {
+useEffect(() => {
+  async function fetchCaseStudies() {
+    try {
+      const studies = await client.fetch(`
+        *[_type == "caseStudy" && isHidden != true] 
+          | order(order asc, ranking desc, _createdAt desc) {
             _id,
             title,
             description,
             slug,
             tags,
             _createdAt,
+            order,
+            ranking,
+            isHidden,
             mainImage {
               asset -> {
                 url
               }
             }
           }
-        `)
-        setCaseStudies(studies || [])
-      } catch (error) {
-        console.error("Error fetching case studies:", error)
-      } finally {
-        setLoading(false)
-      }
+      `)
+      setCaseStudies(studies || [])
+    } catch (error) {
+      console.error("Error fetching case studies:", error)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    fetchCaseStudies()
-  }, [])
+  fetchCaseStudies()
+}, [])
+
 
   // const filteredStudies = caseStudies.filter((study) => {
   //   const matchesSearch =

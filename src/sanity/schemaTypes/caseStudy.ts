@@ -132,5 +132,43 @@ export default defineType({
         },
       ]
     }),
+
+    // ✅ NEW FIELDS FOR HIDING, RANKING, ORDERING
+    defineField({
+      name: 'isHidden',
+      title: 'Hide this Case Study?',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'ranking',
+      title: 'Ranking',
+      type: 'number',
+      description: 'Higher number = higher priority in display',
+      validation: Rule => Rule.min(0).integer(),
+    }),
+    defineField({
+      name: 'order',
+      title: 'Order',
+      type: 'number',
+      description: 'Manual sort order (lower = shown first)',
+      validation: Rule => Rule.min(0).integer(),
+    }),
   ],
+
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'subtitle',
+      media: 'mainImage',
+      isHidden: 'isHidden',
+    },
+    prepare({ title, subtitle, media, isHidden }) {
+      return {
+        title: isHidden ? `🚫 ${title}` : title,
+        subtitle: subtitle ? subtitle : 'No subtitle',
+        media,
+      }
+    },
+  },
 })
