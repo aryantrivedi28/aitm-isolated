@@ -11,7 +11,7 @@ export default async function OptionLayout({ children }: { children: ReactNode; 
   const authCookie = cookieStore.get("client_auth")?.value;
 
   if (!authCookie) {
-    redirect("/verify");
+    redirect("/find-talent");
   }
 
   return <>{children}</>;

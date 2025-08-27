@@ -15,7 +15,7 @@ export function middleware(req: NextRequest) {
     const authCookie = req.cookies.get("client_auth")?.value;
 
     if (!authCookie) {
-      const loginUrl = new URL("/verify", req.url);
+      const loginUrl = new URL("/find-talent", req.url);
       loginUrl.searchParams.set("redirect", pathname); // optional redirect back
       return NextResponse.redirect(loginUrl);
     }
