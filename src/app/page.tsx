@@ -89,17 +89,16 @@ export default function ClientLandingPage() {
 
 
 
-  const logos = [
-    "/logos/logos1.jpeg",
-    "/logos/logos2.webp",
-    "/logos/logos3.webp",
-    "/logos/logos4.png",
-    "/logos/logos5.png",
-    "/logos/logos6.webp",
-    "/logos/logos7.jpeg",
-    "/logos/logos8.jpeg"
-  ];
-
+const logos = [
+  { src: "/logos/logos1.png", width: 120, height: 60 }, // custom size
+  { src: "/logos/logos2.webp", width: 150, height: 60 },
+  { src: "/logos/logos3.png", width: 100, height: 50 },
+  { src: "/logos/logos4.png", width: 130, height: 60 },
+  { src: "/logos/logos5.png", width: 110, height: 55 },
+  { src: "/logos/logos6.webp", width: 140, height: 70 },
+  { src: "/logos/logos7.jpeg", width: 100, height: 50 },
+  { src: "/logos/logos8.jpeg", width: 150, height: 75 }
+];
   const services = [
     {
       icon: <Users className="w-12 h-12 text-[#FFE01B]" />,
@@ -352,7 +351,7 @@ export default function ClientLandingPage() {
 
 
       {/* what we do */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-16 px-4 bg-[#fbf5e5]">
         <motion.div
           className="max-w-4xl mx-auto text-center mb-12"
           initial="hidden"
@@ -373,7 +372,7 @@ export default function ClientLandingPage() {
               key={index}
               whileHover={{ y: -6 }}
               transition={{ duration: 0.3 }}
-              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-8 text-center border border-gray-100"
+              className="bg-[#fbf5e5] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-8 text-center border border-gray-100"
             >
               <div className="flex justify-center mb-6">{service.icon}</div>
               <h3 className="font-semibold text-xl text-[#241C15] mb-2 group-hover:text-[#FFE01B]">
@@ -436,7 +435,7 @@ export default function ClientLandingPage() {
                 <img
                   src={step.img || "/placeholder.svg"}
                   alt={step.title}
-                  className="relative mx-auto rounded-lg w-full h-40 object-contain border-2 border-gray-200 group-hover:border-[#FFE01B] bg-white transition-colors duration-300"
+                  className="relative mx-auto rounded-lg w-full h-40 object-contain border-2 border-gray-200 group-hover:border-[#FFE01B] bg-[#fbf5e5] transition-colors duration-300"
                 />
               </motion.div>
               <h3 className="mt-4 font-semibold text-lg text-white group-hover:text-[#FFE01B] transition-colors duration-300">
@@ -461,7 +460,7 @@ export default function ClientLandingPage() {
       </section>
 
       {/* Client Logos section */}
-      <section className="bg-gray-50 py-12">
+      <section className="bg-[#fbf5e5] py-12">
         <div className="container mx-auto overflow-hidden">
           <h2 className="text-center text-2xl font-semibold mb-8 text-gray-800">
             Trusted by Leading Brands
@@ -485,9 +484,9 @@ export default function ClientLandingPage() {
                 >
                   <div className="w-28 h-16 sm:w-36 sm:h-20 md:w-44 md:h-24 lg:w-52 lg:h-32 
                             flex items-center justify-center 
-                            bg-white rounded-lg shadow-sm p-2">
+                            bg-[#fbf5e5] rounded-lg shadow-sm p-2">
                     <img
-                      src={logo}
+                      src={logo.src}
                       alt={`Client Logo ${index + 1}`}
                       className="object-contain max-w-full max-h-full opacity-90 hover:opacity-100 transition"
                     />
@@ -501,7 +500,7 @@ export default function ClientLandingPage() {
 
 
       {/* Testimonials Section */}
-      <section className="py-16 px-4 bg-gray-50 overflow-hidden">
+      <section className="py-16 px-4 bg-[#fbf5e5] overflow-hidden">
         <motion.div
           className="max-w-6xl mx-auto"
           initial="hidden"
@@ -545,7 +544,7 @@ export default function ClientLandingPage() {
               {testimonials.map((testimonial, index) => (
                 <motion.div
                   key={`first-${index}`}
-                  className="group bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0 flex flex-col"
+                  className="group bg-[#fbf5e5] rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0 flex flex-col"
                   style={{
                     width: "380px",
                     minHeight: expandedTestimonial === index ? "auto" : "420px",
@@ -619,7 +618,7 @@ export default function ClientLandingPage() {
               {testimonials.map((testimonial, index) => (
                 <motion.div
                   key={`second-${index}`}
-                  className="group bg-white rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0 flex flex-col"
+                  className="group bg-[#fbf5e5] rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0 flex flex-col"
                   style={{
                     width: "380px",
                     minHeight: expandedTestimonial === index + testimonials.length ? "auto" : "420px",
@@ -805,7 +804,7 @@ export default function ClientLandingPage() {
 
 
       {/* Service Categories */}
-      <section className="py-20 px-4 bg-white relative overflow-hidden">
+      <section className="py-20 px-4 bg-[#fbf5e5] relative overflow-hidden">
         <motion.div
           className="relative max-w-7xl mx-auto"
           initial="hidden"
@@ -850,7 +849,7 @@ export default function ClientLandingPage() {
 
           {/* Services Row */}
           <motion.div
-            className="flex justify-center gap-4 overflow-x-auto pb-4"
+            className="flex justify-center gap-4 overflow-x-auto py-4 h-full"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.1 }}
@@ -888,9 +887,9 @@ export default function ClientLandingPage() {
                 initial="hidden"
                 animate="visible"
                 variants={scaleIn}
-                className="group relative bg-white rounded-3xl p-6 border-2 border-gray-200 hover:border-[#FFE01B] hover:shadow-2xl transition-all duration-500 backdrop-blur-sm overflow-hidden flex-shrink-0 w-[240px]"
+                className="group relative bg-[#fbf5e5] rounded-3xl p-6 border-2 border-gray-200 hover:border-[#FFE01B] hover:shadow-xl transition-all duration-500 backdrop-blur-sm overflow-hidden flex-shrink-0 w-[240px]"
                 whileHover={{ y: -10, scale: 1.02 }}
-                style={{ minHeight: "320px" }}
+                style={{ minHeight: "340px" }}
               >
                 {/* Background gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/5 to-[#241C15]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
