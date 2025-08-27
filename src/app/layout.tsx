@@ -4,7 +4,7 @@ import Header from '../components/Header';
 
 export const metadata = {
   title: 'Finzie',
-  description: 'Your app description here',
+  description: '',
   icons: {
     icon: '/finzie-logo.png', // You can also use .png or .svg
   },
