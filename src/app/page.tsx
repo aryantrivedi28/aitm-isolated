@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { motion, useAnimation, type Variants } from "framer-motion"
-import { useState, useEffect } from "react"
-import { ChevronDown, Star, Quote, ArrowRight, CheckCircle, Users, Zap, Shield, Clock, SearchCheck, Briefcase } from "lucide-react"
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { motion, useAnimation, type Variants } from "framer-motion";
+import { useState, useEffect } from "react";
+import { ChevronDown, Star, Quote, ArrowRight, CheckCircle, Users, Zap, Shield, Clock, SearchCheck, Briefcase } from "lucide-react";
 
 // Animation variants with proper typing
 const fadeUp: Variants = {
@@ -20,7 +20,7 @@ const fadeUp: Variants = {
       ease: [0.6, -0.05, 0.01, 0.99], // Custom cubic-bezier easing
     },
   },
-}
+};
 
 const fadeInLeft: Variants = {
   hidden: {
@@ -35,7 +35,7 @@ const fadeInLeft: Variants = {
       ease: [0.6, -0.05, 0.01, 0.99],
     },
   },
-}
+};
 
 const fadeInRight: Variants = {
   hidden: {
@@ -50,7 +50,7 @@ const fadeInRight: Variants = {
       ease: [0.6, -0.05, 0.01, 0.99],
     },
   },
-}
+};
 
 const staggerContainer: Variants = {
   hidden: {
@@ -63,7 +63,7 @@ const staggerContainer: Variants = {
       delayChildren: 0.1,
     },
   },
-}
+};
 
 const scaleIn: Variants = {
   hidden: {
@@ -78,14 +78,14 @@ const scaleIn: Variants = {
       ease: [0.6, -0.05, 0.01, 0.99],
     },
   },
-}
+};
 
 export default function ClientLandingPage() {
-  const router = useRouter()
-  const [openFAQ, setOpenFAQ] = useState<number | null>(null)
-  const [isHovered, setIsHovered] = useState(false)
-  const [expandedTestimonial, setExpandedTestimonial] = useState<number | null>(null)
-  const controls = useAnimation()
+  const router = useRouter();
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [expandedTestimonial, setExpandedTestimonial] = useState<number | null>(null);
+  const controls = useAnimation();
 
 
 
@@ -150,7 +150,7 @@ export default function ClientLandingPage() {
       rating: 5,
       avatar: "/akshadeep.jpeg?height=60&width=60",
     },
-  ]
+  ];
 
   const faqs = [
     {
@@ -158,40 +158,51 @@ export default function ClientLandingPage() {
       answer:
         "Our AI-powered matching system typically finds and verifies the perfect freelancer for your international freelance jobs within 24 hours. For urgent projects, we can also match you even faster.",
     },
-    {
-      question: "How much do freelancers charge per hour?",
-      answer: "Freelance hourly rates vary based on expertise and project scope. Finzie provides transparent freelancer quotes, allowing you to connect with freelancers needed for diverse roles at a price tailored to your budget.",
-    },
-    {
-      question: "Do freelancers earn more than employees?",
-      answer:
-        "Freelancers often enjoy higher earning potential due to the flexibility of freelance work. By joining Finzie’s freelancers hub, you can earn competitive pay from international freelance jobs, often surpassing traditional employee salaries.",
-    },
-    {
-      question: "What are the advantages of hiring freelancers?",
-      answer:
-        "The benefits of hiring freelancers include cost-efficiency, access to specialized skills, and scalability. Finzie’s freelancers portal connects you with freelance web developers, freelancers graphic designers, and more, ensuring high-quality results for your projects.",
-    },
+    // {
+    //   question: "How much do freelancers charge per hour?",
+    //   answer: "Freelance hourly rates vary based on expertise and project scope. Finzie provides transparent freelancer quotes, allowing you to connect with freelancers needed for diverse roles at a price tailored to your budget.",
+    // },
+    // {
+    //   question: "Do freelancers earn more than employees?",
+    //   answer:
+    //     "Freelancers often enjoy higher earning potential due to the flexibility of freelance work. By joining Finzie’s freelancers hub, you can earn competitive pay from international freelance jobs, often surpassing traditional employee salaries.",
+    // },
+    // {
+    //   question: "What are the advantages of hiring freelancers?",
+    //   answer:
+    //     "The benefits of hiring freelancers include cost-efficiency, access to specialized skills, and scalability. Finzie’s freelancers portal connects you with freelance web developers, freelancers graphic designers, and more, ensuring high-quality results for your projects.",
+    // },
+
+    // {
+    //   question: "What action will you take next to create a positive hiring experience for your new employees?",
+    //   answer:
+    //     "At Finzie, we enhance the new employee hiring experience by offering tools to streamline communication, freelancers review, and match clients with the right talent for freelance work.",
+    // },
+    // {
+    //   question: "What is an outsourced team?",
+    //   answer:
+    //     "An outsourced team consists of freelancers hired for specific projects or roles, often remotely. Finzie connects you with freelancers needed for tasks like freelance writing jobs remote or freelancers photographers, creating efficient teams for your needs.",
+    // },
+    // {
+    //   question: "What are the outsourcing benefits?",
+    //   answer:
+    //     "Outsourcing through Finzie’s offers cost savings, global talent access, and flexibility. Businesses can leverage international freelance jobs to tap into diverse skill sets, such as freelancer 3d modeling, freelancers for branding, or freelance writing gigs, without traditional hiring overhead.",
+    // },
+    // {
+    //   question: "What does it mean to outsource staff?",
+    //   answer:
+    //     "Outsourcing staff means hiring freelancers for freelance work instead of in-house employees.",
+    // },
 
     {
-      question: "What action will you take next to create a positive hiring experience for your new employees?",
+      question: "How do we get your freelancers ?",
       answer:
-        "At Finzie, we enhance the new employee hiring experience by offering tools to streamline communication, freelancers review, and match clients with the right talent for freelance work.",
+        "",
     },
     {
-      question: "What is an outsourced team?",
+      question: "What services do you specialise in ?",
       answer:
-        "An outsourced team consists of freelancers hired for specific projects or roles, often remotely. Finzie connects you with freelancers needed for tasks like freelance writing jobs remote or freelancers photographers, creating efficient teams for your needs.",
-    },
-    {
-      question: "What are the outsourcing benefits?",
-      answer:
-        "Outsourcing through Finzie’s offers cost savings, global talent access, and flexibility. Businesses can leverage international freelance jobs to tap into diverse skill sets, such as freelancer 3d modeling, freelancers for branding, or freelance writing gigs, without traditional hiring overhead.",
-    },
-    {
-      question: "What does it mean to outsource staff?",
-      answer:
-        "Outsourcing staff means hiring freelancers for freelance work instead of in-house employees.",
+        "",
     },
     {
       question: "What if I’m not satisfied with the freelancer’s work?",
@@ -213,13 +224,13 @@ export default function ClientLandingPage() {
       answer:
         "Finzie stands out as the easiest platform for hiring freelancers, combining AI-driven matching, pre-vetted talent, and end-to-end project management for an unparalleled candidate hiring experience.",
     }
-  ]
+  ];
 
   // Function to truncate text
   const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text
-    return text.substring(0, maxLength) + "..."
-  }
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + "...";
+  };
 
   // Start the continuous animation
   useEffect(() => {
@@ -234,14 +245,14 @@ export default function ClientLandingPage() {
             ease: "linear",
           },
         },
-      })
-    }
+      });
+    };
     if (!isHovered) {
-      startAnimation()
+      startAnimation();
     } else {
-      controls.stop()
+      controls.stop();
     }
-  }, [isHovered, controls, testimonials.length])
+  }, [isHovered, controls, testimonials.length]);
 
   return (
     <main className="flex flex-col bg-white overflow-hidden">
@@ -330,7 +341,7 @@ export default function ClientLandingPage() {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Hiring Talent
+                  Get hired as frelancer
                 </motion.button>
               </Link>
             </motion.div>
@@ -461,21 +472,23 @@ export default function ClientLandingPage() {
               animate={{ x: ["0%", "-50%"] }}
               transition={{
                 repeat: Infinity,
-                duration: 20, // smooth and continuous
+                duration: 20,
                 ease: "linear",
               }}
             >
               {[...logos, ...logos].map((logo, index) => (
                 <motion.div
                   key={index}
-                  className="flex-shrink-0 flex items-center justify-center bg-transparent"
+                  className="flex-shrink-0 flex items-center justify-center"
                   whileHover={{ scale: 1.1 }}
                 >
-                  <div className="w-44 h-24 md:w-52 md:h-32 flex items-center justify-center bg-transparent">
+                  <div className="w-28 h-16 sm:w-36 sm:h-20 md:w-44 md:h-24 lg:w-52 lg:h-32 
+                            flex items-center justify-center 
+                            bg-white rounded-lg shadow-sm p-2">
                     <img
                       src={logo}
                       alt={`Client Logo ${index + 1}`}
-                      className="object-contain w-full h-full opacity-90 hover:opacity-100 transition"
+                      className="object-contain max-w-full max-h-full opacity-90 hover:opacity-100 transition"
                     />
                   </div>
                 </motion.div>
@@ -569,8 +582,8 @@ export default function ClientLandingPage() {
                         {testimonial.content.length > 180 && (
                           <button
                             onClick={(e) => {
-                              e.stopPropagation()
-                              setExpandedTestimonial(expandedTestimonial === index ? null : index)
+                              e.stopPropagation();
+                              setExpandedTestimonial(expandedTestimonial === index ? null : index);
                             }}
                             className="text-[#FFE01B] hover:text-[#241C15] font-medium text-sm mt-2 transition-colors duration-300"
                           >
@@ -645,12 +658,12 @@ export default function ClientLandingPage() {
                         {testimonial.content.length > 180 && (
                           <button
                             onClick={(e) => {
-                              e.stopPropagation()
+                              e.stopPropagation();
                               setExpandedTestimonial(
                                 expandedTestimonial === index + testimonials.length
                                   ? null
                                   : index + testimonials.length,
-                              )
+                              );
                             }}
                             className="text-[#FFE01B] hover:text-[#241C15] font-medium text-sm mt-2 transition-colors duration-300"
                           >
@@ -1114,5 +1127,5 @@ export default function ClientLandingPage() {
         </motion.div>
       </section>
     </main>
-  )
+  );
 }
