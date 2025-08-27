@@ -97,6 +97,7 @@ export default function ClientLandingPage() {
     "/logos/logos5.png",
     "/logos/logos6.webp",
     "/logos/logos7.jpeg",
+    "/logos/logos8.jpeg"
   ];
 
   const services = [
