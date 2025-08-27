@@ -34,7 +34,7 @@ interface CaseStudy {
     quote: string
     authorName: string
     authorRole: string
-    image?: { asset: { url: string } }
+    image: { asset: { url: string } }
   }
   mainImage: { asset: { url: string } }
 
@@ -92,35 +92,36 @@ export default function CaseStudyPage({
       const { slug } = await params
       const fetchedStudy: CaseStudy = await client.fetch(
         `*[_type == "caseStudy" && slug.current == $slug][0]{
-    title,
-    subtitle,
-    slug,
-    description,
-    tags,
-    mainImage { asset -> { url } },
-    video {
-      videoUrl,
-      caption,
-      videoFile { asset -> { url } }
-    },
-    challenge,
-    finzieAdvantage,
-    teamMember {
-      name,
-      role,
-      bio,
-      image { asset -> { url } }
-    },
-    snapshot,
-    testimonial {
-      quote,
-      authorName,
-      authorRole,
-      image? { asset -> { url } }
-    },
-    callToActionText,
-    callToActionButton { text, link }
-  }`,
+  title,
+  subtitle,
+  slug,
+  description,
+  tags,
+  mainImage { asset -> { url } },
+  video {
+    videoUrl,
+    caption,
+    videoFile { asset -> { url } }
+  },
+  challenge,
+  finzieAdvantage,
+  teamMember {
+    name,
+    role,
+    bio,
+    image { asset -> { url } }
+  },
+  snapshot,
+  testimonial {
+    quote,
+    authorName,
+    authorRole,
+    image { asset -> { url } }
+  },
+  callToActionText,
+  callToActionButton { text, link }
+}
+`,
         { slug }
       );
 
