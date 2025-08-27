@@ -1,11 +1,12 @@
-"use client"
+"use client";
+export const dynamic = "force-dynamic";
 
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { User, GraduationCap, Briefcase } from "lucide-react"
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { User, GraduationCap, Briefcase } from "lucide-react";
 
 export default function DirectHiringPage() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#241C15] p-6">
@@ -57,5 +58,5 @@ export default function DirectHiringPage() {
         </motion.button>
       </motion.div>
     </div>
-  )
+  );
 }

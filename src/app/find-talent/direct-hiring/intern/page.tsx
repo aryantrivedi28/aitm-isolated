@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -34,24 +35,24 @@ export default function ClientFormPage() {
   // }, [roleTypeFromUrl]);
 
   // // ✅ Skip client step if already exists (check Supabase user)
-// ✅ Skip client step if already exists (check via cookie)
-useEffect(() => {
-  async function fetchClient() {
-    try {
-      const res = await fetch("/api/client/me", { credentials: "include" });
-      const data = await res.json();
+  // ✅ Skip client step if already exists (check via cookie)
+  useEffect(() => {
+    async function fetchClient() {
+      try {
+        const res = await fetch("/api/client/me", { credentials: "include" });
+        const data = await res.json();
 
-      console.log("Fetched client data:", data);
+        console.log("Fetched client data:", data);
 
-      if (data?.exists) {
-        setStep(2);
+        if (data?.exists) {
+          setStep(2);
+        }
+      } catch (err) {
+        console.error("Error fetching client:", err);
       }
-    } catch (err) {
-      console.error("Error fetching client:", err);
     }
-  }
-  fetchClient();
-}, []);
+    fetchClient();
+  }, []);
 
 
   // ✅ Step 1 submit

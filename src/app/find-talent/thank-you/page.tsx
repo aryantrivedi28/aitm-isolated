@@ -1,8 +1,9 @@
-"use client"
+"use client";
+export const dynamic = "force-dynamic";
 
-import { motion } from "framer-motion"
-import { CheckCircle } from "lucide-react"
-import Link from "next/link"
+import { motion } from "framer-motion";
+import { CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function ThankYouPage() {
   return (
@@ -39,7 +40,7 @@ export default function ThankYouPage() {
 
         <h1 className="text-3xl font-bold mb-4">Thank You!</h1>
         <p className="text-gray-600 mb-8">
-          Your hiring request has been submitted successfully.  
+          Your hiring request has been submitted successfully.
           Our team will review your requirements and reach out shortly.
         </p>
 
@@ -51,5 +52,5 @@ export default function ThankYouPage() {
         </Link>
       </motion.div>
     </div>
-  )
+  );
 }
