@@ -4,8 +4,14 @@ import type { NextRequest } from "next/server";
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Explicitly skip the root /find-talent (with or without trailing slash)
+  if (pathname === "/find-talent" || pathname === "/find-talent/") {
+    return NextResponse.next();
+  }
+
   // Check only protected routes
-  if (pathname.startsWith("/find-talent") || pathname.startsWith("/api/client")) {
+  // For find-talent, only protect sub-routes, not the root path
+  if ((pathname.startsWith("/find-talent/") || pathname.startsWith("/api/client"))) {
     const authCookie = req.cookies.get("client_auth")?.value;
 
     if (!authCookie) {
@@ -19,6 +25,6 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/find-talent/:path*"],
+  matcher: ["/:path*"],
 };
 
