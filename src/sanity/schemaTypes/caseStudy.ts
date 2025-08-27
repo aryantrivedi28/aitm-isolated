@@ -1,5 +1,4 @@
 // ./src/sanity/schemaTypes/caseStudy.ts
-
 import { defineType, defineField } from 'sanity'
 
 export default defineType({
@@ -43,29 +42,16 @@ export default defineType({
       options: { hotspot: true }
     }),
 
-    // ✅ New Video Section
+    // Video section
     defineField({
       name: 'video',
       title: 'Case Study Video',
       type: 'object',
       fields: [
-        {
-          name: 'videoUrl',
-          title: 'Video URL (YouTube, Vimeo, etc.)',
-          type: 'url',
-        },
-        {
-          name: 'videoFile',
-          title: 'Upload Video',
-          type: 'file',
-          options: { accept: 'video/*' },
-        },
-        {
-          name: 'caption',
-          title: 'Video Caption',
-          type: 'string',
-        }
-      ]
+        { name: 'videoUrl', title: 'Video URL (YouTube, Vimeo, etc.)', type: 'url' },
+        { name: 'videoFile', title: 'Upload Video', type: 'file', options: { accept: 'video/*' } },
+        { name: 'caption', title: 'Video Caption', type: 'string' },
+      ],
     }),
 
     defineField({
@@ -118,22 +104,12 @@ export default defineType({
       title: 'CTA Button',
       type: 'object',
       fields: [
-        {
-          name: 'text',
-          title: 'Button Text',
-          type: 'string',
-          validation: Rule => Rule.required()
-        },
-        {
-          name: 'link',
-          title: 'Button Link',
-          type: 'url',
-          validation: Rule => Rule.required()
-        },
-      ]
+        { name: 'text', title: 'Button Text', type: 'string', validation: Rule => Rule.required() },
+        { name: 'link', title: 'Button Link', type: 'url', validation: Rule => Rule.required() },
+      ],
     }),
 
-    // ✅ NEW FIELDS FOR HIDING, RANKING, ORDERING
+    // ✅ Visibility + sorting controls
     defineField({
       name: 'isHidden',
       title: 'Hide this Case Study?',
@@ -142,18 +118,37 @@ export default defineType({
     }),
     defineField({
       name: 'ranking',
-      title: 'Ranking',
+      title: 'Ranking (lower = higher priority)',
       type: 'number',
-      description: 'Higher number = higher priority in display',
+      description: 'Use small numbers (e.g., 0, 1, 2). Lower number means it shows earlier.',
       validation: Rule => Rule.min(0).integer(),
     }),
     defineField({
       name: 'order',
-      title: 'Order',
+      title: 'Order (tie-breaker, lower = earlier)',
       type: 'number',
-      description: 'Manual sort order (lower = shown first)',
+      description: 'Used when rankings are equal. Lower number is shown earlier.',
       validation: Rule => Rule.min(0).integer(),
     }),
+  ],
+
+  // Nice Studio list ordering options
+  orderings: [
+    {
+      title: 'By Ranking (Asc, lower first)',
+      name: 'rankingAsc',
+      by: [{ field: 'ranking', direction: 'asc' }, { field: 'order', direction: 'asc' }, { field: '_createdAt', direction: 'desc' }],
+    },
+    {
+      title: 'By Order (Asc, lower first)',
+      name: 'orderAsc',
+      by: [{ field: 'order', direction: 'asc' }, { field: '_createdAt', direction: 'desc' }],
+    },
+    {
+      title: 'Newest First',
+      name: 'createdDesc',
+      by: [{ field: '_createdAt', direction: 'desc' }],
+    },
   ],
 
   preview: {
@@ -162,11 +157,19 @@ export default defineType({
       subtitle: 'subtitle',
       media: 'mainImage',
       isHidden: 'isHidden',
+      ranking: 'ranking',
+      order: 'order',
     },
-    prepare({ title, subtitle, media, isHidden }) {
+    prepare({ title, subtitle, media, isHidden, ranking, order }) {
+      const prefix = isHidden ? '🚫 ' : ''
+      const sub = [
+        subtitle || 'No subtitle',
+        ranking != null ? `rank:${ranking}` : null,
+        order != null ? `order:${order}` : null,
+      ].filter(Boolean).join(' • ')
       return {
-        title: isHidden ? `🚫 ${title}` : title,
-        subtitle: subtitle ? subtitle : 'No subtitle',
+        title: `${prefix}${title}`,
+        subtitle: sub,
         media,
       }
     },
