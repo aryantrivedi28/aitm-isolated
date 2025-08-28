@@ -24,11 +24,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing required fields: form_id, name, email" }, { status: 400 })
     }
 
-    const { data: form, error: formError } = await supabaseAdmin
-      .from("forms")
-      .select("id, is_active")
-      .eq("form_id", form_id)
-      .single()
+    let formQuery = supabaseAdmin.from("forms").select("id, is_active")
+
+    // Check if form_id looks like a UUID (contains hyphens and is 36 chars)
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(form_id)
+
+    if (isUUID) {
+      formQuery = formQuery.eq("id", form_id)
+    } else {
+      formQuery = formQuery.eq("form_id", form_id)
+    }
+
+    const { data: form, error: formError } = await formQuery.single()
 
     if (formError || !form) {
       console.error("[v0] Form not found:", formError)
