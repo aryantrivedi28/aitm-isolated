@@ -21,6 +21,8 @@ import {
   Copy,
   CheckCircle,
   X,
+  Edit,
+  Trash2,
 } from "lucide-react"
 import { supabase } from "../../lib/SupabaseAuthClient"
 import { supabaseAdmin } from "../../lib/supabase-admin"
@@ -102,6 +104,7 @@ type Form = {
   id: string
   form_id: string
   form_name: string
+  form_description: string
   category: string
   subcategory: string // Changed from string[] to string to match database
   industry: string
@@ -111,6 +114,7 @@ type Form = {
   submission_count?: number
   required_fields?: string[]
   custom_questions?: any[]
+  is_active: boolean
 }
 
 type FormSubmission = {
@@ -164,11 +168,23 @@ const categoryOptions: CategoryOptions = {
       "Mobile App Development",
       "Game Development",
       "Blockchain",
-      "Embedded Systems"
+      "Embedded Systems",
     ],
     techStacks: [
-      "React", "Vue", "Angular", "Node.js", "Python", "Java", "PHP", ".NET",
-      "React Native", "Flutter", "Unity", "Unreal Engine", "Rust", "Solidity"
+      "React",
+      "Vue",
+      "Angular",
+      "Node.js",
+      "Python",
+      "Java",
+      "PHP",
+      ".NET",
+      "React Native",
+      "Flutter",
+      "Unity",
+      "Unreal Engine",
+      "Rust",
+      "Solidity",
     ],
     tools: {
       React: ["Redux", "Next.js", "Material-UI", "Styled Components", "TypeScript"],
@@ -183,15 +199,12 @@ const categoryOptions: CategoryOptions = {
       Flutter: ["Dart", "Firebase", "Provider", "Bloc", "GetX"],
       Unity: ["C#", "Photon", "DOTS", "Unity Analytics", "Shader Graph"],
       "Unreal Engine": ["Blueprints", "C++", "Niagara", "MetaHuman", "Sequencer"],
-      Solidity: ["Truffle", "Hardhat", "Remix", "Ganache", "Web3.js"]
-    }
+      Solidity: ["Truffle", "Hardhat", "Remix", "Ganache", "Web3.js"],
+    },
   },
 
   Design: {
-    subcategories: [
-      "UI/UX", "Graphic Design", "Web Design",
-      "Product Design", "Motion Graphics", "3D Design"
-    ],
+    subcategories: ["UI/UX", "Graphic Design", "Web Design", "Product Design", "Motion Graphics", "3D Design"],
     techStacks: ["Figma", "Adobe XD", "Sketch", "Photoshop", "Illustrator", "After Effects", "Blender"],
     tools: {
       Figma: ["Auto Layout", "Components", "Prototyping", "Design Systems", "Plugins"],
@@ -200,8 +213,8 @@ const categoryOptions: CategoryOptions = {
       Photoshop: ["Layer Styles", "Smart Objects", "Actions", "Brushes", "Filters"],
       Illustrator: ["Vector Graphics", "Typography", "Logos", "Icons", "Illustrations"],
       "After Effects": ["Motion Graphics", "VFX", "Keyframes", "Expressions", "Compositing"],
-      Blender: ["Modeling", "Animation", "UV Mapping", "Rendering", "Sculpting"]
-    }
+      Blender: ["Modeling", "Animation", "UV Mapping", "Rendering", "Sculpting"],
+    },
   },
 
   Data: {
@@ -213,13 +226,24 @@ const categoryOptions: CategoryOptions = {
       SQL: ["PostgreSQL", "MySQL", "MongoDB", "BigQuery", "Snowflake"],
       Tableau: ["Dashboard", "Stories", "Calculations", "Parameters", "Actions"],
       TensorFlow: ["Keras", "TensorBoard", "TFX", "TensorFlow Lite", "TensorFlow.js"],
-      "Apache Spark": ["PySpark", "Spark SQL", "MLlib", "Streaming", "GraphX"]
-    }
+      "Apache Spark": ["PySpark", "Spark SQL", "MLlib", "Streaming", "GraphX"],
+    },
   },
 
   DevOps: {
     subcategories: ["DevOps & Cloud Engineering", "Containerization & Orchestration", "CI/CD", "Cloud Platforms"],
-    techStacks: ["Docker", "Kubernetes", "Terraform", "Jenkins", "GitHub Actions", "GitLab CI/CD", "AWS", "Azure", "Google Cloud", "DigitalOcean"],
+    techStacks: [
+      "Docker",
+      "Kubernetes",
+      "Terraform",
+      "Jenkins",
+      "GitHub Actions",
+      "GitLab CI/CD",
+      "AWS",
+      "Azure",
+      "Google Cloud",
+      "DigitalOcean",
+    ],
     tools: {
       Docker: ["Compose", "Swarm", "Registry", "BuildKit", "Docker CLI"],
       Kubernetes: ["Helm", "Kubectl", "Kustomize", "Operators", "Istio"],
@@ -229,8 +253,8 @@ const categoryOptions: CategoryOptions = {
       "GitLab CI/CD": ["Pipelines", "Artifacts", "Runners", "Environments"],
       AWS: ["EC2", "S3", "EKS", "RDS", "IAM"],
       Azure: ["AKS", "VMs", "Functions", "Blob Storage", "Azure DevOps"],
-      "Google Cloud": ["GKE", "Cloud Functions", "BigQuery", "Cloud Storage", "IAM"]
-    }
+      "Google Cloud": ["GKE", "Cloud Functions", "BigQuery", "Cloud Storage", "IAM"],
+    },
   },
 
   Cybersecurity: {
@@ -239,8 +263,8 @@ const categoryOptions: CategoryOptions = {
     tools: {
       "Application Security": ["Snyk", "Veracode", "Burp Suite", "OWASP ZAP"],
       "Penetration Testing": ["Kali Linux", "Metasploit", "Nmap", "Hydra", "Wireshark"],
-      "Network Security": ["pfSense", "Cisco ASA", "Fortinet", "Suricata", "Snort"]
-    }
+      "Network Security": ["pfSense", "Cisco ASA", "Fortinet", "Suricata", "Snort"],
+    },
   },
 
   ITSupport: {
@@ -249,8 +273,8 @@ const categoryOptions: CategoryOptions = {
     tools: {
       Linux: ["Bash", "Cron", "Systemd", "FirewallD", "SSH"],
       "Windows Server": ["PowerShell", "Active Directory", "Group Policy", "IIS", "Hyper-V"],
-      "Network Administration": ["Cisco CLI", "MikroTik", "VLAN", "VPN"]
-    }
+      "Network Administration": ["Cisco CLI", "MikroTik", "VLAN", "VPN"],
+    },
   },
 
   QA: {
@@ -261,18 +285,25 @@ const categoryOptions: CategoryOptions = {
       Cypress: ["Test Runner", "Dashboard", "Plugins", "Custom Commands", "Fixtures"],
       Jest: ["Mocking", "Snapshots", "Coverage", "Matchers", "Setup"],
       Postman: ["Collections", "Environments", "Tests", "Monitors", "Mock Servers"],
-      Appium: ["Mobile Testing", "UIAutomator", "XCUITest", "Espresso", "Cloud Testing"]
-    }
+      Appium: ["Mobile Testing", "UIAutomator", "XCUITest", "Espresso", "Cloud Testing"],
+    },
   },
 
   Marketing: {
-    subcategories: ["Digital Marketing", "SEO", "Content Marketing", "Social Media Marketing", "Email Marketing", "Paid Ads"],
+    subcategories: [
+      "Digital Marketing",
+      "SEO",
+      "Content Marketing",
+      "Social Media Marketing",
+      "Email Marketing",
+      "Paid Ads",
+    ],
     techStacks: ["Google Ads", "Facebook Ads", "HubSpot", "Hootsuite", "Buffer", "Mailchimp"],
     tools: {
       "Google Ads": ["Keyword Planner", "Ad Extensions", "Smart Bidding", "Conversion Tracking"],
       HubSpot: ["CRM", "Marketing Automation", "Landing Pages", "Workflows", "Lead Scoring"],
-      Mailchimp: ["Campaigns", "A/B Testing", "Segmentation", "Automations"]
-    }
+      Mailchimp: ["Campaigns", "A/B Testing", "Segmentation", "Automations"],
+    },
   },
 
   Content: {
@@ -281,8 +312,8 @@ const categoryOptions: CategoryOptions = {
     tools: {
       Grammarly: ["Grammar Check", "Plagiarism Check", "Tone Adjustment"],
       Hemingway: ["Readability", "Clarity", "Sentence Structure"],
-      SurferSEO: ["Content Editor", "Keyword Analysis", "Audit"]
-    }
+      SurferSEO: ["Content Editor", "Keyword Analysis", "Audit"],
+    },
   },
 
   Video: {
@@ -290,21 +321,25 @@ const categoryOptions: CategoryOptions = {
     techStacks: ["Adobe Premiere Pro", "Final Cut Pro", "After Effects", "DaVinci Resolve"],
     tools: {
       "Adobe Premiere Pro": ["Transitions", "Effects", "Color Correction", "Audio Sync"],
-      "Final Cut Pro": ["Magnetic Timeline", "Motion Graphics", "Color Grading"]
-    }
+      "Final Cut Pro": ["Magnetic Timeline", "Motion Graphics", "Color Grading"],
+    },
   },
 
   Business: {
-    subcategories: ["Virtual Assistance", "Project Management", "Customer Support", "Data Entry", "Finance & Accounting"],
+    subcategories: [
+      "Virtual Assistance",
+      "Project Management",
+      "Customer Support",
+      "Data Entry",
+      "Finance & Accounting",
+    ],
     techStacks: ["Asana", "Trello", "Slack", "QuickBooks", "Excel"],
     tools: {
       Asana: ["Tasks", "Timelines", "Workflows", "Automation"],
-      Trello: ["Boards", "Power-Ups", "Labels", "Checklists"]
-    }
-  }
-};
-
-
+      Trello: ["Boards", "Power-Ups", "Labels", "Checklists"],
+    },
+  },
+}
 
 type FinanceData = {
   [key: string]: string[]
@@ -389,7 +424,7 @@ export default function AdminPanel() {
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
   const [selectedTechStacks, setSelectedTechStacks] = useState<string[]>([])
   const [selectedTools, setSelectedTools] = useState<string[]>([])
-  const [dashboard, setDashboard] = useState<string>("");
+  const [dashboard, setDashboard] = useState<string>("")
   const [selectedRequiredFields, setSelectedRequiredFields] = useState<string[]>([
     "name",
     "email",
@@ -416,6 +451,11 @@ export default function AdminPanel() {
     { key: "years_experience", label: "Years of Experience" },
     { key: "proposal_link", label: "Proposal/Cover Letter" }, // Fixed field name
   ]
+
+  const [loadingSubmissions, setLoadingSubmissions] = useState(false)
+
+  const [editingForm, setEditingForm] = useState<Form | null>(null)
+  const [showEditForm, setShowEditForm] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -520,9 +560,9 @@ export default function AdminPanel() {
   }
 
   const handleNavigation = (path: string) => {
-    setDashboard(path);       // change button color
-    router.push(path);        // navigate to page
-  };
+    setDashboard(path) // change button color
+    router.push(path) // navigate to page
+  }
 
   const loadAllFreelancers = async () => {
     if (typeof window === "undefined") return
@@ -711,7 +751,6 @@ export default function AdminPanel() {
     }
   }
 
-
   const handleToolsChange = (value: string) => {
     if (value === "other") {
       setShowOtherTools(true)
@@ -783,7 +822,6 @@ export default function AdminPanel() {
           subcategory: [],
           tech_stack: [],
           tools: [],
-
         })
         setSelectedRequiredFields(["name", "email", "phone", "resume_link"]) // Fixed field name
         setCustomQuestions([])
@@ -909,8 +947,181 @@ export default function AdminPanel() {
     }
   }
 
-  console.log("servciewewe  :", selectedTools)
+  const handleDeleteForm = async (formId: string, formName: string) => {
+    if (
+      !confirm(`Are you sure you want to delete "${formName}"? This will also delete all submissions for this form.`)
+    ) {
+      return
+    }
 
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch(`/api/forms?id=${formId}`, {
+        method: "DELETE",
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete form")
+      }
+
+      // Remove form from local state
+      setForms((prev) => prev.filter((form) => form.id !== formId))
+
+      // Close modal if this form was selected
+      if (selectedForm === formId) {
+        setSelectedForm(null)
+      }
+    } catch (err: any) {
+      setError("Error deleting form: " + err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleToggleFormStatus = async (form: Form) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const response = await fetch("/api/forms", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: form.id,
+          form_id: form.form_id,
+          form_name: form.form_name,
+          form_description: form.form_description,
+          category: form.category,
+          subcategory: form.subcategory,
+          industry: form.industry,
+          tech_stack: form.tech_stack,
+          tools: form.tools,
+          is_active: !form.is_active,
+          required_fields: form.required_fields,
+          custom_questions: form.custom_questions,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update form status")
+      }
+
+      // Update form in local state
+      setForms((prev) => prev.map((f) => (f.id === form.id ? { ...f, is_active: !f.is_active } : f)))
+    } catch (err: any) {
+      setError("Error updating form status: " + err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEditForm = (form: Form) => {
+    setEditingForm(form)
+    setNewForm({
+      form_id: form.form_id,
+      form_name: form.form_name,
+      form_description: form.form_description || "",
+      industry: form.industry,
+      category: form.category,
+      subcategory: typeof form.subcategory === "string" ? form.subcategory.split(", ") : [],
+      tech_stack: typeof form.tech_stack === "string" ? form.tech_stack.split(", ") : [],
+      tools: typeof form.tools === "string" ? form.tools.split(", ") : [],
+    })
+    setSelectedCategory(form.category)
+    setSelectedSubcategories(typeof form.subcategory === "string" ? form.subcategory.split(", ") : [])
+    setSelectedTechStacks(typeof form.tech_stack === "string" ? form.tech_stack.split(", ") : [])
+    setSelectedTools(typeof form.tools === "string" ? form.tools.split(", ") : [])
+    setSelectedRequiredFields(form.required_fields || ["name", "email", "phone", "resume_link"])
+    setCustomQuestions(form.custom_questions || [])
+    setShowEditForm(true)
+  }
+
+  const handleUpdateForm = async () => {
+    if (!editingForm) return
+
+    const missingFields = validateFormCreation()
+
+    if (missingFields.length > 0) {
+      setError(`Missing required fields: ${missingFields.join(", ")}`)
+      return
+    }
+
+    setCreateFormLoading(true)
+    setError(null)
+
+    try {
+      const formData = {
+        id: editingForm.id,
+        form_id: newForm.form_id,
+        form_name: newForm.form_name,
+        form_description: newForm.form_description,
+        industry: newForm.industry,
+        category: newForm.category,
+        subcategory: selectedSubcategories.join(", "),
+        tech_stack: selectedTechStacks.join(", "),
+        tools: selectedTools.join(", "),
+        is_active: editingForm.is_active, // Keep current active status
+        required_fields: selectedRequiredFields,
+        custom_questions: customQuestions,
+      }
+
+      const response = await fetch("/api/forms", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update form")
+      }
+
+      // Update form in local state
+      setForms((prev) =>
+        prev.map((f) => (f.id === editingForm.id ? { ...data.form, submission_count: f.submission_count } : f)),
+      )
+
+      // Reset form state
+      setNewForm({
+        form_id: "",
+        form_name: "",
+        form_description: "",
+        industry: "",
+        category: "",
+        subcategory: [],
+        tech_stack: [],
+        tools: [],
+      })
+      setSelectedRequiredFields(["name", "email", "phone", "resume_link"])
+      setCustomQuestions([])
+      setShowEditForm(false)
+      setEditingForm(null)
+      // Reset all selections
+      setSelectedCategory("")
+      setSelectedSubcategory("")
+      setSelectedTechStack("")
+      setSelectedSubcategories([])
+      setSelectedTechStacks([])
+      setSelectedTools([])
+    } catch (err: any) {
+      setError("Error updating form: " + err.message)
+    } finally {
+      setCreateFormLoading(false)
+    }
+  }
+
+  console.log("servciewewe  :", selectedTools)
 
   return (
     <div className="min-h-screen bg-[#241C15] text-white overflow-hidden">
@@ -1006,26 +1217,31 @@ export default function AdminPanel() {
             >
               <button
                 onClick={() => setActiveTab("freelancers")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === "freelancers"
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  activeTab === "freelancers"
                     ? "bg-[#FFE01B] text-[#241C15]"
                     : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
+                }`}
               >
                 <Users className="w-5 h-5" />
                 Freelancer Search
               </button>
               <button
                 onClick={() => setActiveTab("forms")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === "forms" ? "bg-[#FFE01B] text-[#241C15]" : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  activeTab === "forms" ? "bg-[#FFE01B] text-[#241C15]" : "bg-white/10 text-white hover:bg-white/20"
+                }`}
               >
                 <FileText className="w-5 h-5" />
                 Form Management
               </button>
               <button
                 onClick={() => handleNavigation("/admin-form-creation/dashboard")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${dashboard === "/admin-form-creation/dashboard" ? "bg-[#FFE01B] text-[#241C15]" : "bg-white/10 text-white hover:bg-white/20"
-                  }`}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
+                  dashboard === "/admin-form-creation/dashboard"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                }`}
               >
                 <FileText className="w-5 h-5" />
                 Form Dashboard
@@ -1468,14 +1684,16 @@ export default function AdminPanel() {
                 </motion.button>
               </motion.div>
 
-              {showCreateForm && (
+              {(showCreateForm || showEditForm) && (
                 <motion.div
                   className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 mb-8"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
                 >
-                  <h3 className="text-xl font-bold text-white mb-6">Create New Form</h3>
+                  <h3 className="text-xl font-bold text-white mb-6">
+                    {showEditForm ? "Edit Form" : "Create New Form"}
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-semibold text-[#FFE01B] mb-2">Form ID</label>
@@ -1781,8 +1999,8 @@ export default function AdminPanel() {
                                         type: e.target.value as any,
                                         options:
                                           e.target.value === "select" ||
-                                            e.target.value === "radio" ||
-                                            e.target.value === "checkbox"
+                                          e.target.value === "radio" ||
+                                          e.target.value === "checkbox"
                                             ? [""]
                                             : undefined,
                                       })
@@ -1822,21 +2040,21 @@ export default function AdminPanel() {
                               {(question.type === "select" ||
                                 question.type === "radio" ||
                                 question.type === "checkbox") && (
-                                  <div className="mt-3">
-                                    <label className="block text-xs text-gray-300 mb-2">Options (one per line)</label>
-                                    <textarea
-                                      value={question.options?.join("\n") || ""}
-                                      onChange={(e) =>
-                                        updateCustomQuestion(question.id, {
-                                          options: e.target.value.split("\n").filter((opt) => opt.trim()),
-                                        })
-                                      }
-                                      placeholder="Option 1&#10;Option 2&#10;Option 3"
-                                      rows={3}
-                                      className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#FFE01B]"
-                                    />
-                                  </div>
-                                )}
+                                <div className="mt-3">
+                                  <label className="block text-xs text-gray-300 mb-2">Options (one per line)</label>
+                                  <textarea
+                                    value={question.options?.join("\n") || ""}
+                                    onChange={(e) =>
+                                      updateCustomQuestion(question.id, {
+                                        options: e.target.value.split("\n").filter((opt) => opt.trim()),
+                                      })
+                                    }
+                                    placeholder="Option 1&#10;Option 2&#10;Option 3"
+                                    rows={3}
+                                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#FFE01B]"
+                                  />
+                                </div>
+                              )}
 
                               <div className="mt-3">
                                 <label className="flex items-center space-x-2 cursor-pointer">
@@ -1857,7 +2075,7 @@ export default function AdminPanel() {
                   </div>
                   <div className="flex gap-4 mt-6">
                     <motion.button
-                      onClick={handleCreateForm}
+                      onClick={showEditForm ? handleUpdateForm : handleCreateForm}
                       disabled={createFormLoading}
                       className="bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold px-6 py-3 rounded-xl transition-all duration-300 disabled:opacity-50 flex items-center gap-2"
                       whileHover={{ scale: createFormLoading ? 1 : 1.05 }}
@@ -1870,17 +2088,21 @@ export default function AdminPanel() {
                             transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                             className="w-4 h-4 border-2 border-[#241C15] border-t-transparent rounded-full"
                           />
-                          Creating...
+                          {showEditForm ? "Updating..." : "Creating..."}
                         </>
                       ) : (
                         <>
                           <Plus className="w-4 h-4" />
-                          Create Form
+                          {showEditForm ? "Update Form" : "Create Form"}
                         </>
                       )}
                     </motion.button>
                     <motion.button
-                      onClick={() => setShowCreateForm(false)}
+                      onClick={() => {
+                        setShowCreateForm(false)
+                        setShowEditForm(false)
+                        setEditingForm(null)
+                      }}
                       className="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -1930,8 +2152,19 @@ export default function AdminPanel() {
                             </span>
                           </div>
                         </div>
-                        <div className="px-3 py-1 bg-[#FFE01B]/20 text-[#FFE01B] text-xs rounded-full border border-[#FFE01B]/30">
-                          {form.submission_count || 0} submissions
+                        <div className="flex flex-col items-end gap-2">
+                          <div className="px-3 py-1 bg-[#FFE01B]/20 text-[#FFE01B] text-xs rounded-full border border-[#FFE01B]/30">
+                            {form.submission_count || 0} submissions
+                          </div>
+                          <div
+                            className={`px-3 py-1 text-xs rounded-full border ${
+                              form.is_active
+                                ? "bg-green-500/20 text-green-400 border-green-500/30"
+                                : "bg-red-500/20 text-red-400 border-red-500/30"
+                            }`}
+                          >
+                            {form.is_active ? "Active" : "Inactive"}
+                          </div>
                         </div>
                       </div>
 
@@ -1980,7 +2213,50 @@ export default function AdminPanel() {
                           whileTap={{ scale: 0.98 }}
                         >
                           <Eye className="w-3 h-3" />
-                          View Submissions
+                          View
+                        </motion.button>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <motion.button
+                          onClick={() => handleToggleFormStatus(form)}
+                          className={`flex-1 font-semibold py-2 px-3 rounded-xl transition-all duration-300 text-center text-sm flex items-center justify-center gap-1 ${
+                            form.is_active
+                              ? "bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 hover:border-red-500"
+                              : "bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 hover:border-green-500"
+                          }`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          {form.is_active ? (
+                            <>
+                              <X className="w-3 h-3" />
+                              Deactivate
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-3 h-3" />
+                              Activate
+                            </>
+                          )}
+                        </motion.button>
+                        <motion.button
+                          onClick={() => handleEditForm(form)}
+                          className="flex-1 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-yellow-500/30 hover:border-yellow-500 text-center text-sm flex items-center justify-center gap-1"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Edit className="w-3 h-3" />
+                          Edit
+                        </motion.button>
+                        <motion.button
+                          onClick={() => handleDeleteForm(form.id, form.form_name)}
+                          className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold py-2 px-3 rounded-xl transition-all duration-300 border border-red-500/30 hover:border-red-500 text-center text-sm flex items-center justify-center gap-1"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          Delete
                         </motion.button>
                       </div>
                     </div>
@@ -2101,7 +2377,6 @@ export default function AdminPanel() {
     </div>
   )
 }
-
 
 
 

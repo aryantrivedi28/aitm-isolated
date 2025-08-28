@@ -13,7 +13,6 @@ interface FormPageProps {
   }> // Updated to Promise type for Next.js 15+
 }
 
-
 export default function FormPage({ params }: FormPageProps) {
   const [formId, setFormId] = useState<string | null>(null) // Added state to store resolved form ID
   const [form, setForm] = useState<Form | null>(null)
@@ -109,7 +108,7 @@ export default function FormPage({ params }: FormPageProps) {
 
     try {
       const submissionData: Record<string, any> = {
-        form_id: formId, // Use resolved formId
+        form_id: formId, // Use resolved formId (this will be the text form_id, not UUID)
         custom_responses: customResponses,
       }
 
@@ -318,6 +317,17 @@ export default function FormPage({ params }: FormPageProps) {
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Form Not Found</h1>
           <p className="text-gray-300 text-lg">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (form && !form.is_active) {
+    return (
+      <div className="min-h-screen bg-[#241C15] flex items-center justify-center px-4">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-4">Form Closed</h1>
+          <p className="text-gray-300 text-lg">This form is currently not accepting submissions.</p>
         </div>
       </div>
     )
