@@ -220,7 +220,7 @@ useEffect(() => {
     try {
       const studies = await client.fetch(`
         *[_type == "caseStudy" && isHidden != true] 
-          | order(order asc, ranking desc, _createdAt desc) {
+          | order(order asc, ranking asc, _createdAt desc) {
             _id,
             title,
             description,
