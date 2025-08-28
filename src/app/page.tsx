@@ -91,12 +91,12 @@ export default function ClientLandingPage() {
 
 const logos = [
   { src: "/logos/logos1.png", width: 120, height: 60 }, // custom size
-  { src: "/logos/logos2.webp", width: 150, height: 60 },
+  { src: "/logos/logos2.webp", width: 200, height: 70 },
   { src: "/logos/logos3.png", width: 100, height: 50 },
   { src: "/logos/logos4.png", width: 130, height: 60 },
   { src: "/logos/logos5.png", width: 110, height: 55 },
   { src: "/logos/logos6.webp", width: 140, height: 70 },
-  { src: "/logos/logos7.jpeg", width: 100, height: 50 },
+  { src: "/logos/logos7.png", width: 100, height: 50 },
   { src: "/logos/logos8.jpeg", width: 150, height: 75 }
 ];
   const services = [
