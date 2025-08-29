@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import './globals.css'
+import './globals.css';
 import Header from '../components/Header';
 
 export const metadata = {
@@ -8,17 +8,17 @@ export const metadata = {
   icons: {
     icon: '/finzie-logo.png', // You can also use .png or .svg
   },
-}
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+};
+export default function RootLayout({ children }: { children: React.ReactNode; }) {
   return (
     <html lang="en">
-      <head/>
+      <head />
       <body>
         <Header />
-        <main className="py-32 bg-[#241C15]"> {/* Adjust 'pt-16' as per your header height */}
+        <main className="bg-white"> {/* Adjust 'pt-16' as per your header height */}
           {children}
         </main>
       </body>
     </html>
-  )
+  );
 }

@@ -9,7 +9,10 @@ body {
   font-family: var(--font-body, Arial, sans-serif);
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: var(--font-heading, serif);
 }
 
@@ -43,6 +46,7 @@ h1, h2, h3, h4 {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -77,7 +81,182 @@ h1, h2, h3, h4 {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Finzie Brand Colors */
+    --background: 0 0% 100%;
+    --foreground: 30 23% 11%;
+
+    --brand-dark: 30 23% 11%;
+    --brand-yellow: 54 100% 56%;
+    --brand-yellow-hover: 45 96% 64%;
+    --brand-white: 0 0% 100%;
+    --brand-black: 0 0% 0%;
+    --brand-gray-600: 214 13% 33%;
+    --brand-gray-300: 214 11% 82%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 30 23% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 23% 11%;
+
+    --primary: 30 23% 11%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 214 11% 82%;
+    --secondary-foreground: 30 23% 11%;
+
+    --muted: 214 11% 96%;
+    --muted-foreground: 214 13% 33%;
+
+    --accent: 54 100% 56%;
+    --accent-foreground: 30 23% 11%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 11% 82%;
+    --input: 214 11% 82%;
+    --ring: 54 100% 56%;
+
+    --radius: 1rem;
+
+    /* Premium gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--brand-dark)), hsl(30 23% 5%), hsl(var(--brand-dark)));
+    --gradient-hero-overlay: radial-gradient(ellipse at center, hsl(var(--brand-yellow) / 0.08) 0%, transparent 70%);
+    --gradient-accent: linear-gradient(135deg, hsl(var(--brand-yellow)), hsl(var(--brand-yellow-hover)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(214 11% 99%));
+    --gradient-premium: linear-gradient(135deg, hsl(var(--brand-dark) / 0.95), hsl(30 23% 8% / 0.98));
+    --gradient-glass: linear-gradient(135deg, hsl(var(--brand-white) / 0.1), hsl(var(--brand-white) / 0.05));
+    --gradient-border: linear-gradient(135deg, hsl(var(--brand-yellow) / 0.3), hsl(var(--brand-yellow-hover) / 0.1));
+
+    /* Premium shadows & effects */
+    --shadow-elegant: 0 20px 60px -15px hsl(var(--brand-dark) / 0.15);
+    --shadow-glow: 0 0 60px hsl(var(--brand-yellow) / 0.25);
+    --shadow-premium: 0 25px 80px -20px hsl(var(--brand-dark) / 0.2);
+    --shadow-glass: 0 8px 32px 0 hsl(var(--brand-dark) / 0.1);
+    --shadow-inset: inset 0 1px 0 0 hsl(var(--brand-white) / 0.1);
+
+    /* Advanced animations */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-glass: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 30 23% 11%;
+    --foreground: 0 0% 100%;
+
+    --card: 30 23% 11%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 30 23% 11%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 54 100% 56%;
+    --primary-foreground: 30 23% 11%;
+
+    --secondary: 30 23% 15%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 30 23% 15%;
+    --muted-foreground: 214 11% 82%;
+
+    --accent: 54 100% 56%;
+    --accent-foreground: 30 23% 11%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 23% 15%;
+    --input: 30 23% 15%;
+    --ring: 54 100% 56%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(var(--brand-dark)), hsl(30 23% 5%));
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--brand-black) / 0.3);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply relative overflow-hidden bg-gradient-accent text-accent-foreground px-10 py-5 rounded-2xl font-bold text-lg shadow-premium hover:shadow-glow transform hover:scale-[1.05] hover:-translate-y-1 transition-all duration-500 ease-spring before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700;
+  }
+
+  .btn-secondary {
+    @apply relative bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground px-10 py-5 rounded-2xl font-bold text-lg shadow-elegant hover:shadow-glow transform hover:scale-[1.05] hover:-translate-y-1 transition-all duration-500 ease-spring backdrop-blur-sm;
+  }
+
+  .card-elevated {
+    @apply relative bg-card rounded-3xl shadow-premium hover:shadow-glow border border-border/30 backdrop-blur-lg transform hover:scale-[1.03] hover:-translate-y-2 transition-all duration-500 ease-spring before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-glass before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300;
+  }
+
+  .card-premium {
+    @apply relative bg-gradient-premium rounded-3xl shadow-premium border border-brand-yellow/20 backdrop-blur-xl transform hover:scale-[1.02] hover:-translate-y-1 transition-all duration-500 ease-spring overflow-hidden before:absolute before:inset-0 before:rounded-3xl before:bg-gradient-to-r before:from-transparent before:via-brand-yellow/5 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-1000;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-accent via-brand-yellow-hover to-accent bg-clip-text text-transparent bg-size-200 animate-gradient;
+  }
+
+  .section-padding {
+    @apply py-20 md:py-28 lg:py-36;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-6 sm:px-8 lg:px-12;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-xl bg-brand-white/10 border border-brand-white/20 shadow-glass rounded-3xl;
+  }
+
+  .floating-element {
+    @apply animate-float-slow;
+  }
+
+  .text-glow {
+    @apply drop-shadow-[0_0_20px_hsl(var(--brand-yellow)/0.5)];
   }
 }
