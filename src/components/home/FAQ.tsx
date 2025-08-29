@@ -50,7 +50,7 @@ const FAQ = () => {
   };
 
   return (
-    <section className="relative py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 overflow-hidden bg-gradient-to-br from-gray-50 via-[#fbf5e5] to-gray-100">
+    <section className="relative w-full py-8 sm:py-10 md:py-12 lg:py-16 xl:py-24 overflow-hidden bg-gradient-to-br from-gray-50 via-[#fbf5e5] to-gray-100">
 
       {/* Sophisticated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -92,7 +92,7 @@ const FAQ = () => {
         </div>
 
         {/* Modern FAQ Accordion */}
-        <div className="max-w-4xl mx-auto mb-12 sm:mb-16 md:mb-20">
+        <div className="max-w-6xl mx-auto mb-12 sm:mb-16 md:mb-20">
           <div className="space-y-4 sm:space-y-6">
             {faqs.map((faq, index) => {
               const isOpen = openItem === index;

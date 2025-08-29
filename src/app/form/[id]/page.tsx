@@ -373,7 +373,16 @@ export default function FormPage({ params }: FormPageProps) {
           className="text-center mb-8"
         >
           <h1 className="text-4xl font-bold text-white mb-4">{form?.form_name}</h1>
-          <p className="text-gray-300 mb-6">{form?.form_description || "No description provided."}</p>
+          <p
+            className="text-gray-300 mb-6"
+            dangerouslySetInnerHTML={{
+              __html: (form?.form_description || "No description provided.").replace(
+                /(https?:\/\/[^\s]+)/g,
+                '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline">$1</a>'
+              ),
+            }}
+          />
+
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <span className="bg-[#FFE01B] text-black px-3 py-1 rounded-full font-medium">{form?.category}</span>
             {form?.subcategory && (

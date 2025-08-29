@@ -23,18 +23,15 @@ const BottomCTA = () => {
       ></div>
 
       <div className="container-custom relative z-10">
-        <div className="text-center max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Badge */}
-          <div className="relative inline-flex items-center gap-2 sm:gap-3 glass-effect px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 mb-8 sm:mb-12 group hover:scale-105 transition-all duration-500 ease-spring rounded-2xl">
-            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-brand-yellow animate-glow-pulse" />
-            <span className="text-brand-yellow font-bold text-base sm:text-lg">
-              Join 500+ Successful Companies
-            </span>
+          <div className="relative inline-flex items-center gap-2 sm:gap-3 glass-effect px-4 py-2 sm:px-6 sm:py-3 md:px-6 md:py-4 mb-6 sm:mb-10 group hover:scale-105 transition-all duration-500 ease-spring rounded-2xl">
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-brand-yellow animate-glow-pulse" />
             <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-20 rounded-2xl sm:rounded-3xl transition-opacity duration-300"></div>
           </div>
 
           {/* Main Headline */}
-          <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-brand-white leading-snug sm:leading-tight mb-6 sm:mb-8 text-glow">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black text-brand-white leading-snug sm:leading-tight mb-6 sm:mb-8 text-glow">
             Ready to{" "}
             <span className="gradient-text animate-gradient">Transform</span>
             <br className="hidden sm:block" />
@@ -42,7 +39,7 @@ const BottomCTA = () => {
           </h2>
 
           {/* Description */}
-          <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-brand-gray-300 leading-relaxed mb-8 sm:mb-12 font-medium px-2">
+          <p className="text-lg sm:text-xl md:text-xl lg:text-2xl text-brand-gray-300 leading-relaxed mb-8 sm:mb-12 font-medium px-2">
             Join hundreds of successful startups who've accelerated their growth with
             <span className="text-brand-yellow font-bold text-glow">
               {" "}
@@ -70,7 +67,7 @@ const BottomCTA = () => {
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center px-2">
             <Link href="/client-request">
               <Button
-                className="btn-primary group inline-flex items-center justify-center text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-16 py-4 sm:py-6 md:py-8"
+                className="btn-primary group inline-flex items-center justify-center text-lg sm:text-xl md:text-xl px-4 sm:px-12 md:px-12 py-4 sm:py-6 md:py-6"
                 asChild
               >
                 <span>

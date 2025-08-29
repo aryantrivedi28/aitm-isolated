@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
       <head />
       <body>
         <Header />
-        <main className="bg-white"> {/* Adjust 'pt-16' as per your header height */}
+        <main className="py-32 bg-[#241C15]"> {/* Adjust 'pt-16' as per your header height */}
           {children}
         </main>
       </body>

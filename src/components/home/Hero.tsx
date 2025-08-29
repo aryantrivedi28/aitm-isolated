@@ -21,7 +21,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#241C15] via-[#1A1512] to-[#0F0A07] min-h-screen pt-[120px] sm:pt-[150px] lg:pt-[130px]">
+    <section className="relative overflow-hidden bg-gradient-to-br from-[#241C15] via-[#1A1512] to-[#0F0A07] min-h-screen pt-[100px] sm:pt-[120px] lg:pt-[130px]">
       {/* Background Elements - Mouse Follower */}
       <div className="absolute inset-0 z-0 transition-opacity duration-300">
         {isClient && (
