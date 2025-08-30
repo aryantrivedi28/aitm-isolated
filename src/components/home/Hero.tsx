@@ -108,7 +108,7 @@ const Hero = () => {
             {/* Modern CTA Buttons - Better Mobile Layout */}
             <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center md:justify-start items-center px-4 sm:px-0 transition-all duration-1000 ${isLoaded ? 'animate-[slideUp_1s_ease-out_0.6s_forwards]' : 'opacity-0 translate-y-10'}`}>
               {/* Link for "Start Your Project" */}
-              <Link href="/client-request" className="w-full sm:w-auto">
+              <Link href="/find-talent" className="w-full sm:w-auto">
                 <Button className="relative group bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black font-bold text-sm sm:text-base lg:text-lg xl:text-xl px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 rounded-full shadow-2xl hover:shadow-yellow-400/30 transition-all duration-500 hover:scale-105 overflow-hidden w-full sm:w-auto">
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <span className="relative flex items-center justify-center">
