@@ -35,7 +35,7 @@ const Hero = () => {
       </div>
 
       {/* Modern Floating Orbs / Blobs */}
-      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-yellow-400/20 to-amber-300/20 rounded-full blur-3xl animate-blob-slow" style={{ animationDelay: '0s' }} />
+      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-r from-yellow-400/25 to-amber-300/25 rounded-full blur-3xl animate-blob-slow" style={{ animationDelay: '0s' }} />
       <div className="absolute top-[60%] left-[10%] w-40 h-40 bg-gradient-to-r from-amber-400/15 to-yellow-300/15 rounded-full blur-3xl animate-blob-medium" style={{ animationDelay: '2s' }} />
       <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-gradient-to-r from-yellow-400/25 to-amber-300/25 rounded-full blur-3xl animate-blob-fast" style={{ animationDelay: '4s' }} />
       <div className="absolute top-[20%] right-[15%] w-36 h-36 bg-gradient-to-r from-yellow-300/20 to-amber-200/20 rounded-full blur-3xl animate-blob-medium" style={{ animationDelay: '1s' }} />
@@ -109,7 +109,7 @@ const Hero = () => {
             <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center md:justify-start items-center px-4 sm:px-0 transition-all duration-1000 ${isLoaded ? 'animate-[slideUp_1s_ease-out_0.6s_forwards]' : 'opacity-0 translate-y-10'}`}>
               {/* Link for "Start Your Project" */}
               <Link href="/find-talent" className="w-full sm:w-auto">
-                <Button className="relative group bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-black font-bold text-sm sm:text-base lg:text-lg xl:text-xl px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 rounded-full shadow-2xl hover:shadow-yellow-400/30 transition-all duration-500 hover:scale-105 overflow-hidden w-full sm:w-auto">
+                <Button className="relative group bg-gradient-to-r from-yellow-400 to-amber-400 hover:from-yellow-300 hover:to-amber-400 text-black font-bold text-sm sm:text-base lg:text-lg xl:text-xl px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 rounded-full shadow-2xl hover:shadow-yellow-400/30 transition-all duration-500 hover:scale-105 overflow-hidden w-full sm:w-auto">
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <span className="relative flex items-center justify-center">
                     Start Your Project
