@@ -1,6 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { motion, type Variants } from "framer-motion"
 import {
   Search,
@@ -136,6 +136,8 @@ type SearchFilters = {
   category: string
   experience_level: string
   search_text: string
+  formTextId?: string
+  subcategory?: string
 }
 
 type IndustryData = {
@@ -381,6 +383,8 @@ export default function AdminPanel() {
     category: "",
     experience_level: "",
     search_text: "",
+    formTextId: "", // added
+    subcategory: "", // added
   })
   const [freelancers, setFreelancers] = useState<Freelancer[]>([])
   const [loading, setLoading] = useState(false)
@@ -404,8 +408,6 @@ export default function AdminPanel() {
 
   const [createFormLoading, setCreateFormLoading] = useState(false)
   const [copiedFormId, setCopiedFormId] = useState<string | null>(null)
-
-  const [selectedIndustry, setSelectedIndustry] = useState("")
   // const [selectedCategory, setSelectedCategory] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
   const [selectedSubcategory, setSelectedSubcategory] = useState("")
@@ -451,11 +453,40 @@ export default function AdminPanel() {
     { key: "years_experience", label: "Years of Experience" },
     { key: "proposal_link", label: "Proposal/Cover Letter" }, // Fixed field name
   ]
-
-  const [loadingSubmissions, setLoadingSubmissions] = useState(false)
-
   const [editingForm, setEditingForm] = useState<Form | null>(null)
   const [showEditForm, setShowEditForm] = useState(false)
+
+  const [submissionFilters, setSubmissionFilters] = useState<{
+    formTextId: string
+    category: string
+    subcategory: string
+  }>({
+    formTextId: "",
+    category: "",
+    subcategory: "",
+  })
+
+  const uniqueFormTextIds = useMemo(() => {
+    const ids = new Set<string>()
+    for (const f of forms) {
+      if (f?.form_id) ids.add(f.form_id)
+    }
+    return Array.from(ids)
+  }, [forms])
+
+  const uniqueSubcategories = useMemo(() => {
+    const subs = new Set<string>()
+    for (const f of forms) {
+      // subcategory can be string or array in some schemas; normalize safely
+      const value: any = (f as any)?.subcategory
+      if (Array.isArray(value)) {
+        for (const s of value) if (s) subs.add(String(s))
+      } else if (value) {
+        subs.add(String(value))
+      }
+    }
+    return Array.from(subs)
+  }, [forms])
 
   useEffect(() => {
     setMounted(true)
@@ -536,6 +567,16 @@ export default function AdminPanel() {
         query = query.or(`full_name.ilike.%${filters.search_text}%,email.ilike.%${filters.search_text}%`)
       }
 
+      if (filters.formTextId) {
+        // If your all-freelancer column name differs (e.g., "applied_form_id"), change below accordingly.
+        query = query.eq("form_id", filters.formTextId)
+      }
+
+      // If your all-freelancer column is an array json/array, switch to .contains("subcategory", [filters.subcategory])
+      if (filters.subcategory) {
+        query = query.eq("subcategory", filters.subcategory)
+      }
+
       const { data, error } = await query.limit(100).order("created_at", { ascending: false })
 
       if (error) {
@@ -608,6 +649,8 @@ export default function AdminPanel() {
       category: "",
       experience_level: "",
       search_text: "",
+      formTextId: "",
+      subcategory: "",
     })
     loadAllFreelancers()
   }
@@ -705,8 +748,8 @@ export default function AdminPanel() {
     setNewForm((prev) => ({ ...prev, category, subcategory: [], tech_stack: [], tools: [] }))
 
     if (categoryOptions[category]) {
-      setAvailableSubcategories(categoryOptions[category].subcategories)
-      setAvailableTechStacks(categoryOptions[category].techStacks)
+      setAvailableSubcategories(categoryOptions[category]?.subcategories || [])
+      setAvailableTechStacks(categoryOptions[category]?.techStacks)
     }
     setAvailableTools([])
     setSelectedSubcategory("")
@@ -1121,6 +1164,89 @@ export default function AdminPanel() {
     }
   }
 
+  const formIdOptions = Array.from(new Set(forms.map((f) => f.form_id))).sort()
+    // };
+  const subcategoryOptions = Array.from(new Set(forms.map((f) => f.subcategory))).sort()
+
+  const loadFilteredSubmissions = async () => {
+    try {
+      if (!supabase) return
+      // Build base query joining forms to access category/subcategory and text form_id
+      // We select submissions and related form fields
+      let query = supabase
+        .from("freelancer_submissions")
+        .select(
+          `
+        *,
+        forms:form_id (
+          id,
+          form_id,
+          category,
+          subcategory,
+          form_name
+        )
+      `,
+        )
+        .order("created_at", { ascending: false })
+
+      // Collect conditions based on filters (each filter works alone or combined)
+      const { formTextId, category, subcategory } = submissionFilters
+
+      // Filter by specific form text id -> we must first resolve to the UUID(s) matching that form_id
+      if (formTextId) {
+        const match = forms.find((f) => f.form_id === formTextId)
+        if (match) {
+          query = query.eq("form_id", match.id) // submissions.form_id is UUID FK to forms.id
+        } else {
+          // If no match, force an empty result quickly
+          setFormSubmissions([])
+          return
+        }
+      }
+
+      if (category) {
+        const categoryFormIds = forms.filter((f) => f.category === category).map((f) => f.id)
+        if (categoryFormIds.length > 0) {
+          query = query.in("form_id", categoryFormIds)
+        } else {
+          setFormSubmissions([])
+          return
+        }
+      }
+
+      if (subcategory) {
+        const subFormIds = forms.filter((f) => f.subcategory === subcategory).map((f) => f.id)
+        if (subFormIds.length > 0) {
+          query = query.in("form_id", subFormIds)
+        } else {
+          setFormSubmissions([])
+          return
+        }
+      }
+
+      const { data, error } = await query
+      if (error) {
+        console.error("[v0] Error filtering submissions:", error)
+        setFormSubmissions([])
+        setError("Error filtering submissions: " + error.message)
+        return
+      }
+      setFormSubmissions(data || [])
+    } catch (e: any) {
+      console.error("[v0] loadFilteredSubmissions error:", e)
+      setError("Error filtering submissions: " + e.message)
+    }
+  }
+
+  const resetSubmissionFilters = () => {
+    setSubmissionFilters({
+      formTextId: "",
+      category: "",
+      subcategory: "",
+    })
+    loadFilteredSubmissions()
+  }
+
   console.log("servciewewe  :", selectedTools)
 
   return (
@@ -1324,6 +1450,7 @@ export default function AdminPanel() {
                     <h2 className="text-2xl font-bold text-white">Search Filters</h2>
                   </div>
 
+                  {/* Search Filters grid start */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Category */}
                     <div className="space-y-4">
@@ -1358,7 +1485,40 @@ export default function AdminPanel() {
                         ))}
                       </select>
                     </div>
+
+                    {/* <div className="space-y-4">
+                      <label className="block text-sm font-semibold text-[#FFE01B]">Form</label>
+                      <select
+                        value={filters.formTextId}
+                        onChange={(e) => setFilters((prev) => ({ ...prev, formTextId: e.target.value }))}
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                      >
+                        <option value="">All Forms</option>
+                        {uniqueFormTextIds.map((fid) => (
+                          <option key={fid} value={fid} className="bg-[#241C15]">
+                            {fid}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="block text-sm font-semibold text-[#FFE01B]">Subcategory</label>
+                      <select
+                        value={filters.subcategory}
+                        onChange={(e) => setFilters((prev) => ({ ...prev, subcategory: e.target.value }))}
+                        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                      >
+                        <option value="">All Subcategories</option>
+                        {uniqueSubcategories.map((sc) => (
+                          <option key={sc} value={sc} className="bg-[#241C15]">
+                            {sc}
+                          </option>
+                        ))}
+                      </select>
+                    </div> */}
                   </div>
+                  {/* Search Filters grid end */}
 
                   {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/10">
@@ -2262,6 +2422,85 @@ export default function AdminPanel() {
                     </div>
                   </motion.div>
                 ))}
+              </div>
+
+              {/* New Submissions Filter Bar (form_id, category, subcategory) - works independently and combined */}
+              <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30">
+                    {/* You likely have an icon set already; reuse consistent styling */}
+                    <Filter className="w-5 h-5 text-[#FFE01B]" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">Filter Submissions</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Form (text id) */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-[#FFE01B]">Form</label>
+                    <select
+                      value={submissionFilters.formTextId}
+                      onChange={(e) => setSubmissionFilters((p) => ({ ...p, formTextId: e.target.value }))}
+                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                    >
+                      <option value="">All Forms</option>
+                      {formIdOptions.map((fid) => (
+                        <option key={fid} value={fid} className="bg-[#241C15]">
+                          {fid}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Category (from forms) */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-[#FFE01B]">Category</label>
+                    <select
+                      value={submissionFilters.category}
+                      onChange={(e) => setSubmissionFilters((p) => ({ ...p, category: e.target.value }))}
+                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                    >
+                      <option value="">All Categories</option>
+                      {Object.keys(categoryOptions).map((cat) => (
+                        <option key={cat} value={cat} className="bg-[#241C15]">
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Subcategory (from forms) */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-[#FFE01B]">Subcategory</label>
+                    <select
+                      value={submissionFilters.subcategory}
+                      onChange={(e) => setSubmissionFilters((p) => ({ ...p, subcategory: e.target.value }))}
+                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFE01B] transition-colors duration-300"
+                    >
+                      <option value="">All Subcategories</option>
+                      {subcategoryOptions.map((sub) => (
+                        <option key={sub} value={sub} className="bg-[#241C15]">
+                          {sub}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/10">
+                  <button
+                    onClick={loadFilteredSubmissions}
+                    className="flex-1 bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold py-3 px-6 rounded-2xl transition-all duration-300"
+                  >
+                    Apply Submission Filters
+                  </button>
+                  <button
+                    onClick={resetSubmissionFilters}
+                    className="bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-2xl transition-all duration-300 border border-white/20 hover:border-white/40"
+                  >
+                    Reset Submission Filters
+                  </button>
+                </div>
               </div>
 
               {/* Form Submissions Modal/Section */}

@@ -13,75 +13,73 @@ const BottomCTA = () => {
   ];
 
   return (
-    <section className="section-padding bg-gradient-hero relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--brand-yellow)_0%,_transparent_50%)] opacity-20"></div>
-      <div className="absolute top-10 right-10 w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 bg-brand-yellow/10 rounded-full blur-3xl animate-float"></div>
-      <div
-        className="absolute bottom-10 left-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-brand-yellow/5 rounded-full blur-3xl animate-float"
-        style={{ animationDelay: "2s" }}
-      ></div>
+    <section className="relative overflow-hidden bg-[#241C15] py-20 sm:py-28 flex items-center justify-center">
+      {/* Minimal Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#FFE01B_0%,_transparent_60%)] opacity-15 pointer-events-none"></div>
+      <div className="absolute top-10 right-10 w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 bg-[#FFE01B]/10 rounded-full blur-2xl animate-float"></div>
+      <div className="absolute bottom-10 left-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-[#FFE01B]/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
 
-      <div className="container-custom relative z-10">
-        <div className="text-center max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Badge */}
-          <div className="relative inline-flex items-center gap-2 sm:gap-3 glass-effect px-4 py-2 sm:px-6 sm:py-3 md:px-6 md:py-4 mb-6 sm:mb-10 group hover:scale-105 transition-all duration-500 ease-spring rounded-2xl">
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-brand-yellow animate-glow-pulse" />
-            <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-20 rounded-2xl sm:rounded-3xl transition-opacity duration-300"></div>
-          </div>
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 sm:gap-3 backdrop-blur-xl bg-white/10 border border-[#D1D5DB]/20 px-4 py-2 sm:px-6 sm:py-3 rounded-2xl mb-6 sm:mb-10 hover:scale-105 transition-transform duration-300">
+          <Sparkles className="w-5 h-5 text-[#FFE01B] animate-pulse" />
+          <div className="absolute inset-0 bg-[#FFE01B]/20 opacity-0 hover:opacity-20 rounded-2xl transition-opacity duration-300"></div>
+        </div>
 
-          {/* Main Headline */}
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black text-brand-white leading-snug sm:leading-tight mb-6 sm:mb-8 text-glow">
-            Ready to{" "}
-            <span className="gradient-text animate-gradient">Transform</span>
-            <br className="hidden sm:block" />
-            Your Business?
-          </h2>
+        {/* Main Headline */}
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-snug sm:leading-tight mb-6 sm:mb-8">
+          Ready to{" "}
+          <span className="bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent animate-gradient">
+            Transform
+          </span>
+          <br className="hidden sm:block" />
+          Your Business?
+        </h2>
 
-          {/* Description */}
-          <p className="text-lg sm:text-xl md:text-xl lg:text-2xl text-brand-gray-300 leading-relaxed mb-8 sm:mb-12 font-medium px-2">
-            Join hundreds of successful startups who've accelerated their growth with
-            <span className="text-brand-yellow font-bold text-glow">
-              {" "}
-              Finzie's expert talent.
-            </span>
-          </p>
+        {/* Description */}
+        <p className="text-[#D1D5DB] text-base sm:text-lg md:text-xl leading-relaxed mb-8 sm:mb-12 max-w-3xl font-medium">
+          Join hundreds of successful startups who've accelerated their growth with{" "}
+          <span className="text-[#FFE01B] font-bold">
+            Finzie's expert talent.
+          </span>
+        </p>
 
-          {/* Benefits Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-12 sm:mb-16 max-w-3xl mx-auto px-2">
-            {benefits.map((benefit, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 sm:gap-4 text-brand-gray-300 group hover:scale-105 transition-all duration-300"
-                style={{ animationDelay: `${index * 0.15 + 0.3}s` }}
-              >
-                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-brand-yellow flex-shrink-0 group-hover:scale-125 transition-transform duration-300" />
-                <span className="text-sm sm:text-base md:text-lg font-medium">
-                  {benefit}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA Button */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center px-2">
-            <Link href="/client-request">
-              <Button
-                className="btn-primary group inline-flex items-center justify-center text-lg sm:text-xl md:text-xl px-4 sm:px-12 md:px-12 py-4 sm:py-6 md:py-6"
-                asChild
-              >
-                <span>
-                  Start a Project Now
-                  <ArrowRight className="ml-2 sm:ml-4 w-6 sm:w-7 h-6 sm:h-7 group-hover:translate-x-2 transition-transform duration-300" />
-                </span>
-              </Button>
-            </Link>
-            <div className="text-brand-gray-300 text-sm sm:text-base md:text-lg font-medium text-center sm:text-left">
-              ✨ Free consultation • No commitment required
+        {/* Benefits Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-12 sm:mb-16 max-w-3xl">
+          {benefits.map((benefit, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-3 sm:gap-4 text-[#D1D5DB] transition-transform duration-300 hover:scale-105 justify-center"
+              style={{ animationDelay: `${index * 0.15 + 0.3}s` }}
+            >
+              <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFE01B] flex-shrink-0" />
+              <span className="text-sm sm:text-base md:text-lg font-medium">{benefit}</span>
             </div>
+          ))}
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center">
+          <Link href="/client-request">
+            <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black font-bold px-6 py-4 sm:px-12 sm:py-6 rounded-full flex items-center justify-center transition-transform duration-300">
+              Start a Project Now
+              <ArrowRight className="ml-2 w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:translate-x-2" />
+            </Button>
+          </Link>
+          <div className="text-[#D1D5DB] text-sm sm:text-base md:text-lg font-medium">
+            ✨ Free consultation • No commitment required
           </div>
         </div>
       </div>
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes gradient { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
+        .animate-gradient { background-size: 300% 300%; animation: gradient 3s ease infinite; }
+
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .animate-float { animation: float 10s ease-in-out infinite; }
+      `}</style>
     </section>
   );
 };

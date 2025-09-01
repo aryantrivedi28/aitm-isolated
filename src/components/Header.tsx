@@ -82,7 +82,7 @@ export default function Header() {
           <a
             onClick={() => handleNavigation("/get-hired")}
             className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
-            // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
+          // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
           >
             Get Hired
           </a>
@@ -127,7 +127,7 @@ export default function Header() {
             <a
               onClick={() => handleNavigation("/get-hired")}
               className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
-              // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
+            // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
             >
               Get Hired
             </a>
