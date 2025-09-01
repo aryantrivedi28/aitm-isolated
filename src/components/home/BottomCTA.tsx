@@ -13,7 +13,7 @@ const BottomCTA = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[#241C15] py-20 sm:py-28 flex items-center justify-center">
+    <section className="relative overflow-hidden bg-[#241C15] py-16 sm:py-20 flex items-center justify-center">
       {/* Minimal Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#FFE01B_0%,_transparent_60%)] opacity-15 pointer-events-none"></div>
       <div className="absolute top-10 right-10 w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 bg-[#FFE01B]/10 rounded-full blur-2xl animate-float"></div>
@@ -27,7 +27,7 @@ const BottomCTA = () => {
         </div>
 
         {/* Main Headline */}
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-snug sm:leading-tight mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-snug sm:leading-tight mb-6 sm:mb-8">
           Ready to{" "}
           <span className="bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent animate-gradient">
             Transform
@@ -61,7 +61,7 @@ const BottomCTA = () => {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center">
           <Link href="/client-request">
-            <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black font-bold px-6 py-4 sm:px-12 sm:py-6 rounded-full flex items-center justify-center transition-transform duration-300">
+            <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black text-lg font-bold px-6 py-4 sm:px-8 sm:py-5 rounded-2xl flex items-center justify-center transition-transform duration-300">
               Start a Project Now
               <ArrowRight className="ml-2 w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:translate-x-2" />
             </Button>

@@ -29,7 +29,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-[#241C15] min-h-screen pt-[100px] sm:pt-[120px] lg:pt-[130px]">
+    <section className="relative overflow-hidden bg-[#241C15] pt-[100px] sm:pt-[120px] lg:pt-[130px]">
       {/* Light Radial Gradient Mouse Follower */}
       <div
         className="absolute inset-0 z-0 opacity-20 pointer-events-none transition-all duration-300"
@@ -65,11 +65,11 @@ const Hero = () => {
               <span className="inline-block bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent animate-gradient">
                 Tier-One
               </span> Indian Talent <br />
-              <span className="text-[#D1D5DB]">for </span>
+              <span className="text-[#f9fafb]">for </span>
               <span className="inline-block bg-gradient-to-r from-[#FCD34D] to-[#FFE01B] bg-clip-text text-transparent animate-gradient">
                 Global
               </span>
-              <span className="text-[#D1D5DB]"> Companies</span>
+              <span className="text-[#f5f6f7]"> Companies</span>
             </h1>
 
             {/* Description */}
@@ -85,12 +85,12 @@ const Hero = () => {
             {/* CTA Buttons */}
             <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center md:justify-start items-center ${isLoaded ? 'animate-slideUp' : 'opacity-0 translate-y-10'}`}>
               <Link href="/find-talent" className="w-full sm:w-auto">
-                <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black font-bold px-6 py-3 sm:px-8 sm:py-4 rounded-full shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
-                  Start Your Project <ArrowRight className="ml-2 w-5 h-5" />
+                <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black text-lg font-bold px-6 py-4 sm:px-7 sm:py-4 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
+                  Hiring for the talent <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
               <Link href="/all-freelancer" className="w-full sm:w-auto">
-                <Button className="bg-white/10 hover:bg-white/20 text-white border border-[#D1D5DB]/50 hover:border-[#FFE01B] font-semibold px-6 py-3 sm:px-8 sm:py-4 rounded-full shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
+                <Button className="bg-white/10 hover:bg-white/20 text-white text-lg border border-[#D1D5DB]/50 hover:border-[#FFE01B] font-semibold px-6 py-4 sm:px-8 sm:py-4 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
                   <Play className="mr-2 w-5 h-5" /> Get Hired as Freelancer
                 </Button>
               </Link>

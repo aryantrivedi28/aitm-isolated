@@ -6,38 +6,20 @@ import { useState, useEffect } from "react";
 import { type Variants } from "framer-motion";
 
 const fadeUp: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 60,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.6, -0.05, 0.01, 0.99],
-    },
-  },
+  hidden: { opacity: 0, y: 60 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] } },
 };
 
 const staggerContainer: Variants = {
-  hidden: {
-    opacity: 0,
-  },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-    },
-  },
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.1 } },
 };
 
 const Testimonials = () => {
   const [expandedTestimonial, setExpandedTestimonial] = useState<number | null>(null);
   const controls = useAnimation();
 
-  const testimonials = [
+ const testimonials = [
     {
       name: "Apratim Sinha",
       role: "Founder, Alevia Wellness",
@@ -71,37 +53,17 @@ const Testimonials = () => {
       avatar: "/akshadeep.jpeg",
     },
   ];
-
-  // Function to truncate text
-  const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
-  };
-
-  const startAnimation = () => {
-    controls.start({
-      x: "-50%",
-      transition: {
-        x: {
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: testimonials.length * 5,
-          ease: "linear",
-        },
-      },
-    });
-  };
-
-  const stopAnimation = () => {
-    controls.stop();
-  };
+  const truncateText = (text: string, maxLength: number) => text.length <= maxLength ? text : text.substring(0, maxLength) + "...";
 
   useEffect(() => {
-    startAnimation();
-  }, []);
+    controls.start({
+      x: "-50%",
+      transition: { x: { repeat: Infinity, repeatType: "loop", duration: testimonials.length * 5, ease: "linear" } },
+    });
+  }, [controls, testimonials.length]);
 
   return (
-    <section className="py-16 px-4 bg-[#fbf5e5] overflow-hidden">
+    <section className="py-16 px-4 bg-[#241C15] overflow-hidden">
       <motion.div
         className="max-w-6xl mx-auto"
         initial="hidden"
@@ -109,113 +71,85 @@ const Testimonials = () => {
         viewport={{ once: true, amount: 0.2 }}
         variants={staggerContainer}
       >
-        {/* Enhanced Header */}
-        <div className={`text-center mb-16 sm:mb-20 lg:mb-24 transition-all duration-1000`}>
-          {/* Subtitle Badge */}
-          <div className="inline-flex items-center gap-3 backdrop-blur-sm bg-white/70 border border-gray-200/60 px-5 py-3 rounded-full mb-8 shadow-lg hover:shadow-xl transition-all duration-300 group">
+        {/* Header */}
+        <div className="text-center mb-16 sm:mb-20 lg:mb-24">
+          <div className="inline-flex items-center gap-3 backdrop-blur-sm bg-white/10 border border-gray-300 px-5 py-3 rounded-full mb-8 shadow-sm">
             <Sparkles className="w-5 h-5 text-[#FFE01B] animate-pulse" />
-            <span className="text-sm font-semibold text-gray-700">Testimonials</span>
+            <span className="text-sm font-semibold text-white">Testimonials</span>
             <div className="w-2 h-2 bg-[#FFE01B] rounded-full animate-ping" />
           </div>
 
-          <h2
-            className="font-black leading-tight mb-6 text-gray-900"
-            style={{
-              fontSize: "clamp(2.5rem, 7vw, 4.5rem)",
-              textShadow: "0 4px 20px rgba(0,0,0,0.1)",
-            }}
-          >
+          <h2 className="font-black leading-tight mb-6 text-white text-3xl sm:text-4xl md:text-5xl">
             What Our Clients{" "}
-            <span className="relative inline-block">
-              <span className="bg-gradient-to-r from-[#FFE01B] via-amber-500 to-[#FFE01B] bg-clip-text text-transparent animate-gradient bg-300%">
-                Say
-              </span>
-              <div className="absolute -inset-2 bg-gradient-to-r from-[#FFE01B]/20 to-amber-500/20 blur-xl -z-10 animate-pulse" />
+            <span className="bg-gradient-to-r from-[#FFE01B] via-[#FCD34D] to-[#FFE01B] bg-clip-text text-transparent animate-gradient bg-300%">
+              Say
             </span>
           </h2>
 
-          <div className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <div className="text-lg sm:text-xl text-[#dfd8c5] max-w-3xl mx-auto leading-relaxed">
             We’ll make you fall in love with our offering—at least, that’s what our existing clients say!
           </div>
         </div>
 
+        {/* Testimonials Carousel */}
         <div className="relative">
           <motion.div
             className="flex gap-6"
             animate={controls}
-            onHoverStart={stopAnimation}
-            onHoverEnd={startAnimation}
+            onHoverStart={() => controls.stop()}
+            onHoverEnd={() => controls.start({ x: "-50%", transition: { x: { repeat: Infinity, repeatType: "loop", duration: testimonials.length * 5, ease: "linear" } } })}
           >
             {[...testimonials, ...testimonials].map((testimonial, index) => (
               <motion.div
                 key={index}
-                className="group bg-[#fbf5e5] rounded-3xl p-8 shadow-lg border border-gray-100 hover:border-[#FFE01B]/50 hover:shadow-xl transition-all duration-500 flex-shrink-0 flex flex-col"
+                className="group bg-[#241C15] rounded-3xl p-8 shadow-md border border-gray-300 hover:border-[#FFE01B] hover:shadow-lg transition-all duration-500 flex-shrink-0 flex flex-col"
                 style={{
                   width: "380px",
                   minHeight: expandedTestimonial === index ? "auto" : "420px",
                   height: expandedTestimonial === index ? "auto" : "420px",
                 }}
-                whileHover={{ y: -10, scale: 1.02 }}
+                whileHover={{ y: -8, scale: 1.02 }}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative flex flex-col h-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+
+                <div className="flex flex-col h-full relative">
                   <div className="flex gap-1 mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                      >
-                        <Star className="w-5 h-5 fill-[#FFE01B] text-[#FFE01B]" />
-                      </motion.div>
+                      <Star key={i} className="w-5 h-5 fill-[#FFE01B] text-[#FFE01B]" />
                     ))}
                   </div>
 
                   <div className={`mb-6 ${expandedTestimonial === index ? "flex-none" : "flex-1"}`}>
-                    <div className="relative">
-                      <blockquote className="text-gray-700 leading-relaxed italic">
-                        {expandedTestimonial === index
-                          ? `"${testimonial.content}"`
-                          : `"${truncateText(testimonial.content, 180)}"`}
-                      </blockquote>
-                      {testimonial.content.length > 180 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setExpandedTestimonial(expandedTestimonial === index ? null : index);
-                          }}
-                          className="text-[#FFE01B] hover:text-[#241C15] font-medium text-sm mt-2 transition-colors duration-300"
-                        >
-                          {expandedTestimonial === index ? "Show less" : "Read more"}
-                        </button>
-                      )}
-                    </div>
+                    <blockquote className="text-white leading-relaxed italic">
+                      {expandedTestimonial === index ? `"${testimonial.content}"` : `"${truncateText(testimonial.content, 180)}"`}
+                    </blockquote>
+                    {testimonial.content.length > 180 && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setExpandedTestimonial(expandedTestimonial === index ? null : index); }}
+                        className="text-[#FFE01B] hover:text-[#FCD34D] font-medium text-sm mt-2 transition-colors duration-300"
+                      >
+                        {expandedTestimonial === index ? "Show less" : "Read more"}
+                      </button>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-4 mt-auto">
-                    <motion.div whileHover={{ scale: 1.1 }} className="relative">
-                      <div className="absolute inset-0 bg-[#FFE01B] rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-
-                      {/* --- FIX START HERE --- */}
+                    <motion.div whileHover={{ scale: 1.05 }} className="relative">
+                      <div className="absolute inset-0 bg-[#FFE01B]/20 rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
                       <img
                         src={testimonial.avatar}
                         alt={testimonial.name}
                         width={60}
                         height={60}
-                        className="relative w-12 h-12 rounded-full object-cover border-2 border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-500"
+                        className="relative w-12 h-12 rounded-full object-cover border-2 border-[#FFE01B] transition-colors duration-500"
                       />
-                      {/* --- FIX END HERE --- */}
-
                     </motion.div>
                     <div>
-                      <h4 className="font-bold text-[#241C15] group-hover:text-[#FFE01B] transition-colors duration-500">
-                        {testimonial.name}
-                      </h4>
-                      <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                      <h4 className="font-bold text-white group-hover:text-[#FFE01B] transition-colors duration-500">{testimonial.name}</h4>
+                      <p className="text-gray-300 text-sm">{testimonial.role}</p>
                     </div>
                   </div>
                 </div>
@@ -224,23 +158,19 @@ const Testimonials = () => {
           </motion.div>
         </div>
 
-        <motion.div
-          className="text-center mt-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
-          <p className="text-gray-500 text-sm flex items-center justify-center gap-2">
-            <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-            >
-              👆
-            </motion.span>
+        <motion.div className="text-center mt-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
+          <p className="text-gray-300 text-sm flex items-center justify-center gap-2">
+            <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}>👆</motion.span>
             Hover over testimonials to pause and read • Click "Read more" for full testimonials
           </p>
         </motion.div>
       </motion.div>
+
+      <style jsx>{`
+        @keyframes gradient { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .animate-gradient { background-size: 300% 300%; animation: gradient 3s ease infinite; }
+        .bg-300\\% { background-size: 300% 300%; }
+      `}</style>
     </section>
   );
 };

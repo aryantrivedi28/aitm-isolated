@@ -18,7 +18,7 @@ const ClientLogos = () => {
     <section className="bg-[#fbf5e5] py-12">
       <div className="container mx-auto overflow-hidden">
         {/* Enhanced Header */}
-        <div className={`text-center mb-16 sm:mb-20 lg:mb-24 transition-all duration-1000`}>
+        <div className={`text-center mb-12 sm:mb-18 lg:mb-20 transition-all duration-1000`}>
           {/* Subtitle Badge */}
           <div className="inline-flex items-center gap-3 backdrop-blur-sm bg-white/70 border border-gray-200/60 px-5 py-3 rounded-full mb-8 shadow-lg hover:shadow-xl transition-all duration-300 group">
             <Sparkles className="w-5 h-5 text-[#FFE01B] animate-pulse" />
@@ -29,7 +29,7 @@ const ClientLogos = () => {
           <h2
             className="font-black leading-tight mb-6 text-gray-900"
             style={{
-              fontSize: "clamp(2.5rem, 7vw, 4.5rem)",
+              fontSize: "clamp(2rem, 7vw, 3.5rem)",
               textShadow: "0 4px 20px rgba(0,0,0,0.1)",
             }}
           >
@@ -49,7 +49,7 @@ const ClientLogos = () => {
 
         <div className="relative w-full overflow-hidden">
           <motion.div
-            className="flex space-x-12 w-max"
+            className="flex space-x-6 w-max"
             animate={{ x: ["0%", "-50%"] }}
             transition={{
               repeat: Infinity,

@@ -17,20 +17,13 @@ export default function Header() {
   }
 
   return (
-    <div className="
-  fixed top-4 left-1/2 -translate-x-1/2
-  w-[90%] max-w-6xl
-  bg-white/20 backdrop-blur-md border border-white/20
-  shadow-lg shadow-black/20
-  rounded-lg
-  z-50
-">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] max-w-7xl bg-white/20 backdrop-blur-md border border-white/20 shadow-lg shadow-black/20 rounded-lg z-50">
 
       {/* Glass effect overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5 pointer-events-none"></div>
 
       {/* Main Header */}
-      <div className="relative flex justify-between items-center px-4 sm:px-6 lg:px-8 py-4">
+      <div className="relative flex justify-between items-center px-4 sm:px-6 lg:px-8 py-3">
         {/* Logo */}
         <div
           className="flex items-center cursor-pointer space-x-3 hover:opacity-80 transition-all duration-300 group"
@@ -82,7 +75,7 @@ export default function Header() {
           <a
             onClick={() => handleNavigation("/get-hired")}
             className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
-          // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
+            // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
           >
             Get Hired
           </a>
@@ -127,7 +120,7 @@ export default function Header() {
             <a
               onClick={() => handleNavigation("/get-hired")}
               className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
-            // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
+              // className="bg-[#FFE01B]/90 hover:bg-[#FFE01B] backdrop-blur-sm text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-300 cursor-pointer shadow-lg hover:shadow-[#FFE01B]/20 hover:scale-105 border border-[#FFE01B]/20"
             >
               Get Hired
             </a>
