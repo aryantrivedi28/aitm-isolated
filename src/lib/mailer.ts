@@ -9,3 +9,19 @@ export const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS,
   },
 })
+
+
+
+export const sendEmail = async (to: string, subject: string, html: string) => {
+  try {
+    await transporter.sendMail({
+      from: `"Finzie" <${process.env.SMTP_USER}>`,
+      to,
+      subject,
+      html,
+    });
+    console.log("✅ Email sent to", to);
+  } catch (err) {
+    console.error("❌ Email send error:", err);
+  }
+};

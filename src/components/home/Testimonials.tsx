@@ -19,7 +19,7 @@ const Testimonials = () => {
   const [expandedTestimonial, setExpandedTestimonial] = useState<number | null>(null);
   const controls = useAnimation();
 
- const testimonials = [
+  const testimonials = [
     {
       name: "Apratim Sinha",
       role: "Founder, Alevia Wellness",
@@ -53,12 +53,21 @@ const Testimonials = () => {
       avatar: "/akshadeep.jpeg",
     },
   ];
-  const truncateText = (text: string, maxLength: number) => text.length <= maxLength ? text : text.substring(0, maxLength) + "...";
+
+  const truncateText = (text: string, maxLength: number) =>
+    text.length <= maxLength ? text : text.substring(0, maxLength) + "...";
 
   useEffect(() => {
     controls.start({
       x: "-50%",
-      transition: { x: { repeat: Infinity, repeatType: "loop", duration: testimonials.length * 5, ease: "linear" } },
+      transition: {
+        x: {
+          repeat: Infinity,
+          repeatType: "loop",
+          duration: testimonials.length * 6,
+          ease: "linear",
+        },
+      },
     });
   }, [controls, testimonials.length]);
 
@@ -92,24 +101,37 @@ const Testimonials = () => {
         </div>
 
         {/* Testimonials Carousel */}
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <motion.div
             className="flex gap-6"
             animate={controls}
             onHoverStart={() => controls.stop()}
-            onHoverEnd={() => controls.start({ x: "-50%", transition: { x: { repeat: Infinity, repeatType: "loop", duration: testimonials.length * 5, ease: "linear" } } })}
+            onHoverEnd={() =>
+              controls.start({
+                x: "-50%",
+                transition: {
+                  x: {
+                    repeat: Infinity,
+                    repeatType: "loop",
+                    duration: testimonials.length * 6,
+                    ease: "linear",
+                  },
+                },
+              })
+            }
           >
             {[...testimonials, ...testimonials].map((testimonial, index) => (
               <motion.div
                 key={index}
-                className="group bg-[#241C15] rounded-3xl p-8 shadow-md border border-gray-300 hover:border-[#FFE01B] hover:shadow-lg transition-all duration-500 flex-shrink-0 flex flex-col"
+                className="group bg-[#241C15] rounded-3xl p-6 sm:p-8 shadow-md border border-gray-300 hover:border-[#FFE01B] hover:shadow-lg transition-all duration-500 flex-shrink-0 flex flex-col"
                 style={{
-                  width: "380px",
+                  width: "85vw", // 🔥 Mobile-friendly width
+                  maxWidth: "380px", // 🔥 Keep your desktop size
                   minHeight: expandedTestimonial === index ? "auto" : "420px",
                   height: expandedTestimonial === index ? "auto" : "420px",
                 }}
                 whileHover={{ y: -8, scale: 1.02 }}
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
               >
@@ -124,11 +146,16 @@ const Testimonials = () => {
 
                   <div className={`mb-6 ${expandedTestimonial === index ? "flex-none" : "flex-1"}`}>
                     <blockquote className="text-white leading-relaxed italic">
-                      {expandedTestimonial === index ? `"${testimonial.content}"` : `"${truncateText(testimonial.content, 180)}"`}
+                      {expandedTestimonial === index
+                        ? `"${testimonial.content}"`
+                        : `"${truncateText(testimonial.content, 180)}"`}
                     </blockquote>
                     {testimonial.content.length > 180 && (
                       <button
-                        onClick={(e) => { e.stopPropagation(); setExpandedTestimonial(expandedTestimonial === index ? null : index); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedTestimonial(expandedTestimonial === index ? null : index);
+                        }}
                         className="text-[#FFE01B] hover:text-[#FCD34D] font-medium text-sm mt-2 transition-colors duration-300"
                       >
                         {expandedTestimonial === index ? "Show less" : "Read more"}
@@ -148,7 +175,9 @@ const Testimonials = () => {
                       />
                     </motion.div>
                     <div>
-                      <h4 className="font-bold text-white group-hover:text-[#FFE01B] transition-colors duration-500">{testimonial.name}</h4>
+                      <h4 className="font-bold text-white group-hover:text-[#FFE01B] transition-colors duration-500">
+                        {testimonial.name}
+                      </h4>
                       <p className="text-gray-300 text-sm">{testimonial.role}</p>
                     </div>
                   </div>
@@ -158,7 +187,12 @@ const Testimonials = () => {
           </motion.div>
         </div>
 
-        <motion.div className="text-center mt-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
+        <motion.div
+          className="text-center mt-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
           <p className="text-gray-300 text-sm flex items-center justify-center gap-2">
             <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}>👆</motion.span>
             Hover over testimonials to pause and read • Click "Read more" for full testimonials
@@ -167,7 +201,10 @@ const Testimonials = () => {
       </motion.div>
 
       <style jsx>{`
-        @keyframes gradient { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes gradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
         .animate-gradient { background-size: 300% 300%; animation: gradient 3s ease infinite; }
         .bg-300\\% { background-size: 300% 300%; }
       `}</style>
