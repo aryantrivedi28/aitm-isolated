@@ -2,10 +2,55 @@
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+
+type CategoryOptionsType = typeof categoryOptions;
+
+const categoryOptions = {
+  Development: {
+    subcategories: [
+      "Frontend", "Backend", "Full Stack", "Mobile App Development",
+      "Game Development", "Blockchain", "Embedded Systems",
+    ],
+    techStacks: [
+      "React", "Vue", "Angular", "Node.js", "Python", "Java", "PHP", ".NET",
+      "React Native", "Flutter", "Unity", "Unreal Engine", "Rust", "Solidity",
+    ],
+    tools: {
+      React: ["Redux", "Next.js", "Material-UI", "Styled Components", "TypeScript"],
+      Vue: ["Vuex", "Nuxt.js", "Vuetify", "Vue Router", "TypeScript"],
+      Angular: ["NgRx", "Angular Material", "TypeScript", "RxJS", "Ionic"],
+      "Node.js": ["Express", "MongoDB", "PostgreSQL", "Redis", "Socket.io"],
+      Python: ["Django", "Flask", "FastAPI", "PostgreSQL", "MongoDB"],
+      Java: ["Spring Boot", "Hibernate", "Maven", "PostgreSQL", "Redis"],
+      PHP: ["Laravel", "Symfony", "MySQL", "PostgreSQL", "Redis"],
+      ".NET": ["ASP.NET Core", "Entity Framework", "SQL Server", "Azure", "C#"],
+      "React Native": ["Expo", "Redux", "AsyncStorage", "React Navigation", "TypeScript"],
+      Flutter: ["Dart", "Firebase", "Provider", "Bloc", "GetX"],
+      Unity: ["C#", "Photon", "DOTS", "Unity Analytics", "Shader Graph"],
+      "Unreal Engine": ["Blueprints", "C++", "Niagara", "MetaHuman", "Sequencer"],
+      Solidity: ["Truffle", "Hardhat", "Remix", "Ganache", "Web3.js"],
+    },
+  },
+  Design: {
+    subcategories: ["UI/UX", "Graphic Design", "Web Design", "Product Design", "Motion Graphics", "3D Design"],
+    techStacks: ["Figma", "Adobe XD", "Sketch", "Photoshop", "Illustrator", "After Effects", "Blender"],
+    tools: {
+      Figma: ["Auto Layout", "Components", "Prototyping", "Design Systems", "Plugins"],
+      "Adobe XD": ["Prototyping", "Voice Prototyping", "Auto-Animate", "Repeat Grid", "Plugins"],
+      Sketch: ["Symbols", "Libraries", "Prototyping", "Plugins", "Abstract"],
+      Photoshop: ["Layer Styles", "Smart Objects", "Actions", "Brushes", "Filters"],
+      Illustrator: ["Vector Graphics", "Typography", "Logos", "Icons", "Illustrations"],
+      "After Effects": ["Motion Graphics", "VFX", "Keyframes", "Expressions", "Compositing"],
+      Blender: ["Modeling", "Animation", "UV Mapping", "Rendering", "Sculpting"],
+    },
+  },
+} as const;
 
 export default function ClientFormPage() {
   const [step, setStep] = useState<1 | 2>(1);
+  const router = useRouter();
+
   const [clientDetails, setClientDetails] = useState({
     name: "",
     company_name: "",
@@ -13,40 +58,26 @@ export default function ClientFormPage() {
     industry: "",
     phone: "",
   });
+
   const [hiringDetails, setHiringDetails] = useState({
-    role_type: "Intern", // will be auto-filled from URL
+    role_type: "intern",
     job_title: "",
     description: "",
     budget_range: "",
-    category: "",
-    subcategory: "",
+    categories: [] as string[],
+    otherCategories: [] as string[],
+    subcategories: [] as string[],
+    otherSubcategories: [] as string[],
     tools: [] as string[],
+    otherTools: [] as string[],
   });
 
-  const router = useRouter();
-  // const searchParams = useSearchParams();
-  // const roleTypeFromUrl = searchParams.get("role"); // freelancer | intern | fulltime
-
-  // // ✅ Always set role_type from URL once
-  // useEffect(() => {
-  //   if (roleTypeFromUrl) {
-  //     setHiringDetails((prev) => ({ ...prev, role_type: roleTypeFromUrl }));
-  //   }
-  // }, [roleTypeFromUrl]);
-
-  // // ✅ Skip client step if already exists (check Supabase user)
-  // ✅ Skip client step if already exists (check via cookie)
   useEffect(() => {
     async function fetchClient() {
       try {
         const res = await fetch("/api/client/me", { credentials: "include" });
         const data = await res.json();
-
-        console.log("Fetched client data:", data);
-
-        if (data?.exists) {
-          setStep(2);
-        }
+        if (data?.exists) setStep(2);
       } catch (err) {
         console.error("Error fetching client:", err);
       }
@@ -54,8 +85,6 @@ export default function ClientFormPage() {
     fetchClient();
   }, []);
 
-
-  // ✅ Step 1 submit
   const handleClientSubmit = async () => {
     try {
       const res = await fetch("/api/client/details", {
@@ -63,30 +92,40 @@ export default function ClientFormPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(clientDetails),
       });
-
       const data = await res.json();
       if (data.success) {
         localStorage.setItem("client_id", data.client.id);
         setStep(2);
-      } else {
-        console.error("Failed to save client:", data.error);
       }
     } catch (err) {
-      console.error("Client submit error:", err);
+      console.error(err);
     }
   };
 
-  // ✅ Step 2 submit
   const handleHiringSubmit = async () => {
     try {
       const client_id = localStorage.getItem("client_id");
-      if (!client_id) {
-        alert("Client ID missing, please complete Step 1.");
-        return;
-      }
+      if (!client_id) return alert("Client ID missing");
 
-      const payload = { ...hiringDetails, client_id };
-      console.log("📤 Submitting hiring request:", payload);
+      const payload = {
+        client_id,
+        role_type: hiringDetails.role_type,
+        job_title: hiringDetails.job_title,
+        description: hiringDetails.description,
+        budget_range: hiringDetails.budget_range,
+        category: [
+          ...hiringDetails.categories.filter((c) => c !== "Other"),
+          ...hiringDetails.otherCategories,
+        ],
+        subcategory: [
+          ...hiringDetails.subcategories.filter((s) => s !== "Other"),
+          ...hiringDetails.otherSubcategories,
+        ],
+        tools: [
+          ...hiringDetails.tools.filter((t) => t !== "Other"),
+          ...hiringDetails.otherTools,
+        ],
+      };
 
       const res = await fetch("/api/client/hiring", {
         method: "POST",
@@ -95,72 +134,51 @@ export default function ClientFormPage() {
       });
 
       const data = await res.json();
-      if (data.success) {
-        router.push("/find-talent/thank-you");
-      } else {
-        console.error("Hiring request failed:", data.error);
-      }
+      if (data.success) router.push("/find-talent/thank-you");
     } catch (err) {
-      console.error("Hiring submit error:", err);
+      console.error(err);
     }
+  };
+
+  const toggleSelect = (arr: string[], value: string) => {
+    if (arr.includes(value)) return arr.filter((v) => v !== value);
+    return [...arr, value];
+  };
+
+  const getAvailableSubcategories = () =>
+    hiringDetails.categories.length === 1 && hiringDetails.categories[0] !== "Other"
+      ? categoryOptions[hiringDetails.categories[0] as keyof CategoryOptionsType].subcategories
+      : [];
+
+  const getAvailableToolsMerged = () => {
+    if (hiringDetails.categories.length === 1 && hiringDetails.categories[0] !== "Other") {
+      const cat = hiringDetails.categories[0] as keyof CategoryOptionsType;
+      const { techStacks, tools } = categoryOptions[cat];
+      const merged: string[] = [...techStacks];
+      Object.values(tools).forEach((arr) => merged.push(...arr));
+      return Array.from(new Set(merged));
+    }
+    return [];
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#241C15] text-white">
-      <div className="bg-white text-black rounded-2xl shadow-xl p-8 w-[500px]">
-        {/* ✅ Step 1: Client details */}
+      <div className="bg-white text-black rounded-2xl shadow-xl p-8 w-[600px]">
+        {/* Step 1 */}
         {step === 1 && (
           <>
             <h2 className="text-xl font-bold mb-4">Step 1: Client Details</h2>
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Name"
-              value={clientDetails.name}
-              onChange={(e) =>
-                setClientDetails({ ...clientDetails, name: e.target.value })
-              }
-            />
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Company Name"
-              value={clientDetails.company_name}
-              onChange={(e) =>
-                setClientDetails({
-                  ...clientDetails,
-                  company_name: e.target.value,
-                })
-              }
-            />
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Website"
-              value={clientDetails.website}
-              onChange={(e) =>
-                setClientDetails({
-                  ...clientDetails,
-                  website: e.target.value,
-                })
-              }
-            />
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Industry"
-              value={clientDetails.industry}
-              onChange={(e) =>
-                setClientDetails({
-                  ...clientDetails,
-                  industry: e.target.value,
-                })
-              }
-            />
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Phone"
-              value={clientDetails.phone}
-              onChange={(e) =>
-                setClientDetails({ ...clientDetails, phone: e.target.value })
-              }
-            />
+            {Object.entries(clientDetails).map(([key, value]) => (
+              <input
+                key={key}
+                className="border p-2 w-full mb-3"
+                placeholder={key.replace("_", " ").toUpperCase()}
+                value={value}
+                onChange={(e) =>
+                  setClientDetails({ ...clientDetails, [key]: e.target.value })
+                }
+              />
+            ))}
             <button
               onClick={handleClientSubmit}
               className="bg-[#FFE01B] hover:bg-yellow-300 px-4 py-2 rounded w-full font-bold"
@@ -170,12 +188,11 @@ export default function ClientFormPage() {
           </>
         )}
 
-        {/* ✅ Step 2: Hiring details */}
+        {/* Step 2 */}
         {step === 2 && (
           <>
             <h2 className="text-xl font-bold mb-4">Step 2: Hiring Request</h2>
 
-            {/* role_type locked from URL */}
             <div className="mb-3 p-2 border rounded bg-gray-100">
               Role Type: <b>{hiringDetails.role_type}</b>
             </div>
@@ -185,10 +202,7 @@ export default function ClientFormPage() {
               placeholder="Job Title"
               value={hiringDetails.job_title}
               onChange={(e) =>
-                setHiringDetails({
-                  ...hiringDetails,
-                  job_title: e.target.value,
-                })
+                setHiringDetails({ ...hiringDetails, job_title: e.target.value })
               }
             />
             <textarea
@@ -196,10 +210,7 @@ export default function ClientFormPage() {
               placeholder="Job Description"
               value={hiringDetails.description}
               onChange={(e) =>
-                setHiringDetails({
-                  ...hiringDetails,
-                  description: e.target.value,
-                })
+                setHiringDetails({ ...hiringDetails, description: e.target.value })
               }
             />
             <input
@@ -207,44 +218,165 @@ export default function ClientFormPage() {
               placeholder="Budget Range"
               value={hiringDetails.budget_range}
               onChange={(e) =>
-                setHiringDetails({
-                  ...hiringDetails,
-                  budget_range: e.target.value,
-                })
+                setHiringDetails({ ...hiringDetails, budget_range: e.target.value })
               }
             />
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Category (optional)"
-              value={hiringDetails.category}
-              onChange={(e) =>
-                setHiringDetails({
-                  ...hiringDetails,
-                  category: e.target.value,
-                })
-              }
-            />
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Subcategory (optional)"
-              value={hiringDetails.subcategory}
-              onChange={(e) =>
-                setHiringDetails({
-                  ...hiringDetails,
-                  subcategory: e.target.value,
-                })
-              }
-            />
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Tools (comma separated, optional)"
-              onChange={(e) =>
-                setHiringDetails({
-                  ...hiringDetails,
-                  tools: e.target.value.split(","),
-                })
-              }
-            />
+
+            {/* Categories Multi-select */}
+            <label className="block mb-1 font-semibold">Categories</label>
+            <div className="mb-3 flex flex-wrap gap-2">
+              {Object.keys(categoryOptions).map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() =>
+                    setHiringDetails({
+                      ...hiringDetails,
+                      categories: toggleSelect(hiringDetails.categories, cat),
+                    })
+                  }
+                  className={`px-2 py-1 border rounded ${
+                    hiringDetails.categories.includes(cat) ? "bg-yellow-300" : ""
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  setHiringDetails({
+                    ...hiringDetails,
+                    categories: toggleSelect(hiringDetails.categories, "Other"),
+                  })
+                }
+                className={`px-2 py-1 border rounded ${
+                  hiringDetails.categories.includes("Other") ? "bg-yellow-300" : ""
+                }`}
+              >
+                Other
+              </button>
+            </div>
+            {hiringDetails.categories.includes("Other") && (
+              <input
+                className="border p-2 w-full mb-3"
+                placeholder="Enter custom categories (comma separated)"
+                value={hiringDetails.otherCategories.join(",")}
+                onChange={(e) =>
+                  setHiringDetails({
+                    ...hiringDetails,
+                    otherCategories: e.target.value.split(","),
+                  })
+                }
+              />
+            )}
+
+            {/* Subcategories Multi-select */}
+            {getAvailableSubcategories().length > 0 && (
+              <>
+                <label className="block mb-1 font-semibold">Subcategories</label>
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {getAvailableSubcategories().map((sub) => (
+                    <button
+                      key={sub}
+                      type="button"
+                      onClick={() =>
+                        setHiringDetails({
+                          ...hiringDetails,
+                          subcategories: toggleSelect(hiringDetails.subcategories, sub),
+                        })
+                      }
+                      className={`px-2 py-1 border rounded ${
+                        hiringDetails.subcategories.includes(sub) ? "bg-yellow-300" : ""
+                      }`}
+                    >
+                      {sub}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setHiringDetails({
+                        ...hiringDetails,
+                        subcategories: toggleSelect(hiringDetails.subcategories, "Other"),
+                      })
+                    }
+                    className={`px-2 py-1 border rounded ${
+                      hiringDetails.subcategories.includes("Other") ? "bg-yellow-300" : ""
+                    }`}
+                  >
+                    Other
+                  </button>
+                </div>
+                {hiringDetails.subcategories.includes("Other") && (
+                  <input
+                    className="border p-2 w-full mb-3"
+                    placeholder="Enter custom subcategories (comma separated)"
+                    value={hiringDetails.otherSubcategories.join(",")}
+                    onChange={(e) =>
+                      setHiringDetails({
+                        ...hiringDetails,
+                        otherSubcategories: e.target.value.split(","),
+                      })
+                    }
+                  />
+                )}
+              </>
+            )}
+
+            {/* Tools + TechStacks Merged */}
+            {getAvailableToolsMerged().length > 0 && (
+              <>
+                <label className="block mb-1 font-semibold">Tools / Tech Stacks</label>
+                <div className="mb-3 flex flex-wrap gap-2">
+                  {getAvailableToolsMerged().map((tool) => (
+                    <button
+                      key={tool}
+                      type="button"
+                      onClick={() =>
+                        setHiringDetails({
+                          ...hiringDetails,
+                          tools: toggleSelect(hiringDetails.tools, tool),
+                        })
+                      }
+                      className={`px-2 py-1 border rounded ${
+                        hiringDetails.tools.includes(tool) ? "bg-yellow-300" : ""
+                      }`}
+                    >
+                      {tool}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setHiringDetails({
+                        ...hiringDetails,
+                        tools: toggleSelect(hiringDetails.tools, "Other"),
+                      })
+                    }
+                    className={`px-2 py-1 border rounded ${
+                      hiringDetails.tools.includes("Other") ? "bg-yellow-300" : ""
+                    }`}
+                  >
+                    Other
+                  </button>
+                </div>
+                {hiringDetails.tools.includes("Other") && (
+                  <input
+                    className="border p-2 w-full mb-3"
+                    placeholder="Enter custom tools (comma separated)"
+                    value={hiringDetails.otherTools.join(",")}
+                    onChange={(e) =>
+                      setHiringDetails({
+                        ...hiringDetails,
+                        otherTools: e.target.value.split(","),
+                      })
+                    }
+                  />
+                )}
+              </>
+            )}
+
             <button
               onClick={handleHiringSubmit}
               className="bg-[#FFE01B] hover:bg-yellow-300 px-4 py-2 rounded w-full font-bold"
