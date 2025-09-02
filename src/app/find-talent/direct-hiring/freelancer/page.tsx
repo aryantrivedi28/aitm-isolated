@@ -3,6 +3,17 @@ export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  User,
+  Briefcase,
+  FileText,
+  DollarSign,
+  Layers,
+  Wrench,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 
 type CategoryOptionsType = typeof categoryOptions;
 
@@ -303,230 +314,232 @@ export default function ClientFormPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#241C15] text-white">
-      <div className="bg-white text-black rounded-2xl shadow-xl p-8 w-[600px]">
-        {/* Step 1 */}
-        {step === 1 && (
-          <>
-            <h2 className="text-xl font-bold mb-4">Step 1: Client Details</h2>
-            {Object.entries(clientDetails).map(([key, value]) => (
+    <div className="min-h-screen flex items-center justify-center bg-[#241C15] text-white px-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="bg-white text-black rounded-2xl shadow-2xl p-8 w-full max-w-2xl"
+      >
+        <AnimatePresence mode="wait">
+          {step === 1 && (
+            <motion.div
+              key="step1"
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 40 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-[#241C15]">
+                <User className="w-6 h-6 text-[#FFE01B]" />
+                Step 1: Client Details
+              </h2>
+
+              {Object.entries(clientDetails).map(([key, value]) => (
+                <div key={key} className="mb-4">
+                  <label className="block text-gray-600 text-sm mb-1">
+                    {key.replace("_", " ").toUpperCase()}
+                  </label>
+                  <input
+                    className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-[#FFE01B] outline-none"
+                    placeholder={key.replace("_", " ")}
+                    value={value}
+                    onChange={(e) =>
+                      setClientDetails({
+                        ...clientDetails,
+                        [key]: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              ))}
+
+              <button
+                onClick={handleClientSubmit}
+                className="mt-4 bg-[#FFE01B] text-black px-6 py-3 rounded-xl font-bold w-full flex items-center justify-center gap-2 transition transform hover:scale-105 hover:bg-[#FCD34D] active:scale-95"
+              >
+                Next <ArrowRight className="w-5 h-5" />
+              </button>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div
+              key="step2"
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.4 }}
+            >
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-[#241C15]">
+                <Briefcase className="w-6 h-6 text-[#FFE01B]" />
+                Step 2: Hiring Request
+              </h2>
+
+              {/* Role Type Display */}
+              <div className="mb-4 p-3 border rounded-lg bg-gray-50 flex items-center gap-2 text-gray-700">
+                <FileText className="w-5 h-5 text-[#241C15]" />
+                Role Type: <b>{hiringDetails.role_type}</b>
+              </div>
+
+              {/* Job Title */}
               <input
-                key={key}
-                className="border p-2 w-full mb-3"
-                placeholder={key.replace("_", " ").toUpperCase()}
-                value={value}
+                className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4 focus:ring-2 focus:ring-[#FFE01B] outline-none"
+                placeholder="Job Title"
+                value={hiringDetails.job_title}
                 onChange={(e) =>
-                  setClientDetails({ ...clientDetails, [key]: e.target.value })
+                  setHiringDetails({
+                    ...hiringDetails,
+                    job_title: e.target.value,
+                  })
                 }
               />
-            ))}
-            <button
-              onClick={handleClientSubmit}
-              className="bg-[#FFE01B] hover:bg-yellow-300 px-4 py-2 rounded w-full font-bold"
-            >
-              Next → Hiring Details
-            </button>
-          </>
-        )}
 
-        {/* Step 2 */}
-        {step === 2 && (
-          <>
-            <h2 className="text-xl font-bold mb-4">Step 2: Hiring Request</h2>
+              {/* Description */}
+              <textarea
+                className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4 focus:ring-2 focus:ring-[#FFE01B] outline-none"
+                placeholder="Job Description"
+                rows={4}
+                value={hiringDetails.description}
+                onChange={(e) =>
+                  setHiringDetails({
+                    ...hiringDetails,
+                    description: e.target.value,
+                  })
+                }
+              />
 
-            <div className="mb-3 p-2 border rounded bg-gray-100">
-              Role Type: <b>{hiringDetails.role_type}</b>
-            </div>
-
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Job Title"
-              value={hiringDetails.job_title}
-              onChange={(e) =>
-                setHiringDetails({ ...hiringDetails, job_title: e.target.value })
-              }
-            />
-            <textarea
-              className="border p-2 w-full mb-3"
-              placeholder="Job Description"
-              value={hiringDetails.description}
-              onChange={(e) =>
-                setHiringDetails({ ...hiringDetails, description: e.target.value })
-              }
-            />
-            <input
-              className="border p-2 w-full mb-3"
-              placeholder="Budget Range"
-              value={hiringDetails.budget_range}
-              onChange={(e) =>
-                setHiringDetails({ ...hiringDetails, budget_range: e.target.value })
-              }
-            />
-
-            {/* Categories Multi-select */}
-            <label className="block mb-1 font-semibold">Categories</label>
-            <div className="mb-3 flex flex-wrap gap-2">
-              {Object.keys(categoryOptions).map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() =>
+              {/* Budget */}
+              <div className="relative mb-4">
+                <DollarSign className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                <input
+                  className="border border-gray-300 rounded-lg pl-10 pr-3 py-2 w-full focus:ring-2 focus:ring-[#FFE01B] outline-none"
+                  placeholder="Budget Range"
+                  value={hiringDetails.budget_range}
+                  onChange={(e) =>
                     setHiringDetails({
                       ...hiringDetails,
-                      categories: toggleSelect(hiringDetails.categories, cat),
+                      budget_range: e.target.value,
                     })
                   }
-                  className={`px-2 py-1 border rounded ${
-                    hiringDetails.categories.includes(cat) ? "bg-yellow-300" : ""
-                  }`}
+                />
+              </div>
+
+              {/* Categories */}
+              <label className="mb-2 font-semibold text-[#241C15] flex items-center gap-2">
+                <Layers className="w-5 h-5 text-[#FFE01B]" /> Categories
+              </label>
+              <div className="mb-4 flex flex-wrap gap-2">
+                {Object.keys(categoryOptions).map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() =>
+                      setHiringDetails({
+                        ...hiringDetails,
+                        categories: toggleSelect(
+                          hiringDetails.categories,
+                          cat
+                        ),
+                      })
+                    }
+                    className={`px-3 py-1 rounded-full border transition ${
+                      hiringDetails.categories.includes(cat)
+                        ? "bg-[#FFE01B] text-black"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Subcategories */}
+              {getAvailableSubcategories().length > 0 && (
+                <>
+                  <label className="mb-2 font-semibold text-[#241C15] flex items-center gap-2">
+                    <Wrench className="w-5 h-5 text-[#FFE01B]" /> Subcategories
+                  </label>
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {getAvailableSubcategories().map((sub) => (
+                      <button
+                        key={sub}
+                        type="button"
+                        onClick={() =>
+                          setHiringDetails({
+                            ...hiringDetails,
+                            subcategories: toggleSelect(
+                              hiringDetails.subcategories,
+                              sub
+                            ),
+                          })
+                        }
+                        className={`px-3 py-1 rounded-full border transition ${
+                          hiringDetails.subcategories.includes(sub)
+                            ? "bg-[#FFE01B] text-black"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
+                        {sub}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Tools */}
+              {getAvailableToolsMerged().length > 0 && (
+                <>
+                  <label className="mb-2 font-semibold text-[#241C15] flex items-center gap-2">
+                    <Wrench className="w-5 h-5 text-[#FFE01B]" /> Tools / Tech
+                    Stacks
+                  </label>
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {getAvailableToolsMerged().map((tool) => (
+                      <button
+                        key={tool}
+                        type="button"
+                        onClick={() =>
+                          setHiringDetails({
+                            ...hiringDetails,
+                            tools: toggleSelect(
+                              hiringDetails.tools,
+                              tool
+                            ),
+                          })
+                        }
+                        className={`px-3 py-1 rounded-full border transition ${
+                          hiringDetails.tools.includes(tool)
+                            ? "bg-[#FFE01B] text-black"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
+                        {tool}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Actions */}
+              <div className="flex items-center justify-between gap-4 mt-6">
+                <button
+                  onClick={() => window.location.reload()}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-200 text-gray-700 font-semibold transition hover:bg-gray-300 active:scale-95"
                 >
-                  {cat}
+                  <ArrowLeft className="w-5 h-5" /> Back
                 </button>
-              ))}
-              <button
-                type="button"
-                onClick={() =>
-                  setHiringDetails({
-                    ...hiringDetails,
-                    categories: toggleSelect(hiringDetails.categories, "Other"),
-                  })
-                }
-                className={`px-2 py-1 border rounded ${
-                  hiringDetails.categories.includes("Other") ? "bg-yellow-300" : ""
-                }`}
-              >
-                Other
-              </button>
-            </div>
-            {hiringDetails.categories.includes("Other") && (
-              <input
-                className="border p-2 w-full mb-3"
-                placeholder="Enter custom categories (comma separated)"
-                value={hiringDetails.otherCategories.join(",")}
-                onChange={(e) =>
-                  setHiringDetails({
-                    ...hiringDetails,
-                    otherCategories: e.target.value.split(","),
-                  })
-                }
-              />
-            )}
-
-            {/* Subcategories Multi-select */}
-            {getAvailableSubcategories().length > 0 && (
-              <>
-                <label className="block mb-1 font-semibold">Subcategories</label>
-                <div className="mb-3 flex flex-wrap gap-2">
-                  {getAvailableSubcategories().map((sub) => (
-                    <button
-                      key={sub}
-                      type="button"
-                      onClick={() =>
-                        setHiringDetails({
-                          ...hiringDetails,
-                          subcategories: toggleSelect(hiringDetails.subcategories, sub),
-                        })
-                      }
-                      className={`px-2 py-1 border rounded ${
-                        hiringDetails.subcategories.includes(sub) ? "bg-yellow-300" : ""
-                      }`}
-                    >
-                      {sub}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setHiringDetails({
-                        ...hiringDetails,
-                        subcategories: toggleSelect(hiringDetails.subcategories, "Other"),
-                      })
-                    }
-                    className={`px-2 py-1 border rounded ${
-                      hiringDetails.subcategories.includes("Other") ? "bg-yellow-300" : ""
-                    }`}
-                  >
-                    Other
-                  </button>
-                </div>
-                {hiringDetails.subcategories.includes("Other") && (
-                  <input
-                    className="border p-2 w-full mb-3"
-                    placeholder="Enter custom subcategories (comma separated)"
-                    value={hiringDetails.otherSubcategories.join(",")}
-                    onChange={(e) =>
-                      setHiringDetails({
-                        ...hiringDetails,
-                        otherSubcategories: e.target.value.split(","),
-                      })
-                    }
-                  />
-                )}
-              </>
-            )}
-
-            {/* Tools + TechStacks Merged */}
-            {getAvailableToolsMerged().length > 0 && (
-              <>
-                <label className="block mb-1 font-semibold">Tools / Tech Stacks</label>
-                <div className="mb-3 flex flex-wrap gap-2">
-                  {getAvailableToolsMerged().map((tool) => (
-                    <button
-                      key={tool}
-                      type="button"
-                      onClick={() =>
-                        setHiringDetails({
-                          ...hiringDetails,
-                          tools: toggleSelect(hiringDetails.tools, tool),
-                        })
-                      }
-                      className={`px-2 py-1 border rounded ${
-                        hiringDetails.tools.includes(tool) ? "bg-yellow-300" : ""
-                      }`}
-                    >
-                      {tool}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setHiringDetails({
-                        ...hiringDetails,
-                        tools: toggleSelect(hiringDetails.tools, "Other"),
-                      })
-                    }
-                    className={`px-2 py-1 border rounded ${
-                      hiringDetails.tools.includes("Other") ? "bg-yellow-300" : ""
-                    }`}
-                  >
-                    Other
-                  </button>
-                </div>
-                {hiringDetails.tools.includes("Other") && (
-                  <input
-                    className="border p-2 w-full mb-3"
-                    placeholder="Enter custom tools (comma separated)"
-                    value={hiringDetails.otherTools.join(",")}
-                    onChange={(e) =>
-                      setHiringDetails({
-                        ...hiringDetails,
-                        otherTools: e.target.value.split(","),
-                      })
-                    }
-                  />
-                )}
-              </>
-            )}
-
-            <button
-              onClick={handleHiringSubmit}
-              className="bg-[#FFE01B] hover:bg-yellow-300 px-4 py-2 rounded w-full font-bold"
-            >
-              Submit Request
-            </button>
-          </>
-        )}
-      </div>
+                <button
+                  onClick={handleHiringSubmit}
+                  className="bg-[#FFE01B] text-black px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition transform hover:scale-105 hover:bg-[#FCD34D] active:scale-95"
+                >
+                  Submit Request <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </div>
   );
 }
