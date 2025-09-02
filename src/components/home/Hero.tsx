@@ -29,7 +29,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-[#241C15] pt-[90px] sm:pt-[110px] lg:pt-[130px]">
+    <section className="relative overflow-hidden bg-[#241C15] pt-[60px] sm:pt-[80px] lg:pt-[90px]">
       {/* Light Radial Gradient Mouse Follower */}
       <div
         className="absolute inset-0 z-0 opacity-20 pointer-events-none transition-all duration-300"

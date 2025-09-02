@@ -74,7 +74,7 @@ const Testimonials = () => {
   return (
     <section className="py-16 px-4 bg-[#241C15] overflow-hidden">
       <motion.div
-        className="max-w-6xl mx-auto"
+        className="max-w-full mx-auto"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
