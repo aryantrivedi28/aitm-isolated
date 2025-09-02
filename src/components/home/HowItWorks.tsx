@@ -31,8 +31,8 @@ const HowItWorks = () => {
     <section ref={sectionRef} className="relative py-16 lg:py-20 bg-[#241C15] text-white overflow-hidden">
 
       {/* Mouse-follow glow */}
-      <div className="absolute w-[400px] h-[400px] bg-[#FFE01B]/20 rounded-full blur-3xl transition-all duration-1000 pointer-events-none"
-        style={{ left: mousePosition.x - 200, top: mousePosition.y - 200 }} />
+      {/* <div className="absolute w-[400px] h-[400px] bg-[#FFE01B]/20 rounded-full blur-3xl transition-all duration-1000 pointer-events-none"
+        style={{ left: mousePosition.x - 200, top: mousePosition.y - 200 }} /> */}
 
       {/* Floating Background Circles */}
       <div className="absolute top-20 left-10 w-16 h-16 bg-[#FFE01B]/20 rounded-full blur-xl animate-pulse" />
