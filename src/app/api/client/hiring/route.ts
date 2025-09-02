@@ -3,20 +3,17 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "../../../../lib/supabase-admin";
 import { cookies } from "next/headers";
-import { sendEmail } from "../../../../lib/mailer"; // make sure you have this
+import { sendEmail } from "../../../../lib/mailer";
 
 export async function POST(req: Request) {
   try {
-    console.log("📥 Incoming hiring request...");
 
     const body = await req.json();
-    console.log("📝 Request body:", body);
 
     const { role_type, job_title, description, budget_range, category, subcategory, tools } = body;
 
     // ✅ Basic validation
-    if (!role_type || !job_title || !description || !budget_range || !category) {
-      console.error("⚠️ Missing required fields in request body");
+    if (!role_type || !job_title || !description || !budget_range || !category?.length) {
       return NextResponse.json(
         { success: false, error: "Missing required fields" },
         { status: 400 }
@@ -26,10 +23,8 @@ export async function POST(req: Request) {
     // ✅ Read cookie for client session
     const cookieStore = await cookies();
     const session = cookieStore.get("client_auth")?.value;
-    console.log("🍪 Raw cookie session:", session);
 
     if (!session) {
-      console.error("❌ No client_auth cookie found. Unauthorized request.");
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
@@ -37,40 +32,28 @@ export async function POST(req: Request) {
     try {
       const parsed = JSON.parse(session);
       email = parsed?.email;
-      console.log("✅ Parsed cookie:", parsed);
-    } catch (err) {
-      console.error("❌ Cookie JSON parse error:", err);
+    } catch {
       return NextResponse.json({ success: false, error: "Invalid session cookie" }, { status: 400 });
     }
 
     if (!email) {
-      console.error("❌ No email found in session cookie");
       return NextResponse.json({ success: false, error: "Invalid session" }, { status: 400 });
     }
 
     // ✅ Get client info from database
-    console.log("🔎 Fetching client info for email:", email);
     const { data: clientData, error: clientError } = await supabaseAdmin
       .from("client_table")
       .select("*")
       .eq("email", email)
       .single();
 
-    if (clientError) {
-      console.error("❌ Error fetching client info:", clientError);
-      return NextResponse.json({ success: false, error: clientError.message }, { status: 500 });
-    }
-
-    if (!clientData) {
-      console.error("❌ No client found for email:", email);
+    if (clientError || !clientData) {
       return NextResponse.json({ success: false, error: "Client not found" }, { status: 404 });
     }
 
     const client_id = clientData.id;
-    console.log("✅ Found client_id:", client_id);
 
     // ✅ Insert new hiring request
-    console.log("📤 Inserting new hiring request into 'hiring_requests'...");
     const { data: hiringData, error: hiringError } = await supabaseAdmin
       .from("hiring_requests")
       .insert([
@@ -89,78 +72,109 @@ export async function POST(req: Request) {
       .single();
 
     if (hiringError) {
-      console.error("❌ Error inserting hiring request:", hiringError);
-      return NextResponse.json({ success: false, error: hiringError.message }, { status: 500 });
+      console.error("❌ DB insert error:", hiringError);
+      return NextResponse.json({ success: false, error: "Failed to save hiring request" }, { status: 500 });
     }
 
-    console.log("✅ Hiring request created successfully:", hiringData);
-
     // ✅ Fetch all hiring requests for this client
-    console.log("🔎 Fetching all hiring requests for client...");
-    const { data: allRequests, error: requestsError } = await supabaseAdmin
+    const { data: allRequests } = await supabaseAdmin
       .from("hiring_requests")
       .select("*")
       .eq("client_id", client_id);
 
-    if (requestsError) {
-      console.error("❌ Error fetching hiring requests:", requestsError);
-    }
-    console.log("📄 All client hiring requests:", allRequests);
-
     // ✅ Prepare HTML for admin email
-    const requestsHtml = allRequests?.map(req => {
-      const subcategories = Array.isArray(req.subcategory) ? req.subcategory : [];
-      const tools = Array.isArray(req.tools) ? req.tools : [];
+    const requestsHtml = allRequests
+      ?.map((req) => {
+        const categories = Array.isArray(req.category) ? req.category : [];
+        const subcategories = Array.isArray(req.subcategory) ? req.subcategory : [];
+        const tools = Array.isArray(req.tools) ? req.tools : [];
 
-      return `
-    <li>
-      <strong>Role:</strong> ${req.role_type} - ${req.job_title}<br/>
-      <strong>Description:</strong> ${req.description}<br/>
-      <strong>Budget:</strong> ${req.budget_range}<br/>
-      <strong>Category:</strong> ${req.category} - ${subcategories.join(", ")}<br/>
-      <strong>Tools:</strong> ${tools.join(", ")}
-    </li>
-  `;
-    }).join("<br/>");
-
+        return `
+      <tr style="border-bottom:1px solid #e5e7eb;">
+        <td style="padding:16px;">
+          <p style="margin:0; font-size:15px;">
+            <strong style="color:#111827;">Role:</strong> ${req.role_type} - ${req.job_title}
+          </p>
+          <p style="margin:6px 0; font-size:15px;">
+            <strong style="color:#111827;">Description:</strong> ${req.description}
+          </p>
+          <p style="margin:6px 0; font-size:15px;">
+            <strong style="color:#111827;">Budget:</strong> ${req.budget_range}
+          </p>
+          <p style="margin:6px 0; font-size:15px;">
+            <strong style="color:#111827;">Category:</strong> ${categories.join(", ") || "N/A"}
+          </p>
+          <p style="margin:6px 0; font-size:15px;">
+            <strong style="color:#111827;">Subcategories:</strong> ${subcategories.join(", ") || "N/A"}
+          </p>
+          <p style="margin:6px 0; font-size:15px;">
+            <strong style="color:#111827;">Tools:</strong> ${tools.join(", ") || "N/A"}
+          </p>
+        </td>
+      </tr>
+    `;
+      })
+      .join("");
 
     const adminEmailHtml = `
-      <h3>Client Details</h3>
-      <p>Name: ${clientData.name}</p>
-      <p>Company: ${clientData.company_name}</p>
-      <p>Website: ${clientData.website}</p>
-      <p>Industry: ${clientData.industry}</p>
-      <p>Email: ${clientData.email}</p>
-      <p>Phone: ${clientData.phone}</p>
-      <h3>Hiring Requests</h3>
-      <ul>${requestsHtml}</ul>
-    `;
+  <div style="font-family:Arial, sans-serif; color:#111827; max-width:800px; margin:auto; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
+    <div style="background-color:#241C15; padding:20px;">
+      <h2 style="margin:0; color:white; font-size:22px;"> New Hiring Submission</h2>
+    </div>
+    <div style="padding:20px;">
+      <h3 style="margin-top:0; color:#241C15; font-size:18px;">Client Details</h3>
+      <table style="width:100%; border-collapse:collapse; margin-bottom:24px;">
+        <tr><td style="padding:6px;"><strong>Name:</strong></td><td>${clientData.name}</td></tr>
+        <tr><td style="padding:6px;"><strong>Company:</strong></td><td>${clientData.company_name || "N/A"}</td></tr>
+        <tr><td style="padding:6px;"><strong>Website:</strong></td><td>${clientData.website || "N/A"}</td></tr>
+        <tr><td style="padding:6px;"><strong>Industry:</strong></td><td>${clientData.industry || "N/A"}</td></tr>
+        <tr><td style="padding:6px;"><strong>Email:</strong></td><td>${clientData.email}</td></tr>
+        <tr><td style="padding:6px;"><strong>Phone:</strong></td><td>${clientData.phone || "N/A"}</td></tr>
+      </table>
 
-    // ✅ Send email to admin
-    console.log("✉️ Sending admin email...");
-    if (!process.env.SMTP_USER) {
-      throw new Error("SMTP_USER environment variable is not defined");
-    }
-    await sendEmail(process.env.SMTP_USER, "New Client Hiring Submission", adminEmailHtml);
-    console.log("✅ Admin email sent");
-
-    // ✅ Optional: send confirmation to client
-   const clientEmailHtml = `
-  <p>Dear ${clientData.name},</p>
-  <p>Thank you for submitting your hiring request with Finzie. We have successfully received your information and our team will review your requirements promptly.</p>
-  <p>One of our representatives will reach out to you shortly to discuss the next steps and ensure a smooth onboarding process.</p>
-  <p>We appreciate your trust in Finzie and look forward to assisting you in finding the best talent for your project.</p>
-  <p>Best regards,<br/>
-  The Finzie Team</p>
+      <h3 style="color:#241C15; font-size:18px;">Hiring Requests</h3>
+      <table style="width:100%; border-collapse:collapse; border:1px solid #e5e7eb;">
+        ${requestsHtml}
+      </table>
+    </div>
+    <div style="background-color:#f9fafb; padding:14px; text-align:center; font-size:13px; color:#6b7280;">
+      Finzie Hiring Platform • Confidential Report
+    </div>
+  </div>
 `;
 
-    console.log("✉️ Sending confirmation email to client...");
-    await sendEmail(clientData.email, "Thank you for your hiring request", clientEmailHtml);
-    console.log("✅ Client email sent");
+
+    // ✅ Send emails safely
+    try {
+      if (!process.env.SMTP_USER) {
+        throw new Error("SMTP_USER not configured");
+      }
+      await sendEmail(process.env.SMTP_USER, "New Client Hiring Submission", adminEmailHtml);
+      console.log("✅ Admin email sent");
+    } catch (err) {
+      console.error("❌ Failed to send admin email:", err);
+    }
+
+    try {
+      const clientEmailHtml = `
+        <p>Dear ${clientData.name},</p>
+        <p>Thank you for submitting your hiring request with Finzie. We have successfully received your information and our team will review your requirements promptly.</p>
+        <p>One of our representatives will reach out to you shortly to discuss the next steps and ensure a smooth onboarding process.</p>
+        <p>We appreciate your trust in Finzie and look forward to assisting you in finding the best talent for your project.</p>
+        <p>Best regards,<br/>The Finzie Team</p>
+      `;
+      await sendEmail(clientData.email, "Thank you for your hiring request", clientEmailHtml);
+      console.log("✅ Client email sent");
+    } catch (err) {
+      console.error("❌ Failed to send client confirmation email:", err);
+    }
 
     return NextResponse.json({ success: true, hiring: hiringData });
   } catch (err: any) {
     console.error("🔥 Unexpected error in hiring request API:", err);
-    return NextResponse.json({ success: false, error: err.message }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: "Something went wrong, please try again later." },
+      { status: 500 }
+    );
   }
 }

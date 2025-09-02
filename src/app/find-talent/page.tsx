@@ -1,7 +1,7 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -13,6 +13,25 @@ export default function FindTalentPage() {
   const [verified, setVerified] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); // ✅ success message
+  const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+    async function checkSession() {
+      try {
+        const res = await fetch("/api/otp/session", { cache: "no-store" });
+        const data = await res.json();
+        if (data.authenticated) {
+          // already logged in
+          router.replace("/find-talent/option");
+        } else {
+          setLoading(false);
+        }
+      } catch {
+        setLoading(false);
+      }
+    }
+    checkSession();
+  }, [router]);
 
   async function sendOtp() {
     setError("");
