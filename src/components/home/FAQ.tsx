@@ -17,11 +17,11 @@ const FAQ = () => {
       answer:
         "We have a rigorous vetting process that includes technical assessments, portfolio reviews, and interviews. Our freelancers are sourced through our extensive network and undergo continuous quality monitoring.",
     },
-    {
-      question: "What services do you specialise in?",
-      answer:
-        "We specialize in Development, Marketing, Design, Video Editing, and AI services, covering everything from frontend/backend to automation and content creation.",
-    },
+    // {
+    //   question: "What services do you specialise in?",
+    //   answer:
+    //     "We specialize in Development, Marketing, Design, Video Editing, and AI services, covering everything from frontend/backend to automation and content creation.",
+    // },
     {
       question: "What if I'm not satisfied with the freelancer's work?",
       answer:
