@@ -48,7 +48,7 @@ const AssistedHiring: React.FC = () => {
         className="mt-10"
       >
         <a
-          href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1H2SAy42T-Ou9LszAIJg5OOKK8oLY_o2cGQlD0IjP_5eHA0GZPZ05rmwRT3UCtawLw6KXDNWbs"
+          href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ3JEPO_jv48TnnuSi5pE_u6BEk799ry0q1ddTAD428aGoxkH7Vc1J5cJVqMIpC0O8uqj4YN-Ub8?gv=true%27"
           target="_blank"
           rel="noopener noreferrer"
           className="px-6 py-3 bg-[#FFE01B] text-black font-semibold rounded-lg shadow-md hover:bg-yellow-300 transition"
