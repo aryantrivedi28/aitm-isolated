@@ -17,7 +17,7 @@ export default function Index() {
       <WhatWeDo />
       <HowItWorks />
       <ClientLogos />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <WhyUs />
       <ServiceCategories />
       <FAQ />
