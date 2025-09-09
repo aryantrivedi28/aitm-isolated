@@ -23,6 +23,7 @@ import {
   X,
   Edit,
   Trash2,
+  Bell,
 } from "lucide-react"
 import { supabase } from "../../lib/SupabaseAuthClient"
 import { supabaseAdmin } from "../../lib/supabase-admin"
@@ -1165,7 +1166,7 @@ export default function AdminPanel() {
   }
 
   const formIdOptions = Array.from(new Set(forms.map((f) => f.form_id))).sort()
-    // };
+  // };
   const subcategoryOptions = Array.from(new Set(forms.map((f) => f.subcategory))).sort()
 
   const loadFilteredSubmissions = async () => {
@@ -1248,6 +1249,14 @@ export default function AdminPanel() {
   }
 
   console.log("servciewewe  :", selectedTools)
+
+  const handleAgreementAutomation = () => {
+    window.location.href = "/admin-panel/agreements"
+  }
+
+  const handleFormDashboard = () => {
+    window.location.href = "/admin-form-creation/dashboard"
+  }
 
   return (
     <div className="min-h-screen bg-[#241C15] text-white overflow-hidden">
@@ -1343,36 +1352,60 @@ export default function AdminPanel() {
             >
               <button
                 onClick={() => setActiveTab("freelancers")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
-                  activeTab === "freelancers"
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === "freelancers"
                     ? "bg-[#FFE01B] text-[#241C15]"
                     : "bg-white/10 text-white hover:bg-white/20"
-                }`}
+                  }`}
               >
                 <Users className="w-5 h-5" />
                 Freelancer Search
               </button>
+
               <button
                 onClick={() => setActiveTab("forms")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
-                  activeTab === "forms" ? "bg-[#FFE01B] text-[#241C15]" : "bg-white/10 text-white hover:bg-white/20"
-                }`}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === "forms"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
               >
                 <FileText className="w-5 h-5" />
                 Form Management
               </button>
+
               <button
                 onClick={() => handleNavigation("/admin-form-creation/dashboard")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${
-                  dashboard === "/admin-form-creation/dashboard"
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${dashboard === "/admin-form-creation/dashboard"
                     ? "bg-[#FFE01B] text-[#241C15]"
                     : "bg-white/10 text-white hover:bg-white/20"
-                }`}
+                  }`}
               >
                 <FileText className="w-5 h-5" />
                 Form Dashboard
               </button>
+
+              <button
+                onClick={handleAgreementAutomation}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${dashboard === "/admin-panel/agreements"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+              >
+                <FileText className="w-5 h-5" />
+                Agreement Automation
+              </button>
+
+              <button
+                onClick={() => handleNavigation("/admin-panel/notifications")}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${dashboard === "/admin-panel/notifications"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+              >
+                <Bell className="w-5 h-5" />
+                Notifications
+              </button>
             </motion.div>
+
 
             {/* Stats */}
             <motion.div
@@ -2159,8 +2192,8 @@ export default function AdminPanel() {
                                         type: e.target.value as any,
                                         options:
                                           e.target.value === "select" ||
-                                          e.target.value === "radio" ||
-                                          e.target.value === "checkbox"
+                                            e.target.value === "radio" ||
+                                            e.target.value === "checkbox"
                                             ? [""]
                                             : undefined,
                                       })
@@ -2200,21 +2233,21 @@ export default function AdminPanel() {
                               {(question.type === "select" ||
                                 question.type === "radio" ||
                                 question.type === "checkbox") && (
-                                <div className="mt-3">
-                                  <label className="block text-xs text-gray-300 mb-2">Options (one per line)</label>
-                                  <textarea
-                                    value={question.options?.join("\n") || ""}
-                                    onChange={(e) =>
-                                      updateCustomQuestion(question.id, {
-                                        options: e.target.value.split("\n").filter((opt) => opt.trim()),
-                                      })
-                                    }
-                                    placeholder="Option 1&#10;Option 2&#10;Option 3"
-                                    rows={3}
-                                    className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#FFE01B]"
-                                  />
-                                </div>
-                              )}
+                                  <div className="mt-3">
+                                    <label className="block text-xs text-gray-300 mb-2">Options (one per line)</label>
+                                    <textarea
+                                      value={question.options?.join("\n") || ""}
+                                      onChange={(e) =>
+                                        updateCustomQuestion(question.id, {
+                                          options: e.target.value.split("\n").filter((opt) => opt.trim()),
+                                        })
+                                      }
+                                      placeholder="Option 1&#10;Option 2&#10;Option 3"
+                                      rows={3}
+                                      className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#FFE01B]"
+                                    />
+                                  </div>
+                                )}
 
                               <div className="mt-3">
                                 <label className="flex items-center space-x-2 cursor-pointer">
@@ -2317,11 +2350,10 @@ export default function AdminPanel() {
                             {form.submission_count || 0} submissions
                           </div>
                           <div
-                            className={`px-3 py-1 text-xs rounded-full border ${
-                              form.is_active
-                                ? "bg-green-500/20 text-green-400 border-green-500/30"
-                                : "bg-red-500/20 text-red-400 border-red-500/30"
-                            }`}
+                            className={`px-3 py-1 text-xs rounded-full border ${form.is_active
+                              ? "bg-green-500/20 text-green-400 border-green-500/30"
+                              : "bg-red-500/20 text-red-400 border-red-500/30"
+                              }`}
                           >
                             {form.is_active ? "Active" : "Inactive"}
                           </div>
@@ -2380,11 +2412,10 @@ export default function AdminPanel() {
                       <div className="flex gap-2">
                         <motion.button
                           onClick={() => handleToggleFormStatus(form)}
-                          className={`flex-1 font-semibold py-2 px-3 rounded-xl transition-all duration-300 text-center text-sm flex items-center justify-center gap-1 ${
-                            form.is_active
-                              ? "bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 hover:border-red-500"
-                              : "bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 hover:border-green-500"
-                          }`}
+                          className={`flex-1 font-semibold py-2 px-3 rounded-xl transition-all duration-300 text-center text-sm flex items-center justify-center gap-1 ${form.is_active
+                            ? "bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 hover:border-red-500"
+                            : "bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 hover:border-green-500"
+                            }`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
@@ -2613,11 +2644,51 @@ export default function AdminPanel() {
           </section>
         </>
       )}
+      <section className="relative py-12 px-4 z-10">
+        <motion.div
+          className="max-w-6xl mx-auto"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={staggerContainer}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Form Dashboard Button */}
+            <button
+              onClick={handleFormDashboard}
+              className="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 text-left hover:bg-white/10 transition-all duration-300 group"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-[#FFE01B] transition-colors">
+                    Form Dashboard
+                  </h3>
+                  <p className="text-white/70 text-sm">Manage and view all submitted forms</p>
+                </div>
+                <div className="text-[#FFE01B] text-2xl group-hover:scale-110 transition-transform">📊</div>
+              </div>
+            </button>
+
+            <button
+              onClick={handleAgreementAutomation}
+              className="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 text-left hover:bg-white/10 transition-all duration-300 group"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-[#FFE01B] transition-colors">
+                    Agreement Automation
+                  </h3>
+                  <p className="text-white/70 text-sm">Manage client agreements, invoices & DocuSeal integration</p>
+                </div>
+                <div className="text-[#FFE01B] text-2xl group-hover:scale-110 transition-transform">📄</div>
+              </div>
+            </button>
+          </div>
+        </motion.div>
+      </section>
     </div>
   )
 }
-
-
 
 
 

@@ -1,0 +1,260 @@
+﻿├── .sanity
+│   └── runtime
+│       ├── app.js
+│       └── index.html
+├── .vscode
+│   └── settings.json
+├── components
+│   └── ui
+│       ├── accordion.tsx
+│       ├── button.tsx
+│       └── card.tsx
+├── lib
+│   └── utils.ts
+├── public
+│   ├── logos
+│   │   ├── logos1.png
+│   │   ├── logos2.webp
+│   │   ├── logos3.png
+│   │   ├── logos4.png
+│   │   ├── logos5.png
+│   │   ├── logos6.webp
+│   │   ├── logos7.png
+│   │   └── logos8.jpeg
+│   ├── akshadeep.jpeg
+│   ├── apratim.jpeg
+│   ├── aryan_t.jpg
+│   ├── aryan_v.png
+│   ├── Career.png
+│   ├── deals.svg
+│   ├── file.svg
+│   ├── finzie-logo.png
+│   ├── globe.svg
+│   ├── income.png
+│   ├── kunal.png
+│   ├── manage.png
+│   ├── match.png
+│   ├── Minakshi.jpeg
+│   ├── mission.png
+│   ├── mission2.png
+│   ├── next.svg
+│   ├── Primary-Black (1).png
+│   ├── Share.png
+│   ├── vercel.svg
+│   ├── vision.png
+│   ├── window.svg
+│   ├── xyz.png
+│   └── zakariya.jpeg
+├── src
+│   ├── app
+│   │   ├── about-us
+│   │   │   └── page.tsx
+│   │   ├── admin-form-creation
+│   │   │   ├── dashboard
+│   │   │   │   └── page.tsx
+│   │   │   └── forms
+│   │   │       └── [id]
+│   │   ├── admin-panel
+│   │   │   ├── agreements
+│   │   │   │   ├── api
+│   │   │   │   │   ├── create
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   ├── list
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   ├── sign
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   └── webhook
+│   │   │   │   │       └── route.ts
+│   │   │   │   ├── create
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── dashboard
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── notifications
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── loading.tsx
+│   │   │   └── page.tsx
+│   │   ├── ai-freelancer-onboarding
+│   │   │   └── page.tsx
+│   │   ├── all-freelancer
+│   │   │   └── page.tsx
+│   │   ├── analyze
+│   │   │   └── page.tsx
+│   │   ├── api
+│   │   │   ├── analyze-sheet
+│   │   │   │   └── route.ts
+│   │   │   ├── auth
+│   │   │   │   └── login
+│   │   │   │       └── route.ts
+│   │   │   ├── client
+│   │   │   │   ├── details
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── hiring
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── me
+│   │   │   │       └── route.ts
+│   │   │   ├── docuseal
+│   │   │   │   ├── clients.ts
+│   │   │   │   ├── envelopes.ts
+│   │   │   │   └── templates.ts
+│   │   │   ├── forms
+│   │   │   │   └── route.ts
+│   │   │   ├── freelancer
+│   │   │   │   ├── cron
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── fix-file-sharing
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── portfolio-test-routing
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── resume-test-parsing
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── test-openai
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── test-sheet-processing
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── webhook
+│   │   │   │       └── route.ts
+│   │   │   ├── otp
+│   │   │   │   ├── send
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── session
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── verify
+│   │   │   │       └── route.ts
+│   │   │   ├── personalize-chunk
+│   │   │   │   └── route.ts
+│   │   │   ├── preview-sheet
+│   │   │   │   └── route.ts
+│   │   │   ├── process-chunk
+│   │   │   │   └── route.ts
+│   │   │   └── submissions
+│   │   │       └── route.ts
+│   │   ├── case-studies
+│   │   │   ├── [slug]
+│   │   │   └── page.tsx
+│   │   ├── client-request
+│   │   │   └── page.tsx
+│   │   ├── email-personalize
+│   │   │   └── page.tsx
+│   │   ├── find-talent
+│   │   │   ├── assisted-hiring
+│   │   │   │   └── page.tsx
+│   │   │   ├── direct-hiring
+│   │   │   │   ├── freelancer
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── fulltime
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── intern
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── option
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── thank-you
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── form
+│   │   │   └── [id]
+│   │   ├── freelancer
+│   │   │   └── page.tsx
+│   │   ├── get-hired
+│   │   │   └── page.tsx
+│   │   ├── gig_form
+│   │   │   └── page.tsx
+│   │   ├── how-do-we-work
+│   │   │   ├── components
+│   │   │   │   ├── how-we-work-sections.tsx
+│   │   │   │   └── motion-variants.tsx
+│   │   │   └── page.tsx
+│   │   ├── login
+│   │   │   └── page.tsx
+│   │   ├── sheet-analyzer
+│   │   │   └── page.tsx
+│   │   ├── studio
+│   │   │   └── [[...tool]]
+│   │   ├── thank-you
+│   │   │   └── page.tsx
+│   │   ├── thank-you-client
+│   │   │   └── page.tsx
+│   │   ├── App.css
+│   │   ├── globals.css
+│   │   ├── home-sections.tsx
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components
+│   │   ├── home
+│   │   │   ├── BottomCTA.tsx
+│   │   │   ├── ClientLogo.tsx
+│   │   │   ├── FAQ.tsx
+│   │   │   ├── Hero.tsx
+│   │   │   ├── HowItWorks.tsx
+│   │   │   ├── ServiceCategories.tsx
+│   │   │   ├── Testimonials.tsx
+│   │   │   ├── WhatWeDo.tsx
+│   │   │   └── WhyUs.tsx
+│   │   └── Header.tsx
+│   ├── lib
+│   │   ├── agreements
+│   │   │   ├── ai-terms.ts
+│   │   │   ├── mailer.ts
+│   │   │   ├── pdf-generator.ts
+│   │   │   ├── storage.ts
+│   │   │   └── templates.ts
+│   │   ├── personalization
+│   │   │   ├── openai.ts
+│   │   │   └── sheets.ts
+│   │   ├── scrapers
+│   │   │   ├── newsFetcher.ts
+│   │   │   └── websiteScraper.ts
+│   │   ├── services
+│   │   │   ├── content-scraper.ts
+│   │   │   ├── drive-service.ts
+│   │   │   ├── fallbackRatingService.ts
+│   │   │   ├── googleSheetsService.ts
+│   │   │   ├── openaiService.ts
+│   │   │   ├── processingService.ts
+│   │   │   ├── prompt-generator.ts
+│   │   │   └── scrapingService.ts
+│   │   ├── utils
+│   │   │   └── google.ts
+│   │   ├── auth.ts
+│   │   ├── config.ts
+│   │   ├── mailer.ts
+│   │   ├── matchmaker.js
+│   │   ├── supabase-admin.ts
+│   │   └── SupabaseAuthClient.ts
+│   ├── sanity
+│   │   ├── lib
+│   │   │   ├── client.ts
+│   │   │   ├── image.ts
+│   │   │   └── live.ts
+│   │   ├── schemaTypes
+│   │   │   ├── caseStudy.ts
+│   │   │   └── index.ts
+│   │   ├── env.ts
+│   │   └── structure.ts
+│   ├── types
+│   │   ├── database.ts
+│   │   └── freelancer.ts
+│   └── middleware.ts
+├── .env
+├── .env.local
+├── .gitignore
+├── components.json
+├── finzei-7d6407661068.json
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── postcss.config.mjs
+├── README.md
+├── sanity.cli.ts
+├── sanity.config.ts
+├── structure.txt
+├── tailwind.config.js
+└── tsconfig.json
