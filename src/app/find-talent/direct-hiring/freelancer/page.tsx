@@ -224,18 +224,31 @@ export default function ClientFormPage() {
     otherTools: [] as string[],
   });
 
-  useEffect(() => {
-    async function fetchClient() {
-      try {
-        const res = await fetch("/api/client/me", { credentials: "include" });
-        const data = await res.json();
-        if (data?.exists) setStep(2);
-      } catch (err) {
-        console.error("Error fetching client:", err);
+useEffect(() => {
+  async function fetchClient() {
+    try {
+      const res = await fetch("/api/client/me", { credentials: "include" });
+      const data = await res.json();
+
+      if (data?.client) {
+        setClientDetails({
+          name: data.client.name || "",
+          company_name: data.client.company_name || "",
+          website: data.client.website || "",
+          industry: data.client.industry || "",
+          phone: data.client.phone || "",
+        });
       }
+
+      // Only move to step 2 if profile is complete
+      if (data?.exists) setStep(2);
+    } catch (err) {
+      console.error("Error fetching client:", err);
     }
-    fetchClient();
-  }, []);
+  }
+  fetchClient();
+}, []);
+
 
   const handleClientSubmit = async () => {
     try {
