@@ -26,6 +26,7 @@ export interface FreelancerAgreement {
   freelancer_name: string
   freelancer_email: string
   client_name: string
+  client_email: string
   work_type: string
   nda: string
   ip_rights: string

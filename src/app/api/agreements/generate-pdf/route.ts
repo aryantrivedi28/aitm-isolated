@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     if (!agreementId || !type) {
       return NextResponse.json({ error: "Agreement ID and type are required" }, { status: 400 })
     }
-
+    console.log("new agreement:-", agreementId, type)
     // Get agreement data
     const tableName = type === "client" ? "client_agreements" : "freelancer_agreements"
     const { data: agreement, error: agreementError } = await supabase
@@ -24,19 +24,30 @@ export async function POST(request: NextRequest) {
     if (agreementError || !agreement) {
       return NextResponse.json({ error: "Agreement not found" }, { status: 404 })
     }
-
+    console.log("new agreement:-", agreement, agreementError)
     // Get template
     const templateType = type === "client" ? "client_agreement" : "freelancer_agreement"
-    const { data: template, error: templateError } = await supabase
+
+    let { data: template, error: templateError } = await supabase
       .from("document_templates")
       .select("*")
       .eq("type", templateType)
       .eq("is_active", true)
-      .single()
+      .maybeSingle()
 
-    if (templateError || !template) {
-      return NextResponse.json({ error: "Template not found" }, { status: 404 })
+    // fallback to client template if freelancer template doesn't exist
+    if (!template && type === "freelancer") {
+      const fallback = await supabase
+        .from("document_templates")
+        .select("*")
+        .eq("type", "client_agreement")
+        .eq("is_active", true)
+        .single()
+
+      template = fallback.data
+      templateError = fallback.error
     }
+
 
     // Generate PDF
     let pdfBuffer: Buffer
@@ -45,7 +56,7 @@ export async function POST(request: NextRequest) {
     } else {
       pdfBuffer = await PDFGenerator.generateFreelancerAgreementPDF(agreement, template)
     }
-
+    console.log("new agreement:-", pdfBuffer)
     // Upload to Vercel Blob
     const filename = `${type}-agreement-${agreementId}-${Date.now()}.pdf`
     const blob = await put(filename, pdfBuffer, {

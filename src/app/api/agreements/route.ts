@@ -51,7 +51,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient()
@@ -82,9 +81,13 @@ export async function POST(request: NextRequest) {
       const freelancerAgreement: Partial<FreelancerAgreement> = {
         freelancer_name: body.freelancer_name,
         freelancer_email: body.freelancer_email,
+        client_name: body.client_name,      // ✅ Required by DB
+        client_email: body.client_email,    // ✅ Good to add
         work_type: body.work_type,
         nda: body.nda,
         ip_rights: body.ip_rights,
+        deliverables: body.deliverables,
+        terms: body.terms,
         hourly_rate: body.hourly_rate,
         project_duration: body.project_duration,
         status: "pending",
@@ -108,7 +111,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to create agreement" }, { status: 500 })
   }
 }
-
 
 export async function PUT(request: NextRequest) {
   try {

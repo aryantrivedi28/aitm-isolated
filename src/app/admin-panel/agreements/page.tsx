@@ -263,9 +263,13 @@ function AgreementAutomationPageContent() {
         payload = {
           freelancer_name: formData.freelancer_name,
           freelancer_email: formData.freelancer_email,
+          client_name: formData.client_name,          // 🔥 add this
+          client_email: formData.client_email,        // 🔥 add this if required
           work_type: formData.work_type,
           nda: formData.nda,
           ip_rights: formData.ip_rights,
+          deliverables: formData.deliverables,        // also missing in your snippet
+          terms: formData.terms,                      // also missing
           hourly_rate: formData.hourly_rate,
           project_duration: formData.project_duration,
           type,
@@ -364,7 +368,7 @@ function AgreementAutomationPageContent() {
       }
 
       const data = await response.json()
-      await downloadFile(data.pdfUrl, `invoice-${invoiceId}.pdf`)
+      // await downloadFile(data.pdfUrl, `invoice-${invoiceId}.pdf`)
 
       await fetchInvoices()
     } catch (error) {
@@ -687,7 +691,7 @@ function AgreementAutomationPageContent() {
                           </div>
                         </div>
 
-                        {document.pdf_url && (
+                        {/* {document.pdf_url && (
                           <SignatureStatus
                             documentId={document.id}
                             documentType={
@@ -706,7 +710,7 @@ function AgreementAutomationPageContent() {
                               }
                             }}
                           />
-                        )}
+                        )} */}
                       </div>
                     ))
                   )}
