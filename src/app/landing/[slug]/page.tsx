@@ -1,7 +1,5 @@
+// app/landing/[slug]/page.tsx
 import { client } from '@/src/sanity/lib/client'
-import { urlFor } from '@/src/sanity/lib/image'
-
-// Components
 import Hero from '../../../../src/components/landing/Hero'
 import PainPoints from '../../../../src/components/landing/PainPoints'
 import HowWeSolve from '../../../../src/components/landing/HowWeSolve'
@@ -11,18 +9,6 @@ import Logos from '../../../../src/components/landing/Logos'
 import HowItWorks from '../../../../src/components/landing/HowItWorks'
 import FAQ from '../../../../src/components/landing/FAQ'
 import CTA from '../../../../src/components/landing/CTA'
-
-interface LandingPageData {
-  title: string
-  hero: any
-  sections: Section[]
-}
-
-type LandingPageProps = {
-  params: {
-    slug: string
-  }
-}
 
 // 🔹 Section union type
 type Section =
@@ -34,6 +20,19 @@ type Section =
   | { _type: 'howItWorksSection'; [key: string]: any }
   | { _type: 'faqSection'; [key: string]: any }
   | { _type: 'ctaSection'; [key: string]: any }
+
+interface LandingPageData {
+  title: string
+  hero: any
+  sections: Section[]
+}
+
+// ✅ props for Next page
+interface LandingPageProps {
+  params: {
+    slug: string
+  }
+}
 
 // 🔹 Component map
 const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
@@ -48,7 +47,8 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
 }
 
 export default async function LandingPage({ params }: LandingPageProps) {
-  const { slug } = await params
+  // ✅ no await here
+  const { slug } = params
 
   const page: LandingPageData = await client.fetch(
     `*[_type == "landingPage" && slug.current == $slug][0]{
