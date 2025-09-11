@@ -7,8 +7,13 @@
 ├── components
 │   └── ui
 │       ├── accordion.tsx
+│       ├── badge.tsx
 │       ├── button.tsx
-│       └── card.tsx
+│       ├── card.tsx
+│       ├── input.tsx
+│       ├── select.tsx
+│       ├── tabs.tsx
+│       └── textarea.tsx
 ├── lib
 │   └── utils.ts
 ├── public
@@ -56,20 +61,6 @@
 │   │   │       └── [id]
 │   │   ├── admin-panel
 │   │   │   ├── agreements
-│   │   │   │   ├── api
-│   │   │   │   │   ├── create
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   ├── list
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   ├── sign
-│   │   │   │   │   │   └── route.ts
-│   │   │   │   │   └── webhook
-│   │   │   │   │       └── route.ts
-│   │   │   │   ├── create
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── dashboard
-│   │   │   │   │   └── page.tsx
-│   │   │   │   ├── layout.tsx
 │   │   │   │   └── page.tsx
 │   │   │   ├── notifications
 │   │   │   │   └── page.tsx
@@ -83,6 +74,12 @@
 │   │   ├── analyze
 │   │   │   └── page.tsx
 │   │   ├── api
+│   │   │   ├── agreements
+│   │   │   │   ├── generate-pdf
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── generate-terms
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
 │   │   │   ├── analyze-sheet
 │   │   │   │   └── route.ts
 │   │   │   ├── auth
@@ -96,9 +93,12 @@
 │   │   │   │   └── me
 │   │   │   │       └── route.ts
 │   │   │   ├── docuseal
-│   │   │   │   ├── clients.ts
-│   │   │   │   ├── envelopes.ts
-│   │   │   │   └── templates.ts
+│   │   │   │   ├── send-for-signature
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── status
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── webhook
+│   │   │   │       └── route.ts
 │   │   │   ├── forms
 │   │   │   │   └── route.ts
 │   │   │   ├── freelancer
@@ -116,6 +116,10 @@
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── webhook
 │   │   │   │       └── route.ts
+│   │   │   ├── invoices
+│   │   │   │   ├── generate-pdf
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
 │   │   │   ├── otp
 │   │   │   │   ├── send
 │   │   │   │   │   └── route.ts
@@ -170,6 +174,8 @@
 │   │   │   │   ├── how-we-work-sections.tsx
 │   │   │   │   └── motion-variants.tsx
 │   │   │   └── page.tsx
+│   │   ├── landing
+│   │   │   └── [slug]
 │   │   ├── login
 │   │   │   └── page.tsx
 │   │   ├── sheet-analyzer
@@ -196,13 +202,30 @@
 │   │   │   ├── Testimonials.tsx
 │   │   │   ├── WhatWeDo.tsx
 │   │   │   └── WhyUs.tsx
-│   │   └── Header.tsx
+│   │   ├── landing
+│   │   │   ├── CTA.tsx
+│   │   │   ├── FAQ.tsx
+│   │   │   ├── Hero.tsx
+│   │   │   ├── HowItWorks.tsx
+│   │   │   ├── HowWeSolve.tsx
+│   │   │   ├── Logos.tsx
+│   │   │   ├── PainPoints.tsx
+│   │   │   ├── SectionWrapper.tsx
+│   │   │   ├── ShortCaseStudies.tsx
+│   │   │   └── WhyUs.tsx
+│   │   ├── ai-prompt-input.tsx
+│   │   ├── Header.tsx
+│   │   ├── invoice-form.tsx
+│   │   └── signature-status.tsx
 │   ├── lib
 │   │   ├── agreements
 │   │   │   ├── ai-terms.ts
-│   │   │   ├── mailer.ts
+│   │   │   ├── docuseal-client.ts
+│   │   │   ├── email-service.ts
+│   │   │   ├── notification-helper.ts
 │   │   │   ├── pdf-generator.ts
 │   │   │   ├── storage.ts
+│   │   │   ├── supabase-server.ts
 │   │   │   └── templates.ts
 │   │   ├── personalization
 │   │   │   ├── openai.ts
@@ -233,11 +256,24 @@
 │   │   │   ├── image.ts
 │   │   │   └── live.ts
 │   │   ├── schemaTypes
+│   │   │   ├── objects
+│   │   │   │   └── richImage.ts
+│   │   │   ├── sections
+│   │   │   │   ├── ctaSection.ts
+│   │   │   │   ├── faqSection.ts
+│   │   │   │   ├── howItWorksSection.ts
+│   │   │   │   ├── howWeSolveSection.ts
+│   │   │   │   ├── logosSection.ts
+│   │   │   │   ├── painPointsSections.ts
+│   │   │   │   ├── shortCaseStudiesSection.ts
+│   │   │   │   └── whyUsSection.ts
 │   │   │   ├── caseStudy.ts
-│   │   │   └── index.ts
+│   │   │   ├── index.ts
+│   │   │   └── landingPage.ts
 │   │   ├── env.ts
 │   │   └── structure.ts
 │   ├── types
+│   │   ├── agreement.ts
 │   │   ├── database.ts
 │   │   └── freelancer.ts
 │   └── middleware.ts
