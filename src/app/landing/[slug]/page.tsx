@@ -10,7 +10,6 @@ import HowItWorks from '../../../../src/components/landing/HowItWorks'
 import FAQ from '../../../../src/components/landing/FAQ'
 import CTA from '../../../../src/components/landing/CTA'
 
-// 🔹 Section union type
 type Section =
   | { _type: 'painPointsSection'; [key: string]: any }
   | { _type: 'howWeSolveSection'; [key: string]: any }
@@ -27,14 +26,6 @@ interface LandingPageData {
   sections: Section[]
 }
 
-// ✅ props for Next page
-interface LandingPageProps {
-  params: {
-    slug: string
-  }
-}
-
-// 🔹 Component map
 const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   painPointsSection: PainPoints,
   howWeSolveSection: HowWeSolve,
@@ -46,8 +37,11 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   ctaSection: CTA,
 }
 
-export default async function LandingPage({ params }: LandingPageProps) {
-  // ✅ no await here
+export default async function LandingPage({
+  params,
+}: {
+  params: { slug: string }
+}) {
   const { slug } = params
 
   const page: LandingPageData = await client.fetch(
