@@ -36,7 +36,6 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   faqSection: FAQ,
   ctaSection: CTA,
 }
-
 export default async function LandingPage({
   params,
 }: {
