@@ -33,9 +33,9 @@ export default function Header() {
             <img
               src="/finzie-logo.png"
               alt="Finzie Logo"
-              width={40}
-              height={40}
-              className="rounded-lg w-10 h-10 group-hover:scale-105 transition-transform duration-300"
+              width={50}
+              height={50}
+              className="rounded-lg w-15 h-15 group-hover:scale-105 transition-transform duration-300"
             />
             <div className="absolute inset-0 bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
