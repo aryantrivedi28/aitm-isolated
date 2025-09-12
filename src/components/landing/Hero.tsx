@@ -1,24 +1,31 @@
 'use client'
+
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight, Sparkles, Zap } from 'lucide-react'
 import SectionWrapper from './SectionWrapper'
-import { urlFor } from '@/src/sanity/lib/image' // keep if you have Sanity images
+import { urlFor } from '@/src/sanity/lib/image'
+
+interface CTA {
+  label: string
+  href: string
+  variant?: string
+}
 
 interface HeroProps {
   title: string
   subtitle?: string
-  ctaText?: string
-  ctaLink?: string
   backgroundImage?: any
+  foregroundImage?: any
+  ctas?: CTA[]
 }
 
 export default function Hero({
   title,
   subtitle,
-  ctaText,
-  ctaLink,
   backgroundImage,
+  foregroundImage,
+  ctas = [],
 }: HeroProps) {
   return (
     <div className="relative bg-[#241C15] overflow-hidden">
@@ -40,8 +47,21 @@ export default function Hero({
           src={urlFor(backgroundImage).url()}
           alt={title || 'hero-bg'}
           fill
-          className="object-cover opacity-6"
+          className="object-cover opacity-60"
         />
+      )}
+
+      {/* optional foreground illustration */}
+      {foregroundImage && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <Image
+            src={urlFor(foregroundImage).url()}
+            alt="hero illustration"
+            width={600}
+            height={400}
+            className="object-contain"
+          />
+        </div>
       )}
 
       <SectionWrapper className="relative z-10 text-center py-28">
@@ -64,10 +84,8 @@ export default function Hero({
             transition={{ duration: 0.8, type: 'spring', stiffness: 80 }}
             className="text-white text-4xl md:text-6xl font-extrabold leading-tight"
           >
-            {/* play with layered typography */}
             <span className="block">{title}</span>
             <span className="block mt-3 text-[#FFE01B] text-3xl md:text-4xl font-black tracking-tight">
-              {/** subtle accent line */}
               Accelerate · Delight · Scale
             </span>
           </motion.h1>
@@ -83,33 +101,37 @@ export default function Hero({
             </motion.p>
           )}
 
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45 }}
-            className="mt-10 flex items-center justify-center gap-4"
-          >
-            {ctaText && ctaLink && (
-              <a
-                href={ctaLink}
-                className="inline-flex items-center gap-3 bg-[#FFE01B] text-black px-6 py-3 rounded-2xl font-semibold shadow-xl hover:bg-yellow-300 transition-transform transform hover:-translate-y-0.5"
-              >
-                <span>{ctaText}</span>
-                <ArrowRight size={18} />
-              </a>
-            )}
-
-            <a
-              href="#contact"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 text-gray-300 hover:text-white transition-colors"
+          {/* map all CTAs from Sanity */}
+          {ctas.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+              className="mt-10 flex items-center justify-center gap-4 flex-wrap"
             >
-              Demo &nbsp; <Sparkles size={16} />
-            </a>
-          </motion.div>
+              {ctas.map((cta) => {
+                const isSecondary = cta.variant === 'secondary'
+                return (
+                  <a
+                    key={cta.href}
+                    href={cta.href}
+                    className={
+                      isSecondary
+                        ? 'inline-flex items-center gap-3 px-6 py-3 rounded-2xl border border-gray-300 text-gray-300 hover:text-white transition-colors'
+                        : 'inline-flex items-center gap-3 bg-[#FFE01B] text-black px-6 py-3 rounded-2xl font-semibold shadow-xl hover:bg-yellow-300 transition-transform transform hover:-translate-y-0.5'
+                    }
+                  >
+                    <span>{cta.label}</span>
+                    <ArrowRight size={18} />
+                  </a>
+                )
+              })}
+            </motion.div>
+          )}
         </motion.div>
       </SectionWrapper>
 
-      {/* floating decorative shapes (subtle motion) */}
+      {/* floating decorative shapes */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
