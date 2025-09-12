@@ -966,187 +966,226 @@ function AgreementAutomationPageContent() {
 
           {/* Freelancer Agreement Tab */}
           <TabsContent value="freelancer-agreement" className="space-y-4 md:space-y-6 animate-fadeIn">
-            <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-[#FFE01B]" />
-                  Create Freelancer Agreement
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 md:space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                  <div className="space-y-3 md:space-y-4">
-                    <div>
-                      <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        Freelancer Name
-                      </label>
-                      <Input
-                        value={formData.freelancer_name}
-                        onChange={(e) => handleInputChange("freelancer_name", e.target.value)}
-                        className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                        placeholder="Enter freelancer name"
-                      />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+              <div className="lg:col-span-2">
+                <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Briefcase className="w-5 h-5 text-[#FFE01B]" />
+                      Create Freelancer Agreement
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4 md:space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                      <div className="space-y-3 md:space-y-4">
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <User className="w-4 h-4" />
+                            Freelancer Name
+                          </label>
+                          <Input
+                            value={formData.freelancer_name}
+                            onChange={(e) => handleInputChange("freelancer_name", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
+                            placeholder="Enter freelancer name"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <Mail className="w-4 h-4" />
+                            Freelancer Email
+                          </label>
+                          <Input
+                            type="email"
+                            value={formData.freelancer_email}
+                            onChange={(e) => handleInputChange("freelancer_email", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
+                            placeholder="freelancer@example.com"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <User className="w-4 h-4" />
+                            Client Name
+                          </label>
+                          <Input
+                            value={formData.client_name}
+                            onChange={(e) => handleInputChange("client_name", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
+                            placeholder="Enter client name"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <Briefcase className="w-4 h-4" />
+                            Work Type
+                          </label>
+                          <Input
+                            value={formData.work_type}
+                            onChange={(e) => handleInputChange("work_type", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
+                            placeholder="e.g., Web Development, Design"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-3 md:space-y-4">
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <Coins className="w-4 h-4" />
+                            Hourly Rate ($)
+                          </label>
+                          <Input
+                            type="number"
+                            value={formData.hourly_rate}
+                            onChange={(e) => handleInputChange("hourly_rate", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
+                            placeholder="0.00"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            Project Duration
+                          </label>
+                          <Input
+                            value={formData.project_duration}
+                            onChange={(e) => handleInputChange("project_duration", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
+                            placeholder="e.g., 3 months, 40 hours"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <Shield className="w-4 h-4" />
+                            NDA Requirements
+                          </label>
+                          <Textarea
+                            value={formData.nda}
+                            onChange={(e) => handleInputChange("nda", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
+                            placeholder="Describe NDA requirements"
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                        <Mail className="w-4 h-4" />
-                        Freelancer Email
-                      </label>
-                      <Input
-                        type="email"
-                        value={formData.freelancer_email}
-                        onChange={(e) => handleInputChange("freelancer_email", e.target.value)}
-                        className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                        placeholder="freelancer@example.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                        <User className="w-4 h-4" />
-                        Client Name
-                      </label>
-                      <Input
-                        value={formData.client_name}
-                        onChange={(e) => handleInputChange("client_name", e.target.value)}
-                        className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                        placeholder="Enter client name"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                        <Briefcase className="w-4 h-4" />
-                        Work Type
-                      </label>
-                      <Input
-                        value={formData.work_type}
-                        onChange={(e) => handleInputChange("work_type", e.target.value)}
-                        className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                        placeholder="e.g., Web Development, Design"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-3 md:space-y-4">
-                    <div>
-                      <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                        <Coins className="w-4 h-4" />
-                        Hourly Rate ($)
-                      </label>
-                      <Input
-                        type="number"
-                        value={formData.hourly_rate}
-                        onChange={(e) => handleInputChange("hourly_rate", e.target.value)}
-                        className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                        placeholder="0.00"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        Project Duration
-                      </label>
-                      <Input
-                        value={formData.project_duration}
-                        onChange={(e) => handleInputChange("project_duration", e.target.value)}
-                        className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                        placeholder="e.g., 3 months, 40 hours"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                        <Shield className="w-4 h-4" />
-                        NDA Requirements
-                      </label>
-                      <Textarea
-                        value={formData.nda}
-                        onChange={(e) => handleInputChange("nda", e.target.value)}
-                        className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
-                        placeholder="Describe NDA requirements"
-                      />
-                    </div>
-                  </div>
-                </div>
 
-                <div className="space-y-3 md:space-y-4">
-                  <div>
-                    <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                      <Landmark className="w-4 h-4" />
-                      IP Rights
-                    </label>
-                    <Textarea
-                      value={formData.ip_rights}
-                      onChange={(e) => handleInputChange("ip_rights", e.target.value)}
-                      className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
-                      placeholder="Describe intellectual property rights"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                      <FileCheck className="w-4 h-4" />
-                      Deliverables
-                    </label>
-                    <Textarea
-                      value={formData.deliverables}
-                      onChange={(e) => handleInputChange("deliverables", e.target.value)}
-                      className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
-                      placeholder="List the deliverables"
-                    />
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="text-white/70 text-sm flex items-center gap-1">
-                        <Shield className="w-4 h-4" />
-                        Terms & Conditions
-                      </label>
+                    <div className="space-y-3 md:space-y-4">
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                          <Landmark className="w-4 h-4" />
+                          IP Rights
+                        </label>
+                        <Textarea
+                          value={formData.ip_rights}
+                          onChange={(e) => handleInputChange("ip_rights", e.target.value)}
+                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
+                          placeholder="Describe intellectual property rights"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                          <FileCheck className="w-4 h-4" />
+                          Deliverables
+                        </label>
+                        <Textarea
+                          value={formData.deliverables}
+                          onChange={(e) => handleInputChange("deliverables", e.target.value)}
+                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
+                          placeholder="List the deliverables"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-white/70 text-sm flex items-center gap-1">
+                            <Shield className="w-4 h-4" />
+                            Terms & Conditions
+                          </label>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => generateAITerms("freelancer")}
+                            disabled={aiLoading}
+                            className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
+                          >
+                            {aiLoading ? (
+                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                            ) : (
+                              <Sparkles className="w-3 h-3 mr-1" />
+                            )}
+                            AI Generate
+                          </Button>
+                        </div>
+                        <Textarea
+                          value={formData.terms}
+                          onChange={(e) => handleInputChange("terms", e.target.value)}
+                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[100px]"
+                          placeholder="Enter terms and conditions"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 md:gap-4 flex-col sm:flex-row">
                       <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => generateAITerms("freelancer")}
-                        disabled={aiLoading}
-                        className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
+                        onClick={() => handleSubmit("freelancer")}
+                        disabled={loading}
+                        className="bg-[#FFE01B] text-black hover:bg-[#FFE01B]/90 transition-all duration-200 flex-1"
                       >
-                        {aiLoading ? (
-                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        {loading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Creating...
+                          </>
                         ) : (
-                          <Sparkles className="w-3 h-3 mr-1" />
+                          <>
+                            <FileSignature className="w-4 h-4 mr-2" />
+                            Create Agreement
+                          </>
                         )}
-                        AI Generate
+                      </Button>
+                      <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent transition-all duration-200 flex-1">
+                        Save as Draft
                       </Button>
                     </div>
-                    <Textarea
-                      value={formData.terms}
-                      onChange={(e) => handleInputChange("terms", e.target.value)}
-                      className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[100px]"
-                      placeholder="Enter terms and conditions"
-                    />
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
+              </div>
 
-                <div className="flex gap-3 md:gap-4 flex-col sm:flex-row">
-                  <Button
-                    onClick={() => handleSubmit("freelancer")}
-                    disabled={loading}
-                    className="bg-[#FFE01B] text-black hover:bg-[#FFE01B]/90 transition-all duration-200 flex-1"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Creating...
-                      </>
-                    ) : (
-                      <>
-                        <FileSignature className="w-4 h-4 mr-2" />
-                        Create Agreement
-                      </>
-                    )}
-                  </Button>
-                  <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent transition-all duration-200 flex-1">
-                    Save as Draft
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+              <div className="space-y-3 md:space-y-4">
+                <AIPromptInput
+                  onGenerateAction={generateAIContent}
+                  loading={aiLoading}
+                  title="Generate Non-Disclosure Agreement(NDA)"
+                  placeholder="e.g., Create a modern e-commerce website with payment integration"
+                  type="scope"
+                  icon={<FileText className="w-4 h-4" />}
+                />
+                <AIPromptInput
+                  onGenerateAction={generateAIContent}
+                  loading={aiLoading}
+                  title="Generate Deliverables"
+                  placeholder="e.g., Website design, mobile app, user documentation"
+                  type="deliverables"
+                  icon={<FileCheck className="w-4 h-4" />}
+                />
+                <AIPromptInput
+                  onGenerateAction={generateAIContent}
+                  loading={aiLoading}
+                  title="Generate IP Right Terms"
+                  placeholder="e.g., 50% upfront, 50% on completion, Net 30 payment terms"
+                  type="payment_terms"
+                  icon={<CalendarDays className="w-4 h-4" />}
+                />
+                <AIPromptInput
+                  onGenerateAction={generateAIContent}
+                  loading={aiLoading}
+                  title="Generate Terms & Conditions"
+                  placeholder="e.g., Include IP ownership, revision limits, cancellation policy"
+                  type="terms"
+                  icon={<Shield className="w-4 h-4" />}
+                />
+              </div>
+            </div>
           </TabsContent>
 
           {/* Invoice Tab */}
