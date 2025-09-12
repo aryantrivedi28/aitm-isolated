@@ -36,17 +36,17 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   faqSection: FAQ,
   ctaSection: CTA,
 }
+
 export default async function LandingPage({
   params,
 }: {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }) {
-  const { slug } = params
+  const { slug } = await params
 
   const page: LandingPageData = await client.fetch(
     `*[_type == "landingPage" && slug.current == $slug][0]{
       title,
-
       hero {
         title,
         subtitle,
@@ -54,12 +54,9 @@ export default async function LandingPage({
         foregroundImage{asset->{url}},
         ctas[]{label, href, variant}
       },
-
       sections[] {
         _type,
         _key,
-
-        // ✅ Pain Points
         _type == "painPointsSection" => {
           _type,
           _key,
@@ -70,8 +67,6 @@ export default async function LandingPage({
             icon{asset->{url}}
           }
         },
-
-        // ✅ How We Solve
         _type == "howWeSolveSection" => {
           _type,
           _key,
@@ -82,8 +77,6 @@ export default async function LandingPage({
             image{asset->{url}}
           }
         },
-
-        // ✅ Why Us
         _type == "whyUsSection" => {
           _type,
           _key,
@@ -94,8 +87,6 @@ export default async function LandingPage({
             icon{asset->{url}}
           }
         },
-
-        // ✅ Short Case Studies
         _type == "shortCaseStudiesSection" => {
           _type,
           _key,
@@ -108,8 +99,6 @@ export default async function LandingPage({
             thumbnail{asset->{url}}
           }
         },
-
-        // ✅ Logos
         _type == "logosSection" => {
           _type,
           _key,
@@ -119,8 +108,6 @@ export default async function LandingPage({
             image{asset->{url}}
           }
         },
-
-        // ✅ How It Works
         _type == "howItWorksSection" => {
           _type,
           _key,
@@ -131,8 +118,6 @@ export default async function LandingPage({
             image{asset->{url}}
           }
         },
-
-        // ✅ FAQs
         _type == "faqSection" => {
           _type,
           _key,
@@ -141,8 +126,6 @@ export default async function LandingPage({
             answer
           }
         },
-
-        // ✅ CTA
         _type == "ctaSection" => {
           _type,
           _key,
@@ -163,10 +146,7 @@ export default async function LandingPage({
 
   return (
     <div>
-      {/* Hero section */}
       {page.hero && <Hero {...page.hero} />}
-
-      {/* Dynamic sections */}
       {page.sections?.map((section, i) => {
         const SectionComponent = componentMap[section._type]
         if (!SectionComponent) return null
