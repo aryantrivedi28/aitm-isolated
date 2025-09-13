@@ -68,12 +68,12 @@ export default function Hero({
         </div>
       )}
 
-      <SectionWrapper className="relative z-10 text-center py-16 sm:py-24 md:py-28 px-4">
+      <SectionWrapper className="relative z-10 text-center py-10 sm:py-12 md:py-16 px-4">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05, duration: 0.8 }}
-          className="mx-auto max-w-4xl"
+          className="mx-auto max-w-5xl"
         >
           {/* badge + tagline */}
           <div className="inline-flex flex-col sm:flex-row items-center gap-2 sm:gap-3 mb-6 mx-auto">
