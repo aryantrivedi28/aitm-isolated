@@ -17,7 +17,7 @@ export default function Header() {
   }
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] sm:w-[90%] max-w-7xl bg-white backdrop-blur-md border border-white/20 shadow-lg shadow-black/20 rounded-lg z-50">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] sm:w-[90%] max-w-7xl bg-[#fbf5e5] backdrop-blur-md border border-white/20 shadow-lg shadow-black/20 rounded-lg z-50">
 
       {/* Glass effect overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5 pointer-events-none"></div>

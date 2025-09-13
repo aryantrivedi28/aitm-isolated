@@ -99,12 +99,12 @@ const Hero = () => {
             {/* CTA Buttons */}
             <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center md:justify-start items-center ${isLoaded ? 'animate-slideUp' : 'opacity-0 translate-y-10'}`}>
               <Link href="/find-talent" className="w-full sm:w-auto">
-                <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black text-base sm:text-lg font-bold px-5 sm:px-6 py-3 sm:py-4 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
+                <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black text-base sm:text-lg font-bold px-5 sm:px-6 py-4 sm:py-6 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
                   Hiring for the talent <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               </Link>
               <Link href="/all-freelancer" className="w-full sm:w-auto">
-                <Button className="bg-white/10 hover:bg-white/20 text-white text-base sm:text-lg border border-[#D1D5DB]/50 hover:border-[#FFE01B] font-semibold px-5 sm:px-7 py-3 sm:py-4 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
+                <Button className="bg-white/10 hover:bg-white/20 text-white text-base sm:text-lg border border-[#D1D5DB]/50 hover:border-[#FFE01B] font-semibold px-5 sm:px-7 py-4 sm:py-6 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
                   <Play className="mr-2 w-4 h-4 sm:w-5 sm:h-5" /> Get Hired as Freelancer
                 </Button>
               </Link>

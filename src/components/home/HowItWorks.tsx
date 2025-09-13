@@ -74,7 +74,7 @@ const HowItWorks = () => {
                 </div>
 
                 {/* Image */}
-                <div className="relative w-full h-44 sm:h-50 rounded-lg mb-4 overflow-hidden shadow-md group-hover:shadow-lg bg-slate-50 z-0">
+                <div className="relative w-full h-44 sm:h-50 rounded-lg mb-4 overflow-hidden shadow-md group-hover:shadow-lg bg-[#fbf5e5] z-0">
                   <Image src={step.image} alt={step.title} fill objectFit="contain" className="transition-transform duration-300 group-hover:scale-110" />
                 </div>
 
@@ -90,7 +90,7 @@ const HowItWorks = () => {
         <div className="text-center mt-16 sm:mt-20">
           <div className="inline-flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
             <Link href="/how-do-we-work" passHref>
-              <Button className="inline-flex items-center bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] text-black text-xl font-bold px-4 py-4 rounded-2xl shadow-2xl hover:scale-105 transition-all duration-500">
+              <Button className="inline-flex items-center bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] text-black text-xl font-bold px-4 py-6 rounded-2xl shadow-2xl hover:scale-105 transition-all duration-500">
                 <Play className="mr-3 w-6 h-6" />
                 How We Work?
                 <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
