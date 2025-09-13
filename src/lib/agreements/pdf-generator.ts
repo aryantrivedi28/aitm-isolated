@@ -84,14 +84,14 @@ export class PDFGenerator {
     await browser.close()
     return Buffer.from(pdf)
   }
-static async generateInvoicePDF(invoice: Invoice, items: any[], template: DocumentTemplate): Promise<Buffer> {
-  const browser = await this.getBrowser()
-  const page = await browser.newPage()
+  static async generateInvoicePDF(invoice: Invoice, items: any[], template: DocumentTemplate): Promise<Buffer> {
+    const browser = await this.getBrowser()
+    const page = await browser.newPage()
 
-  // Generate invoice items HTML
-  const itemsHtml = items
-    .map(
-      (item) => `
+    // Generate invoice items HTML
+    const itemsHtml = items
+      .map(
+        (item) => `
         <tr>
           <td>${item.description}</td>
           <td>${item.quantity}</td>
@@ -99,47 +99,49 @@ static async generateInvoicePDF(invoice: Invoice, items: any[], template: Docume
           <td>${invoice.currency} ${item.amount.toFixed(2)}</td>
         </tr>
       `
-    )
-    .join("")
+      )
+      .join("")
 
-  const htmlContent = template.template_content
-    .replace(/{{invoice_number}}/g, invoice.invoice_number || "INV-" + Date.now())
-    .replace(/{{date}}/g, new Date(invoice.invoice_date || new Date()).toLocaleDateString())
-    .replace(/{{client_name}}/g, invoice.client_name || "")
-    .replace(/{{client_address}}/g, invoice.client_address || "")
-    .replace(/{{project_title}}/g, invoice.project_title || "")
-    .replace(/{{due_date}}/g, invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : "")
-    .replace(/{{invoice_items}}/g, itemsHtml)
-    .replace(/{{currency}}/g, invoice.currency || "USD")
-    .replace(/{{amount}}/g, (invoice.amount || 0).toFixed(2))
-    .replace(/{{tax_amount}}/g, (invoice.tax_amount || 0).toFixed(2))
-    .replace(/{{total_amount}}/g, (invoice.total_amount || invoice.amount || 0).toFixed(2))
-    .replace(/{{terms}}/g, invoice.terms || "")
-    // 🔥 Add these replacements for payee & banking info
-    .replace(/{{payee_name}}/g, invoice.payee_name || "")
-    .replace(/{{account_number}}/g, invoice.account_number || "")
-    .replace(/{{account_type}}/g, invoice.account_type || "")
-    .replace(/{{routing_number}}/g, invoice.routing_number || "")
-    .replace(/{{payment_method}}/g, invoice.payment_method || "")
 
-  await page.setContent(htmlContent, {
-    waitUntil: "domcontentloaded",
-    timeout: 0,
-  })
+    const logoUrl = "https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/Primary-Black%20(1).png"
+    const htmlContent = template.template_content
+      .replace(/{{invoice_number}}/g, invoice.invoice_number || "INV-" + Date.now())
+      .replace(/{{date}}/g, new Date(invoice.invoice_date || new Date()).toLocaleDateString())
+      .replace(/{{client_name}}/g, invoice.client_name || "")
+      .replace(/{{client_address}}/g, invoice.client_address || "")
+      .replace(/{{project_title}}/g, invoice.project_title || "")
+      .replace(/{{due_date}}/g, invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : "")
+      .replace(/{{invoice_items}}/g, itemsHtml)
+      .replace(/{{currency}}/g, invoice.currency || "USD")
+      .replace(/{{amount}}/g, (invoice.amount || 0).toFixed(2))
+      .replace(/{{tax_amount}}/g, (invoice.tax_amount || 0).toFixed(2))
+      .replace(/{{total_amount}}/g, (invoice.total_amount || invoice.amount || 0).toFixed(2))
+      .replace(/{{terms}}/g, invoice.terms || "")
+      // 🔥 Add these replacements for payee & banking info
+      .replace(/{{payee_name}}/g, invoice.payee_name || "")
+      .replace(/{{account_number}}/g, invoice.account_number || "")
+      .replace(/{{account_type}}/g, invoice.account_type || "")
+      .replace(/{{routing_number}}/g, invoice.routing_number || "")
+      .replace(/{{payment_method}}/g, invoice.payment_method || "")
+      .replace(/{{company_logo_url}}/g, logoUrl)
+    await page.setContent(htmlContent, {
+      waitUntil: "networkidle0", // wait for images
+      timeout: 0,
+    });
 
-  const pdf = await page.pdf({
-    format: "A4",
-    printBackground: true,
-    margin: {
-      top: "20mm",
-      right: "20mm",
-      bottom: "20mm",
-      left: "20mm",
-    },
-  })
+    const pdf = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: {
+        top: "20mm",
+        right: "20mm",
+        bottom: "20mm",
+        left: "20mm",
+      },
+    });
 
-  await browser.close()
-  return Buffer.from(pdf)
-}
+    await browser.close()
+    return Buffer.from(pdf)
+  }
 
 }
