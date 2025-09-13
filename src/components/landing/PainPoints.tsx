@@ -3,9 +3,9 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { urlFor } from '@/src/sanity/lib/image'
-import { AlertTriangle, Clock, Layers } from 'lucide-react'
+import { Clock, Layers } from 'lucide-react'
 
-const defaultIcons = [AlertTriangle, Clock, Layers]
+const defaultIcons = [Clock, Layers]
 
 interface PainPointsProps {
   heading?: string
@@ -28,7 +28,7 @@ export default function PainPoints({ heading, items = [] }: PainPointsProps) {
 
         <div className="mt-10 grid gap-8 grid-cols-1 md:grid-cols-3">
           {items.map((p, i) => {
-            const DefaultIcon = defaultIcons[i % defaultIcons.length] || AlertTriangle
+            const DefaultIcon = defaultIcons[i % defaultIcons.length] 
 
             return (
               <motion.div

@@ -11,14 +11,14 @@ import FAQ from '../../../../src/components/landing/FAQ'
 import CTA from '../../../../src/components/landing/CTA'
 
 type Section =
-  | { _type: 'painPointsSection'; [key: string]: any }
-  | { _type: 'howWeSolveSection'; [key: string]: any }
-  | { _type: 'whyUsSection'; [key: string]: any }
-  | { _type: 'shortCaseStudiesSection'; [key: string]: any }
-  | { _type: 'logosSection'; [key: string]: any }
-  | { _type: 'howItWorksSection'; [key: string]: any }
-  | { _type: 'faqSection'; [key: string]: any }
-  | { _type: 'ctaSection'; [key: string]: any }
+  | { _type: 'painPointsSection';[key: string]: any }
+  | { _type: 'howWeSolveSection';[key: string]: any }
+  | { _type: 'whyUsSection';[key: string]: any }
+  | { _type: 'shortCaseStudiesSection';[key: string]: any }
+  | { _type: 'logosSection';[key: string]: any }
+  | { _type: 'howItWorksSection';[key: string]: any }
+  | { _type: 'faqSection';[key: string]: any }
+  | { _type: 'ctaSection';[key: string]: any }
 
 interface LandingPageData {
   title: string
@@ -145,13 +145,27 @@ export default async function LandingPage({
   if (!page) return <div>Not found</div>
 
   return (
-    <div>
-      {page.hero && <Hero {...page.hero} />}
+    <main className="flex flex-col w-full">
+      {page.hero && (
+        <section className="w-full">
+          <Hero {...page.hero} />
+        </section>
+      )}
+
       {page.sections?.map((section, i) => {
         const SectionComponent = componentMap[section._type]
         if (!SectionComponent) return null
-        return <SectionComponent key={section._key || i} {...section} />
+
+        return (
+          <section
+            key={section._key || i}
+            className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          >
+            <SectionComponent {...section} />
+          </section>
+        )
       })}
-    </div>
+    </main>
   )
+
 }
