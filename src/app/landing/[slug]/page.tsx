@@ -46,101 +46,102 @@ export default async function LandingPage({
 
   const page: LandingPageData = await client.fetch(
     `*[_type == "landingPage" && slug.current == $slug][0]{
+    title,
+    hero {
       title,
-      hero {
-        title,
-        subtitle,
-        backgroundImage{asset->{url}},
-        foregroundImage{asset->{url}},
-        ctas[]{label, href, variant}
-      },
-      sections[] {
+      subtitle,
+      backgroundImage{asset->{url}},
+      foregroundImage{asset->{url}},
+      ctas[]{label, href, variant}
+    },
+    sections[] {
+      _type,
+      _key,
+      _type == "painPointsSection" => {
         _type,
         _key,
-        _type == "painPointsSection" => {
-          _type,
-          _key,
-          heading,
-          items[] {
-            title,
-            description,
-            icon{asset->{url}}
-          }
-        },
-        _type == "howWeSolveSection" => {
-          _type,
-          _key,
-          heading,
-          solutions[] {
-            title,
-            description,
-            image{asset->{url}}
-          }
-        },
-        _type == "whyUsSection" => {
-          _type,
-          _key,
-          heading,
-          reasons[] {
-            title,
-            description,
-            icon{asset->{url}}
-          }
-        },
-        _type == "shortCaseStudiesSection" => {
-          _type,
-          _key,
-          heading,
-          caseStudies[]->{
-            _id,
-            title,
-            excerpt,
-            "slug": slug.current,
-            thumbnail{asset->{url}}
-          }
-        },
-        _type == "logosSection" => {
-          _type,
-          _key,
-          heading,
-          logos[] {
-            name,
-            image{asset->{url}}
-          }
-        },
-        _type == "howItWorksSection" => {
-          _type,
-          _key,
-          heading,
-          steps[] {
-            title,
-            description,
-            image{asset->{url}}
-          }
-        },
-        _type == "faqSection" => {
-          _type,
-          _key,
-          faqs[] {
-            question,
-            answer
-          }
-        },
-        _type == "ctaSection" => {
-          _type,
-          _key,
+        heading,
+        items[] {
           title,
-          subtitle,
-          buttons[] {
-            label,
-            href
-          },
-          background{asset->{url}}
+          description,
+          icon{asset->{url}}
         }
+      },
+      _type == "howWeSolveSection" => {
+        _type,
+        _key,
+        heading,
+        solutions[] {
+          title,
+          description,
+          image{asset->{url}}
+        }
+      },
+      _type == "whyUsSection" => {
+        _type,
+        _key,
+        heading,
+        reasons[] {
+          title,
+          description,
+          icon{asset->{url}}
+        }
+      },
+      _type == "shortCaseStudiesSection" => {
+        _type,
+        _key,
+        heading,
+        "studies": caseStudies[]->{
+          "company": title,
+          "image": mainImage,
+          "result": description,
+          "slug": slug,
+          tags
+        }
+      },
+      _type == "logosSection" => {
+        _type,
+        _key,
+        heading,
+        logos[] {
+          name,
+          image{asset->{url}}
+        }
+      },
+      _type == "howItWorksSection" => {
+        _type,
+        _key,
+        heading,
+        steps[] {
+          title,
+          description,
+          image{asset->{url}}
+        }
+      },
+      _type == "faqSection" => {
+        _type,
+        _key,
+        faqs[] {
+          question,
+          answer
+        }
+      },
+      _type == "ctaSection" => {
+        _type,
+        _key,
+        title,
+        subtitle,
+        buttons[] {
+          label,
+          href
+        },
+        background{asset->{url}}
       }
-    }`,
+    }
+  }`,
     { slug }
   )
+
 
   if (!page) return <div>Not found</div>
 
@@ -155,6 +156,11 @@ export default async function LandingPage({
       {page.sections?.map((section, i) => {
         const SectionComponent = componentMap[section._type]
         if (!SectionComponent) return null
+
+        // Debug only the case studies section:
+        if (section._type === 'shortCaseStudiesSection') {
+          console.log('ShortCaseStudies section data:', section)
+        }
 
         return (
           <section
