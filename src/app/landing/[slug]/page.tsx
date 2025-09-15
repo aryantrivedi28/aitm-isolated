@@ -12,15 +12,15 @@ import CTA from '../../../../src/components/landing/CTA'
 import TestimonialSection from '../../../../src/components/landing/Testimonial' // ← import it
 
 type Section =
-  | { _type: 'painPointsSection'; [key: string]: any }
-  | { _type: 'howWeSolveSection'; [key: string]: any }
-  | { _type: 'whyUsSection'; [key: string]: any }
-  | { _type: 'shortCaseStudiesSection'; [key: string]: any }
-  | { _type: 'logosSection'; [key: string]: any }
-  | { _type: 'howItWorksSection'; [key: string]: any }
-  | { _type: 'faqSection'; [key: string]: any }
-  | { _type: 'ctaSection'; [key: string]: any }
-  | { _type: 'testimonialSection'; [key: string]: any }
+  | { _type: 'painPointsSection';[key: string]: any }
+  | { _type: 'howWeSolveSection';[key: string]: any }
+  | { _type: 'whyUsSection';[key: string]: any }
+  | { _type: 'shortCaseStudiesSection';[key: string]: any }
+  | { _type: 'logosSection';[key: string]: any }
+  | { _type: 'howItWorksSection';[key: string]: any }
+  | { _type: 'faqSection';[key: string]: any }
+  | { _type: 'ctaSection';[key: string]: any }
+  | { _type: 'testimonialSection';[key: string]: any }
 
 interface LandingPageData {
   title: string
@@ -81,15 +81,16 @@ export default async function LandingPage({
           }
         },
         _type == "whyUsSection" => {
-          _type,
-          _key,
-          heading,
-          reasons[] {
-            title,
-            description,
-            icon{asset->{url}}
-          }
-        },
+  _type,
+  _key,
+  heading,
+  "features": reasons[] {
+    title,
+    description,
+    icon{asset->{url}}
+  }
+},
+
         _type == "shortCaseStudiesSection" => {
           _type,
           _key,
@@ -173,7 +174,6 @@ export default async function LandingPage({
         return (
           <section
             key={section._key || i}
-            className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
           >
             <SectionComponent {...section} />
           </section>

@@ -204,7 +204,7 @@ export default function CaseStudyPage({
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div className="space-y-8" initial="initial" animate="animate" variants={staggerContainer}>
               <motion.div className="space-y-6" variants={fadeInLeft}>
-                <motion.div className="flex flex-wrap gap-3 mb-6" variants={staggerContainer}>
+                <motion.div className="flex flex-wrap gap-3 mb-6 w-full" variants={staggerContainer}>
                   {study.tags?.map((tag, idx) => (
                     <motion.span
                       key={idx}
@@ -217,14 +217,14 @@ export default function CaseStudyPage({
                   ))}
                 </motion.div>
 
-                <motion.h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight" variants={fadeInLeft}>
+                <motion.h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight" variants={fadeInLeft}>
                   <span className="bg-gradient-to-r from-white to-[#FFE01B] bg-clip-text text-transparent">
                     {study.title}
                   </span>
                 </motion.h1>
 
                 {study.subtitle && (
-                  <motion.h2 className="text-2xl lg:text-3xl text-gray-300 font-medium" variants={fadeInLeft}>
+                  <motion.h2 className="text-xl lg:text-3xl text-gray-300 font-medium" variants={fadeInLeft}>
                     {study.subtitle}
                   </motion.h2>
                 )}
