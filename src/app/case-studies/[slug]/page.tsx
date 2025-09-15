@@ -87,6 +87,8 @@ export default function CaseStudyPage({
   const [study, setStudy] = useState<CaseStudy | null>(null)
   const [loading, setLoading] = useState(true)
 
+  
+
   useEffect(() => {
     async function fetchStudy() {
       const { slug } = await params

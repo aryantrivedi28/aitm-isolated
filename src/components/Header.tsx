@@ -1,11 +1,18 @@
 "use client"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useState } from "react"
 import { Menu, X } from "lucide-react"
 
 export default function Header() {
   const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+
+  const pathname = usePathname() || ''
+  if (pathname.startsWith('/landing')) return null
+   if (pathname.startsWith('/case-studies/') && pathname !== '/case-studies') {
+    return null
+  }
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)

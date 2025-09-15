@@ -175,7 +175,8 @@
 │   │   │   │   └── motion-variants.tsx
 │   │   │   └── page.tsx
 │   │   ├── landing
-│   │   │   └── [slug]
+│   │   │   ├── [slug]
+│   │   │   └── layout.tsx
 │   │   ├── login
 │   │   │   └── page.tsx
 │   │   ├── sheet-analyzer

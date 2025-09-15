@@ -1,4 +1,4 @@
-import Hero from "../../components/home/Hero";
+import Hero from "../components/home/Hero";
 import {
   WhatWeDo,
   HowItWorks,
@@ -8,7 +8,7 @@ import {
   ServiceCategories,
   FAQ,
   BottomCTA,
-} from "../home-sections";
+} from "./home-sections";
 
 export default function Index() {
   return (

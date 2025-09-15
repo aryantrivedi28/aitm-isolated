@@ -1,9 +1,16 @@
-// src/app/landing/layout.tsx
+// app/landing/layout.tsx
+export const metadata = {
+  title: 'Landing Pages',
+  description: 'Landing page layout without header/footer',
+}
+
 export default function LandingLayout({ children }: { children: React.ReactNode }) {
+  // Just render the children, no Header/Footer
   return (
     <>
-      {/* No header here */}
-      {children}
+      {/* <body> */}
+        {children}
+      {/* </body> */}
     </>
-  );
+  )
 }
