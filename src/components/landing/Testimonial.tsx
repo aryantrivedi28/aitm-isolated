@@ -137,7 +137,7 @@ export default function TestimonialSection({
                         />
                   </div>
 
-                  <div className="relative z-10 max-w-7xl mx-auto">
+                  <div className="relative z-10 max-w-full mx-auto">
                         {/* Enhanced heading section */}
                         {heading && (
                               <motion.div
