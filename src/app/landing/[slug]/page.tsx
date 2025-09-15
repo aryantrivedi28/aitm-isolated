@@ -129,6 +129,7 @@ export default async function LandingPage({
         _type == "faqSection" => {
           _type,
           _key,
+          heading,
           faqs[] {
             question,
             answer
