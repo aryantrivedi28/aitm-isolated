@@ -109,7 +109,7 @@ export default function Hero({
           )}
 
           {/* map all CTAs from Sanity */}
-          {ctas.length > 0 && (
+          {ctas?.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
