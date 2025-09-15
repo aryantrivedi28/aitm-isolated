@@ -9,16 +9,18 @@ import Logos from '../../../../src/components/landing/Logos'
 import HowItWorks from '../../../../src/components/landing/HowItWorks'
 import FAQ from '../../../../src/components/landing/FAQ'
 import CTA from '../../../../src/components/landing/CTA'
+import TestimonialSection from '../../../../src/components/landing/Testimonial' // ← import it
 
 type Section =
-  | { _type: 'painPointsSection';[key: string]: any }
-  | { _type: 'howWeSolveSection';[key: string]: any }
-  | { _type: 'whyUsSection';[key: string]: any }
-  | { _type: 'shortCaseStudiesSection';[key: string]: any }
-  | { _type: 'logosSection';[key: string]: any }
-  | { _type: 'howItWorksSection';[key: string]: any }
-  | { _type: 'faqSection';[key: string]: any }
-  | { _type: 'ctaSection';[key: string]: any }
+  | { _type: 'painPointsSection'; [key: string]: any }
+  | { _type: 'howWeSolveSection'; [key: string]: any }
+  | { _type: 'whyUsSection'; [key: string]: any }
+  | { _type: 'shortCaseStudiesSection'; [key: string]: any }
+  | { _type: 'logosSection'; [key: string]: any }
+  | { _type: 'howItWorksSection'; [key: string]: any }
+  | { _type: 'faqSection'; [key: string]: any }
+  | { _type: 'ctaSection'; [key: string]: any }
+  | { _type: 'testimonialSection'; [key: string]: any }
 
 interface LandingPageData {
   title: string
@@ -35,6 +37,7 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   howItWorksSection: HowItWorks,
   faqSection: FAQ,
   ctaSection: CTA,
+  testimonialSection: TestimonialSection, // ← added
 }
 
 export default async function LandingPage({
@@ -46,102 +49,112 @@ export default async function LandingPage({
 
   const page: LandingPageData = await client.fetch(
     `*[_type == "landingPage" && slug.current == $slug][0]{
-    title,
-    hero {
       title,
-      subtitle,
-      backgroundImage{asset->{url}},
-      foregroundImage{asset->{url}},
-      ctas[]{label, href, variant}
-    },
-    sections[] {
-      _type,
-      _key,
-      _type == "painPointsSection" => {
-        _type,
-        _key,
-        heading,
-        items[] {
-          title,
-          description,
-          icon{asset->{url}}
-        }
-      },
-      _type == "howWeSolveSection" => {
-        _type,
-        _key,
-        heading,
-        solutions[] {
-          title,
-          description,
-          image{asset->{url}}
-        }
-      },
-      _type == "whyUsSection" => {
-        _type,
-        _key,
-        heading,
-        reasons[] {
-          title,
-          description,
-          icon{asset->{url}}
-        }
-      },
-      _type == "shortCaseStudiesSection" => {
-        _type,
-        _key,
-        heading,
-        "studies": caseStudies[]->{
-          "company": title,
-          "image": mainImage,
-          "result": description,
-          "slug": slug,
-          tags
-        }
-      },
-      _type == "logosSection" => {
-        _type,
-        _key,
-        heading,
-        logos[] {
-          name,
-          image{asset->{url}}
-        }
-      },
-      _type == "howItWorksSection" => {
-        _type,
-        _key,
-        heading,
-        steps[] {
-          title,
-          description,
-          image{asset->{url}}
-        }
-      },
-      _type == "faqSection" => {
-        _type,
-        _key,
-        faqs[] {
-          question,
-          answer
-        }
-      },
-      _type == "ctaSection" => {
-        _type,
-        _key,
+      hero {
         title,
         subtitle,
-        buttons[] {
-          label,
-          href
+        backgroundImage{asset->{url}},
+        foregroundImage{asset->{url}},
+        ctas[]{label, href, variant}
+      },
+      sections[] {
+        _type,
+        _key,
+        _type == "painPointsSection" => {
+          _type,
+          _key,
+          heading,
+          items[] {
+            title,
+            description,
+            icon{asset->{url}}
+          }
         },
-        background{asset->{url}}
+        _type == "howWeSolveSection" => {
+          _type,
+          _key,
+          heading,
+          solutions[] {
+            title,
+            description,
+            image{asset->{url}}
+          }
+        },
+        _type == "whyUsSection" => {
+          _type,
+          _key,
+          heading,
+          reasons[] {
+            title,
+            description,
+            icon{asset->{url}}
+          }
+        },
+        _type == "shortCaseStudiesSection" => {
+          _type,
+          _key,
+          heading,
+          "studies": caseStudies[]->{
+            "company": title,
+            "image": mainImage,
+            "result": description,
+            "slug": slug,
+            tags
+          }
+        },
+        _type == "logosSection" => {
+          _type,
+          _key,
+          heading,
+          logos[] {
+            name,
+            image{asset->{url}}
+          }
+        },
+        _type == "howItWorksSection" => {
+          _type,
+          _key,
+          heading,
+          steps[] {
+            title,
+            description,
+            image{asset->{url}}
+          }
+        },
+        _type == "faqSection" => {
+          _type,
+          _key,
+          faqs[] {
+            question,
+            answer
+          }
+        },
+        _type == "ctaSection" => {
+          _type,
+          _key,
+          title,
+          subtitle,
+          buttons[] {
+            label,
+            href
+          },
+          background{asset->{url}}
+        },
+        _type == "testimonialSection" => {
+          _type,
+          _key,
+          heading,
+          testimonials[]{
+            quote,
+            authorName,
+            authorTitle,
+            authorImage{asset->{url}}
+          }
+        }
       }
-    }
-  }`,
+    }`,
     { slug }
   )
-
 
   if (!page) return <div>Not found</div>
 
@@ -173,5 +186,4 @@ export default async function LandingPage({
       })}
     </main>
   )
-
 }
