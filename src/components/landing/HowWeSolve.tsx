@@ -75,10 +75,10 @@ export default function HowWeSolve({
                 )}
               </motion.div>
 
-              <h3 className="mt-6 text-2xl font-semibold bg-gradient-to-r from-gray-600 to-gray-400 bg-clip-text text-transparent">
+              <h3 className="mt-6 text-2xl font-semibold bg-gradient-to-r from-gray-100 to-gray-200 bg-clip-text text-transparent">
                 {it.title}
               </h3>
-              <p className="mt-3 text-gray-100 leading-relaxed">{it.description}</p>
+              <p className="mt-3 text-gray-400 leading-relaxed">{it.description}</p>
 
               <motion.div
                 whileHover={{ x: 5 }}
