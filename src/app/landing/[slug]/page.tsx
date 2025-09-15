@@ -170,11 +170,6 @@ export default async function LandingPage({
         const SectionComponent = componentMap[section._type]
         if (!SectionComponent) return null
 
-        // Debug only the case studies section:
-        if (section._type === 'shortCaseStudiesSection') {
-          console.log('ShortCaseStudies section data:', section)
-        }
-
         return (
           <section
             key={section._key || i}
