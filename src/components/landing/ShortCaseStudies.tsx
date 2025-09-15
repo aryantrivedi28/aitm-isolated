@@ -112,21 +112,6 @@ export default function ShortCaseStudies({
             </motion.div>
           ))}
         </div>
-
-        {/* View All Button */}
-        {studies.length > 0 && (
-          <div className="text-center mt-12">
-            <Link
-              href="/case-studies"
-              className="inline-flex items-center px-8 py-3 bg-[#FFE01B] text-[#241C15] font-semibold rounded-lg hover:bg-[#FCD34D] transition-colors shadow-md hover:shadow-lg"
-            >
-              View All Case Studies
-              <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
-        )}
       </div>
     </section>
   )
