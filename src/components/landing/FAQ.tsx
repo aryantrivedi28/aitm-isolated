@@ -181,7 +181,7 @@ export default function FAQ({
         </div>
 
         {/* Additional info */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-50px' }}
@@ -199,7 +199,7 @@ export default function FAQ({
             </a>
             .
           </p>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   )
