@@ -58,11 +58,11 @@ export default function PainPoints({ heading, items = [] }: PainPointsProps) {
                 </h3>
                 <p className="mt-3 text-gray-300 text-center">{p.description}</p>
 
-                <div className="mt-6 text-center">
+                {/* <div className="mt-6 text-center">
                   <a className="inline-flex items-center gap-2 text-sm font-medium px-3 py-2 rounded-full border border-gray-600 hover:bg-[#FFE01B] hover:text-black transition-colors">
                     Learn more
                   </a>
-                </div>
+                </div> */}
 
                 {/* glowing accent */}
                 <div className="absolute right-4 top-4 opacity-0 group-hover:opacity-70 transition-opacity">

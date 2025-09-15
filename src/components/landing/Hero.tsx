@@ -155,7 +155,7 @@ export default function Hero({
               </div>
               <div className="flex items-center gap-1 text-gray-300 text-sm">
                 <Star size={14} className="text-[#FFE01B]" />
-                <span>Trusted by 10,000+ growing teams</span>
+                <span>Trusted by 50+ Companies Globally</span>
               </div>
             </motion.div>
 

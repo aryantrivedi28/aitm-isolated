@@ -80,14 +80,14 @@ export default function HowWeSolve({
               </h3>
               <p className="mt-3 text-gray-400 leading-relaxed">{it.description}</p>
 
-              <motion.div
+              {/* <motion.div
                 whileHover={{ x: 5 }}
                 className="mt-5 flex justify-center cursor-pointer"
               >
                 <span className="text-sm font-medium text-[#FFE01B] flex items-center gap-1">
                   More →
                 </span>
-              </motion.div>
+              </motion.div> */}
             </motion.div>
           ))}
         </div>

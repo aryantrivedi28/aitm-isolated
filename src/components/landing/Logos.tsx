@@ -1,79 +1,100 @@
 'use client'
 import Image from 'next/image'
 import { motion, useAnimation } from 'framer-motion'
-import { Sparkles, TrendingUp, Users } from 'lucide-react'
-import { useEffect } from 'react'
+import { Sparkles, TrendingUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { urlFor } from '@/src/sanity/lib/image'
 
 interface Logo {
-  asset?: any
-  alt?: string
+  name?: string
+  image?: { asset?: any }
 }
 
-export default function Logos({ heading, logos = [] }: { heading?: string; logos?: Logo[] }) {
+export default function Logos({
+  heading,
+  logos = [],
+}: {
+  heading?: string
+  logos?: Logo[]
+}) {
   const controls = useAnimation()
 
-  // Auto-sliding animation for logos
+  // ✅ store random background dot positions in state
+  const [dots, setDots] = useState<{ left: string; top: string; delay: number; duration: number }[]>([])
+
+  useEffect(() => {
+    setDots(
+      [...Array(6)].map(() => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        delay: Math.random() * 2,
+        duration: 4 + Math.random() * 3,
+      }))
+    )
+  }, [])
+
+  // Auto-slide only if we actually have logos
   useEffect(() => {
     if (logos.length > 0) {
       controls.start({
-        x: "-100%",
+        x: '-100%',
         transition: {
           x: {
             repeat: Infinity,
-            repeatType: "loop",
-            duration: logos.length * 3, // 3 seconds per logo
-            ease: "linear",
+            repeatType: 'loop',
+            duration: logos.length * 3, // 3s per logo
+            ease: 'linear',
           },
         },
       })
     }
   }, [controls, logos.length])
 
+  if (!logos?.length) return null
+
+  const formatHeading = (heading?: string) => {
+    if (!heading) return null
+    const words = heading.trim().split(' ')
+    if (words.length < 2) return heading
+    return (
+      <>
+        {words.slice(0, -2).join(' ')}{' '}
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B]">
+          {words.slice(-2).join(' ')}
+        </span>
+      </>
+    )
+  }
+
   return (
-    <section className="relative bg-gradient-to-br from-[#FAFAFA] via-white to-[#F5F5F5] py-16 md:py-24 overflow-hidden">
+    <section className="relative bg-[#fbf5e5] py-10 md:py-12 overflow-hidden">
       {/* Subtle background elements */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-radial from-[#FFE01B]/3 via-transparent to-transparent opacity-60" />
-        
-        {/* Subtle pattern */}
-        <div 
+        <div
           className="absolute inset-0 opacity-[0.01]"
           style={{
             backgroundImage: `
               linear-gradient(45deg, rgba(255, 224, 27, 0.1) 1px, transparent 1px),
               linear-gradient(-45deg, rgba(255, 224, 27, 0.1) 1px, transparent 1px)
             `,
-            backgroundSize: '60px 60px'
+            backgroundSize: '60px 60px',
           }}
         />
-
-        {/* Floating decorative elements */}
-        {[...Array(6)].map((_, i) => (
+        {/* ✅ safe dots (no hydration mismatch) */}
+        {dots.map((dot, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-[#FFE01B]/15 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [-15, 15, -15],
-              opacity: [0.1, 0.4, 0.1],
-              scale: [1, 1.3, 1],
-            }}
-            transition={{
-              duration: 4 + Math.random() * 3,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
+            style={{ left: dot.left, top: dot.top }}
+            animate={{ y: [-15, 15, -15], opacity: [0.1, 0.4, 0.1], scale: [1, 1.3, 1] }}
+            transition={{ duration: dot.duration, repeat: Infinity, delay: dot.delay }}
           />
         ))}
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Enhanced heading section */}
+      <div className="relative z-10 max-w-full mx-auto px-6">
+        {/* Heading */}
         {heading && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -82,7 +103,6 @@ export default function Logos({ heading, logos = [] }: { heading?: string; logos
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -91,10 +111,11 @@ export default function Logos({ heading, logos = [] }: { heading?: string; logos
               className="inline-flex items-center gap-2 bg-[#FFE01B]/10 backdrop-blur-sm border border-[#FFE01B]/20 rounded-full px-6 py-3 mb-8"
             >
               <TrendingUp size={18} className="text-[#241C15]" />
-              <span className="text-sm text-[#241C15] font-semibold tracking-wide">Trusted Partners</span>
+              <span className="text-sm text-[#241C15] font-semibold tracking-wide">
+                Trusted Partners
+              </span>
             </motion.div>
-            
-            {/* Main heading */}
+
             <motion.h3
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -102,13 +123,9 @@ export default function Logos({ heading, logos = [] }: { heading?: string; logos
               transition={{ delay: 0.3, duration: 0.8 }}
               className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight text-[#241C15] mb-4"
             >
-              {heading.split(' ').slice(0, -2).join(' ')}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B]">
-                {heading.split(' ').slice(-2).join(' ')}
-              </span>
+              {formatHeading(heading)}
             </motion.h3>
 
-            {/* Subtitle */}
             <motion.p
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -121,57 +138,20 @@ export default function Logos({ heading, logos = [] }: { heading?: string; logos
           </motion.div>
         )}
 
-        {/* Stats section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-          className="flex items-center justify-center gap-8 mb-16 flex-wrap"
-        >
-          <div className="flex items-center gap-2 text-[#241C15]">
-            <Users size={20} className="text-[#FFE01B]" />
-            <span className="font-bold text-lg">{logos.length}+</span>
-            <span className="text-gray-600">Partners</span>
-          </div>
-          <div className="w-px h-6 bg-gray-300" />
-          <div className="flex items-center gap-2 text-[#241C15]">
-            <Sparkles size={20} className="text-[#FFE01B]" />
-            <span className="font-bold text-lg">99%</span>
-            <span className="text-gray-600">Satisfaction</span>
-          </div>
-        </motion.div>
-
-        {/* Sliding logos container */}
+        {/* Logos slider */}
         <div className="relative">
-          {/* Gradient fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10" />
-          
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#fbf5e5] to-transparent z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#fbf5e5] to-transparent z-10" />
+
           <div className="overflow-hidden">
             <motion.div
-              className="flex items-center gap-12 md:gap-16"
+              className="flex items-center gap-10 md:gap-12"
               animate={controls}
-              onHoverStart={() => controls.stop()}
-              onHoverEnd={() =>
-                controls.start({
-                  x: "-100%",
-                  transition: {
-                    x: {
-                      repeat: Infinity,
-                      repeatType: "loop",
-                      duration: logos.length * 3,
-                      ease: "linear",
-                    },
-                  },
-                })
-              }
               style={{ width: `${logos.length * 200}px` }}
             >
-              {/* Duplicate logos for seamless loop */}
               {[...logos, ...logos].map((logo, index) => (
                 <motion.div
-                  key={`${index}-${logo.alt}`}
+                  key={`${index}-${logo.name || 'logo'}`}
                   className="flex-shrink-0 group"
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -179,18 +159,17 @@ export default function Logos({ heading, logos = [] }: { heading?: string; logos
                   transition={{ delay: (index % logos.length) * 0.1, duration: 0.6 }}
                   whileHover={{ scale: 1.1, y: -5 }}
                 >
-                  <div className="relative w-32 h-20 md:w-40 md:h-24 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-500 border border-gray-100 group-hover:border-[#FFE01B]/30 p-4 flex items-center justify-center overflow-hidden">
-                    {/* Subtle hover glow */}
+                  <div className="relative w-44 h-28 md:w-56 md:h-36 bg-[#fbf5e5] rounded-2xl shadow-sm hover:shadow-lg transition-all duration-500 border border-gray-100 group-hover:border-[#FFE01B]/30 p-4 flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    
-                    {logo.asset ? (
-                      <div className="relative w-full h-full filter grayscale group-hover:grayscale-0 transition-all duration-500">
-                        <Image 
-                          src={urlFor(logo.asset).url()} 
-                          alt={logo.alt || 'logo'} 
-                          fill 
-                          className="object-contain p-2" 
-                          sizes="(max-width: 768px) 128px, 160px"
+
+                    {logo.image?.asset ? (
+                      <div className="relative w-full h-full filter group-hover:grayscale-0 transition-all duration-500">
+                        <Image
+                          src={urlFor(logo.image).url()}
+                          alt={logo.name || 'Logo'}
+                          fill
+                          className="object-contain p-2"
+                          sizes="(max-width: 768px) 176px, 224px"
                         />
                       </div>
                     ) : (
@@ -201,9 +180,6 @@ export default function Logos({ heading, logos = [] }: { heading?: string; logos
                         </div>
                       </div>
                     )}
-                    
-                    {/* Corner accent */}
-                    <div className="absolute top-2 right-2 w-2 h-2 bg-[#FFE01B]/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
                 </motion.div>
               ))}
@@ -211,7 +187,7 @@ export default function Logos({ heading, logos = [] }: { heading?: string; logos
           </div>
         </div>
 
-        {/* Bottom helper text */}
+        {/* Helper text */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -220,41 +196,11 @@ export default function Logos({ heading, logos = [] }: { heading?: string; logos
           className="text-center mt-12"
         >
           <p className="text-gray-500 text-sm flex items-center justify-center gap-2">
-            <motion.span 
-              animate={{ rotate: [0, 10, -10, 0] }} 
-              transition={{ duration: 3, repeat: Infinity }}
-            >
+            <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 3, repeat: Infinity }}>
               ✨
             </motion.span>
             Hover over logos to pause animation
           </p>
-        </motion.div>
-
-        {/* Bottom decorative element */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 1.2, duration: 1 }}
-          className="mt-16 flex justify-center"
-        >
-          <div className="flex items-center gap-2">
-            {[...Array(3)].map((_, i) => (
-              <motion.div
-                key={i}
-                animate={{ 
-                  scale: [1, 1.4, 1],
-                  opacity: [0.3, 0.8, 0.3] 
-                }}
-                transition={{ 
-                  duration: 2, 
-                  repeat: Infinity, 
-                  delay: i * 0.3 
-                }}
-                className="w-2 h-2 bg-[#FFE01B]/40 rounded-full"
-              />
-            ))}
-          </div>
         </motion.div>
       </div>
     </section>

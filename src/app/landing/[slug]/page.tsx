@@ -106,10 +106,10 @@ export default async function LandingPage({
         _type == "logosSection" => {
           _type,
           _key,
-          heading,
+          heading, // may be null
           logos[] {
-            name,
-            image{asset->{url}}
+            name, // optional
+            image{asset->{url}} // required when logo exists
           }
         },
         _type == "howItWorksSection" => {
