@@ -79,7 +79,8 @@ export default defineType({
         {type: 'howItWorksSection'},
         {type: 'faqSection'},
         {type: 'ctaSection'},      // inline CTA block you can drop anywhere
-        { type: 'testimonialSection' },
+        {type: 'testimonialSection' },
+        {type: 'footerSection' },  // ← added footer section as an option
       ],
     }),
 

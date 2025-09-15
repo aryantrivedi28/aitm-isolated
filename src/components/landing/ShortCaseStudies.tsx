@@ -27,9 +27,9 @@ export default function ShortCaseStudies({
         {/* Multiple gradient layers */}
         <div className="absolute inset-0 bg-gradient-radial from-[#FFE01B]/6 via-transparent to-transparent opacity-70" />
         <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-radial from-[#FFE01B]/3 to-transparent opacity-60" />
-        
+
         {/* Subtle pattern overlay */}
-        <div 
+        <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `
@@ -88,7 +88,7 @@ export default function ShortCaseStudies({
               <TrendingUp size={18} className="text-[#FFE01B]" />
               <span className="text-sm text-[#FFE01B] font-semibold tracking-wide">Success Stories</span>
             </motion.div>
-            
+
             {/* Main heading */}
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -130,7 +130,7 @@ export default function ShortCaseStudies({
             >
               {/* Glow effect */}
               <div className="absolute -inset-1 bg-gradient-to-r from-[#FFE01B]/20 via-[#FFE01B]/10 to-transparent rounded-3xl blur opacity-0 group-hover:opacity-100 transition duration-700" />
-              
+
               {/* Main card */}
               <div className="relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700 border border-white/20 group-hover:border-[#FFE01B]/30">
                 <Link href={`/case-studies/${c.slug?.current || ''}`} className="flex flex-col h-full">
@@ -138,15 +138,15 @@ export default function ShortCaseStudies({
                   <div className="relative w-full aspect-[16/10] overflow-hidden">
                     {/* Overlay gradient */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-10" />
-                    
-                    {c.image ? (
+
+                    {c.image?.asset ? (
                       <Image
                         src={urlFor(c.image).url()}
                         alt={c.company || ''}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
+
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-50 text-gray-400">
                         <div className="text-center">
@@ -181,7 +181,7 @@ export default function ShortCaseStudies({
                       >
                         {c.company || 'Untitled'}
                       </motion.h3>
-                      
+
                       {/* Primary tag with enhanced styling */}
                       {c.tags?.[0] && (
                         <motion.span
@@ -250,7 +250,7 @@ export default function ShortCaseStudies({
                           View Case Study
                           <ArrowRight className="ml-2 w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-300" />
                         </span>
-                        
+
                         <motion.div
                           className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                           whileHover={{ rotate: 45 }}
@@ -286,14 +286,14 @@ export default function ShortCaseStudies({
             {[...Array(3)].map((_, i) => (
               <motion.div
                 key={i}
-                animate={{ 
+                animate={{
                   scale: [1, 1.3, 1],
-                  opacity: [0.5, 1, 0.5] 
+                  opacity: [0.5, 1, 0.5]
                 }}
-                transition={{ 
-                  duration: 3, 
-                  repeat: Infinity, 
-                  delay: i * 0.5 
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  delay: i * 0.5
                 }}
                 className="w-3 h-3 bg-[#FFE01B]/40 rounded-full"
               />

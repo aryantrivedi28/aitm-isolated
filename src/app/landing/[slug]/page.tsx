@@ -10,6 +10,7 @@ import HowItWorks from '../../../../src/components/landing/HowItWorks'
 import FAQ from '../../../../src/components/landing/FAQ'
 import CTA from '../../../../src/components/landing/CTA'
 import TestimonialSection from '../../../../src/components/landing/Testimonial' // ← import it
+import Footer from '@/src/components/landing/Footer'
 
 type Section =
   | { _type: 'painPointsSection';[key: string]: any }
@@ -21,6 +22,8 @@ type Section =
   | { _type: 'faqSection';[key: string]: any }
   | { _type: 'ctaSection';[key: string]: any }
   | { _type: 'testimonialSection';[key: string]: any }
+  | { _type: 'footerSection'; [key: string]: any }
+
 
 interface LandingPageData {
   title: string
@@ -38,6 +41,7 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   faqSection: FAQ,
   ctaSection: CTA,
   testimonialSection: TestimonialSection, // ← added
+  footerSection: Footer,
 }
 
 export default async function LandingPage({
@@ -151,7 +155,13 @@ export default async function LandingPage({
             authorTitle,
             authorImage{asset->{url}}
           }
-        }
+        },
+        _type == "footerSection" => {
+  _type,
+  _key,
+  text
+},
+
       }
     }`,
     { slug }
@@ -179,6 +189,7 @@ export default async function LandingPage({
           </section>
         )
       })}
+      <Footer />
     </main>
   )
 }
