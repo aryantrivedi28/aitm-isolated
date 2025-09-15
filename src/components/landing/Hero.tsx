@@ -166,7 +166,7 @@ export default function Hero({
               transition={{ delay: 0.4, duration: 0.8 }}
               className="mb-8"
             >
-              <h1 className="text-white text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black leading-[0.9] tracking-tight">
+              <h1 className="text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-[0.9] tracking-tight max-w-5xl">
                 <motion.span
                   className="block"
                   initial={{ opacity: 0, x: -20 }}
@@ -176,7 +176,7 @@ export default function Hero({
                   {title}
                 </motion.span>
                 <motion.span
-                  className="block mt-4 text-transparent bg-clip-text bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black"
+                  className="block mt-4 text-transparent bg-clip-text bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B] text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.8 }}
@@ -193,7 +193,7 @@ export default function Hero({
                 transition={{ delay: 1 }}
                 className="mb-12"
               >
-                <p className="text-gray-300 text-lg sm:text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed font-light">
+                <p className="text-gray-300 text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed font-light">
                   {subtitle}
                 </p>
               </motion.div>
