@@ -137,7 +137,7 @@ export default function WhyUs({
         )}
 
         {/* Enhanced Features Grid */}
-        {features.length > 0 && (
+        {features?.length > 0 && (
           <div className="grid lg:grid-cols-2 gap-8">
             {features.map((f, i) => (
               <motion.div
