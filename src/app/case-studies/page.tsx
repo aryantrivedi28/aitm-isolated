@@ -283,7 +283,7 @@ useEffect(() => {
 
   if (!caseStudies || caseStudies.length === 0) {
     return (
-      <div className="min-h-screen bg-[#241C15] text-white overflow-hidden">
+      <div className="min-h-screen bg-[#241C15] text-white overflow-hidden ">
         {/* Animated Background Elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <motion.div
@@ -326,7 +326,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-[#241C15] text-white overflow-hidden">
+    <div className="min-h-screen bg-[#241C15] text-white overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div

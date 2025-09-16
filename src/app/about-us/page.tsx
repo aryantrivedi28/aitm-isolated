@@ -78,7 +78,7 @@ const floatingAnimation = {
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col bg-[#241C15] text-white overflow-hidden">
+    <div className="flex flex-col bg-[#241C15] text-white overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -117,10 +117,10 @@ export default function AboutPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center">
+      <section className="relative min-h-[85vh] flex items-center">
         <div className="absolute inset-0 bg-gradient-to-br from-[#241C15] via-[#2a1f16] to-[#241C15]" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <motion.div
             className="grid lg:grid-cols-2 gap-16 items-center"
             initial="hidden"

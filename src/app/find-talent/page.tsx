@@ -100,7 +100,7 @@ export default function FindTalentPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#241C15] text-white overflow-hidden">
+    <div className="relative min-h-screen bg-[#241C15] text-white overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
       {/* Toast Provider */}
       <Toaster
         position="top-right"

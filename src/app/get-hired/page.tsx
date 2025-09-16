@@ -139,7 +139,7 @@ export default function GetHiredPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#241C15] text-white overflow-hidden">
+    <div className="min-h-screen bg-[#241C15] text-white overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
       {/* Navigation */}
       {/* <nav className="border-b border-gray-700 bg-[#241C15]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -165,7 +165,30 @@ export default function GetHiredPage() {
       </nav> */}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Section */}
+
+
+        {/* Header Section */}
+        <section className="text-center mb-8">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-3xl font-bold tracking-tight sm:text-4xl text-[#FFE01B]"
+          >
+            Available Opportunities
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="mt-2 text-gray-300 sm:text-lg max-w-3xl mx-auto"
+          >
+            Apply to vetted opportunities and land your next role
+          </motion.p>
+        </section>
+
+                {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -200,27 +223,6 @@ export default function GetHiredPage() {
             </div>
           </motion.div>
         </div>
-
-        {/* Header Section */}
-        <section className="text-center mb-8">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-3xl font-bold tracking-tight sm:text-4xl text-[#FFE01B]"
-          >
-            Available Opportunities
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="mt-2 text-gray-300 sm:text-lg max-w-3xl mx-auto"
-          >
-            Apply to vetted opportunities and land your next role
-          </motion.p>
-        </section>
 
         {/* Filters and Search */}
         <section className="mb-8">
