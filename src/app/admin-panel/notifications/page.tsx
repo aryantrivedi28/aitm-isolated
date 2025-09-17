@@ -179,7 +179,7 @@ export default function NotificationsPage() {
   }, [])
 
   return (
-    <main className="min-h-screen bg-[#1A1410] text-white">
+    <main className="min-h-screen bg-[#1A1410] text-white pt-[50px] sm:pt-[80px] lg:pt-[100px]">
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="flex items-center justify-between mb-10">

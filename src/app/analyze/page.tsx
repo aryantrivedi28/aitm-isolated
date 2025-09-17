@@ -73,7 +73,7 @@ export default function AnalyzeSheetPage() {
   // };
 
   return (
-    <main className="bg-[#241C15] min-h-screen py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-6 xl:px-8 relative overflow-hidden">
+    <main className="bg-[#241C15] min-h-screen py-4 sm:py-6 lg:py-8 px-2 sm:px-4 lg:px-6 xl:px-8 relative overflow-hidden pt-[100px] sm:pt-[120px] lg:pt-[160px]">
       {/* Advanced Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Animated gradient orbs */}

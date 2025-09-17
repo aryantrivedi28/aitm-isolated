@@ -448,7 +448,7 @@ function AgreementAutomationPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#241C15] text-white p-4 md:p-6">
+    <div className="min-h-screen bg-[#241C15] text-white p-4 md:p-6 pt-[80px] sm:pt-[120px] lg:pt-[140px]">
       <div className="max-w-7xl mx-auto">
         {/* Error Message */}
         {error && (

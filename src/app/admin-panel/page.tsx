@@ -1259,7 +1259,7 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-[#241C15] text-white overflow-hidden">
+    <div className="min-h-screen bg-[#241C15] text-white overflow-hidden pt-[50px] sm:pt-[80px] lg:pt-[100px]">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <motion.div
@@ -1345,77 +1345,89 @@ export default function AdminPanel() {
 
             {/* Tab Navigation */}
             <motion.div
-              className="grid grid-cols-3 gap-6 mt-12"
+              className="
+    grid grid-cols-1 
+    sm:grid-cols-2 
+    md:grid-cols-3 
+    gap-4 sm:gap-6 mt-8 sm:mt-12
+  "
               initial="hidden"
               animate="visible"
               variants={fadeUp}
             >
               <button
                 onClick={() => setActiveTab("freelancers")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === "freelancers"
-                  ? "bg-[#FFE01B] text-[#241C15]"
-                  : "bg-white/10 text-white hover:bg-white/20"
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+      ${activeTab === "freelancers"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
                   }`}
               >
-                <Users className="w-5 h-5" />
+                <Users className="w-5 h-5 shrink-0" />
                 Freelancer Search
               </button>
 
               <button
                 onClick={() => setActiveTab("forms")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === "forms"
-                  ? "bg-[#FFE01B] text-[#241C15]"
-                  : "bg-white/10 text-white hover:bg-white/20"
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+      ${activeTab === "forms"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
                   }`}
               >
-                <FileText className="w-5 h-5" />
+                <FileText className="w-5 h-5 shrink-0" />
                 Form Management
               </button>
 
               <button
                 onClick={() => handleNavigation("/admin-form-creation/dashboard")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${dashboard === "/admin-form-creation/dashboard"
-                  ? "bg-[#FFE01B] text-[#241C15]"
-                  : "bg-white/10 text-white hover:bg-white/20"
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+      ${dashboard === "/admin-form-creation/dashboard"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
                   }`}
               >
-                <FileText className="w-5 h-5" />
+                <FileText className="w-5 h-5 shrink-0" />
                 Form Dashboard
               </button>
 
               <button
                 onClick={handleAgreementAutomation}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${dashboard === "/admin-panel/agreements"
-                  ? "bg-[#FFE01B] text-[#241C15]"
-                  : "bg-white/10 text-white hover:bg-white/20"
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+      ${dashboard === "/admin-panel/agreements"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
                   }`}
               >
-                <FileText className="w-5 h-5" />
+                <FileText className="w-5 h-5 shrink-0" />
                 Agreement Automation
               </button>
 
               <button
                 onClick={() => handleNavigation("/admin-panel/notifications")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${dashboard === "/admin-panel/notifications"
-                  ? "bg-[#FFE01B] text-[#241C15]"
-                  : "bg-white/10 text-white hover:bg-white/20"
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+      ${dashboard === "/admin-panel/notifications"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
                   }`}
               >
-                <Bell className="w-5 h-5" />
+                <Bell className="w-5 h-5 shrink-0" />
                 Notifications
               </button>
 
               <button
                 onClick={() => handleNavigation("/analyze")}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 ${dashboard === "/analyze"
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+      ${dashboard === "/analyze"
                     ? "bg-[#FFE01B] text-[#241C15]"
                     : "bg-white/10 text-white hover:bg-white/20"
                   }`}
               >
-                <BarChart3 className="w-5 h-5" />
+                <BarChart3 className="w-5 h-5 shrink-0" />
                 Analyze
               </button>
             </motion.div>
+
 
 
             {/* Stats */}
