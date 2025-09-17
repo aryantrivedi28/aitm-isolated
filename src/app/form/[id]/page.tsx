@@ -363,7 +363,7 @@ export default function FormPage({ params }: FormPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#241C15] py-12 px-4 pt-[50px] sm:pt-[80px] lg:pt-[100px]">
+    <div className="min-h-screen bg-[#241C15] py-12 px-4 pt-[80px] sm:pt-[100px] lg:pt-[130px]">
       <div className="max-w-3xl mx-auto">
         {/* Form Header */}
         <motion.div

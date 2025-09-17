@@ -5,7 +5,6 @@ import type { CreateFormData } from "../../../types/database"
 export async function POST(req: Request) {
   try {
     const body: CreateFormData = await req.json()
-    console.log("Request body:", body)
     const { form_id, form_name, category, subcategory, industry, created_by, is_active } = body
 
     // Validate required fields
@@ -16,8 +15,7 @@ export async function POST(req: Request) {
       )
     }
     // allow letters, numbers, dashes and underscores
-const formIdRegex = /^[a-zA-Z0-9_-]+$/;
-    console.log(form_id, formIdRegex.test(form_id))
+    const formIdRegex = /^[a-zA-Z0-9_-]+$/;
     if (!formIdRegex.test(form_id)) {
       return NextResponse.json(
         { error: "Form ID must contain only letters and numbers (e.g., reactjs1, nodejs2)" },
@@ -25,7 +23,6 @@ const formIdRegex = /^[a-zA-Z0-9_-]+$/;
       )
     }
 
-console.log("Validated form_id format", form_id)
     const { data: existingForm } = await supabaseAdmin.from("forms").select("form_id").eq("form_id", form_id).single()
 
     if (existingForm) {
@@ -52,13 +49,10 @@ console.log("Validated form_id format", form_id)
       console.error("Supabase error:", error)
       throw error
     }
-console.log("Inserted form into database", data)
     // Generate the public form URL using custom form_id
     const baseUrl =
       process.env.APP_BASE_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"
-console.log("Base URL for form:", baseUrl)
     const publicUrl = `${baseUrl}/form/${data.form_id}`
-console.log("Generated public URL:", publicUrl)
     return NextResponse.json({
       form: data,
       url: publicUrl,
