@@ -2667,48 +2667,6 @@ export default function AdminPanel() {
           </section>
         </>
       )}
-      <section className="relative py-12 px-4 z-10">
-        <motion.div
-          className="max-w-6xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={staggerContainer}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Form Dashboard Button */}
-            <button
-              onClick={handleFormDashboard}
-              className="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 text-left hover:bg-white/10 transition-all duration-300 group"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-[#FFE01B] transition-colors">
-                    Form Dashboard
-                  </h3>
-                  <p className="text-white/70 text-sm">Manage and view all submitted forms</p>
-                </div>
-                <div className="text-[#FFE01B] text-2xl group-hover:scale-110 transition-transform">📊</div>
-              </div>
-            </button>
-
-            <button
-              onClick={handleAgreementAutomation}
-              className="w-full bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 text-left hover:bg-white/10 transition-all duration-300 group"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-[#FFE01B] transition-colors">
-                    Agreement Automation
-                  </h3>
-                  <p className="text-white/70 text-sm">Manage client agreements, invoices & DocuSeal integration</p>
-                </div>
-                <div className="text-[#FFE01B] text-2xl group-hover:scale-110 transition-transform">📄</div>
-              </div>
-            </button>
-          </div>
-        </motion.div>
-      </section>
     </div>
   )
 }
