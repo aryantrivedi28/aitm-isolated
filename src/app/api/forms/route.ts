@@ -20,16 +20,7 @@ export async function POST(req: Request) {
       is_active,
     } = body;
 
-    console.log("Parsed form data:", {
-      form_id,
-      form_name,  
-      form_description,
-      category,
-      subcategory,
-      industry,
-      created_by,
-      is_active,
-    });
+
     // ✅ Validate required fields
     if (!form_id || !form_name || !category || !subcategory || !industry) {
       return NextResponse.json(
