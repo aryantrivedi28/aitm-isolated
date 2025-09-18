@@ -24,6 +24,7 @@ import {
   Edit,
   Trash2,
   Bell,
+  FileCheck,
 } from "lucide-react"
 import { supabase } from "../../lib/SupabaseAuthClient"
 import { supabaseAdmin } from "../../lib/supabase-admin"
@@ -1344,13 +1345,7 @@ export default function AdminPanel() {
             </motion.p>
 
             {/* Tab Navigation */}
-            <motion.div
-              className="
-    grid grid-cols-1 
-    sm:grid-cols-2 
-    md:grid-cols-3 
-    gap-4 sm:gap-6 mt-8 sm:mt-12
-  "
+            <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12"
               initial="hidden"
               animate="visible"
               variants={fadeUp}
@@ -1399,7 +1394,7 @@ export default function AdminPanel() {
                     : "bg-white/10 text-white hover:bg-white/20"
                   }`}
               >
-                <FileText className="w-5 h-5 shrink-0" />
+                <FileCheck className="w-5 h-5 shrink-0" />
                 Agreement Automation
               </button>
 
@@ -1426,6 +1421,33 @@ export default function AdminPanel() {
                 <BarChart3 className="w-5 h-5 shrink-0" />
                 Analyze
               </button>
+
+              <button
+                onClick={() => handleNavigation("/admin-panel/generate-form")}
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+    ${dashboard === "/admin-panel/generate-form"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+              >
+                <FileText className="w-5 h-5 shrink-0" />
+                Form Generation
+              </button>
+
+
+              <button
+                onClick={() => handleNavigation("/email-personalize")}
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+    ${dashboard === "/email-personalize"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+              >
+                <Mail className="w-5 h-5 shrink-0" />
+                Email Personalization
+              </button>
+
+
             </motion.div>
 
 
