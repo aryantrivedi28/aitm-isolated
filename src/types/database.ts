@@ -40,17 +40,18 @@ export interface FreelancerSubmission {
 }
 
 export interface CreateFormData {
-  form_id: string // Added form_id field for custom IDs
-  form_name: string
-  category: string
-  subcategory: string // Changed from string[] to string to match database schema
-  industry: string
-  tech_stack?: string // Changed from string[] to string to match database schema
-  tools?: string // Changed from string[] to string to match database schema
-  required_fields: string[] // Added required_fields for custom field selection
-  custom_questions: CustomQuestion[] // Added custom_questions for dynamic form fields
-  created_by?: string
-  is_active?: boolean // Added is_active field to control form status
+  form_id: string;
+  form_name: string;
+  form_description?: string | null;
+  industry: string;
+  category: string;
+  subcategory: string;
+  tech_stack?: string[] | null;
+  tools?: string[] | null;
+  required_fields?: string[] | null;
+  custom_questions?: any[] | null;
+  created_by?: string;
+  is_active?: boolean; // Added is_active field to control form status
 }
 
 export interface CreateSubmissionData {
