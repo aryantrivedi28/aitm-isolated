@@ -44,15 +44,17 @@ export interface CreateFormData {
   form_name: string;
   form_description?: string | null;
   industry: string;
-  category: string;
-  subcategory: string;
+  category: string;        // still required
+  subcategory: string;     // still required
   tech_stack?: string[] | null;
   tools?: string[] | null;
   required_fields?: string[] | null;
   custom_questions?: any[] | null;
   created_by?: string;
-  is_active?: boolean; // Added is_active field to control form status
+  is_active?: boolean;     // Added is_active field to control form status
+  message?: string | null; // 👈 NEW: optional message field
 }
+
 
 export interface CreateSubmissionData {
   form_id?: string // Made optional to support admin direct entries

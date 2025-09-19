@@ -16,7 +16,9 @@ export async function POST(req: Request) {
       industry,
       created_by,
       is_active,
+      message,        // 👈 add this
     } = body;
+
 
 
     // ✅ Validate required fields
@@ -65,6 +67,7 @@ export async function POST(req: Request) {
           form_name,
           form_description: form_description || null,
           industry,
+          message: message || null,
           created_by: created_by || "admin",
           is_active: is_active ?? true,
         },
