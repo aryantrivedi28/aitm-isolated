@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 import './globals.css';
 import Header from '../components/Header';
+import GoogleAnalytics from '../components/GoogleAnalytic';
 
 export const metadata = {
   title: 'Finzie',
@@ -12,7 +13,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode; }) {
   return (
     <html lang="en">
-      <head />
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body>
         <Header />
         <main className="bg-[#241C15]"> {/* Adjust 'pt-16' as per your header height */}
