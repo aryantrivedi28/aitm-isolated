@@ -22,8 +22,6 @@ Return **only valid JSON** (no explanations, no markdown) following this schema 
   "form_name": "Web Developer Requirement",  // short clear name
   "form_description": "Write 2–3 full sentences summarising what this form is for and what the applicant should expect.",
   "industry": "Technology",
-  "category": "Development",
-  "subcategory": "Web Development",
   "message": "Write a friendly marketing-style invitation text (2–3 sentences) encouraging people to fill out this form."
 }
 

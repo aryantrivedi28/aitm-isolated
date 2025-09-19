@@ -13,8 +13,6 @@ export async function POST(req: Request) {
       form_id,
       form_name,
       form_description,
-      category,
-      subcategory,
       industry,
       created_by,
       is_active,
@@ -22,7 +20,7 @@ export async function POST(req: Request) {
 
 
     // ✅ Validate required fields
-    if (!form_id || !form_name || !category || !subcategory || !industry) {
+    if (!form_id || !form_name || !form_description || !industry) {
       return NextResponse.json(
         {
           error:
@@ -66,8 +64,6 @@ export async function POST(req: Request) {
           form_id,
           form_name,
           form_description: form_description || null,
-          category,
-          subcategory,
           industry,
           created_by: created_by || "admin",
           is_active: is_active ?? true,

@@ -417,7 +417,6 @@ export default function AdminPanel() {
   const [availableSubcategories, setAvailableSubcategories] = useState<string[]>([])
   const [availableTechStacks, setAvailableTechStacks] = useState<string[]>([])
   const [availableTools, setAvailableTools] = useState<string[]>([])
-  const [availableCategories, setAvailableCategories] = useState<string[]>([])
 
   // Other options state
   const [showOtherCategory, setShowOtherCategory] = useState(false)
@@ -1249,7 +1248,6 @@ export default function AdminPanel() {
     loadFilteredSubmissions()
   }
 
-  console.log("servciewewe  :", selectedTools)
 
   const handleAgreementAutomation = () => {
     window.location.href = "/admin-panel/agreements"
@@ -1374,7 +1372,7 @@ export default function AdminPanel() {
                 Form Management
               </button>
 
-              <button
+              {/* <button
                 onClick={() => handleNavigation("/admin-form-creation/dashboard")}
                 className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
       ${dashboard === "/admin-form-creation/dashboard"
@@ -1384,7 +1382,7 @@ export default function AdminPanel() {
               >
                 <FileText className="w-5 h-5 shrink-0" />
                 Form Dashboard
-              </button>
+              </button> */}
 
               <button
                 onClick={handleAgreementAutomation}
@@ -2391,7 +2389,7 @@ export default function AdminPanel() {
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-2">
-                          <div className="px-3 py-1 bg-[#FFE01B]/20 text-[#FFE01B] text-xs rounded-full border border-[#FFE01B]/30">
+                          <div className="px-3 py-1 bg-[#FFE01B]/40 text-[#FFE01B] text-xs rounded-full border border-[#FFE01B]/30">
                             {form.submission_count || 0} submissions
                           </div>
                           <div
