@@ -1372,7 +1372,7 @@ export default function AdminPanel() {
                 Form Management
               </button>
 
-              {/* <button
+              <button
                 onClick={() => handleNavigation("/admin-form-creation/dashboard")}
                 className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
       ${dashboard === "/admin-form-creation/dashboard"
@@ -1382,7 +1382,7 @@ export default function AdminPanel() {
               >
                 <FileText className="w-5 h-5 shrink-0" />
                 Form Dashboard
-              </button> */}
+              </button>
 
               <button
                 onClick={handleAgreementAutomation}
