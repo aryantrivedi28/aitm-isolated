@@ -64,9 +64,9 @@ export default function Footer() {
           <ul className="space-y-2 text-sm">
             {[
               { label: "About Us", href: "/about", icon: Info },
-              { label: "Features", href: "/features", icon: ArrowRight },
-              { label: "Pricing", href: "/pricing", icon: FileText },
-              { label: "Contact", href: "/contact", icon: Users },
+              // { label: "Features", href: "/features", icon: ArrowRight },
+              // { label: "Pricing", href: "/pricing", icon: FileText },
+              // { label: "Contact", href: "/contact", icon: Users },
             ].map(({ label, href, icon: Icon }, idx) => (
               <li key={idx}>
                 <a
@@ -84,7 +84,7 @@ export default function Footer() {
         </motion.div>
 
         {/* Resources */}
-        <motion.div
+        {/* <motion.div
           custom={2}
           variants={fadeUp}
           initial="hidden"
@@ -114,7 +114,7 @@ export default function Footer() {
               </li>
             ))}
           </ul>
-        </motion.div>
+        </motion.div> */}
 
         {/* Newsletter */}
         <motion.div
