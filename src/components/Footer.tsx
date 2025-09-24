@@ -143,11 +143,9 @@ export default function Footer() {
               </div> */}
             </div>
             
-            {/* <p className="text-gray-300 text-base leading-relaxed mb-6">
-              Finzie helps you simplify your financial planning with smart
-              analytics and tools. Join thousands of users achieving financial
-              freedom.
-            </p> */}
+            <p className="text-gray-300 text-base leading-relaxed mb-6">
+              Finzie connects you with India's top freelancers & professionals,{" "}pre-vetted, managed, and ready to deliver. Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure{" "}world-class talent with zero hassle.
+            </p>
           </motion.div>
 
           {/* Enhanced Quick Links */}
