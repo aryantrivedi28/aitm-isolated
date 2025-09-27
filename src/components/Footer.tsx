@@ -17,6 +17,7 @@ import {
   Send,
   ExternalLink,
 } from "lucide-react";
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
   // Enhanced stagger animation variants
@@ -25,8 +26,8 @@ export default function Footer() {
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { 
-        duration: 0.8, 
+      transition: {
+        duration: 0.8,
         delay: i * 0.2,
         ease: [0.6, -0.05, 0.01, 0.99]
       },
@@ -44,15 +45,22 @@ export default function Footer() {
     },
   };
 
+
+    const pathname = usePathname() || ''
+    if (pathname.startsWith('/landing')) return null
+     if (pathname.startsWith('/case-studies/') && pathname !== '/case-studies') {
+      return null
+    }
+
   return (
     <footer className="relative overflow-hidden bg-gradient-to-br from-[#241C15] via-[#2A1F17] to-[#1F1811]">
       {/* Enhanced background elements */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Animated gradient overlay */}
         <div className="absolute -inset-1 bg-gradient-to-br from-[#FFE01B]/8 via-transparent to-[#FFE01B]/4 animate-gradient opacity-60" />
-        
+
         {/* Subtle pattern overlay */}
-        <div 
+        <div
           className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `
@@ -70,7 +78,7 @@ export default function Footer() {
           const topPosition = (i * 17.1 + 28.9) % 100;
           const duration = 4 + ((i * 13) % 40) / 10; // 4-7.9 seconds
           const delay = (i * 7) % 20 / 10; // 0-1.9 seconds
-          
+
           return (
             <motion.div
               key={i}
@@ -121,7 +129,7 @@ export default function Footer() {
             className="md:col-span-1"
           >
             <div className="mb-6">
-              <motion.h2 
+              <motion.h2
                 className="text-4xl font-black mb-2 text-white"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
@@ -142,7 +150,7 @@ export default function Footer() {
                 <span className="text-[#FFE01B] text-sm font-semibold ml-2">5.0</span>
               </div> */}
             </div>
-            
+
             <p className="text-gray-300 text-base leading-relaxed mb-6">
               Finzie connects you with India's top freelancers & professionals,{" "}pre-vetted, managed, and ready to deliver. Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure{" "}world-class talent with zero hassle.
             </p>
@@ -166,7 +174,7 @@ export default function Footer() {
                 // { label: "Pricing", href: "/pricing", icon: FileText },
                 // { label: "Contact", href: "/contact", icon: Users },
               ].map(({ label, href, icon: Icon }, idx) => (
-                <motion.li 
+                <motion.li
                   key={idx}
                   whileHover={{ x: 5 }}
                   transition={{ type: "spring", stiffness: 300 }}
@@ -240,13 +248,13 @@ export default function Footer() {
               </div>
               Stay Updated
             </h3>
-            
+
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-[#FFE01B]/30 transition-all duration-500">
               <p className="text-gray-300 text-base mb-6 leading-relaxed">
                 Subscribe to our newsletter for the latest updates, tips, and exclusive insights to accelerate your financial journey.
               </p>
-              
-              <motion.form 
+
+              <motion.form
                 className="space-y-4"
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
@@ -261,7 +269,7 @@ export default function Footer() {
                     <Send size={18} className="text-gray-400" />
                   </div>
                 </div>
-                
+
                 <motion.button
                   type="submit"
                   className="group relative w-full bg-gradient-to-r from-[#FFE01B] to-[#FFF045] text-[#241C15] px-6 py-4 rounded-xl font-bold text-base hover:shadow-lg hover:shadow-[#FFE01B]/25 transition-all duration-300 overflow-hidden"
@@ -294,32 +302,36 @@ export default function Footer() {
               <p className="text-base">
                 © {new Date().getFullYear()} Finzie. All rights reserved.
               </p>
-              
+
             </div>
-            
+
             <div className="flex items-center gap-4">
               <span className="text-gray-400 text-sm font-medium">Follow us:</span>
               <div className="flex space-x-3">
                 {[
-                  { Icon: Facebook, label: "Facebook" },
-                  { Icon: Twitter, label: "Twitter" },
-                  { Icon: Linkedin, label: "LinkedIn" },
-                  { Icon: Instagram, label: "Instagram" },
-                ].map(({ Icon, label }, idx) => (
+                  // { Icon: Facebook, label: "Facebook", link: "#" },
+                  { Icon: Twitter, label: "Twitter", link: "https://x.com/getfinzie" },
+                  { Icon: Linkedin, label: "LinkedIn", link: "https://www.linkedin.com/company/finzieai" },
+                  // { Icon: Instagram, label: "Instagram", link: "#" },
+                ].map(({ Icon, label, link }, idx) => (
                   <motion.a
                     key={idx}
-                    href="#"
+                    href={link}
                     aria-label={label}
                     className="group relative p-3 rounded-xl bg-white/5 hover:bg-[#FFE01B]/20 transition-all duration-300 border border-white/10 hover:border-[#FFE01B]/30"
                     whileHover={{ y: -2, scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <div className="absolute inset-0 bg-[#FFE01B]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <Icon size={20} className="text-white group-hover:text-[#FFE01B] transition-colors duration-300 relative z-10" />
+                    <Icon
+                      size={20}
+                      className="text-white group-hover:text-[#FFE01B] transition-colors duration-300 relative z-10"
+                    />
                   </motion.a>
                 ))}
               </div>
             </div>
+
           </div>
         </div>
       </motion.div>
