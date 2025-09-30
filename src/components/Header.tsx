@@ -1,117 +1,182 @@
 "use client"
-import { usePathname, useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
+import { useRouter } from "next/navigation";
+
 
 export default function Header() {
-  const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+  const router = useRouter();
 
 
-  const pathname = usePathname() || ''
-  if (pathname.startsWith('/landing')) return null
-   if (pathname.startsWith('/case-studies/') && pathname !== '/case-studies') {
-    return null
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+
+      // Show/hide based on scroll direction
+      if (currentScrollY > lastScrollY) {
+        setIsVisible(false) // Scrolling down
+      } else {
+        setIsVisible(true) // Scrolling up
+      }
+
+      // Change background when scrolled
+      setIsScrolled(currentScrollY > 50)
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
-  const handleNavigation = (path: string) => {
-    router.push(path)
+  interface NavigationHandler {
+    (path: string): void
+  }
+
+  const handleNavigation: NavigationHandler = (path: string): void => {
+    console.log('Navigate to:', path)
+    router.push(path);
     setIsMobileMenuOpen(false)
   }
 
   return (
-    <div className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] sm:w-[90%] max-w-7xl bg-white backdrop-blur-md border border-white/20 shadow-lg shadow-black/20 rounded-lg z-50">
+    <>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        .header-section * {
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+      `}</style>
 
-      {/* Glass effect overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5 pointer-events-none"></div>
+      <div
+        className={`header-section fixed top-0 left-0 right-0 z-50 transition-all duration-100 ${isVisible ? 'translate-y-0' : '-translate-y-32'
+          }`}
+      >
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-[1400px]">
+          <div
+            className={`mt-4 sm:mt-6 rounded-2xl transition-all duration-300`}
+          >
+            {/* Main Header */}
+            <div className="relative flex justify-between items-center px-1 sm:px-6 lg:px-8 py-4">
 
-      {/* Main Header */}
-      <div className="relative flex justify-between items-center px-4 sm:px-6 lg:px-8 py-3">
-        {/* Logo */}
-        <div
-          className="flex items-center cursor-pointer space-x-2 sm:space-x-3 hover:opacity-80 transition-all duration-300 group"
-          onClick={() => handleNavigation("/")}
-        >
-          <div className="relative">
-            <img
-              src="/finzie-logo.png"
-              alt="Finzie Logo"
-              width={50}
-              height={50}
-              className="rounded-lg w-15 h-15 group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-white/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-          <span className="font-bold text-lg sm:text-xl text-black hidden xs:block">Finzie</span>
-        </div>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-8">
-          {["Home", "About Us", "Case Studies", "Find Talent", "Get Hired"].map((item, idx) => (
-            <a
-              key={idx}
-              onClick={() =>
-                handleNavigation(
-                  item === "Home"
-                    ? "/"
-                    : "/" + item.toLowerCase().replace(/\s+/g, "-")
-                )
-              }
-              className="text-black/90 hover:text-[#FFE01B] font-medium cursor-pointer transition-all duration-300 relative group text-lg px-3 py-2 rounded-lg hover:bg-white/5"
-            >
-              {item}
-              <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-[#FFE01B] transition-all duration-300 group-hover:w-[calc(100%-24px)]"></span>
-            </a>
-          ))}
-        </nav>
-
-        {/* Mobile Menu Button */}
-        <button
-          onClick={toggleMobileMenu}
-          className="lg:hidden p-3 rounded-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm border border-white/10"
-          aria-label="Toggle mobile menu"
-        >
-          {isMobileMenuOpen ? (
-            <X className="w-6 h-6 text-[#FFE01B]" />
-          ) : (
-            <Menu className="w-6 h-6 text-white" />
-          )}
-        </button>
-      </div>
-
-      {/* Mobile Navigation Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 bg-white backdrop-blur-xl border-t border-white/10 shadow-2xl shadow-black/20 rounded-b-3xl">
-          {/* Glass effect overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/5 to-transparent pointer-events-none"></div>
-
-          <nav className="relative px-6 py-6 space-y-2">
-            {["About Us", "Case Studies", "Find Talent", "Get Hired"].map((item, idx) => (
-              <a
-                key={idx}
-                onClick={() =>
-                  handleNavigation("/" + item.toLowerCase().replace(/\s+/g, "-"))
-                }
-                className="block text-black/90 hover:text-[#FFE01B] hover:bg-white/10 font-semibold py-3 px-4 cursor-pointer transition-all duration-300 rounded-lg backdrop-blur-sm border border-transparent hover:border-white/10"
+              {/* Logo */}
+              <div
+                className="flex items-center cursor-pointer hover:opacity-80 transition-opacity duration-300 group"
+                onClick={() => handleNavigation("/")}
               >
-                {item}
-              </a>
-            ))}
-          </nav>
-        </div>
-      )}
+                <div className="relative">
+                  <img
+                    src="/finzie-logo2.png"
+                    alt="Finzie Logo"
+                    width={60}
+                    height={60}
+                    className="rounded-lg w-14 h-14 sm:w-13 sm:h-13 group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <span
+                  className="font-bold text-[#241C15]"
+                  style={{ fontSize: '1.25rem', letterSpacing: '-0.01em' }}
+                >
+                  Finzie
+                </span>
 
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div
-          className="md:hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-          onClick={() => setIsMobileMenuOpen(false)}
-        />
-      )}
-    </div>
+              </div>
+
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center space-x-1 text-end">
+                {["Home", "About Us", "Case Studies", "Find Talent", "Get Hired"].map((item, idx) => (
+                  <a
+                    key={idx}
+                    onClick={() =>
+                      handleNavigation(
+                        item === "Home"
+                          ? "/"
+                          : "/" + item.toLowerCase().replace(/\s+/g, "-")
+                      )
+                    }
+                    className="text-[#241C15]/80 hover:text-[#241C15] font-medium cursor-pointer transition-all duration-200 relative group px-4 py-2.5 rounded-sm hover:bg-[#FFE01B]/70"
+                    style={{ fontSize: '1rem', fontWeight: '600' }}
+                  >
+                    {item}
+                    <span className="absolute bottom-1 left-4 w-0 h-[2px] bg-[#241C15]/50 transition-all duration-300 group-hover:w-[calc(100%-32px)]"></span>
+                  </a>
+                ))}
+              </nav>
+
+              {/* CTA Button - Desktop */}
+              {/* <button
+                onClick={() => handleNavigation("/contact")}
+                className="hidden lg:flex items-center bg-[#FFE01B] hover:bg-[#FCD34D] text-[#241C15] font-semibold px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-md"
+                style={{ fontSize: '0.9375rem', fontWeight: '600' }}
+              >
+                Get Started
+              </button> */}
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={toggleMobileMenu}
+                className="lg:hidden p-2.5 rounded-xl hover:bg-[#fbf5e5]/10 transition-all duration-300 border border-[#241C15]/10"
+                aria-label="Toggle mobile menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-5 h-5 text-[#241C15]" />
+                ) : (
+                  <Menu className="w-5 h-5 text-[#241C15]" />
+                )}
+              </button>
+            </div>
+
+            {/* Mobile Navigation Menu */}
+            {isMobileMenuOpen && (
+              <div className="lg:hidden border-t border-[#241C15]/10 bg-white/95 backdrop-blur-xl rounded-b-2xl mb-2">
+                <nav className="px-2 py-4 space-y-1">
+                  {["Home", "About Us", "Case Studies", "Find Talent", "Get Hired"].map((item, idx) => (
+                    <a
+                      key={idx}
+                      onClick={() =>
+                        handleNavigation(
+                          item === "Home"
+                            ? "/"
+                            : "/" + item.toLowerCase().replace(/\s+/g, "-")
+                        )
+                      }
+                      className="block text-[#241C15]/80 hover:text-[#241C15] hover:bg-[#fbf5e5] font-medium py-3 px-2 cursor-pointer transition-all duration-200 rounded-lg"
+                      style={{ fontSize: '0.9375rem', fontWeight: '500' }}
+                    >
+                      {item}
+                    </a>
+                  ))}
+
+                  {/* CTA Button - Mobile */}
+                  {/* <button
+                    onClick={() => handleNavigation("/contact")}
+                    className="w-full mt-3 bg-[#FFE01B] hover:bg-[#FCD34D] text-[#241C15] font-semibold py-3 px-4 rounded-lg transition-all duration-300"
+                    style={{ fontSize: '0.9375rem', fontWeight: '600' }}
+                  >
+                    Get Started
+                  </button> */}
+                </nav>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-[#fbf5e5] backdrop-blur-sm -z-10"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </div>
+    </>
   )
 }

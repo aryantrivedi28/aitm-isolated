@@ -3,6 +3,7 @@ import './globals.css';
 import Header from '../components/Header';
 import GoogleAnalytics from '../components/GoogleAnalytic';
 import Footer from '../components/Footer';
+import PageTransition from '../components/PageTransition';
 
 export const metadata = {
   title: 'Finzie',
@@ -19,9 +20,11 @@ export default function RootLayout({ children }: { children: React.ReactNode; })
       </head>
       <body>
         <Header />
-        <main className="bg-[#241C15]"> {/* Adjust 'pt-16' as per your header height */}
-          {children}
-        </main>
+        <PageTransition>
+          <main className="bg-[#fbf5e5]"> {/* Adjust 'pt-16' as per your header height */}
+            {children}
+          </main>
+        </PageTransition>
         <Footer />
       </body>
     </html>

@@ -1,142 +1,165 @@
 'use client';
 
-import Link from 'next/link';
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Play, Star } from "lucide-react";
+import { ArrowRight, Sparkles, Play } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const Hero = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [scrollY, setScrollY] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Mouse tracking for gradient
   useEffect(() => {
     setIsLoaded(true);
-    let frame: number;
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (frame) cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        setMousePosition({ x: e.clientX, y: e.clientY });
-      });
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (frame) cancelAnimationFrame(frame);
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-[#241C15] pt-[150px] sm:pt-[200px] lg:pt-[240px]">
-      {/* Light Radial Gradient Mouse Follower */}
-      <div
-        className="absolute inset-0 z-0 opacity-20 pointer-events-none transition-all duration-300"
-        style={{
-          background: `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,224,27,0.15), transparent 50%)`
-        }}
-      />
+    <>
+      <style jsx global>{`
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-      {/* Minimal Blobs */}
-      <div className="absolute top-1/4 left-1/4 w-24 sm:w-32 h-24 sm:h-32 bg-[#FFE01B]/20 rounded-full blur-2xl animate-blob-slow" />
-      <div className="absolute bottom-1/4 right-1/4 w-32 sm:w-48 h-32 sm:h-48 bg-[#FFE01B]/20 rounded-full blur-2xl animate-blob-fast" />
+  .hero-section * {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
 
-      {/* Grid Background */}
-      <div className="absolute inset-0 z-0 opacity-10 bg-grid" />
+  /* tracking-in-expand from Animista */
+  @keyframes tracking-in-expand {
+    0% {
+      letter-spacing: -0.5em;
+      opacity: 0;
+    }
+    40% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  .tracking-in-expand {
+    animation: tracking-in-expand 0.7s cubic-bezier(0.215,0.610,0.355,1.000) both;
+  }
 
-      {/* Main Content */}
-      <div className="relative z-10 flex items-center justify-center">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-7xl">
-          <div className="text-center md:text-left max-w-3xl sm:max-w-4xl md:max-w-5xl mx-auto md:mx-0 pb-12 sm:pb-16">
+  /* existing bounce animation */
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0) translateX(-50%); }
+    50% { transform: translateY(-8px) translateX(-50%); }
+  }
+  .animate-bounce-slow {
+    animation: bounce-slow 2.5s ease-in-out infinite;
+  }
+`}</style>
 
-            {/* Badge */}
+
+      <section className="hero-section relative overflow-hidden bg-[#fbf5e5] min-h-screen flex items-center pt-16">
+
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#fbf5e5]/50 via-[#fbf5e5] to-[#fbf5e5]" />
+
+        {/* Minimal accent element */}
+        <div
+          className="absolute top-[15%] right-[8%] w-[400px] h-[400px] bg-[#FFE01B]/6 rounded-full blur-[120px] pointer-events-none"
+          style={{ transform: `translateY(${scrollY * 0.2}px)` }}
+        />
+
+        <div
+          className="absolute bottom-[20%] left-[10%] w-[350px] h-[350px] bg-[#FCD34D]/5 rounded-full blur-[100px] pointer-events-none"
+          style={{ transform: `translateY(${-scrollY * 0.15}px)` }}
+        />
+
+        {/* Main Content */}
+        <div className="relative z-10 w-full">
+          <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1320px] py-16 sm:py-20 lg:py-24">
+
+            {/* Small Badge */}
             <div
-              className={`flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3 backdrop-blur-xl w-fit bg-white/10 border border-[#D1D5DB]/20 px-3 sm:px-5 py-2 sm:py-3 rounded-full shadow-lg transition-transform duration-500 hover:scale-105 mx-auto md:mx-0 mb-6 sm:mb-8 ${isLoaded ? 'animate-slideUp' : 'opacity-0 translate-y-10'}`}
+              className={`inline-flex items-center gap-2.5 bg-[#241C15] px-5 py-2.5 rounded-full mb-10 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
             >
-              {/* Left Icon */}
-              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#FFE01B] animate-pulse flex-shrink-0" />
-
-              {/* Text */}
-              <span
-                className="text-[#FFE01B] font-bold text-sm sm:text-base md:text-lg bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent text-center"
-              >
-                India's Premier Talent Platform
+              <Sparkles className="w-4 h-4 text-[#FFE01B]" />
+              <span className="text-[#fbf5e5] text-sm font-medium tracking-wide" style={{ letterSpacing: '0.05em' }}>
+                INDIA'S PREMIER TALENT PLATFORM
               </span>
-
-              {/* Right Icon */}
-              <Star
-                className="w-3 h-3 sm:w-4 sm:h-4 text-[#FFE01B] animate-spin flex-shrink-0"
-                style={{ animationDuration: '3s' }}
-              />
             </div>
 
-
             {/* Headline */}
-            <h1 className={`font-black leading-tight mb-6 text-white transition-all duration-700 break-words ${isLoaded ? 'animate-slideUp' : 'opacity-0 translate-y-10'}`}
-              style={{ fontSize: 'clamp(1.8rem, 6vw, 4.2rem)', textShadow: '0 0 25px rgba(255,224,27,0.4)' }}>
-              <span className="inline-block bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent animate-gradient">
-                Tier-One
-              </span>{" "}
-              Indian Talent <br className="hidden sm:block" />
-              <span className="text-[#f9fafb]">for </span>
-              <span className="inline-block bg-gradient-to-r from-[#FCD34D] to-[#FFE01B] bg-clip-text text-transparent animate-gradient">
-                Global
-              </span>{" "}
-              <span className="text-[#f5f6f7]">Companies</span>
+            <h1
+              className={`tracking-in-expand font-bold leading-[1.1] mb-8 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                }`}
+              style={{
+                fontSize: 'clamp(2.25rem, 5.5vw, 4.5rem)',
+                letterSpacing: '-0.025em',
+                maxWidth: '950px',
+                fontWeight: '700'
+              }}
+            >
+              <span className="block text-[#241C15] mb-1">
+                Tier-One Indian Talent
+              </span>
+              <span className="block text-[#241C15]">
+                for{" "}
+                <span className="inline-block relative">
+                  <span className="relative z-10">Global Companies</span>
+                  <span className="absolute bottom-[0.12em] left-0 w-full h-[0.1em] bg-[#FFE01B] -z-10 opacity-30"></span>
+                </span>
+              </span>
             </h1>
 
-            {/* Description */}
-            <p className={`text-[#D1D5DB] text-sm sm:text-base md:text-lg max-w-2xl sm:max-w-3xl md:max-w-4xl leading-relaxed mb-8 mx-auto md:mx-0 ${isLoaded ? 'animate-slideUp' : 'opacity-0 translate-y-10'}`}>
-              Finzie connects you with India's top freelancers & professionals,{" "}
-              <span className="font-bold text-[#FFE01B] bg-clip-text text-transparent bg-gradient-to-r from-[#FFE01B] to-[#FCD34D]">
-                pre-vetted, managed, and ready to deliver.
-              </span>{" "}
-              Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure{" "}
-              <span className="font-bold text-[#FFE01B]">world-class talent with zero hassle.</span>
+
+            {/* Subheading */}
+            <p
+              className={`text-[#241C15] leading-relaxed mb-6 transition-all duration-700 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+              style={{
+                fontSize: 'clamp(1.125rem, 1.75vw, 1.375rem)',
+                maxWidth: '720px',
+                fontWeight: '600',
+                opacity: '0.9'
+              }}
+            >
+              Finzie connects you with India's top freelancers & professionals—pre-vetted, managed, and ready to deliver.
+            </p>
+
+            {/* Secondary Description */}
+            <p
+              className={`text-[#241C15]/65 leading-relaxed mb-12 transition-all duration-700 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+              style={{
+                fontSize: 'clamp(1rem, 1.25vw, 1.125rem)',
+                maxWidth: '680px',
+                fontWeight: '400',
+                lineHeight: '1.7'
+              }}
+            >
+              Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure world-class talent with zero hassle.
             </p>
 
             {/* CTA Buttons */}
-            <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center md:justify-start items-center ${isLoaded ? 'animate-slideUp' : 'opacity-0 translate-y-10'}`}>
-              <Link href="/find-talent" className="w-full sm:w-auto">
-                <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black text-base sm:text-lg font-bold px-5 sm:px-6 py-4 sm:py-6 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
-                  Hiring for the talent <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-                </Button>
-              </Link>
-              <Link href="/all-freelancer" className="w-full sm:w-auto">
-                <Button className="bg-white/10 hover:bg-white/20 text-white text-base sm:text-lg border border-[#D1D5DB]/50 hover:border-[#FFE01B] font-semibold px-5 sm:px-7 py-4 sm:py-6 rounded-xl shadow-md hover:scale-105 transition-transform duration-300 w-full sm:w-auto flex items-center justify-center">
-                  <Play className="mr-2 w-4 h-4 sm:w-5 sm:h-5" /> Get Hired as Freelancer
-                </Button>
-              </Link>
+            <div
+              className={`flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-[400ms] ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+            >
+              <button
+                className="group bg-[#FFE01B] hover:bg-[#FCD34D] text-[#241C15] font-semibold px-7 py-4 rounded-lg transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start shadow-md hover:shadow-lg"
+                style={{ fontSize: '1.0625rem', fontWeight: '600' }}
+              >
+                Hire Top Talent
+                <ArrowRight className="ml-2.5 w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </button>
+
+              <button
+                className="group bg-transparent hover:bg-[#241C15] text-[#241C15] hover:text-[#fbf5e5] font-semibold px-7 py-4 rounded-lg border-2 border-[#241C15] transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start"
+                style={{ fontSize: '1.0625rem', fontWeight: '600' }}
+              >
+                <Play className="mr-2.5 w-4 h-4 fill-current" />
+                Join as Freelancer
+              </button>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Animations */}
-      <style jsx>{`
-        .animate-slideUp { animation: slideUp 0.8s ease-out forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-        .animate-gradient { background-size: 300% 300%; animation: gradient 3s ease infinite; }
-        @keyframes gradient { 0%,100% { background-position:0% 50%; } 50% { background-position:100% 50%; } }
-
-        @keyframes blob-slow { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(15px,-15px) scale(1.05); } }
-        .animate-blob-slow { animation: blob-slow 20s ease-in-out infinite; }
-
-        @keyframes blob-fast { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-15px,10px) scale(0.95); } }
-        .animate-blob-fast { animation: blob-fast 15s ease-in-out infinite; }
-
-        .bg-grid {
-          background-image: linear-gradient(rgba(255,224,27,0.1) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(255,224,27,0.1) 1px, transparent 1px);
-          background-size: 60px 60px;
-          animation: grid-fade 5s ease-in-out infinite;
-        }
-
-        @keyframes grid-fade { 0%,100% { opacity:0.1; } 50% { opacity:0.2; } }
-      `}</style>
-    </section>
+      </section>
+    </>
   );
 };
 
