@@ -102,8 +102,8 @@ export default function Footer() {
       </div>
 
       {/* Top Section */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
-        <div className="flex justify-between items-start md:items-center mb-12">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
+        <div className="flex justify-between items-start md:items-center mb-8">
           <h2 className={`text-4xl font-black ${colors.text}`}>Finzie</h2>
           <button
             onClick={toggleTheme}

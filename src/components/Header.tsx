@@ -1,36 +1,52 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Menu, X } from "lucide-react"
 import { useRouter } from "next/navigation";
 
-
+const HIDE_SCROLL_OFFSET = 100;   // only hide after this y
+const SHOW_REVERSE_DELTA = 300;   // must scroll up this much from last hide to show
+const TOP_SHOW_OFFSET = 10;
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const router = useRouter();
+  const lastScrollYRef = useRef(0);
+  const lastHideYRef = useRef(0);
+  const isVisibleRef = useRef(true); // mirror of state to avoid flicker
 
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
 
-      // Show/hide based on scroll direction
-      if (currentScrollY > lastScrollY) {
-        setIsVisible(false) // Scrolling down
-      } else {
-        setIsVisible(true) // Scrolling up
+useEffect(() => {
+  let lastScrollY = window.scrollY;
+  let lastHideY = 0;
+
+  const handleScroll = () => {
+    const y = window.scrollY;
+
+    // Scrolling down
+    if (y > lastScrollY) {
+      if (y > 100 && isVisible) {
+        setIsVisible(false);
+        lastHideY = y; // mark where it hid
       }
-
-      // Change background when scrolled
-      setIsScrolled(currentScrollY > 50)
-      setLastScrollY(currentScrollY)
+    }
+    // Scrolling up
+    else {
+      const reversed = lastHideY - y;
+      if ((y < 50 || reversed > 250) && !isVisible) {
+        setIsVisible(true);
+      }
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+    setIsScrolled(y > 50);
+    lastScrollY = y;
+  };
+
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  return () => window.removeEventListener("scroll", handleScroll);
+}, [isVisible]);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -57,9 +73,10 @@ export default function Header() {
       `}</style>
 
       <div
-        className={`header-section fixed top-0 left-0 right-0 z-50 transition-all duration-100 ${isVisible ? 'translate-y-0' : '-translate-y-32'
+        className={`header-section fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-32"
           }`}
       >
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-[1400px]">
           <div
             className={`mt-4 sm:mt-6 rounded-2xl transition-all duration-300`}
