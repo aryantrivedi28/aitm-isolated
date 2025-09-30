@@ -197,24 +197,6 @@ const services = [
   });
 
 
-//   const filteredCaseStudies = caseStudies.filter(study => {
-//   const matchesIndustry = selectedIndustry
-//     ? study.tags?.includes(selectedIndustry) || study.title.includes(selectedIndustry) || study.description.includes(selectedIndustry)
-//     : true;
-
-//   const matchesService = selectedService
-//     ? study.tags?.includes(selectedService) || study.title.includes(selectedService) || study.description.includes(selectedService)
-//     : true;
-
-//   const matchesSearch = searchTerm
-//     ? study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-//       study.description.toLowerCase().includes(searchTerm.toLowerCase())
-//     : true;
-
-//   return matchesIndustry && matchesService && matchesSearch;
-// });
-
-
 useEffect(() => {
   async function fetchCaseStudies() {
     try {
@@ -248,27 +230,6 @@ useEffect(() => {
   fetchCaseStudies()
 }, [])
 
-
-  // const filteredStudies = caseStudies.filter((study) => {
-  //   const matchesSearch =
-  //     study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     study.description.toLowerCase().includes(searchTerm.toLowerCase())
-  //   const matchesCategory =
-  //     selectedCategory === "All" ||
-  //     (study.tags && study.tags.some((tag) => tag.toLowerCase().includes(selectedCategory.toLowerCase())))
-  //   return matchesSearch && matchesCategory
-  // })
-
-  // const filteredStudies = caseStudies.filter((study) => {
-  //   const matchesSearch =
-  //     study.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     study.description.toLowerCase().includes(searchTerm.toLowerCase())
-  //   const matchesCategory =
-  //     selectedCategory === "All" ||
-  //     (study.tags && study.tags.some((tag) => tag.toLowerCase().includes(selectedCategory.toLowerCase())))
-  //   return matchesSearch && matchesCategory
-  // })
-
   if (loading) {
     return (
       <div className="min-h-screen bg-[#241C15] flex items-center justify-center">
@@ -283,7 +244,7 @@ useEffect(() => {
 
   if (!caseStudies || caseStudies.length === 0) {
     return (
-      <div className="min-h-screen bg-[#241C15] text-white overflow-hidden ">
+      <div className="min-h-screen bg-[#fbf5e5] text-white overflow-hidden ">
         {/* Animated Background Elements */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <motion.div
@@ -326,7 +287,7 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-[#241C15] text-white overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
+    <div className="min-h-screen bg-[#fbf5e5] text-white overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -366,8 +327,6 @@ useEffect(() => {
 
       {/* Hero Section */}
       <section className="relative py-28 px-4">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#241C15] via-[#2a1f16] to-[#241C15]" />
-
         <motion.div
           className="relative max-w-6xl mx-auto"
           initial="hidden"
@@ -377,100 +336,42 @@ useEffect(() => {
           <div className="text-center space-y-8">
             <motion.div
               className="flex items-center justify-center gap-3 mb-6"
-              initial="hidden"
-              animate="visible"
               variants={fadeUp}
             >
-              <motion.div
-                className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
-                whileHover={{ scale: 1.1, rotate: 10 }}
-              >
+              <div className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30">
                 <Sparkles className="w-6 h-6 text-[#FFE01B]" />
-              </motion.div>
-              <span className="text-[#FFE01B] font-semibold text-lg">Portfolio</span>
+              </div>
+              <span className="text-[#241C15] font-semibold text-lg">Portfolio</span>
             </motion.div>
 
             <motion.h1
-              initial="hidden"
-              animate="visible"
               variants={fadeUp}
               className="text-5xl lg:text-7xl font-bold leading-tight"
             >
-              <span className="bg-gradient-to-r from-white to-[#FFE01B] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-yellow-400 to-[#FFE01B] bg-clip-text text-transparent">
                 Case Studies
               </span>
             </motion.h1>
 
             <motion.p
-              initial="hidden"
-              animate="visible"
               variants={fadeUp}
-              className="text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
+              className="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
             >
-              Discover how Finzie transforms startups through design, engineering, and rapid iteration with real client
-              stories.
+              Discover how Finzie transforms startups through design, engineering, and real client stories.
             </motion.p>
-
-            {/* Stats */}
-            {/* <motion.div
-              className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto mt-12"
-              initial="hidden"
-              animate="visible"
-              variants={staggerContainer}
-            >
-              <motion.div
-                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-                initial="hidden"
-                animate="visible"
-                variants={scaleIn}
-              >
-                <div className="flex items-center justify-center mb-3">
-                  <TrendingUp className="w-8 h-8 text-[#FFE01B]" />
-                </div>
-                <h3 className="text-2xl font-bold text-white">{caseStudies.length}+</h3>
-                <p className="text-gray-400 text-sm">Success Stories</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-                initial="hidden"
-                animate="visible"
-                variants={scaleIn}
-              >
-                <div className="flex items-center justify-center mb-3">
-                  <Users className="w-8 h-8 text-[#FFE01B]" />
-                </div>
-                <h3 className="text-2xl font-bold text-white">50+</h3>
-                <p className="text-gray-400 text-sm">Happy Clients</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
-                initial="hidden"
-                animate="visible"
-                variants={scaleIn}
-              >
-                <div className="flex items-center justify-center mb-3">
-                  <Target className="w-8 h-8 text-[#FFE01B]" />
-                </div>
-                <h3 className="text-2xl font-bold text-white">95%</h3>
-                <p className="text-gray-400 text-sm">Success Rate</p>
-              </motion.div>
-            </motion.div> */}
           </div>
         </motion.div>
       </section>
 
       {/* Search and Filter Section */}
       <section className="relative py-12 px-4">
-        <div className="max-w-6xl mx-auto bg-white/15 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-          {/* Dropdown Filters */}
+        <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-3xl p-8 border border-gray-200">
           <div className="grid grid-cols-2 gap-6">
             {/* Industry Dropdown */}
             <select
               value={selectedIndustry || ""}
               onChange={(e) => setSelectedIndustry(e.target.value || null)}
-              className="px-4 py-2 rounded-xl bg-white/10 text-gray-900 border border-white/20 focus:outline-none focus:border-[#FFE01B]"
+              className="px-4 py-2 rounded-xl bg-gray-50 text-gray-800 border border-gray-300 focus:outline-none focus:border-[#FFE01B]"
             >
               <option value="">Industries</option>
               {industries.map(industry => (
@@ -482,7 +383,7 @@ useEffect(() => {
             <select
               value={selectedService || ""}
               onChange={(e) => setSelectedService(e.target.value || null)}
-              className="px-4 py-2 rounded-xl bg-white/10 text-gray-900 border border-white/20 focus:outline-none focus:border-[#FFE01B]"
+              className="px-4 py-2 rounded-xl bg-gray-50 text-gray-800 border border-gray-300 focus:outline-none focus:border-[#FFE01B]"
             >
               <option value="">Services</option>
               {services.map(service => (
@@ -570,14 +471,6 @@ useEffect(() => {
 
                   {/* Content */}
                   <div className="relative p-6 space-y-4">
-                    {/* <div className="flex items-center gap-2 text-sm text-gray-900">
-                      <Calendar className="w-4 h-4" />
-                      {new Date(study._createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </div> */}
 
                     <h2 className="text-xl font-bold text-black group-hover:text-[#FFE01B] transition-colors duration-300 line-clamp-2">
                       {study.title}

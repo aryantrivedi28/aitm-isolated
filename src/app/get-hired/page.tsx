@@ -4,7 +4,8 @@ import { motion } from "framer-motion"
 import {
   Calendar, ExternalLink, CheckCircle, XCircle,
   ClipboardList, Layers, Briefcase, Grid,
-  Search, Filter, Users, BarChart3
+  Search, Filter, Users, BarChart3,
+  Rocket, Target, Zap, Star, ArrowRight
 } from "lucide-react"
 
 type Form = {
@@ -21,58 +22,6 @@ type Form = {
   required_fields?: string[]
   custom_questions?: any[]
 }
-
-// Mock data for demonstration
-const mockForms: Form[] = [
-  {
-    id: "1",
-    form_id: "form_001",
-    form_name: "Frontend Developer Application",
-    category: "Technology",
-    subcategory: "Web Development",
-    industry: "Tech",
-    created_at: "2023-10-15T12:00:00Z",
-    is_active: true,
-    tech_stack: "React, TypeScript, Next.js",
-    required_fields: ["name", "email", "portfolio", "experience"]
-  },
-  {
-    id: "2",
-    form_id: "form_002",
-    form_name: "UX Designer Questionnaire",
-    category: "Design",
-    subcategory: "User Experience",
-    industry: "Tech",
-    created_at: "2023-09-22T09:30:00Z",
-    is_active: true,
-    tools: "Figma, Sketch, Adobe XD",
-    required_fields: ["name", "email", "portfolio", "case_studies"]
-  },
-  {
-    id: "3",
-    form_id: "form_003",
-    form_name: "Data Scientist Assessment",
-    category: "Data",
-    subcategory: "Machine Learning",
-    industry: "Finance",
-    created_at: "2023-11-05T14:15:00Z",
-    is_active: false,
-    tech_stack: "Python, R, SQL, TensorFlow",
-    required_fields: ["name", "email", "github", "publications"]
-  },
-  {
-    id: "4",
-    form_id: "form_004",
-    form_name: "DevOps Engineer Application",
-    category: "Technology",
-    subcategory: "Infrastructure",
-    industry: "Tech",
-    created_at: "2023-10-28T16:45:00Z",
-    is_active: true,
-    tech_stack: "AWS, Docker, Kubernetes, Terraform",
-    required_fields: ["name", "email", "certifications", "experience"]
-  }
-];
 
 export default function GetHiredPage() {
   const [forms, setForms] = useState<Form[]>([])
@@ -98,9 +47,6 @@ export default function GetHiredPage() {
         }
       } catch (err) {
         console.error("Failed to load forms from API, using mock data:", err)
-        // Use mock data as fallback
-        setForms(mockForms)
-        setFilteredForms(mockForms)
       } finally {
         setIsLoading(false)
       }
@@ -139,8 +85,8 @@ export default function GetHiredPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#241C15] text-white overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
-      {/* Navigation */}
+    <div className="min-h-screen bg-[#fbf5e5] text-[#241C15] overflow-hidden pt-[100px] sm:pt-[120px] lg:pt-[120px]">
+      {/* Navigation - commented but kept as is */}
       {/* <nav className="border-b border-gray-700 bg-[#241C15]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -165,43 +111,80 @@ export default function GetHiredPage() {
       </nav> */}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Enhanced Hero Section */}
+        <section className="text-center mb-12 relative overflow-hidden">
+          {/* Background Elements */}
+          <div className="absolute top-0 left-1/4 w-72 h-72 bg-[#FFE01B] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute top-0 right-1/4 w-72 h-72 bg-[#FFE01B] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-[#FFE01B] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+          
+          <div className="relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 mb-6 border border-[#FFE01B] shadow-lg"
+            >
+              <Rocket className="h-5 w-5 text-[#241C15]" />
+              <span className="text-sm font-medium text-[#241C15]">Discover Your Next Career Move</span>
+              <ArrowRight className="h-4 w-4 text-[#241C15]" />
+            </motion.div>
 
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#241C15] mb-4"
+            >
+              Available Opportunities
+            </motion.h1>
 
-        {/* Header Section */}
-        <section className="text-center mb-8">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-3xl font-bold tracking-tight sm:text-4xl text-[#FFE01B]"
-          >
-            Available Opportunities
-          </motion.h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              className="text-xl text-[#241C15] max-w-3xl mx-auto mb-8 leading-relaxed"
+            >
+              Connect with top companies and discover opportunities that match your skills and ambitions
+            </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="mt-2 text-gray-300 sm:text-lg max-w-3xl mx-auto"
-          >
-            Apply to vetted opportunities and land your next role
-          </motion.p>
+            {/* Feature Icons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="flex flex-wrap justify-center gap-8 mt-12"
+            >
+              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg border border-[#FFE01B]">
+                <Target className="h-6 w-6 text-[#241C15]" />
+                <span className="font-semibold text-[#241C15]">Curated Matches</span>
+              </div>
+              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg border border-[#FFE01B]">
+                <Zap className="h-6 w-6 text-[#241C15]" />
+                <span className="font-semibold text-[#241C15]">Fast Response</span>
+              </div>
+              <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg border border-[#FFE01B]">
+                <Star className="h-6 w-6 text-[#241C15]" />
+                <span className="font-semibold text-[#241C15]">Top Companies</span>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
-                {/* Stats Section */}
+        {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#1A1410] rounded-xl p-5 border border-gray-700"
+            className="bg-white rounded-2xl p-6 border border-[#241C15]/10 shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-[#FFE01B]/10">
-                <Users className="h-6 w-6 text-[#FFE01B]" />
+              <div className="p-3 rounded-xl bg-[#FFE01B]">
+                <Users className="h-6 w-6 text-[#241C15]" />
               </div>
               <div className="ml-4">
-                <h3 className="text-sm font-medium text-gray-300">Active Opportunities</h3>
-                <p className="text-2xl font-bold text-white">{statusCounts.active}</p>
+                <h3 className="text-sm font-medium text-[#241C15]">Active Opportunities</h3>
+                <p className="text-2xl font-bold text-[#241C15]">{statusCounts.active}</p>
               </div>
             </div>
           </motion.div>
@@ -210,15 +193,15 @@ export default function GetHiredPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-[#1A1410] rounded-xl p-5 border border-gray-700"
+            className="bg-white rounded-2xl p-6 border border-[#241C15]/10 shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <div className="flex items-center">
-              <div className="p-3 rounded-lg bg-[#FFE01B]/10">
-                <ClipboardList className="h-6 w-6 text-[#FFE01B]" />
+              <div className="p-3 rounded-xl bg-[#FFE01B]">
+                <ClipboardList className="h-6 w-6 text-[#241C15]" />
               </div>
               <div className="ml-4">
-                <h3 className="text-sm font-medium text-gray-300">Total Forms</h3>
-                <p className="text-2xl font-bold text-white">{statusCounts.total}</p>
+                <h3 className="text-sm font-medium text-[#241C15]">Total Forms</h3>
+                <p className="text-2xl font-bold text-[#241C15]">{statusCounts.total}</p>
               </div>
             </div>
           </motion.div>
@@ -226,16 +209,16 @@ export default function GetHiredPage() {
 
         {/* Filters and Search */}
         <section className="mb-8">
-          <div className="bg-[#1A1410] rounded-xl p-4 border border-gray-700">
+          <div className="bg-white rounded-2xl p-6 border border-[#241C15]/10 shadow-lg">
             <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
               <div className="relative flex-grow">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
+                  <Search className="h-5 w-5 text-[#241C15]/60" />
                 </div>
                 <input
                   type="text"
                   placeholder="Search forms by name, category, industry..."
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-700 rounded-lg bg-[#2a2018] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFE01B] focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-3 border border-[#241C15]/20 rounded-xl bg-white text-[#241C15] placeholder-[#241C15]/60 focus:outline-none focus:ring-2 focus:ring-[#FFE01B] focus:border-transparent transition-all duration-200"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -244,26 +227,38 @@ export default function GetHiredPage() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setActiveFilter("all")}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === "all" ? 'bg-[#FFE01B] text-black' : 'bg-[#2a2018] text-gray-300 hover:bg-[#3E3124]'}`}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    activeFilter === "all" 
+                      ? 'bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25' 
+                      : 'bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20'
+                  }`}
                 >
                   All Forms
                 </button>
                 <button
                   onClick={() => setActiveFilter("active")}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === "active" ? 'bg-green-700 text-white' : 'bg-[#2a2018] text-gray-300 hover:bg-[#3E3124]'}`}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    activeFilter === "active" 
+                      ? 'bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25' 
+                      : 'bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20'
+                  }`}
                 >
                   Active
                 </button>
                 <button
                   onClick={() => setActiveFilter("inactive")}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === "inactive" ? 'bg-red-700 text-white' : 'bg-[#2a2018] text-gray-300 hover:bg-[#3E3124]'}`}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    activeFilter === "inactive" 
+                      ? 'bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25' 
+                      : 'bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20'
+                  }`}
                 >
                   Inactive
                 </button>
               </div>
             </div>
             
-            <div className="mt-4 text-sm text-gray-400">
+            <div className="mt-4 text-sm text-[#241C15]/70">
               Showing {filteredForms.length} of {forms.length} forms
             </div>
           </div>
@@ -280,15 +275,15 @@ export default function GetHiredPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-[#1A1410] rounded-xl p-5 border border-gray-700"
+                  className="bg-white rounded-2xl p-6 border border-[#241C15]/10 shadow-lg"
                 >
                   <div className="animate-pulse">
-                    <div className="h-6 bg-gray-700 rounded w-3/4 mb-4"></div>
+                    <div className="h-6 bg-[#241C15]/10 rounded w-3/4 mb-4"></div>
                     <div className="space-y-3">
-                      <div className="h-4 bg-gray-700 rounded w-1/2"></div>
-                      <div className="h-4 bg-gray-700 rounded w-2/3"></div>
-                      <div className="h-4 bg-gray-700 rounded w-1/3"></div>
-                      <div className="h-10 bg-gray-700 rounded mt-4"></div>
+                      <div className="h-4 bg-[#241C15]/10 rounded w-1/2"></div>
+                      <div className="h-4 bg-[#241C15]/10 rounded w-2/3"></div>
+                      <div className="h-4 bg-[#241C15]/10 rounded w-1/3"></div>
+                      <div className="h-10 bg-[#241C15]/10 rounded mt-4"></div>
                     </div>
                   </div>
                 </motion.div>
@@ -300,36 +295,36 @@ export default function GetHiredPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="bg-[#1A1410] rounded-xl p-5 border border-gray-700"
+                  className="bg-white rounded-2xl p-6 border border-[#241C15]/10 shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-semibold text-white">{form.form_name}</h3>
+                    <h3 className="text-lg font-semibold text-[#241C15]">{form.form_name}</h3>
                     {form.is_active ? (
-                      <span className="inline-flex items-center gap-1 text-green-400 text-sm font-medium bg-green-900/30 px-2 py-1 rounded-full">
+                      <span className="inline-flex items-center gap-1 text-green-600 text-sm font-medium bg-green-50 px-3 py-1 rounded-full border border-green-200">
                         <CheckCircle className="w-4 h-4" /> Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-red-400 text-sm font-medium bg-red-900/30 px-2 py-1 rounded-full">
+                      <span className="inline-flex items-center gap-1 text-red-600 text-sm font-medium bg-red-50 px-3 py-1 rounded-full border border-red-200">
                         <XCircle className="w-4 h-4" /> Inactive
                       </span>
                     )}
                   </div>
                   
-                  <div className="mt-4 space-y-2 text-sm text-gray-300">
+                  <div className="mt-4 space-y-2 text-sm text-[#241C15]/80">
                     <div className="flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-gray-500" />
+                      <Layers className="w-4 h-4 text-[#241C15]/60" />
                       <span>{form.category}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Grid className="w-4 h-4 text-gray-500" />
+                      <Grid className="w-4 h-4 text-[#241C15]/60" />
                       <span>{form.subcategory}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-gray-500" />
+                      <Briefcase className="w-4 h-4 text-[#241C15]/60" />
                       <span>{form.industry}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-500" />
+                      <Calendar className="w-4 h-4 text-[#241C15]/60" />
                       <span>{new Date(form.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
@@ -340,12 +335,12 @@ export default function GetHiredPage() {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         href={`/form/${form.id}`}
-                        className="block w-full text-center bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold py-2 px-4 rounded-lg transition-colors"
+                        className="block w-full text-center bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
-                        Fill Form <ExternalLink className="inline w-4 h-4 ml-1" />
+                        Apply Now <ExternalLink className="inline w-4 h-4 ml-1" />
                       </motion.a>
                     ) : (
-                      <div className="text-center text-gray-500 italic py-2">
+                      <div className="text-center text-[#241C15]/50 italic py-3 bg-[#241C15]/5 rounded-xl border border-[#241C15]/10">
                         Not Available
                       </div>
                     )}
@@ -356,11 +351,11 @@ export default function GetHiredPage() {
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center py-10 bg-[#1A1410] rounded-xl border border-gray-700"
+                className="text-center py-12 bg-white rounded-2xl border border-[#241C15]/10 shadow-lg"
               >
-                <ClipboardList className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-300">No forms found</h3>
-                <p className="mt-2 text-gray-500">Try adjusting your search or filter criteria</p>
+                <ClipboardList className="w-16 h-16 text-[#241C15]/40 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-[#241C15]">No opportunities found</h3>
+                <p className="mt-2 text-[#241C15]/60">Try adjusting your search or filter criteria</p>
               </motion.div>
             )}
           </div>
@@ -370,53 +365,53 @@ export default function GetHiredPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4 }}
-            className="hidden md:block overflow-hidden rounded-xl border border-gray-700"
+            className="hidden md:block overflow-hidden rounded-2xl border border-[#241C15]/10 bg-white shadow-lg"
           >
             <table className="w-full border-collapse">
-              <thead className="bg-[#1A1410]">
+              <thead className="bg-[#FFE01B]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <ClipboardList className="w-4 h-4" /> 
-                      Form Name
+                      <ClipboardList className="w-4 h-4 text-[#241C15]" /> 
+                      Opportunity Name
                     </div>
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <Layers className="w-4 h-4" /> 
+                      <Layers className="w-4 h-4 text-[#241C15]" /> 
                       Category
                     </div>
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <Grid className="w-4 h-4" /> 
+                      <Grid className="w-4 h-4 text-[#241C15]" /> 
                       Subcategory
                     </div>
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <Briefcase className="w-4 h-4" /> 
+                      <Briefcase className="w-4 h-4 text-[#241C15]" /> 
                       Industry
                     </div>
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" /> 
+                      <Calendar className="w-4 h-4 text-[#241C15]" /> 
                       Created
                     </div>
                   </th>
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-300">Status</th>
-                  <th className="px-4 py-3 text-center text-sm font-medium text-gray-300">Action</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">Status</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-[#241C15]">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
                   Array.from({ length: 5 }).map((_, index) => (
-                    <tr key={index} className="border-t border-gray-700">
-                      <td colSpan={7} className="px-4 py-4">
+                    <tr key={index} className="border-t border-[#241C15]/10">
+                      <td colSpan={7} className="px-6 py-4">
                         <div className="animate-pulse flex space-x-4 items-center">
                           <div className="flex-1 space-y-3">
-                            <div className="h-4 bg-gray-700 rounded w-3/4"></div>
+                            <div className="h-4 bg-[#241C15]/10 rounded w-3/4"></div>
                           </div>
                         </div>
                       </td>
@@ -429,51 +424,53 @@ export default function GetHiredPage() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.07 }}
-                      className="border-t border-gray-700 hover:bg-[#2a2018] transition-all cursor-pointer"
+                      className="border-t border-[#241C15]/10 hover:bg-[#FFE01B]/10 transition-all duration-200 cursor-pointer group"
                     >
-                      <td className="px-4 py-4 font-medium text-white">{form.form_name}</td>
-                      <td className="px-4 py-4 text-gray-300">{form.category}</td>
-                      <td className="px-4 py-4 text-gray-300">{form.subcategory}</td>
-                      <td className="px-4 py-4 text-gray-300">{form.industry}</td>
-                      <td className="px-4 py-4 text-gray-300">
+                      <td className="px-6 py-4 font-semibold text-[#241C15] group-hover:text-[#241C15] transition-colors">
+                        {form.form_name}
+                      </td>
+                      <td className="px-6 py-4 text-[#241C15]/80">{form.category}</td>
+                      <td className="px-6 py-4 text-[#241C15]/80">{form.subcategory}</td>
+                      <td className="px-6 py-4 text-[#241C15]/80">{form.industry}</td>
+                      <td className="px-6 py-4 text-[#241C15]/70">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 text-gray-500" />
+                          <Calendar className="w-4 h-4 text-[#241C15]/60" />
                           {new Date(form.created_at).toLocaleDateString()}
                         </div>
                       </td>
-                      <td className="px-4 py-4">
+                      <td className="px-6 py-4">
                         {form.is_active ? (
-                          <span className="inline-flex items-center gap-1 text-green-400 font-medium bg-green-900/30 px-2 py-1 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-green-600 font-medium bg-green-50 px-3 py-1 rounded-full border border-green-200">
                             <CheckCircle className="w-4 h-4" /> Active
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-red-400 font-medium bg-red-900/30 px-2 py-1 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-red-600 font-medium bg-red-50 px-3 py-1 rounded-full border border-red-200">
                             <XCircle className="w-4 h-4" /> Inactive
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-4 text-center">
+                      <td className="px-6 py-4 text-center">
                         {form.is_active ? (
                           <motion.a
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             href={`/form/${form.id}`}
-                            className="inline-flex items-center gap-1 bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-4 py-2 rounded-lg text-sm transition-colors"
+                            className="inline-flex items-center gap-2 bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-5 py-2 rounded-xl text-sm transition-all duration-200 shadow-md hover:shadow-lg"
                           >
-                            Fill Form <ExternalLink className="w-4 h-4" />
+                            Apply Now <ExternalLink className="w-4 h-4" />
                           </motion.a>
                         ) : (
-                          <span className="text-gray-500 italic">Not Available</span>
+                          <span className="text-[#241C15]/50 italic">Not Available</span>
                         )}
                       </td>
                     </motion.tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center">
-                      <ClipboardList className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-300">No forms found</h3>
-                      <p className="mt-2 text-gray-500">Try adjusting your search or filter criteria</p>
+                    <td colSpan={7} className="px-6 py-12 text-center">
+                      <ClipboardList className="w-16 h-16 text-[#241C15]/40 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-[#241C15]">No opportunities found</h3>
+                      <p className="mt-2 text-[#241C15]/60">Try adjusting your search or filter criteria</p>
                     </td>
                   </tr>
                 )}
@@ -481,27 +478,25 @@ export default function GetHiredPage() {
             </table>
           </motion.div>
         </section>
-
-        {/* Footer */}
-        {/* <footer className="mt-12 pt-8 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-center md:text-left mb-4 md:mb-0">
-              <div className="font-bold text-lg text-[#FFE01B]">TalentConnect</div>
-              <p className="text-sm text-gray-400 mt-1">Connecting talent with opportunity</p>
-            </div>
-            
-            <div className="flex flex-wrap justify-center gap-6">
-              <a href="#" className="text-gray-400 hover:text-white text-sm">Privacy Policy</a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm">Terms of Service</a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm">Contact Us</a>
-            </div>
-            
-            <div className="mt-4 md:mt-0 text-sm text-gray-500">
-              © {new Date().getFullYear()} TalentConnect. All rights reserved.
-            </div>
-          </div>
-        </footer> */}
       </div>
+
+      <style jsx>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+          animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
     </div>
   )
 }
