@@ -332,15 +332,15 @@ export default function AboutPage() {
               </motion.div>
 
               {/* Right image / illustration placeholder */}
-              <motion.div
+              {/* <motion.div
                 className="hidden lg:flex justify-center items-center"
                 variants={fadeInLeft}
               >
-                {/* Example illustration */}
+                {/* Example illustration *
                 <div className="w-full max-w-md h-64 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center">
                   <span className="text-[#241C15]/50 text-lg">Illustration Here</span>
                 </div>
-              </motion.div>
+              </motion.div> */}
             </div>
           </motion.div>
         </section>
