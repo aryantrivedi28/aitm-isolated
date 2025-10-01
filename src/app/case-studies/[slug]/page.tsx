@@ -192,7 +192,7 @@ export default function CaseStudyPage({
             rotate: { duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
             scale: { duration: 10, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
           }}
-          className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#FFE01B] opacity-3 rounded-full"
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#FFE01B] opacity-5 rounded-full"
         />
       </div>
 

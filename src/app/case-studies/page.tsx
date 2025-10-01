@@ -326,14 +326,14 @@ useEffect(() => {
       </div>
 
       {/* Hero Section */}
-      <section className="relative py-28 px-4">
+      <section className="relative py-12 px-4">
         <motion.div
           className="relative max-w-6xl mx-auto"
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
         >
-          <div className="text-center space-y-8">
+          <div className="text-center space-y-4">
             <motion.div
               className="flex items-center justify-center gap-3 mb-6"
               variants={fadeUp}

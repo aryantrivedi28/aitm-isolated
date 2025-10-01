@@ -21,6 +21,8 @@ export default function Footer() {
   const pathname = usePathname() || "";
   if (pathname.startsWith("/landing")) return null;
   if (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") return null;
+  if (pathname.startsWith("/form/") && pathname !== "/form") return null;
+
 
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const isDark = theme === "dark";
@@ -111,7 +113,7 @@ export default function Footer() {
           >
             {isDark ? <Sun size={20} className="text-white" /> : <Moon size={20} className="text-gray-900" />}
           </button>
-          
+
         </div>
 
         <motion.div
@@ -133,11 +135,9 @@ export default function Footer() {
                   key={idx}
                   href={link}
                   aria-label={label}
-                  className={`group relative p-3 rounded-xl ${
-                    isDark ? "bg-white/5" : "bg-gray-200/40"
-                  } hover:bg-[${colors.accent}]/20 transition-all duration-300 border ${
-                    isDark ? "border-white/10" : "border-gray-300/50"
-                  } hover:border-[${colors.accent}]/30`}
+                  className={`group relative p-3 rounded-xl ${isDark ? "bg-white/5" : "bg-gray-200/40"
+                    } hover:bg-[${colors.accent}]/20 transition-all duration-300 border ${isDark ? "border-white/10" : "border-gray-300/50"
+                    } hover:border-[${colors.accent}]/30`}
                   whileHover={{ y: -2, scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -217,7 +217,7 @@ export default function Footer() {
               </motion.button>
             </motion.form>
 
-            
+
           </motion.div>
         </motion.div>
       </div>

@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
 import { Menu, X } from "lucide-react"
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const HIDE_SCROLL_OFFSET = 100;   // only hide after this y
 const SHOW_REVERSE_DELTA = 300;   // must scroll up this much from last hide to show
@@ -15,6 +15,12 @@ export default function Header() {
   const lastScrollYRef = useRef(0);
   const lastHideYRef = useRef(0);
   const isVisibleRef = useRef(true); // mirror of state to avoid flicker
+
+  const pathname = usePathname() || "";
+    if (pathname.startsWith("/landing")) return null;
+    if (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") return null;
+    if (pathname.startsWith("/form/") && pathname !== "/form") return null;
+
 
 
 
