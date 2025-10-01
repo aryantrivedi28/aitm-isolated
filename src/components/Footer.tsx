@@ -107,13 +107,12 @@ export default function Footer() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="flex justify-between items-start md:items-center mb-8">
           <h2 className={`text-4xl font-black ${colors.text}`}>Finzie</h2>
-          <button
+          {/* <button
             onClick={toggleTheme}
             className={`p-2 rounded-full border border-[${colors.accent}]/40 hover:bg-[${colors.accent}]/20 transition-colors`}
           >
             {isDark ? <Sun size={20} className="text-white" /> : <Moon size={20} className="text-gray-900" />}
-          </button>
-
+          </button> */}
         </div>
 
         <motion.div
