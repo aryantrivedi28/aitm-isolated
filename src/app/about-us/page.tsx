@@ -75,12 +75,6 @@ export default function AboutPage() {
   return (
     <>
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-        .about-section * {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-
         @keyframes rotate360 {
           from { transform: rotate(0deg) scale(1); }
           50% { transform: rotate(180deg) scale(1.2); }
@@ -128,7 +122,7 @@ export default function AboutPage() {
         .animate-visionRotate { animation: visionRotate 8s ease-in-out infinite; }
       `}</style>
 
-      <div className="about-section flex flex-col bg-[#fbf5e5] text-[#241C15] overflow-hidden pt-[80px] sm:pt-[100px] lg:pt-[120px]">
+      <div className="about-section flex flex-col bg-[#fbf5e5] text-[#241C15] overflow-hidden pt-[80px] sm:pt-[80px] lg:pt-[90px]">
 
         {/* Animated Background */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -138,49 +132,87 @@ export default function AboutPage() {
         </div>
 
         {/* Hero Section */}
-        <section className="relative min-h-[85vh] flex items-center">
+        <section className="relative min-h-[80vh] flex items-center">
+          {/* Background Gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-[#fbf5e5] via-[#f5ead3]/30 to-[#fbf5e5]" />
 
-          <div className="relative max-w-7xl mx-auto px-6 sm:px-6 lg:px-8 py-10">
-            <motion.div
-              className="grid lg:grid-cols-2 gap-16 items-center"
-              initial="hidden"
-              animate="visible"
-              variants={staggerContainer}
-            >
-              <motion.div className="space-y-8" variants={fadeInLeft}>
-                <motion.div className="space-y-6" variants={staggerContainer}>
-                  <motion.div className="flex items-center gap-3 mb-4" variants={fadeUp}>
-                    <motion.div
-                      className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
-                      whileHover={{ scale: 1.1, rotate: 10 }}
-                    >
-                      <Rocket className="w-6 h-6 text-[#241C15]" />
+          <div className="relative w-full">
+            <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1300px] py-16 sm:py-20 lg:py-24">
+              <motion.div
+                className="grid lg:grid-cols-2 gap-2 items-center"
+                initial="hidden"
+                animate="visible"
+                variants={staggerContainer}
+              >
+                <motion.div className="space-y-10" variants={fadeInLeft}>
+                  <motion.div className="space-y-6" variants={staggerContainer}>
+                    {/* Badge */}
+                    <motion.div className="flex items-center gap-3 mb-4" variants={fadeUp}>
+                      <motion.div
+                        className="w-14 h-14 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                        whileHover={{ scale: 1.1, rotate: 10 }}
+                      >
+                        <Rocket className="w-7 h-7 text-[#241C15]" />
+                      </motion.div>
+                      <span className="text-[#241C15] font-semibold text-lg sm:text-xl tracking-wide">
+                        About Us
+                      </span>
                     </motion.div>
-                    <span className="text-[#241C15] font-semibold text-lg">About Us</span>
+
+                    {/* Headline */}
+                    <motion.h1
+                      variants={fadeUp}
+                      className="tracking-in-expand font-bold leading-[1.1]"
+                      style={{
+                        fontSize: "clamp(2.35rem, 5.5vw, 4.5rem)",
+                        letterSpacing: "-0.025em",
+                        maxWidth: "950px",
+                      }}
+                    >
+                      <span className="text-[#241C15]">About </span>
+                      <span className="bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent">
+                        Finzie
+                      </span>
+                    </motion.h1>
+
+                    {/* Subheading */}
+                    <motion.p
+                      variants={fadeUp}
+                      className="text-[#241C15] leading-relaxed font-semibold"
+                      style={{
+                        fontSize: "clamp(1.125rem, 1.75vw, 1.375rem)",
+                        maxWidth: "720px",
+                        opacity: "0.9",
+                      }}
+                    >
+                      We connect startups with pre-vetted freelancers and AI-driven teams,
+                      making it easy to build, design, and scale your projects rapidly.
+                    </motion.p>
+
+                    {/* Secondary Description */}
+                    <motion.p
+                      variants={fadeUp}
+                      className="text-[#241C15]/70 leading-relaxed font-medium"
+                      style={{
+                        fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
+                        maxWidth: "680px",
+                        lineHeight: "1.7",
+                      }}
+                    >
+                      Our mission is to empower fast-moving startups by providing instant
+                      access to top-tier talent while fostering a thriving, inclusive
+                      freelancer community worldwide.
+                    </motion.p>
                   </motion.div>
 
-                  <motion.h1 variants={fadeUp} className="text-5xl lg:text-7xl font-bold leading-tight">
-                    <span className="text-[#241C15]">About </span>
-                    <span className="bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent">
-                      Finzie
-                    </span>
-                  </motion.h1>
-
-                  <motion.p variants={fadeUp} className="text-lg sm:text-xl lg:text-2xl text-[#241C15]/80 leading-relaxed font-semibold">
-                    We connect startups with pre-vetted freelancers and AI-driven teams, making it easy to build, design, and scale your projects rapidly.
-                  </motion.p>
-
-                  <motion.p variants={fadeUp} className="text-sm sm:text-lg lg:text-xl text-[#241C15]/70 leading-relaxed font-medium">
-                    Our mission is to empower fast-moving startups by providing instant access to top-tier talent while fostering a thriving, inclusive freelancer community worldwide.
-                  </motion.p>
-
-                  <motion.div variants={fadeUp} className="flex gap-4 pt-4">
+                  {/* CTA Button */}
+                  <motion.div variants={fadeUp} className="flex gap-4">
                     <motion.a
-                      className="group inline-flex items-center gap-3 bg-[#FFE01B] text-[#241C15] font-bold px-8 py-4 rounded-2xl hover:bg-[#FCD34D] transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
+                      className="group inline-flex items-center gap-3 bg-[#FFE01B] text-[#241C15] font-semibold px-8 py-4 rounded-xl hover:bg-[#FCD34D] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       href="#"
+                      style={{ fontSize: "1.0625rem" }}
                     >
                       Start Your Project Today
                       <div className="animate-arrowMove">
@@ -190,9 +222,10 @@ export default function AboutPage() {
                   </motion.div>
                 </motion.div>
               </motion.div>
-            </motion.div>
+            </div>
           </div>
         </section>
+
 
         {/* Team Members Section */}
         <section className="relative py-24 px-4">
@@ -274,6 +307,7 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
+        {/* finzie story */}
         <section className="relative py-24 px-4 sm:px-6 lg:px-8">
           {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#FFE01B]/5 to-transparent pointer-events-none" />
@@ -285,65 +319,92 @@ export default function AboutPage() {
             viewport={{ once: true, amount: 0.2 }}
             variants={staggerContainer}
           >
-            <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="grid lg:grid-cols-2 gap-2 items-center">
               {/* Left Content */}
-              <motion.div variants={fadeInLeft}>
+              <motion.div variants={fadeInLeft} className="">
                 {/* Badge + Title */}
-                <motion.div className="flex items-center gap-3 mb-6" variants={fadeUp}>
+                <motion.div className="flex items-center gap-3 mb-8" variants={fadeUp}>
                   <motion.div
                     className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
                     whileHover={{ scale: 1.1, rotate: 15 }}
                   >
                     <Lightbulb className="w-6 h-6 text-[#241C15]" />
                   </motion.div>
-                  <span className="text-[#241C15] font-semibold text-lg sm:text-xl">Our Story</span>
+                  <span className="text-[#241C15] font-semibold text-xl">Our Story</span>
                 </motion.div>
 
                 {/* Headline */}
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-[#241C15] leading-tight">
+                <h2
+                  className="font-bold mb-2 text-[#241C15]"
+                  style={{
+                    fontSize: "clamp(2.25rem, 5vw, 4rem)",
+                    lineHeight: "1.15",
+                    maxWidth: "100%", // allow full width in left col
+                    letterSpacing: "-0.025em",
+                  }}
+                >
                   Finzie&apos;s Journey
                 </h2>
 
                 {/* Subtitle */}
-                <p className="text-lg sm:text-xl lg:text-2xl text-[#241C15]/70 mb-8">
+                <p
+                  className="text-[#241C15]/80 mb-6 font-semibold"
+                  style={{
+                    fontSize: "clamp(1.125rem, 1.75vw, 1.375rem)",
+                    maxWidth: "100%", // no restriction
+                    lineHeight: "1.6",
+                  }}
+                >
                   From a small startup to a global talent aggregator
                 </p>
 
                 {/* Description */}
-                <div className="space-y-6">
+                <div className="space-y-8 max-w-3xl"> {/* widened column */}
                   <motion.p
-                    className="leading-relaxed text-sm sm:text-base lg:text-lg text-[#241C15]/75 font-semibold"
+                    className="text-[#241C15]/75 font-medium"
+                    style={{
+                      fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
+                      lineHeight: "1.75",
+                    }}
                     variants={fadeUp}
                   >
-                    Finzie was born out of the need for fast-moving startups to access top-tier talent quickly.
-                    Our founders, frustrated with the traditional hiring process, set out to create a platform
-                    that would streamline the way businesses connect with freelancers and AI specialists.
+                    Finzie was born out of the need for fast-moving startups to access top-tier talent quickly. Our founders, frustrated with the traditional hiring process, set out to create a platform that would streamline the way businesses connect with freelancers and AI specialists.
                   </motion.p>
 
-                  <motion.p
-                    className="leading-relaxed text-sm sm:text-base lg:text-lg text-[#241C15]/90 font-medium"
-                    variants={fadeUp}
+                  <motion.div
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    variants={staggerContainer}
+                    className="relative z-10 max-w-3xl"
                   >
-                    Today, Finzie is proud to be the world&apos;s first AI talent aggregator, providing on-demand
-                    access to pre-vetted experts across various domains. Our mission is to empower startups
-                    with the resources they need to scale efficiently and effectively.
-                  </motion.p>
+                    <motion.p
+                      variants={fadeUp}
+                      className="text-[#241C15]/90"
+                      style={{ fontSize: "clamp(1rem, 1.25vw, 1.125rem)", lineHeight: "1.75" }}
+                    >
+                      Today, Finzie is proud to be the world's first AI talent aggregator, providing on-demand access to pre-vetted experts across various domains. Our mission is to empower startups with the resources they need to scale efficiently and effectively.
+
+
+                    </motion.p>
+                  </motion.div>
+
                 </div>
               </motion.div>
 
-              {/* Right image / illustration placeholder */}
+              {/* Right Side Placeholder */}
               {/* <motion.div
                 className="hidden lg:flex justify-center items-center"
                 variants={fadeInLeft}
               >
-                {/* Example illustration *
-                <div className="w-full max-w-md h-64 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center">
+                <div className="w-full max-w-md h-72 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center">
                   <span className="text-[#241C15]/50 text-lg">Illustration Here</span>
                 </div>
               </motion.div> */}
             </div>
           </motion.div>
         </section>
+
 
 
         {/* Goals and Impact Section */}

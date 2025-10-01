@@ -21,7 +21,7 @@ export default function HowWeWork() {
         {customStyles}
       </style>
 
-      <div className="min-h-screen bg-[#241C15] text-[#FFE01B] relative overflow-hidden">
+      <div className="min-h-screen bg-[#241C15] text-[#FFE01B] relative overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
         {/* Decorative Background Dots and Floating shapes */}
         <div className="absolute inset-0 z-0">
           <div
