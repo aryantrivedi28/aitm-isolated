@@ -122,21 +122,21 @@ const WhatWeDo = () => {
                   className={`absolute inset-0 ${service.bgGradient} rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 scale-105`}
                 />
 
-                <div className="relative backdrop-blur-xl bg-[#241C15]/30 rounded-3xl p-6 sm:p-8 h-full shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:scale-105 overflow-hidden">
+                <div className="relative backdrop-blur-xl bg-[#fbf5e5] rounded-3xl p-6 sm:p-8 h-full shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:scale-105 overflow-hidden">
                   {/* Icon */}
                   <div className="relative mb-6">
                     <div className={`inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r ${service.gradient} rounded-2xl shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
                       <service.icon className="w-8 h-8 sm:w-10 sm:h-10 text-[#241C15]" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#241C15] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
-                      <Pin className="w-4 h-4 text-gray-100" />
+                      <Pin className="w-4 h-4 text-gray-200" />
                     </div>
                   </div>
 
                   {/* Content */}
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-black text-white mb-3">{service.title}</h3>
-                    <p className="text-[#D1D5DB] text-sm sm:text-base leading-relaxed">{service.description}</p>
+                    <h3 className="text-xl sm:text-2xl font-black text-[#241C15] mb-3">{service.title}</h3>
+                    <p className="text-[#241C15] text-sm sm:text-base leading-relaxed">{service.description}</p>
 
                   </div>
                 </div>

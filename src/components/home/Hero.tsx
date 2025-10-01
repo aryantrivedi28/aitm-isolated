@@ -21,12 +21,6 @@ const Hero = () => {
   return (
     <>
       <style jsx global>{`
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-  .hero-section * {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
-
   /* tracking-in-expand from Animista */
   @keyframes tracking-in-expand {
     0% {
@@ -87,10 +81,10 @@ const Hero = () => {
 
             {/* Headline */}
             <h1
-              className={`tracking-in-expand font-bold leading-[1.1] mb-8 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              className={`tracking-in-expand font-bold leading-[1.1] mb-4 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                 }`}
               style={{
-                fontSize: 'clamp(2.25rem, 5.5vw, 4.5rem)',
+                fontSize: 'clamp(2.20rem, 5vw, 4rem)',
                 letterSpacing: '-0.025em',
                 maxWidth: '950px',
                 fontWeight: '700'
