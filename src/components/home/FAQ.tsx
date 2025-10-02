@@ -50,12 +50,7 @@ const FAQ = () => {
 
   return (
     <section className="relative w-full py-20 bg-[#241C15] overflow-hidden">
-      {/* Background Blobs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-[#FFE01B]/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-32 right-20 w-40 h-40 bg-[#FFE01B]/10 rounded-full blur-3xl animate-pulse delay-700"></div>
-        <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-[#FFE01B]/15 rounded-full blur-2xl animate-pulse delay-1000"></div>
-      </div>
+
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}

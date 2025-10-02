@@ -142,7 +142,7 @@ const ServiceCategories = () => {
                       key={idx} 
                       className="group bg-[#241C15] border-2 border-[#241C15]/10 rounded-xl p-4 hover:border-[#FFE01B] hover:shadow-md hover:scale-[1.02] transition-all duration-300 cursor-pointer"
                     >
-                      <span className="text-[#fbf5e5] group-hover:text-[#241C15] font-semibold text-sm sm:text-base">
+                      <span className="text-[#fbf5e5] group-hover:text-[#fbf5e5] font-semibold text-sm sm:text-base">
                         {sub}
                       </span>
                     </div>

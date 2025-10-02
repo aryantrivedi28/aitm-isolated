@@ -14,11 +14,6 @@ const BottomCTA = () => {
 
   return (
     <section className="relative overflow-hidden bg-[#241C15] py-16 sm:py-20 flex items-center justify-center">
-      {/* Minimal Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#FFE01B_0%,_transparent_60%)] opacity-15 pointer-events-none"></div>
-      <div className="absolute top-10 right-10 w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 bg-[#FFE01B]/10 rounded-full blur-2xl animate-float"></div>
-      <div className="absolute bottom-10 left-10 w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80 bg-[#FFE01B]/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
-
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 sm:gap-3 backdrop-blur-xl bg-white/10 border border-[#D1D5DB]/20 px-4 py-2 sm:px-6 sm:py-3 rounded-2xl mb-6 sm:mb-10 hover:scale-105 transition-transform duration-300">

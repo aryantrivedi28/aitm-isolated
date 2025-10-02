@@ -447,6 +447,60 @@ function AgreementAutomationPageContent() {
     }
   }
 
+
+
+  // Define default freelancer T&C
+  const defaultFreelancerTerms = `Professional Conduct & Communication
+Terms and Conditions
+The freelancer is expected to maintain the highest level of professionalism in all interactions—
+internal and external.
+All communication with clients must be courteous, respectful, and aligned with Finzie's standards.
+Poaching, discussing payment terms directly with the client, or engaging in independent side
+conversations unrelated to the project shall be considered a breach of contract.
+Attendance in client meetings is mandatory. In case of emergencies, prior notice of at least 5–6
+hours must be given to the Finzie team.
+
+Commitment & Duration
+The minimum duration of engagement is 2 months.
+A 10-day notice period is required in case of termination by either party. If the freelancer
+chooses to discontinue before the minimum duration period, a 50% deduction will be applied
+to the pending payout.
+
+Ownership & Accountability
+The freelancer is expected to take complete ownership of their assigned work, from planning
+to delivery.
+Finzie reserves the right to terminate the engagement without notice in case of serious
+misconduct, repeated underperformance, or breach of trust.
+
+Performance & Deliverables
+Freelancers are expected to meet deadlines, follow briefs precisely, and deliver high-quality
+work.
+Failure to meet performance standards may result in review, deduction, or termination.
+Specific deliverables and timelines will be communicated per project. Delays must be informed
+in advance.
+
+Confidentiality & Conflict of Interest
+The freelancer shall not disclose or misuse any confidential information, documents, strategies,
+or trade secrets of Finzie or its clients during or after the term of engagement.
+Any potential conflict of interest must be disclosed immediately. Freelancers must not work
+with direct competitors of Finzie or its clients without written approval.
+
+Intellectual Property Rights
+All work created during the engagement is the sole property of Finzie or its clients.
+The freelancer waives the right to reuse, reproduce, or republish any part of the work without
+prior written consent.`;
+
+  // Initialize formData with default terms
+  const [formDataT, setFormDataT] = useState({
+    terms: defaultFreelancerTerms,
+    // ...other fields
+  });
+
+  const handleInputChangeT = (field: string, value: string) => {
+    setFormDataT((prev) => ({ ...prev, [field]: value }));
+  };
+
+
   return (
     <div className="min-h-screen bg-[#241C15] text-white p-4 md:p-6 pt-[80px] sm:pt-[120px] lg:pt-[140px]">
       <div className="max-w-7xl mx-auto">
@@ -1069,7 +1123,7 @@ function AgreementAutomationPageContent() {
                       </div>
                     </div>
 
-                    <div className="space-y-3 md:space-y-4">
+                    <div className="space-y-6 md:space-y-4">
                       <div>
                         <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
                           <Landmark className="w-4 h-4" />
@@ -1117,8 +1171,8 @@ function AgreementAutomationPageContent() {
                           </Button>
                         </div>
                         <Textarea
-                          value={formData.terms}
-                          onChange={(e) => handleInputChange("terms", e.target.value)}
+                          value={formDataT.terms}
+                          onChange={(e) => handleInputChangeT("terms", e.target.value)}
                           className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[100px]"
                           placeholder="Enter terms and conditions"
                         />
