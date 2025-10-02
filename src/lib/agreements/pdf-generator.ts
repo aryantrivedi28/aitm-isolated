@@ -45,45 +45,50 @@ export class PDFGenerator {
     return Buffer.from(pdf)
   }
 
-  static async generateFreelancerAgreementPDF(
-    agreement: FreelancerAgreement,
-    template: DocumentTemplate,
-  ): Promise<Buffer> {
-    const browser = await this.getBrowser()
-    const page = await browser.newPage()
+static async generateFreelancerAgreementPDF(
+  agreement: FreelancerAgreement,
+  template: DocumentTemplate
+): Promise<Buffer> {
+  const browser = await this.getBrowser()
+  const page = await browser.newPage()
 
-    const htmlContent = template.template_content
-      .replace(/{{date}}/g, new Date().toLocaleDateString())
-      .replace(/{{freelancer_name}}/g, agreement.freelancer_name)
-      .replace(/{{client_name}}/g, agreement.client_name)
-      .replace(/{{work_type}}/g, agreement.work_type)
-      .replace(/{{nda}}/g, agreement.nda)
-      .replace(/{{ip_rights}}/g, agreement.ip_rights)
-      .replace(/{{deliverables}}/g, agreement.deliverables)
-      .replace(/{{terms}}/g, agreement.terms)
-      .replace(/{{hourly_rate}}/g, agreement.hourly_rate?.toString() || "TBD")
-      .replace(/{{project_duration}}/g, agreement.project_duration || "TBD")
+  // Use Supabase logo (or your CDN)
+  const logoUrl =
+    "https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/Primary-Black%20(1).png"
 
-    await page.setContent(htmlContent, {
-      waitUntil: "domcontentloaded", // faster + safer for static HTML
-      timeout: 0, // disable timeout if needed
-    })
+  const htmlContent = template.template_content
+    .replace(/{{date}}/g, new Date().toLocaleDateString())
+    .replace(/{{freelancer_name}}/g, agreement.freelancer_name || "")
+    .replace(/{{freelancer_email}}/g, agreement.freelancer_email || "")
+    .replace(/{{client_name}}/g, agreement.client_name || "")
+    .replace(/{{client_email}}/g, agreement.client_email || "")
+    .replace(/{{work_type}}/g, agreement.work_type || "")
+    .replace(/{{hourly_rate}}/g, agreement.hourly_rate?.toString() || "TBD")
+    .replace(/{{project_duration}}/g, agreement.project_duration || "TBD")
+    .replace(/{{terms}}/g, agreement.terms || "")
+    .replace(/{{company_logo_url}}/g, logoUrl) // 👈 inject real logo
+
+  await page.setContent(htmlContent, {
+    waitUntil: "networkidle0", // ensures logo loads
+    timeout: 0,
+  })
+
+  const pdf = await page.pdf({
+    format: "A4",
+    printBackground: true,
+    margin: {
+      top: "25mm",
+      right: "25mm",
+      bottom: "25mm",
+      left: "25mm",
+    },
+  })
+
+  await browser.close()
+  return Buffer.from(pdf)
+}
 
 
-    const pdf = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: {
-        top: "20mm",
-        right: "20mm",
-        bottom: "20mm",
-        left: "20mm",
-      },
-    })
-
-    await browser.close()
-    return Buffer.from(pdf)
-  }
   static async generateInvoicePDF(invoice: Invoice, items: any[], template: DocumentTemplate): Promise<Buffer> {
     const browser = await this.getBrowser()
     const page = await browser.newPage()

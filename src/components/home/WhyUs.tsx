@@ -75,9 +75,8 @@ const WhyUs = () => {
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div
-          className={`text-center md:text-left mb-12 transition-all duration-1000 ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
-          }`}
+          className={`text-center md:text-left mb-12 transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+            }`}
         >
           <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl px-4 py-2 rounded-full mb-6 shadow-lg">
             <div className="w-2 h-2 bg-[#FFE01B] rounded-full animate-ping"></div>
@@ -108,14 +107,14 @@ const WhyUs = () => {
                 key={idx}
                 className="group relative h-full transform transition-all duration-500 hover:scale-105"
               >
-                <div className="relative bg-[#241C15]/80 rounded-3xl p-6 flex flex-col border border-[#FFE01B]/20 shadow-lg hover:shadow-2xl transition-all duration-500">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-[#FFE01B] rounded-xl mb-6">
+                <div className="relative bg-[#fbf5e5] rounded-3xl p-6 flex flex-col border-2 border-[#FFE01B]/70 shadow-lg hover:shadow-2xl transition-all duration-500 h-full">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-[#FFE01B] rounded-xl mb-6 flex-shrink-0">
                     <Icon className="w-6 h-6 text-black" />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-black mb-2">
+                  <h3 className="text-lg sm:text-xl font-black mb-2 flex-shrink-0 text-black">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-300 text-sm sm:text-base">
+                  <p className="text-[#241C15] text-sm sm:text-base mt-auto">
                     {feature.description}
                   </p>
                 </div>
@@ -123,6 +122,7 @@ const WhyUs = () => {
             );
           })}
         </div>
+
 
         {/* Mobile Carousel */}
         <div className="md:hidden flex flex-col items-center">

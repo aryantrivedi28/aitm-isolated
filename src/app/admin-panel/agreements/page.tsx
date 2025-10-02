@@ -824,6 +824,21 @@ prior written consent.`;
                             placeholder="Enter project title"
                           />
                         </div>
+
+                      </div>
+                      <div className="space-y-3 md:space-y-4">
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <MapPin className="w-4 h-4" />
+                            Client Address
+                          </label>
+                          <Textarea
+                            value={formData.client_address}
+                            onChange={(e) => handleInputChange("client_address", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[115px]"
+                            placeholder="Enter client address"
+                          />
+                        </div>
                         <div>
                           <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
                             <DollarSign className="w-4 h-4" />
@@ -853,47 +868,9 @@ prior written consent.`;
                           </div>
                         </div>
                       </div>
-                      <div className="space-y-3 md:space-y-4">
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            Client Address
-                          </label>
-                          <Textarea
-                            value={formData.client_address}
-                            onChange={(e) => handleInputChange("client_address", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[100px]"
-                            placeholder="Enter client address"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <FileText className="w-4 h-4" />
-                            Scope of Work
-                          </label>
-                          <Textarea
-                            value={formData.scope}
-                            onChange={(e) => handleInputChange("scope", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[100px]"
-                            placeholder="Describe the scope of work"
-                          />
-                        </div>
-                      </div>
                     </div>
 
                     <div className="space-y-3 md:space-y-4">
-                      <div>
-                        <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                          <FileCheck className="w-4 h-4" />
-                          Deliverables
-                        </label>
-                        <Textarea
-                          value={formData.deliverables}
-                          onChange={(e) => handleInputChange("deliverables", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
-                          placeholder="List the deliverables"
-                        />
-                      </div>
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <label className="text-white/70 text-sm flex items-center gap-1">
@@ -972,9 +949,9 @@ prior written consent.`;
                           </>
                         )}
                       </Button>
-                      <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent transition-all duration-200 flex-1">
+                      {/* <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent transition-all duration-200 flex-1">
                         Save as Draft
-                      </Button>
+                      </Button> */}
                     </div>
                   </CardContent>
                 </Card>
@@ -982,22 +959,6 @@ prior written consent.`;
 
               {/* AI Prompt Inputs Sidebar */}
               <div className="space-y-3 md:space-y-4">
-                <AIPromptInput
-                  onGenerateAction={generateAIContent}
-                  loading={aiLoading}
-                  title="Generate Scope of Work"
-                  placeholder="e.g., Create a modern e-commerce website with payment integration"
-                  type="scope"
-                  icon={<FileText className="w-4 h-4" />}
-                />
-                <AIPromptInput
-                  onGenerateAction={generateAIContent}
-                  loading={aiLoading}
-                  title="Generate Deliverables"
-                  placeholder="e.g., Website design, mobile app, user documentation"
-                  type="deliverables"
-                  icon={<FileCheck className="w-4 h-4" />}
-                />
                 <AIPromptInput
                   onGenerateAction={generateAIContent}
                   loading={aiLoading}
@@ -1020,7 +981,7 @@ prior written consent.`;
 
           {/* Freelancer Agreement Tab */}
           <TabsContent value="freelancer-agreement" className="space-y-4 md:space-y-6 animate-fadeIn">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 gap-4 md:gap-6">
               <div className="lg:col-span-2">
                 <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300">
                   <CardHeader className="pb-4">
@@ -1030,8 +991,8 @@ prior written consent.`;
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 md:space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                      <div className="space-y-3 md:space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                      <div className="space-y-4 md:space-y-4">
                         <div>
                           <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
                             <User className="w-4 h-4" />
@@ -1069,18 +1030,7 @@ prior written consent.`;
                             placeholder="Enter client name"
                           />
                         </div>
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Briefcase className="w-4 h-4" />
-                            Work Type
-                          </label>
-                          <Input
-                            value={formData.work_type}
-                            onChange={(e) => handleInputChange("work_type", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="e.g., Web Development, Design"
-                          />
-                        </div>
+
                       </div>
                       <div className="space-y-3 md:space-y-4">
                         <div>
@@ -1108,7 +1058,7 @@ prior written consent.`;
                             placeholder="e.g., 3 months, 40 hours"
                           />
                         </div>
-                        <div>
+                        {/* <div>
                           <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
                             <Shield className="w-4 h-4" />
                             NDA Requirements
@@ -1119,35 +1069,23 @@ prior written consent.`;
                             className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
                             placeholder="Describe NDA requirements"
                           />
+                        </div> */}
+                        <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <Briefcase className="w-4 h-4" />
+                            Work Type
+                          </label>
+                          <Input
+                            value={formData.work_type}
+                            onChange={(e) => handleInputChange("work_type", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
+                            placeholder="e.g., Web Development, Design"
+                          />
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-6 md:space-y-4">
-                      <div>
-                        <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                          <Landmark className="w-4 h-4" />
-                          IP Rights
-                        </label>
-                        <Textarea
-                          value={formData.ip_rights}
-                          onChange={(e) => handleInputChange("ip_rights", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
-                          placeholder="Describe intellectual property rights"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                          <FileCheck className="w-4 h-4" />
-                          Deliverables
-                        </label>
-                        <Textarea
-                          value={formData.deliverables}
-                          onChange={(e) => handleInputChange("deliverables", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
-                          placeholder="List the deliverables"
-                        />
-                      </div>
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <label className="text-white/70 text-sm flex items-center gap-1">
@@ -1173,13 +1111,12 @@ prior written consent.`;
                         <Textarea
                           value={formDataT.terms}
                           onChange={(e) => handleInputChangeT("terms", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[100px]"
+                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[200px]"
                           placeholder="Enter terms and conditions"
                         />
                       </div>
                     </div>
-
-                    <div className="flex gap-3 md:gap-4 flex-col sm:flex-row">
+                    <div className="flex gap-3 md:gap-4 w-12">
                       <Button
                         onClick={() => handleSubmit("freelancer")}
                         disabled={loading}
@@ -1197,15 +1134,15 @@ prior written consent.`;
                           </>
                         )}
                       </Button>
-                      <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent transition-all duration-200 flex-1">
+                      {/* <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent transition-all duration-200 flex-1">
                         Save as Draft
-                      </Button>
+                      </Button> */}
                     </div>
                   </CardContent>
                 </Card>
               </div>
 
-              <div className="space-y-3 md:space-y-4">
+              {/* <div className="space-y-3 md:space-y-4">
                 <AIPromptInput
                   onGenerateAction={generateAIContent}
                   loading={aiLoading}
@@ -1238,7 +1175,7 @@ prior written consent.`;
                   type="terms"
                   icon={<Shield className="w-4 h-4" />}
                 />
-              </div>
+              </div> */}
             </div>
           </TabsContent>
 
