@@ -701,15 +701,23 @@ prior written consent.`;
                             </div>
                           </div>
                           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
-                            <Badge className={`${getStatusColor(document.status || "pending")} self-start md:self-auto`}>
+                            {/* <Badge className={`${getStatusColor(document.status || "pending")} self-start md:self-auto`}>
                               {(document.status || "pending").charAt(0).toUpperCase() +
                                 (document.status || "pending").slice(1)}
-                            </Badge>
+                            </Badge> */}
                             {getDocumentAmount(document) > 0 && (
                               <span className="text-[#FFE01B] font-semibold text-sm md:text-base">
-                                ${getDocumentAmount(document).toLocaleString()}
+                                {new Intl.NumberFormat("en-IN", {
+                                  style: "currency",
+                                  currency:
+                                    "currency" in document && (document as any).currency
+                                      ? (document as any).currency
+                                      : "USD", // fallback USD if not provided
+                                  minimumFractionDigits: 2
+                                }).format(getDocumentAmount(document))}
                               </span>
                             )}
+
                             <div className="flex gap-2">
                               <Button
                                 size="sm"
