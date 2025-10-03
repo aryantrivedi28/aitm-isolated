@@ -1,13 +1,21 @@
-import puppeteer from "puppeteer"
+import chromium from "@sparticuz/chromium"
+import puppeteer from "puppeteer-core"
 import type { DocumentTemplate, ClientAgreement, FreelancerAgreement, Invoice } from "../../types/agreement"
 
 export class PDFGenerator {
-  private static async getBrowser() {
-    return await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    })
-  }
+ private static async getBrowser() {
+  const executablePath = await chromium.executablePath()
+
+  const headless = (chromium as any).headless ?? true
+
+  return await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: null,
+    executablePath,
+    headless,
+  })
+}
+
 
   static async generateClientAgreementPDF(agreement: ClientAgreement, template: DocumentTemplate): Promise<Buffer> {
     const browser = await this.getBrowser()

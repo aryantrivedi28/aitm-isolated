@@ -903,7 +903,7 @@ prior written consent.`;
                             variant="outline"
                             onClick={() => generateAITerms("payment")}
                             disabled={aiLoading}
-                            className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200 min-h-[150px]"
+                            className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
                           >
                             {aiLoading ? (
                               <Loader2 className="w-3 h-3 mr-1 animate-spin" />
@@ -945,7 +945,7 @@ prior written consent.`;
                         <Textarea
                           value={formData.terms}
                           onChange={(e) => handleInputChange("terms", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[100px]"
+                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[150px]"
                           placeholder="Enter terms and conditions"
                         />
                       </div>
