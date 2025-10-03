@@ -880,6 +880,18 @@ prior written consent.`;
 
                     <div className="space-y-3 md:space-y-4">
                       <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <Shield className="w-4 h-4" />
+                            Scope Of Work
+                          </label>
+                          <Textarea
+                            value={formData.nda}
+                            onChange={(e) => handleInputChange("nda", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[150px]"
+                            placeholder="Describe Scope of Work"
+                          />
+                        </div>
+                      <div>
                         <div className="flex items-center justify-between mb-2">
                           <label className="text-white/70 text-sm flex items-center gap-1">
                             <CalendarDays className="w-4 h-4" />
@@ -891,7 +903,7 @@ prior written consent.`;
                             variant="outline"
                             onClick={() => generateAITerms("payment")}
                             disabled={aiLoading}
-                            className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
+                            className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200 min-h-[150px]"
                           >
                             {aiLoading ? (
                               <Loader2 className="w-3 h-3 mr-1 animate-spin" />
@@ -904,7 +916,7 @@ prior written consent.`;
                         <Textarea
                           value={formData.payment_terms}
                           onChange={(e) => handleInputChange("payment_terms", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
+                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[150px]"
                           placeholder="Describe payment terms"
                         />
                       </div>
@@ -1066,18 +1078,7 @@ prior written consent.`;
                             placeholder="e.g., 3 months, 40 hours"
                           />
                         </div>
-                        {/* <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Shield className="w-4 h-4" />
-                            NDA Requirements
-                          </label>
-                          <Textarea
-                            value={formData.nda}
-                            onChange={(e) => handleInputChange("nda", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
-                            placeholder="Describe NDA requirements"
-                          />
-                        </div> */}
+                        
                         <div>
                           <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
                             <Briefcase className="w-4 h-4" />
@@ -1094,6 +1095,18 @@ prior written consent.`;
                     </div>
 
                     <div className="space-y-6 md:space-y-4">
+                      <div>
+                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                            <Shield className="w-4 h-4" />
+                            Scope Of Work
+                          </label>
+                          <Textarea
+                            value={formData.nda}
+                            onChange={(e) => handleInputChange("nda", e.target.value)}
+                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
+                            placeholder="Describe Scope of Work"
+                          />
+                        </div>
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <label className="text-white/70 text-sm flex items-center gap-1">

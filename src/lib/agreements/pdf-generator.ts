@@ -45,70 +45,75 @@ export class PDFGenerator {
     return Buffer.from(pdf)
   }
 
-static async generateFreelancerAgreementPDF(
-  agreement: FreelancerAgreement,
-  template: DocumentTemplate
-): Promise<Buffer> {
-  const browser = await this.getBrowser()
-  const page = await browser.newPage()
-
-  // Use Supabase logo (or your CDN)
-  const logoUrl =
-    "https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/Primary-Black%20(1).png"
-
-  const htmlContent = template.template_content
-    .replace(/{{date}}/g, new Date().toLocaleDateString())
-    .replace(/{{freelancer_name}}/g, agreement.freelancer_name || "")
-    .replace(/{{freelancer_email}}/g, agreement.freelancer_email || "")
-    .replace(/{{client_name}}/g, agreement.client_name || "")
-    .replace(/{{client_email}}/g, agreement.client_email || "")
-    .replace(/{{work_type}}/g, agreement.work_type || "")
-    .replace(/{{hourly_rate}}/g, agreement.hourly_rate?.toString() || "TBD")
-    .replace(/{{project_duration}}/g, agreement.project_duration || "TBD")
-    .replace(/{{terms}}/g, agreement.terms || "")
-    .replace(/{{company_logo_url}}/g, logoUrl) // 👈 inject real logo
-
-  await page.setContent(htmlContent, {
-    waitUntil: "networkidle0", // ensures logo loads
-    timeout: 0,
-  })
-
-  const pdf = await page.pdf({
-    format: "A4",
-    printBackground: true,
-    margin: {
-      top: "25mm",
-      right: "25mm",
-      bottom: "25mm",
-      left: "25mm",
-    },
-  })
-
-  await browser.close()
-  return Buffer.from(pdf)
-}
-
-
-  static async generateInvoicePDF(invoice: Invoice, items: any[], template: DocumentTemplate): Promise<Buffer> {
+  static async generateFreelancerAgreementPDF(
+    agreement: FreelancerAgreement,
+    template: DocumentTemplate
+  ): Promise<Buffer> {
     const browser = await this.getBrowser()
     const page = await browser.newPage()
+
+    // Use Supabase logo (or your CDN)
+    const logoUrl =
+      "https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/Primary-Black%20(1).png"
+
+    const htmlContent = template.template_content
+      .replace(/{{date}}/g, new Date().toLocaleDateString())
+      .replace(/{{freelancer_name}}/g, agreement.freelancer_name || "")
+      .replace(/{{freelancer_email}}/g, agreement.freelancer_email || "")
+      .replace(/{{client_name}}/g, agreement.client_name || "")
+      .replace(/{{client_email}}/g, agreement.client_email || "")
+      .replace(/{{work_type}}/g, agreement.work_type || "")
+      .replace(/{{hourly_rate}}/g, agreement.hourly_rate?.toString() || "TBD")
+      .replace(/{{project_duration}}/g, agreement.project_duration || "TBD")
+      .replace(/{{terms}}/g, agreement.terms || "")
+      .replace(/{{company_logo_url}}/g, logoUrl) // 👈 inject real logo
+
+    await page.setContent(htmlContent, {
+      waitUntil: "networkidle0", // ensures logo loads
+      timeout: 0,
+    })
+
+    const pdf = await page.pdf({
+      format: "A4",
+      printBackground: true,
+      margin: {
+        top: "25mm",
+        right: "25mm",
+        bottom: "25mm",
+        left: "25mm",
+      },
+    })
+
+    await browser.close()
+    return Buffer.from(pdf)
+  }
+
+
+  static async generateInvoicePDF(
+    invoice: Invoice,
+    items: any[],
+    template: DocumentTemplate
+  ): Promise<Buffer> {
+    const browser = await this.getBrowser();
+    const page = await browser.newPage();
 
     // Generate invoice items HTML
     const itemsHtml = items
       .map(
         (item) => `
-        <tr>
-          <td>${item.description}</td>
-          <td>${item.quantity}</td>
-          <td>${invoice.currency} ${item.rate.toFixed(2)}</td>
-          <td>${invoice.currency} ${item.amount.toFixed(2)}</td>
-        </tr>
-      `
+      <tr>
+        <td>${item.description}</td>
+        <td>${item.quantity}</td>
+        <td>${invoice.currency} ${item.rate.toFixed(2)}</td>
+        <td>${invoice.currency} ${item.amount.toFixed(2)}</td>
+      </tr>
+    `
       )
-      .join("")
+      .join("");
 
+    const logoUrl =
+      "https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/Primary-Black%20(1).png";
 
-    const logoUrl = "https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/Primary-Black%20(1).png"
     const htmlContent = template.template_content
       .replace(/{{invoice_number}}/g, invoice.invoice_number || "INV-" + Date.now())
       .replace(/{{date}}/g, new Date(invoice.invoice_date || new Date()).toLocaleDateString())
@@ -122,31 +127,35 @@ static async generateFreelancerAgreementPDF(
       .replace(/{{tax_amount}}/g, (invoice.tax_amount || 0).toFixed(2))
       .replace(/{{total_amount}}/g, (invoice.total_amount || invoice.amount || 0).toFixed(2))
       .replace(/{{terms}}/g, invoice.terms || "")
-      // 🔥 Add these replacements for payee & banking info
       .replace(/{{payee_name}}/g, invoice.payee_name || "")
       .replace(/{{account_number}}/g, invoice.account_number || "")
       .replace(/{{account_type}}/g, invoice.account_type || "")
       .replace(/{{routing_number}}/g, invoice.routing_number || "")
       .replace(/{{payment_method}}/g, invoice.payment_method || "")
-      .replace(/{{company_logo_url}}/g, logoUrl)
-    await page.setContent(htmlContent, {
-      waitUntil: "networkidle0", // wait for images
-      timeout: 0,
-    });
+      .replace(/{{company_logo_url}}/g, logoUrl);
 
-    const pdf = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: {
-        top: "20mm",
-        right: "20mm",
-        bottom: "20mm",
-        left: "20mm",
-      },
-    });
+    try {
+      await page.setContent(htmlContent, {
+        waitUntil: "load",   // safer than networkidle0 for external assets
+        timeout: 30000,      // 30s timeout
+      });
 
-    await browser.close()
-    return Buffer.from(pdf)
+      const pdf = await page.pdf({
+        format: "A4",
+        printBackground: true,
+        margin: {
+          top: "20mm",
+          right: "20mm",
+          bottom: "20mm",
+          left: "20mm",
+        },
+      });
+
+      return Buffer.from(pdf);
+    } finally {
+      await browser.close(); // ensure browser always closes
+    }
   }
+
 
 }
