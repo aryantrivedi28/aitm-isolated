@@ -818,21 +818,11 @@ prior written consent.`
   }
 
   const openEditDialog = (document: Document) => {
-    console.log("[v0] Opening edit dialog for document:", document)
     setSelectedDocument(document)
-    console.log("[v0] Document set as selectedDocument:", document)
     // Initialize editFormData with the document's data, handling potential null/undefined for optional fields
     setEditFormData({ ...document })
     setEditDialogOpen(true)
-    console.log("[v0] editFormData initialized as:", { ...document })
   }
-
-  useEffect(() => {
-  if (editDialogOpen) {
-    console.log("[v1] Dialog opened with selectedDocument:", selectedDocument)
-    setEditFormData(selectedDocument || {}) // prefill the form
-  }
-}, [editDialogOpen])
 
 
   return (
@@ -1036,7 +1026,10 @@ prior written consent.`
                                 <DropdownMenuContent className="bg-[#241C15] border-white/10">
                                   {/* use onSelect for Radix menu items so actions fire correctly */}
                                   <DropdownMenuItem
-                                    onSelect={() => openEditDialog(document)}
+                                    onSelect={(e) => {
+                                      e.preventDefault()
+                                      openEditDialog(document)
+                                    }}
                                     className="text-white hover:text-[#FFE01B] hover:bg-[#FFE01B]/10 cursor-pointer"
                                   >
                                     <Pencil className="w-4 h-4 mr-2" />
@@ -1125,8 +1118,13 @@ prior written consent.`
         </AlertDialog>
 
         {/* Edit Dialog */}
-        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-          <DialogContent className="bg-[#241C15] border-white/10 max-w-2xl max-h-[80vh] overflow-y-auto">
+        <Dialog open={editDialogOpen} onOpenChange={(open) => {
+          // Only allow closing, not opening through onOpenChange
+          if (!open) {
+            setEditDialogOpen(false)
+          }
+        }}>
+          <DialogContent className="bg-[#241C15] border-white/10 max-w-2xl max-h-[80vh] overflow-y-auto" style={{zIndex: 10000, position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
             <DialogHeader>
               <DialogTitle className="text-white">Edit Document</DialogTitle>
               <DialogDescription className="text-white/70">
@@ -1319,22 +1317,6 @@ prior written consent.`
                           value={editFormData.work_type || ""}
                           onChange={(e) => setEditFormData({ ...editFormData, work_type: e.target.value })}
                           className="bg-white/5 border-white/20 text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-white/70 text-sm mb-2 block">NDA</label>
-                        <Textarea
-                          value={editFormData.nda || ""}
-                          onChange={(e) => setEditFormData({ ...editFormData, nda: e.target.value })}
-                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-white/70 text-sm mb-2 block">IP Rights</label>
-                        <Textarea
-                          value={editFormData.ip_rights || ""}
-                          onChange={(e) => setEditFormData({ ...editFormData, ip_rights: e.target.value })}
-                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
                         />
                       </div>
                     </>

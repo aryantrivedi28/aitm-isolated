@@ -45,10 +45,14 @@ interface ClientAgreementFormData {
 interface ClientAgreementFormProps {
   onSubmitAction: (data: ClientAgreementFormData) => Promise<void>
   loading: boolean
-  onGenerateAIContent: (prompt: string, type: string) => Promise<void>
+  onGenerateAIContent: (
+    prompt: string,
+    type: "terms" | "payment_terms" | "deliverables" | "scope"
+  ) => Promise<void>   // <-- narrowed type
   onGenerateAITerms: (type: "client" | "payment") => Promise<void>
   aiLoading: boolean
 }
+
 
 const DEFAULT_RESPONSIBILITIES = `3.1 Service Provider (Finzie)
 • Source and manage qualified service providers based on project needs.
@@ -437,7 +441,10 @@ export function ClientAgreementForm({
       {/* AI Prompt Inputs Sidebar */}
       <div className="space-y-3 md:space-y-4">
         <AIPromptInput
-          onGenerateAction={(prompt, type) => onGenerateAIContent(prompt, type)}
+          onGenerateAction={(prompt, type) => onGenerateAIContent(
+            prompt,
+            type as "terms" | "payment_terms" | "deliverables" | "scope"
+          )}
           loading={aiLoading}
           title="Generate Scope of Work"
           placeholder="e.g., Design and develop a mobile app with user authentication"
@@ -445,7 +452,10 @@ export function ClientAgreementForm({
           icon={<Shield className="w-4 h-4" />}
         />
         <AIPromptInput
-          onGenerateAction={(prompt, type) => onGenerateAIContent(prompt, type)}
+          onGenerateAction={(prompt, type) => onGenerateAIContent(
+            prompt,
+            type as "terms" | "payment_terms" | "deliverables" | "scope"
+          )}
           loading={aiLoading}
           title="Generate Payment Terms"
           placeholder="e.g., 50% upfront, 50% on completion, Net 30 payment terms"
@@ -453,7 +463,10 @@ export function ClientAgreementForm({
           icon={<CalendarDays className="w-4 h-4" />}
         />
         <AIPromptInput
-          onGenerateAction={(prompt, type) => onGenerateAIContent(prompt, type)}
+          onGenerateAction={(prompt, type) => onGenerateAIContent(
+            prompt,
+            type as "terms" | "payment_terms" | "deliverables" | "scope"
+          )}
           loading={aiLoading}
           title="Generate Terms & Conditions"
           placeholder="e.g., Include IP ownership, revision limits, cancellation policy"
