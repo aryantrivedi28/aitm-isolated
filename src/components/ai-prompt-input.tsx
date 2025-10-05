@@ -1,67 +1,69 @@
 "use client"
 
+import type React from "react"
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Sparkles, Loader2 } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Loader2, Sparkles } from "lucide-react"
 
-interface AIPromptInputProps {
-  onGenerateAction: (prompt: string, type: "terms" | "payment_terms" | "deliverables" | "scope") => Promise<void>
-  loading?: boolean
+type AIPromptInputProps = {
   title: string
-  placeholder: string
-  type: "terms" | "payment_terms" | "deliverables" | "scope"
-  icon?: React.ReactNode // 👈 allow passing a custom icon
+  placeholder?: string
+  type: string
+  loading?: boolean
+  icon?: React.ReactNode
+  onGenerateAction: (prompt: string, type: string) => void | Promise<void>
 }
 
 export function AIPromptInput({
-  onGenerateAction,
-  loading = false,
   title,
-  placeholder,
+  placeholder = "Describe what you want to generate...",
   type,
+  loading = false,
   icon,
+  onGenerateAction,
 }: AIPromptInputProps) {
-  const [prompt, setPrompt] = useState("")
+  const [value, setValue] = useState("")
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return
-    await onGenerateAction(prompt, type)
-    setPrompt("")
+    if (!value.trim() || loading) return
+    await onGenerateAction(value.trim(), type)
   }
 
   return (
     <Card className="bg-white/5 backdrop-blur-sm border-white/10">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2">
         <CardTitle className="text-white text-sm flex items-center gap-2">
-          {icon ?? <Sparkles className="w-4 h-4 text-[#FFE01B]" />}
-          {title}
+          {icon}
+          <span>{title}</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        <Textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="bg-white/5 border-white/20 text-white text-sm"
+      <CardContent className="flex gap-2">
+        <Input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          rows={2}
+          className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleGenerate()
+          }}
         />
         <Button
+          type="button"
           onClick={handleGenerate}
-          disabled={loading || !prompt.trim()}
-          size="sm"
-          className="bg-[#FFE01B] text-black hover:bg-[#FFE01B]/90 w-full"
+          disabled={loading || !value.trim()}
+          className="whitespace-nowrap bg-[#FFE01B] text-black hover:bg-[#FFE01B]/90"
         >
           {loading ? (
             <>
-              <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-              Generating...
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating
             </>
           ) : (
             <>
-              <Sparkles className="w-3 h-3 mr-2" />
-              Generate with AI
+              <Sparkles className="w-4 h-4 mr-2" />
+              AI Generate
             </>
           )}
         </Button>

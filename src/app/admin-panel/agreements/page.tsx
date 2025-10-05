@@ -1,62 +1,92 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowLeft, Plus, FileText, DollarSign, Users, Send, Eye, Download, Sparkles, Loader2, FileSignature, Clock, Calendar, MapPin, Mail, User, Briefcase, Target, Shield, Coins, CalendarDays, FileCheck, FileDigit, CreditCard, Landmark } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  ArrowLeft,
+  FileText,
+  Eye,
+  Download,
+  Loader2,
+  User,
+  Briefcase,
+  CreditCard,
+  Pencil,
+  Trash2,
+  Copy,
+  MoreVertical,
+} from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { InvoiceForm } from "../../../components/invoice-form"
-import { SignatureStatus } from "../../../components/signature-status"
-import { AIPromptInput } from "@/src/components/ai-prompt-input"
 import { motion } from "framer-motion"
+import { ClientAgreementForm } from "../../../components/client-agreement-form"
+import { useToast } from "@/hooks/use-toast"
+import { FreelancerAgreementForm } from "../../../components/freelancer-agreement-form"
 
 // Define proper TypeScript interfaces
 interface BaseDocument {
-  id: string;
-  created_at: string;
-  status: string;
-  project_title?: string;
-  work_type?: string;
-  client_name?: string;
-  client_email?: string;
-  freelancer_name?: string;
-  freelancer_email?: string;
-  pdf_url?: string;
-  docuseal_envelope_id?: string;
+  id: string
+  created_at: string
+  status: string
+  project_title?: string
+  work_type?: string
+  client_name?: string
+  client_email?: string
+  freelancer_name?: string
+  freelancer_email?: string
+  pdf_url?: string
+  docuseal_envelope_id?: string
+  document_type?: "agreement" | "invoice"
 }
 
 interface ClientAgreement extends BaseDocument {
-  type: "client";
-  payment_amount?: number;
-  currency?: string;
-  scope?: string;
-  deliverables?: string;
-  terms?: string;
-  payment_terms?: string;
+  type: "client"
+  payment_amount?: number
+  currency?: string
+  scope?: string
+  deliverables?: string
+  terms?: string
+  payment_terms?: string
+  responsibilities?: string
+  termination?: string
+  confidentiality?: string
+  governing_law?: string
+  ownership?: string
 }
 
 interface FreelancerAgreement extends BaseDocument {
-  type: "freelancer";
-  hourly_rate?: number;
-  project_duration?: string;
-  nda?: string;
-  ip_rights?: string;
+  type: "freelancer"
+  hourly_rate?: number
+  project_duration?: string
+  nda?: string
+  ip_rights?: string
 }
 
 interface Invoice extends BaseDocument {
-  type: "invoice";
-  invoice_number: string;
-  amount: number;
-  total_amount: number;
-  due_date: string;
+  type: "invoice"
+  invoice_number: string
+  amount: number
+  total_amount: number
+  due_date: string
 }
 
-type Agreement = ClientAgreement | FreelancerAgreement;
-type Document = Agreement | Invoice;
+type Agreement = ClientAgreement | FreelancerAgreement
+type Document = Agreement | Invoice
 
 interface FormData {
   client_name: string
@@ -77,6 +107,12 @@ interface FormData {
   ip_rights: string
   hourly_rate: string
   project_duration: string
+  // Client specific
+  responsibilities?: string
+  termination?: string
+  confidentiality?: string
+  governing_law?: string
+  ownership?: string
 }
 
 function AgreementAutomationPageContent() {
@@ -86,6 +122,60 @@ function AgreementAutomationPageContent() {
   const [loading, setLoading] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // CHANGE: make toast hook compatible with both { toast } and { addToast }
+  const toastApi = useToast() as any
+  const toast =
+    typeof toastApi?.toast === "function"
+      ? toastApi.toast
+      : typeof toastApi?.addToast === "function"
+        ? toastApi.addToast
+        : () => {} // no-op fallback
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  const [editFormData, setEditFormData] = useState<any>({})
+
+
+  const defaultFreelancerTerms = `Professional Conduct & Communication
+Terms and Conditions
+The freelancer is expected to maintain the highest level of professionalism in all interactions—
+internal and external.
+All communication with clients must be courteous, respectful, and aligned with Finzie's standards.
+Poaching, discussing payment terms directly with the client, or engaging in independent side
+conversations unrelated to the project shall be considered a breach of contract.
+Attendance in client meetings is mandatory. In case of emergencies, prior notice of at least 5–6
+hours must be given to the Finzie team.
+
+Commitment & Duration
+The minimum duration of engagement is 2 months.
+A 10-day notice period is required in case of termination by either party. If the freelancer
+chooses to discontinue before the minimum duration period, a 50% deduction will be applied
+to the pending payout.
+
+Ownership & Accountability
+The freelancer is expected to take complete ownership of their assigned work, from planning
+to delivery.
+Finzie reserves the right to terminate the engagement without notice in case of serious
+misconduct, repeated underperformance, or breach of trust.
+
+Performance & Deliverables
+Freelancers are expected to meet deadlines, follow briefs precisely, and deliver high-quality
+work.
+Failure to meet performance standards may result in review, deduction, or termination.
+Specific deliverables and timelines will be communicated per project. Delays must be informed
+in advance.
+
+Confidentiality & Conflict of Interest
+The freelancer shall not disclose or misuse any confidential information, documents, strategies,
+or trade secrets of Finzie or its clients during or after the term of engagement.
+Any potential conflict of interest must be disclosed immediately. Freelancers must not work
+with direct competitors of Finzie or its clients without written approval.
+
+Intellectual Property Rights
+All work created during the engagement is the sole property of Finzie or its clients.
+The freelancer waives the right to reuse, reproduce, or republish any part of the work without
+prior written consent.`
+
   const [formData, setFormData] = useState<FormData>({
     client_name: "",
     client_address: "",
@@ -94,7 +184,7 @@ function AgreementAutomationPageContent() {
     scope: "",
     payment_terms: "",
     deliverables: "",
-    terms: "",
+    terms: defaultFreelancerTerms,
     payment_amount: "",
     currency: "USD",
     freelancer_name: "",
@@ -238,43 +328,40 @@ function AgreementAutomationPageContent() {
     }
   }
 
-  const handleSubmit = async (type: "client" | "freelancer") => {
+  // Replaced single handleSubmit with separate client and freelancer submit functions
+  const handleClientSubmit = async (clientPayload?: Partial<FormData>) => {
     setLoading(true)
     setError(null)
 
     try {
-      let payload: any = {}
+      // Use the payload passed by the child if present; otherwise fallback to parent's formData
+      const source = clientPayload ?? formData
 
-      if (type === "client") {
-        payload = {
-          client_name: formData.client_name,
-          client_address: formData.client_address,
-          client_email: formData.client_email,
-          project_title: formData.project_title,
-          scope: formData.scope,
-          payment_terms: formData.payment_terms,
-          deliverables: formData.deliverables,
-          terms: formData.terms,
-          payment_amount: formData.payment_amount,
-          currency: formData.currency,
-          type,
-        }
-      } else if (type === "freelancer") {
-        payload = {
-          freelancer_name: formData.freelancer_name,
-          freelancer_email: formData.freelancer_email,
-          client_name: formData.client_name,          // 🔥 add this
-          client_email: formData.client_email,        // 🔥 add this if required
-          work_type: formData.work_type,
-          nda: formData.nda,
-          ip_rights: formData.ip_rights,
-          deliverables: formData.deliverables,        // also missing in your snippet
-          terms: formData.terms,                      // also missing
-          hourly_rate: formData.hourly_rate,
-          project_duration: formData.project_duration,
-          type,
-        }
+      // Build payload with proper numeric conversions
+      const payload = {
+        type: "client",
+        client_name: source.client_name || "",
+        client_address: source.client_address || "",
+        client_email: source.client_email || "",
+        freelancer_email: source.freelancer_email || "", // Assuming this might be relevant for client agreements too
+        project_title: source.project_title || "",
+        scope: source.scope || "",
+        payment_terms: source.payment_terms || "",
+        deliverables: source.deliverables || "",
+        terms: source.terms || "",
+        payment_amount:
+          source.payment_amount && source.payment_amount !== ""
+            ? Number.parseFloat(String(source.payment_amount))
+            : null,
+        currency: source.currency || "USD",
+        responsibilities: source.responsibilities || "",
+        termination: source.termination || "",
+        confidentiality: source.confidentiality || "",
+        governing_law: source.governing_law || "",
+        ownership: source.ownership || "",
       }
+
+      console.log("[v0] Submitting client agreement payload:", payload)
 
       const response = await fetch("/api/agreements", {
         method: "POST",
@@ -283,13 +370,20 @@ function AgreementAutomationPageContent() {
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || `Failed to create agreement: ${response.status}`)
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to create client agreement: ${response.status}`)
       }
 
+      console.log("[v0] Client agreement created successfully ✅")
       await fetchAgreements()
 
-      // Reset form
+      toast({
+        title: "Success",
+        description: "Client agreement created successfully",
+        variant: "default",
+      })
+
+      // Reset form data after successful submission for client agreement
       setFormData({
         client_name: "",
         client_address: "",
@@ -298,7 +392,97 @@ function AgreementAutomationPageContent() {
         scope: "",
         payment_terms: "",
         deliverables: "",
-        terms: "",
+        terms: defaultFreelancerTerms, // Reset to default or keep last used? For now, default.
+        payment_amount: "",
+        currency: "USD",
+        freelancer_name: "", // Clear freelancer specific if any was filled
+        freelancer_email: "",
+        work_type: "",
+        nda: "",
+        ip_rights: "",
+        hourly_rate: "",
+        project_duration: "",
+        responsibilities: "", // Clear client specific extra fields
+        termination: "",
+        confidentiality: "",
+        governing_law: "",
+        ownership: "",
+      })
+      setActiveTab("dashboard")
+    } catch (error) {
+      console.error("[v0] Error creating client agreement:", error)
+      const errorMessage = error instanceof Error ? error.message : "Failed to create client agreement"
+      setError(errorMessage)
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleFreelancerSubmit = async (freelancerPayload?: Partial<FormData>) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const source = freelancerPayload ?? formData
+
+      // Basic validation using the payload
+      if (!source.freelancer_name) throw new Error("Freelancer name is required")
+      if (!source.freelancer_email) throw new Error("Freelancer email is required")
+      if (!source.client_name) throw new Error("Client name is required for freelancer agreement")
+
+      const payload = {
+        type: "freelancer",
+        freelancer_name: source.freelancer_name,
+        freelancer_email: source.freelancer_email,
+        client_name: source.client_name || "",
+        client_email: source.client_email || "",
+        work_type: source.work_type || "",
+        nda: source.nda || "",
+        ip_rights: source.ip_rights || "",
+        deliverables: source.deliverables || "",
+        terms: source.terms || "",
+        hourly_rate:
+          source.hourly_rate && source.hourly_rate !== "" ? Number.parseFloat(String(source.hourly_rate)) : null,
+        project_duration: source.project_duration || "",
+      }
+
+      console.log("[v0] Submitting freelancer agreement payload:", payload)
+
+      const response = await fetch("/api/agreements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || `Failed to create freelancer agreement: ${response.status}`)
+      }
+
+      console.log("[v0] Freelancer agreement created successfully ✅")
+      await fetchAgreements()
+
+      toast({
+        title: "Success",
+        description: "Freelancer agreement created successfully",
+        variant: "default",
+      })
+
+      // Reset form data after successful submission for freelancer agreement
+      setFormData({
+        client_name: "",
+        client_address: "",
+        client_email: "",
+        project_title: "",
+        scope: "",
+        payment_terms: "",
+        deliverables: "",
+        terms: defaultFreelancerTerms, // Reset to default
         payment_amount: "",
         currency: "USD",
         freelancer_name: "",
@@ -309,11 +493,16 @@ function AgreementAutomationPageContent() {
         hourly_rate: "",
         project_duration: "",
       })
-
       setActiveTab("dashboard")
     } catch (error) {
-      console.error("Error creating agreement:", error)
-      setError(error instanceof Error ? error.message : "Failed to create agreement")
+      console.error("[v0] Error creating freelancer agreement:", error)
+      const errorMessage = error instanceof Error ? error.message : "Failed to create freelancer agreement"
+      setError(errorMessage)
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -331,7 +520,6 @@ function AgreementAutomationPageContent() {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(blobUrl)
   }
-
 
   const generatePDF = async (agreementId: string, type: "client" | "freelancer") => {
     try {
@@ -368,7 +556,11 @@ function AgreementAutomationPageContent() {
       }
 
       const data = await response.json()
-      // await downloadFile(data.pdfUrl, `invoice-${invoiceId}.pdf`)
+      // Try common keys returned by backends
+      const url = data.pdfUrl || data.url
+      if (url) {
+        await downloadFile(url, `invoice-${invoiceId}.pdf`)
+      }
 
       await fetchInvoices()
     } catch (error) {
@@ -376,8 +568,6 @@ function AgreementAutomationPageContent() {
       setError("Failed to generate invoice PDF")
     }
   }
-
-
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -397,18 +587,22 @@ function AgreementAutomationPageContent() {
   }
 
   const getDocumentAmount = (document: Document): number => {
-    if ("amount" in document && typeof document.amount === "number") {
-      return document.amount
+    const toNumber = (val: unknown) => {
+      const num = typeof val === "number" ? val : Number.parseFloat(String(val))
+      return Number.isFinite(num) ? num : 0
     }
-    if ("total_amount" in document && typeof document.total_amount === "number") {
-      return document.total_amount
+
+    if ("amount" in document && (document as any).amount !== undefined) {
+      return toNumber((document as any).amount)
     }
-    if ("payment_amount" in document && typeof document.payment_amount === "number") {
-      return document.payment_amount
+    if ("total_amount" in document && (document as any).total_amount !== undefined) {
+      return toNumber((document as any).total_amount)
+    }
+    if ("payment_amount" in document && (document as any).payment_amount !== undefined) {
+      return toNumber((document as any).payment_amount)
     }
     return 0
   }
-
 
   const allDocuments = [
     ...agreements.map((a) => ({ ...a, document_type: "agreement" as const })),
@@ -439,66 +633,206 @@ function AgreementAutomationPageContent() {
 
       await fetchInvoices()
       setActiveTab("dashboard")
+      toast({
+        title: "Success",
+        description: "Invoice created successfully",
+        variant: "default",
+      })
     } catch (error) {
       console.error("Error creating invoice:", error)
-      setError(error instanceof Error ? error.message : "Failed to create invoice")
+      const errorMessage = error instanceof Error ? error.message : "Failed to create invoice"
+      setError(errorMessage)
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
   }
 
+  // CHANGE: allow direct delete by accepting an optional document param
+  const handleDelete = async (docParam?: Document) => {
+    const doc = docParam ?? selectedDocument
+    if (!doc) return
 
+    try {
+      const endpoint = doc.document_type === "invoice" ? "/api/invoices" : "/api/agreements"
+      const params = new URLSearchParams({
+        id: doc.id,
+        ...(doc.document_type === "agreement" && { type: (doc as Agreement).type }),
+      })
 
-  // Define default freelancer T&C
-  const defaultFreelancerTerms = `Professional Conduct & Communication
-Terms and Conditions
-The freelancer is expected to maintain the highest level of professionalism in all interactions—
-internal and external.
-All communication with clients must be courteous, respectful, and aligned with Finzie's standards.
-Poaching, discussing payment terms directly with the client, or engaging in independent side
-conversations unrelated to the project shall be considered a breach of contract.
-Attendance in client meetings is mandatory. In case of emergencies, prior notice of at least 5–6
-hours must be given to the Finzie team.
+      const response = await fetch(`${endpoint}?${params}`, { method: "DELETE" })
 
-Commitment & Duration
-The minimum duration of engagement is 2 months.
-A 10-day notice period is required in case of termination by either party. If the freelancer
-chooses to discontinue before the minimum duration period, a 50% deduction will be applied
-to the pending payout.
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Failed to delete document")
+      }
 
-Ownership & Accountability
-The freelancer is expected to take complete ownership of their assigned work, from planning
-to delivery.
-Finzie reserves the right to terminate the engagement without notice in case of serious
-misconduct, repeated underperformance, or breach of trust.
+      toast({
+        title: "Success",
+        description: "Document deleted successfully",
+        variant: "default",
+      })
 
-Performance & Deliverables
-Freelancers are expected to meet deadlines, follow briefs precisely, and deliver high-quality
-work.
-Failure to meet performance standards may result in review, deduction, or termination.
-Specific deliverables and timelines will be communicated per project. Delays must be informed
-in advance.
+      if (doc.document_type === "invoice") {
+        fetchInvoices()
+      } else {
+        fetchAgreements()
+      }
+    } catch (error) {
+      console.error("Error deleting document:", error)
+      const errorMessage = error instanceof Error ? error.message : "Failed to delete document"
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
+    } finally {
+      setDeleteDialogOpen(false)
+      setSelectedDocument(null)
+    }
+  }
 
-Confidentiality & Conflict of Interest
-The freelancer shall not disclose or misuse any confidential information, documents, strategies,
-or trade secrets of Finzie or its clients during or after the term of engagement.
-Any potential conflict of interest must be disclosed immediately. Freelancers must not work
-with direct competitors of Finzie or its clients without written approval.
+  const handleEdit = async () => {
+    if (!selectedDocument) return
 
-Intellectual Property Rights
-All work created during the engagement is the sole property of Finzie or its clients.
-The freelancer waives the right to reuse, reproduce, or republish any part of the work without
-prior written consent.`;
+    try {
+      console.log("[v0] Edit form data:", editFormData)
+      const endpoint = selectedDocument.document_type === "invoice" ? "/api/invoices" : "/api/agreements"
 
-  // Initialize formData with default terms
-  const [formDataT, setFormDataT] = useState({
-    terms: defaultFreelancerTerms,
-    // ...other fields
-  });
+      // Prepare the update payload, ensuring correct type handling for agreements
+      const updatePayload: any = {
+        id: selectedDocument.id,
+        ...editFormData, // Spread the form data
+      }
+      console.log("[v0] Initial update payload:", updatePayload)
+      if (selectedDocument.document_type === "agreement") {
+        // Ensure 'type' is included for agreements if it's not already in editFormData
+        updatePayload.type = (selectedDocument as Agreement).type
+      }
 
-  const handleInputChangeT = (field: string, value: string) => {
-    setFormDataT((prev) => ({ ...prev, [field]: value }));
-  };
+      // For numeric fields, attempt conversion if they are strings
+      if (selectedDocument.document_type === "invoice") {
+        if (editFormData.amount !== undefined) updatePayload.amount = Number.parseFloat(String(editFormData.amount))
+        if (editFormData.total_amount !== undefined)
+          updatePayload.total_amount = Number.parseFloat(String(editFormData.total_amount))
+      } else {
+        // Agreement types
+        if (editFormData.payment_amount !== undefined)
+          updatePayload.payment_amount = Number.parseFloat(String(editFormData.payment_amount))
+        if (editFormData.hourly_rate !== undefined)
+          updatePayload.hourly_rate = Number.parseFloat(String(editFormData.hourly_rate))
+      }
+
+      console.log("[v0] Sending update payload:", updatePayload)
+
+      const response = await fetch(endpoint, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatePayload),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || "Failed to update document")
+      }
+
+      toast({
+        title: "Success",
+        description: "Document updated successfully",
+        variant: "default",
+      })
+
+      if (selectedDocument.document_type === "invoice") {
+        fetchInvoices()
+      } else {
+        fetchAgreements()
+      }
+    } catch (error) {
+      console.error("Error updating document:", error)
+      const errorMessage = error instanceof Error ? error.message : "Failed to update document"
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
+    } finally {
+      setEditDialogOpen(false)
+      setSelectedDocument(null)
+      setEditFormData({})
+    }
+  }
+
+  const handleRecreate = async (invoice: Invoice) => {
+    try {
+      // Fetch the specific invoice to get its details
+      const response = await fetch(`/api/invoices?id=${invoice.id}`) // Assuming an API endpoint to get a single invoice by ID
+      if (!response.ok) {
+        throw new Error("Failed to fetch invoice details")
+      }
+
+      const data = await response.json()
+      console.log("[v0] Invoice data received for recreation:", data)
+
+      // Check if invoice data exists in the response
+      if (!data.invoice) {
+        throw new Error("Invoice data not found in response")
+      }
+
+      const invoiceData = data.invoice
+
+      // Remove id and timestamps to create a new invoice with the same details
+      // Keep fields like invoice_number, amount, client_name, etc.
+      const { id, created_at, updated_at, ...recreateData } = invoiceData
+
+      const createResponse = await fetch("/api/invoices", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(recreateData),
+      })
+
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json().catch(() => ({}))
+        throw new Error(errorData.error || "Failed to recreate invoice")
+      }
+
+      toast({
+        title: "Success",
+        description: "Invoice recreated successfully",
+        variant: "default",
+      })
+
+      fetchInvoices() // Refresh the list of invoices
+    } catch (error) {
+      console.error("[v0] Error recreating invoice:", error)
+      const errorMessage = error instanceof Error ? error.message : "Failed to recreate invoice"
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
+    }
+  }
+
+  const openEditDialog = (document: Document) => {
+    console.log("[v0] Opening edit dialog for document:", document)
+    setSelectedDocument(document)
+    console.log("[v0] Document set as selectedDocument:", document)
+    // Initialize editFormData with the document's data, handling potential null/undefined for optional fields
+    setEditFormData({ ...document })
+    setEditDialogOpen(true)
+    console.log("[v0] editFormData initialized as:", { ...document })
+  }
+
+  useEffect(() => {
+  if (editDialogOpen) {
+    console.log("[v1] Dialog opened with selectedDocument:", selectedDocument)
+    setEditFormData(selectedDocument || {}) // prefill the form
+  }
+}, [editDialogOpen])
 
 
   return (
@@ -548,13 +882,9 @@ prior written consent.`;
           >
             <div className="flex items-center justify-center md:justify-start gap-2">
               <FileText className="w-6 h-6 text-[#FFE01B]" />
-              <h1 className="text-2xl md:text-3xl font-bold text-white">
-                Agreement Automation
-              </h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-white">Agreement Automation</h1>
             </div>
-            <p className="text-white/70 text-sm md:text-base mt-1">
-              Manage agreements, invoices & document signing
-            </p>
+            <p className="text-white/70 text-sm md:text-base mt-1">Manage agreements, invoices & document signing</p>
           </motion.div>
         </motion.div>
         {/* Stats Cards */}
@@ -573,53 +903,16 @@ prior written consent.`;
             </CardContent>
           </Card>
 
-          {/* <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-white/70 text-sm">Pending Signatures</p>
-                  <p className="text-xl md:text-2xl font-bold text-white">{stats.pending}</p>
-                </div>
-                <div className="p-2 bg-yellow-500/20 rounded-lg">
-                  <Clock className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card> */}
-
-          {/* <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-white/70 text-sm">Signed Documents</p>
-                  <p className="text-xl md:text-2xl font-bold text-white">{stats.signed}</p>
-                </div>
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <FileSignature className="w-5 h-5 md:w-6 md:h-6 text-green-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card> */}
-
-          {/* <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-white/70 text-sm">Total Revenue</p>
-                  <p className="text-xl md:text-2xl font-bold text-white">${stats.revenue.toLocaleString()}</p>
-                </div>
-                <div className="p-2 bg-[#FFE01B]/20 rounded-lg">
-                  <DollarSign className="w-5 h-5 md:w-6 md:h-6 text-[#FFE01B]" />
-                </div>
-              </div>
-            </CardContent>
-          </Card> */}
+          {/* Removed unused stat cards for brevity */}
         </div>
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 md:space-y-6">
           <TabsList className="bg-white/5 backdrop-blur-sm border-white/10 w-full flex flex-wrap">
-            <TabsTrigger value="dashboard" className="flex-1 data-[state=active]:bg-[#FFE01B] data-[state=active]:text-black transition-all duration-200 rounded-xl h-full">
+            <TabsTrigger
+              value="dashboard"
+              className="flex-1 data-[state=active]:bg-[#FFE01B] data-[state=active]:text-black transition-all duration-200 rounded-xl h-full"
+            >
               <FileText className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Dashboard</span>
             </TabsTrigger>
@@ -637,7 +930,10 @@ prior written consent.`;
               <Briefcase className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Freelancer</span>
             </TabsTrigger>
-            <TabsTrigger value="invoice" className="flex-1 data-[state=active]:bg-[#FFE01B] data-[state=active]:text-black transition-all duration-200 rounded-xl h-full">
+            <TabsTrigger
+              value="invoice"
+              className="flex-1 data-[state=active]:bg-[#FFE01B] data-[state=active]:text-black transition-all duration-200 rounded-xl h-full"
+            >
               <CreditCard className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Invoice</span>
             </TabsTrigger>
@@ -647,23 +943,6 @@ prior written consent.`;
           <TabsContent value="dashboard" className="space-y-4 md:space-y-6 animate-fadeIn">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <h2 className="text-xl font-semibold text-white">Recent Documents</h2>
-              {/* <div className="flex gap-2 w-full sm:w-auto">
-                <Button
-                  onClick={() => setActiveTab("client-agreement")}
-                  className="bg-[#FFE01B] text-black hover:bg-[#FFE01B]/90 transition-all duration-200 flex-1 sm:flex-initial"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">New Agreement</span>
-                </Button>
-                <Button
-                  onClick={() => setActiveTab("invoice")}
-                  variant="outline"
-                  className="border-white/20 text-white hover:bg-white/10 transition-all duration-200 flex-1 sm:flex-initial"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  <span className="hidden sm:inline">New Invoice</span>
-                </Button>
-              </div> */}
             </div>
 
             <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300">
@@ -692,7 +971,9 @@ prior written consent.`;
                             </div>
                             <div>
                               <h3 className="font-semibold text-white text-base md:text-lg">
-                                {document.project_title || document.work_type || ('invoice_number' in document ? document.invoice_number : 'Untitled')}
+                                {document.project_title ||
+                                  document.work_type ||
+                                  ("invoice_number" in document ? document.invoice_number : "Untitled")}
                               </h3>
                               <p className="text-white/70 text-sm">
                                 {document.client_name || document.freelancer_name} • {document.document_type}
@@ -701,10 +982,6 @@ prior written consent.`;
                             </div>
                           </div>
                           <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
-                            {/* <Badge className={`${getStatusColor(document.status || "pending")} self-start md:self-auto`}>
-                              {(document.status || "pending").charAt(0).toUpperCase() +
-                                (document.status || "pending").slice(1)}
-                            </Badge> */}
                             {getDocumentAmount(document) > 0 && (
                               <span className="text-[#FFE01B] font-semibold text-sm md:text-base">
                                 {new Intl.NumberFormat("en-IN", {
@@ -713,7 +990,7 @@ prior written consent.`;
                                     "currency" in document && (document as any).currency
                                       ? (document as any).currency
                                       : "USD", // fallback USD if not provided
-                                  minimumFractionDigits: 2
+                                  minimumFractionDigits: 2,
                                 }).format(getDocumentAmount(document))}
                               </span>
                             )}
@@ -722,7 +999,7 @@ prior written consent.`;
                               <Button
                                 size="sm"
                                 variant="ghost"
-                                className="text-white hover:text-[#FFE01B] transition-all duration-200"
+                                className="text-white hover:text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
                                 onClick={() => {
                                   if (document.document_type === "invoice") {
                                     generateInvoicePDF(document.id)
@@ -737,42 +1014,59 @@ prior written consent.`;
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  className="text-white hover:text-[#FFE01B] transition-all duration-200"
+                                  className="text-white hover:text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
                                   onClick={() =>
-                                    downloadFile(
-                                      document.pdf_url!,
-                                      `${document.document_type}-${document.id}.pdf`
-                                    )
+                                    downloadFile(document.pdf_url!, `${document.document_type}-${document.id}.pdf`)
                                   }
                                 >
                                   <Download className="w-4 h-4" />
                                 </Button>
-
                               )}
+
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    className="text-white hover:text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
+                                  >
+                                    <MoreVertical className="w-4 h-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="bg-[#241C15] border-white/10">
+                                  {/* use onSelect for Radix menu items so actions fire correctly */}
+                                  <DropdownMenuItem
+                                    onSelect={() => openEditDialog(document)}
+                                    className="text-white hover:text-[#FFE01B] hover:bg-[#FFE01B]/10 cursor-pointer"
+                                  >
+                                    <Pencil className="w-4 h-4 mr-2" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                  {document.document_type === "invoice" && (
+                                    <DropdownMenuItem
+                                      onSelect={() => handleRecreate(document as Invoice)}
+                                      className="text-white hover:text-[#FFE01B] hover:bg-[#FFE01B]/10 cursor-pointer"
+                                    >
+                                      <Copy className="w-4 h-4 mr-2" />
+                                      Recreate
+                                    </DropdownMenuItem>
+                                  )}
+                                  {/* CHANGE: call delete directly from the menu instead of opening dialog */}
+                                  <DropdownMenuItem
+                                    onSelect={() => {
+                                      // directly call delete for this document
+                                      handleDelete(document)
+                                    }}
+                                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10 cursor-pointer"
+                                  >
+                                    <Trash2 className="w-4 h-4 mr-2" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                           </div>
                         </div>
-
-                        {/* {document.pdf_url && (
-                          <SignatureStatus
-                            documentId={document.id}
-                            documentType={
-                              document.document_type === "invoice" ? "invoice" : (document as Agreement).type
-                            }
-                            status={document.status || "pending"}
-                            docusealEnvelopeId={document.docuseal_envelope_id}
-                            signerEmail={document.client_email || (document as FreelancerAgreement).freelancer_email}
-                            signerName={document.client_name || (document as FreelancerAgreement).freelancer_name}
-                            onStatusUpdate={() => {
-                              // Refresh documents when status changes
-                              if (document.document_type === "invoice") {
-                                fetchInvoices()
-                              } else {
-                                fetchAgreements()
-                              }
-                            }}
-                          />
-                        )} */}
                       </div>
                     ))
                   )}
@@ -783,421 +1077,24 @@ prior written consent.`;
 
           {/* Client Agreement Tab */}
           <TabsContent value="client-agreement" className="space-y-4 md:space-y-6 animate-fadeIn">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-              <div className="lg:col-span-2">
-                <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <User className="w-5 h-5 text-[#FFE01B]" />
-                      Create Client Agreement
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4 md:space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                      <div className="space-y-3 md:space-y-4">
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            Client Name
-                          </label>
-                          <Input
-                            value={formData.client_name}
-                            onChange={(e) => handleInputChange("client_name", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="Enter client name"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Mail className="w-4 h-4" />
-                            Client Email
-                          </label>
-                          <Input
-                            type="email"
-                            value={formData.client_email}
-                            onChange={(e) => handleInputChange("client_email", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="client@example.com"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Target className="w-4 h-4" />
-                            Project Title
-                          </label>
-                          <Input
-                            value={formData.project_title}
-                            onChange={(e) => handleInputChange("project_title", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="Enter project title"
-                          />
-                        </div>
-
-                      </div>
-                      <div className="space-y-3 md:space-y-4">
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            Client Address
-                          </label>
-                          <Textarea
-                            value={formData.client_address}
-                            onChange={(e) => handleInputChange("client_address", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[115px]"
-                            placeholder="Enter client address"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <DollarSign className="w-4 h-4" />
-                            Payment Amount
-                          </label>
-                          <div className="flex gap-2">
-                            <Select
-                              value={formData.currency}
-                              onValueChange={(value) => handleInputChange("currency", value)}
-                            >
-                              <SelectTrigger className="w-20 md:w-24 bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent className="bg-[#241C15] border-white/20 text-white">
-                                <SelectItem value="USD">USD</SelectItem>
-                                <SelectItem value="EUR">EUR</SelectItem>
-                                <SelectItem value="INR">INR</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Input
-                              type="number"
-                              value={formData.payment_amount}
-                              onChange={(e) => handleInputChange("payment_amount", e.target.value)}
-                              className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                              placeholder="0.00"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 md:space-y-4">
-                      <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Shield className="w-4 h-4" />
-                            Scope Of Work
-                          </label>
-                          <Textarea
-                            value={formData.nda}
-                            onChange={(e) => handleInputChange("nda", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[150px]"
-                            placeholder="Describe Scope of Work"
-                          />
-                        </div>
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="text-white/70 text-sm flex items-center gap-1">
-                            <CalendarDays className="w-4 h-4" />
-                            Payment Terms
-                          </label>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => generateAITerms("payment")}
-                            disabled={aiLoading}
-                            className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
-                          >
-                            {aiLoading ? (
-                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                            ) : (
-                              <Sparkles className="w-3 h-3 mr-1" />
-                            )}
-                            AI Generate
-                          </Button>
-                        </div>
-                        <Textarea
-                          value={formData.payment_terms}
-                          onChange={(e) => handleInputChange("payment_terms", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[150px]"
-                          placeholder="Describe payment terms"
-                        />
-                      </div>
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="text-white/70 text-sm flex items-center gap-1">
-                            <Shield className="w-4 h-4" />
-                            Terms & Conditions
-                          </label>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => generateAITerms("client")}
-                            disabled={aiLoading}
-                            className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
-                          >
-                            {aiLoading ? (
-                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                            ) : (
-                              <Sparkles className="w-3 h-3 mr-1" />
-                            )}
-                            AI Generate
-                          </Button>
-                        </div>
-                        <Textarea
-                          value={formData.terms}
-                          onChange={(e) => handleInputChange("terms", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[150px]"
-                          placeholder="Enter terms and conditions"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex gap-3 md:gap-4 flex-col sm:flex-row">
-                      <Button
-                        onClick={() => handleSubmit("client")}
-                        disabled={loading}
-                        className="bg-[#FFE01B] text-black hover:bg-[#FFE01B]/90 transition-all duration-200 flex-1"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Creating...
-                          </>
-                        ) : (
-                          <>
-                            <FileSignature className="w-4 h-4 mr-2" />
-                            Create Agreement
-                          </>
-                        )}
-                      </Button>
-                      {/* <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent transition-all duration-200 flex-1">
-                        Save as Draft
-                      </Button> */}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* AI Prompt Inputs Sidebar */}
-              <div className="space-y-3 md:space-y-4">
-                <AIPromptInput
-                  onGenerateAction={generateAIContent}
-                  loading={aiLoading}
-                  title="Generate Payment Terms"
-                  placeholder="e.g., 50% upfront, 50% on completion, Net 30 payment terms"
-                  type="payment_terms"
-                  icon={<CalendarDays className="w-4 h-4" />}
-                />
-                <AIPromptInput
-                  onGenerateAction={generateAIContent}
-                  loading={aiLoading}
-                  title="Generate Terms & Conditions"
-                  placeholder="e.g., Include IP ownership, revision limits, cancellation policy"
-                  type="terms"
-                  icon={<Shield className="w-4 h-4" />}
-                />
-              </div>
-            </div>
+            <ClientAgreementForm
+              onSubmitAction={handleClientSubmit}
+              loading={loading}
+              onGenerateAIContent={generateAIContent}
+              onGenerateAITerms={generateAITerms}
+              aiLoading={aiLoading}
+            />
           </TabsContent>
 
           {/* Freelancer Agreement Tab */}
           <TabsContent value="freelancer-agreement" className="space-y-4 md:space-y-6 animate-fadeIn">
-            <div className="grid grid-cols-1 gap-4 md:gap-6">
-              <div className="lg:col-span-2">
-                <Card className="bg-white/5 backdrop-blur-sm border-white/10 transition-all duration-300">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <Briefcase className="w-5 h-5 text-[#FFE01B]" />
-                      Create Freelancer Agreement
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4 md:space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                      <div className="space-y-4 md:space-y-4">
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            Freelancer Name
-                          </label>
-                          <Input
-                            value={formData.freelancer_name}
-                            onChange={(e) => handleInputChange("freelancer_name", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="Enter freelancer name"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Mail className="w-4 h-4" />
-                            Freelancer Email
-                          </label>
-                          <Input
-                            type="email"
-                            value={formData.freelancer_email}
-                            onChange={(e) => handleInputChange("freelancer_email", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="freelancer@example.com"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            Client Name
-                          </label>
-                          <Input
-                            value={formData.client_name}
-                            onChange={(e) => handleInputChange("client_name", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="Enter client name"
-                          />
-                        </div>
-
-                      </div>
-                      <div className="space-y-3 md:space-y-4">
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Coins className="w-4 h-4" />
-                            Hourly Rate ($)
-                          </label>
-                          <Input
-                            type="number"
-                            value={formData.hourly_rate}
-                            onChange={(e) => handleInputChange("hourly_rate", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="0.00"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            Project Duration
-                          </label>
-                          <Input
-                            value={formData.project_duration}
-                            onChange={(e) => handleInputChange("project_duration", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="e.g., 3 months, 40 hours"
-                          />
-                        </div>
-                        
-                        <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Briefcase className="w-4 h-4" />
-                            Work Type
-                          </label>
-                          <Input
-                            value={formData.work_type}
-                            onChange={(e) => handleInputChange("work_type", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                            placeholder="e.g., Web Development, Design"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-6 md:space-y-4">
-                      <div>
-                          <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
-                            <Shield className="w-4 h-4" />
-                            Scope Of Work
-                          </label>
-                          <Textarea
-                            value={formData.nda}
-                            onChange={(e) => handleInputChange("nda", e.target.value)}
-                            className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[80px]"
-                            placeholder="Describe Scope of Work"
-                          />
-                        </div>
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="text-white/70 text-sm flex items-center gap-1">
-                            <Shield className="w-4 h-4" />
-                            Terms & Conditions
-                          </label>
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={() => generateAITerms("freelancer")}
-                            disabled={aiLoading}
-                            className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
-                          >
-                            {aiLoading ? (
-                              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                            ) : (
-                              <Sparkles className="w-3 h-3 mr-1" />
-                            )}
-                            AI Generate
-                          </Button>
-                        </div>
-                        <Textarea
-                          value={formDataT.terms}
-                          onChange={(e) => handleInputChangeT("terms", e.target.value)}
-                          className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[200px]"
-                          placeholder="Enter terms and conditions"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-3 md:gap-4 w-12">
-                      <Button
-                        onClick={() => handleSubmit("freelancer")}
-                        disabled={loading}
-                        className="bg-[#FFE01B] text-black hover:bg-[#FFE01B]/90 transition-all duration-200 flex-1"
-                      >
-                        {loading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Creating...
-                          </>
-                        ) : (
-                          <>
-                            <FileSignature className="w-4 h-4 mr-2" />
-                            Create Agreement
-                          </>
-                        )}
-                      </Button>
-                      {/* <Button variant="outline" className="border-white/20 text-white hover:bg-white/10 bg-transparent transition-all duration-200 flex-1">
-                        Save as Draft
-                      </Button> */}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* <div className="space-y-3 md:space-y-4">
-                <AIPromptInput
-                  onGenerateAction={generateAIContent}
-                  loading={aiLoading}
-                  title="Generate Non-Disclosure Agreement(NDA)"
-                  placeholder="e.g., Create a modern e-commerce website with payment integration"
-                  type="scope"
-                  icon={<FileText className="w-4 h-4" />}
-                />
-                <AIPromptInput
-                  onGenerateAction={generateAIContent}
-                  loading={aiLoading}
-                  title="Generate Deliverables"
-                  placeholder="e.g., Website design, mobile app, user documentation"
-                  type="deliverables"
-                  icon={<FileCheck className="w-4 h-4" />}
-                />
-                <AIPromptInput
-                  onGenerateAction={generateAIContent}
-                  loading={aiLoading}
-                  title="Generate IP Right Terms"
-                  placeholder="e.g., 50% upfront, 50% on completion, Net 30 payment terms"
-                  type="payment_terms"
-                  icon={<CalendarDays className="w-4 h-4" />}
-                />
-                <AIPromptInput
-                  onGenerateAction={generateAIContent}
-                  loading={aiLoading}
-                  title="Generate Terms & Conditions"
-                  placeholder="e.g., Include IP ownership, revision limits, cancellation policy"
-                  type="terms"
-                  icon={<Shield className="w-4 h-4" />}
-                />
-              </div> */}
-            </div>
+            {/* Removed old inline form, now using FreelancerAgreementForm component */}
+            <FreelancerAgreementForm
+              onSubmitAction={handleFreelancerSubmit}
+              loading={loading}
+              onGenerateAITerms={generateAITerms}
+              aiLoading={aiLoading}
+            />
           </TabsContent>
 
           {/* Invoice Tab */}
@@ -1205,6 +1102,270 @@ prior written consent.`;
             <InvoiceForm onSubmitAction={handleInvoiceSubmit} loading={loading} />
           </TabsContent>
         </Tabs>
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent className="bg-[#241C15] border-white/10">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-white">Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription className="text-white/70">
+                This action cannot be undone. This will permanently delete the document from the database.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-white/5 text-white border-white/10 hover:bg-white/10">
+                Cancel
+              </AlertDialogCancel>
+              {/* Call the updated handleDelete without arguments to use selectedDocument */}
+              <AlertDialogAction onClick={() => handleDelete()} className="bg-red-500 text-white hover:bg-red-600">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Edit Dialog */}
+        <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DialogContent className="bg-[#241C15] border-white/10 max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-white">Edit Document</DialogTitle>
+              <DialogDescription className="text-white/70">
+                Make changes to your document. Click save when you're done.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              {selectedDocument?.document_type === "invoice" ? (
+                <>
+                  <div>
+                    <label className="text-white/70 text-sm mb-2 block">Invoice Number</label>
+                    <Input
+                      value={editFormData.invoice_number || ""}
+                      onChange={(e) => setEditFormData({ ...editFormData, invoice_number: e.target.value })}
+                      className="bg-white/5 border-white/20 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white/70 text-sm mb-2 block">Client Name</label>
+                    <Input
+                      value={editFormData.client_name || ""}
+                      onChange={(e) => setEditFormData({ ...editFormData, client_name: e.target.value })}
+                      className="bg-white/5 border-white/20 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white/70 text-sm mb-2 block">Amount</label>
+                    <Input
+                      type="number"
+                      value={editFormData.amount || ""}
+                      onChange={(e) =>
+                        setEditFormData({ ...editFormData, amount: Number.parseFloat(String(e.target.value)) })
+                      }
+                      className="bg-white/5 border-white/20 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-white/70 text-sm mb-2 block">Due Date</label>
+                    <Input
+                      type="date"
+                      value={editFormData.due_date ? editFormData.due_date.split("T")[0] : ""} // Format for date input
+                      onChange={(e) => setEditFormData({ ...editFormData, due_date: e.target.value })}
+                      className="bg-white/5 border-white/20 text-white"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Dynamic fields based on agreement type */}
+                  {(selectedDocument as Agreement)?.type === "client" ? (
+                    <>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Client Name</label>
+                        <Input
+                          value={editFormData.client_name || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, client_name: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Client Email</label>
+                        <Input
+                          type="email"
+                          value={editFormData.client_email || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, client_email: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Payment Amount</label>
+                        <Input
+                          type="number"
+                          value={editFormData.payment_amount || ""}
+                          onChange={(e) =>
+                            setEditFormData({
+                              ...editFormData,
+                              payment_amount: Number.parseFloat(String(e.target.value)),
+                            })
+                          }
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Currency</label>
+                        <Input
+                          value={editFormData.currency || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, currency: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Scope</label>
+                        <Textarea
+                          value={editFormData.scope || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, scope: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Deliverables</label>
+                        <Textarea
+                          value={editFormData.deliverables || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, deliverables: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Responsibilities</label>
+                        <Textarea
+                          value={editFormData.responsibilities || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, responsibilities: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Termination Clause</label>
+                        <Textarea
+                          value={editFormData.termination || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, termination: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Confidentiality</label>
+                        <Textarea
+                          value={editFormData.confidentiality || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, confidentiality: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Governing Law</label>
+                        <Input
+                          value={editFormData.governing_law || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, governing_law: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Ownership Clause</label>
+                        <Textarea
+                          value={editFormData.ownership || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, ownership: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
+                        />
+                      </div>
+                    </>
+                  ) : (selectedDocument as Agreement)?.type === "freelancer" ? (
+                    <>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Freelancer Name</label>
+                        <Input
+                          value={editFormData.freelancer_name || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, freelancer_name: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Freelancer Email</label>
+                        <Input
+                          type="email"
+                          value={editFormData.freelancer_email || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, freelancer_email: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Hourly Rate</label>
+                        <Input
+                          type="number"
+                          value={editFormData.hourly_rate || ""}
+                          onChange={(e) =>
+                            setEditFormData({ ...editFormData, hourly_rate: Number.parseFloat(String(e.target.value)) })
+                          }
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Project Duration</label>
+                        <Input
+                          value={editFormData.project_duration || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, project_duration: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">Work Type</label>
+                        <Input
+                          value={editFormData.work_type || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, work_type: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">NDA</label>
+                        <Textarea
+                          value={editFormData.nda || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, nda: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/70 text-sm mb-2 block">IP Rights</label>
+                        <Textarea
+                          value={editFormData.ip_rights || ""}
+                          onChange={(e) => setEditFormData({ ...editFormData, ip_rights: e.target.value })}
+                          className="bg-white/5 border-white/20 text-white min-h-[100px]"
+                        />
+                      </div>
+                    </>
+                  ) : null}
+
+                  <div>
+                    <label className="text-white/70 text-sm mb-2 block">Terms & Conditions</label>
+                    <Textarea
+                      value={editFormData.terms || ""}
+                      onChange={(e) => setEditFormData({ ...editFormData, terms: e.target.value })}
+                      className="bg-white/5 border-white/20 text-white min-h-[150px]"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setEditDialogOpen(false)}
+                className="bg-white/5 text-white border-white/10 hover:bg-white/10"
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleEdit} className="bg-[#FFE01B] text-black hover:bg-[#FFE01B]/90">
+                Save Changes
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <style jsx global>{`

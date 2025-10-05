@@ -5,84 +5,74 @@ import { put } from "@vercel/blob"
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
-    const body = await request.json()
-    const { agreementId, type } = body
+    console.log("📌 Incoming request to generate PDF");
 
+    const supabase = await createClient();
+    console.log("✅ Supabase client created");
+
+    const body = await request.json();
+    console.log("📌 Request body:", body);
+
+    const { agreementId, type } = body;
     if (!agreementId || !type) {
-      return NextResponse.json({ error: "Agreement ID and type are required" }, { status: 400 })
+      console.error("❌ Missing agreementId or type");
+      return NextResponse.json({ error: "Agreement ID and type are required" }, { status: 400 });
     }
-    console.log("new agreement:-", agreementId, type)
-    // Get agreement data
-    const tableName = type === "client" ? "client_agreements" : "freelancer_agreements"
+
+    const tableName = type === "client" ? "client_agreements" : "freelancer_agreements";
+    console.log("📌 Fetching from table:", tableName);
+
     const { data: agreement, error: agreementError } = await supabase
       .from(tableName)
       .select("*")
       .eq("id", agreementId)
-      .single()
+      .single();
 
     if (agreementError || !agreement) {
-      return NextResponse.json({ error: "Agreement not found" }, { status: 404 })
+      console.error("❌ Agreement fetch error:", agreementError);
+      return NextResponse.json({ error: "Agreement not found" }, { status: 404 });
     }
-    console.log("new agreement:-", agreement, agreementError)
-    // Get template
-    const templateType = type === "client" ? "client_agreement" : "freelancer_agreement"
+    console.log("✅ Agreement found:", agreement);
 
-    let { data: template, error: templateError } = await supabase
-      .from("document_templates")
-      .select("*")
-      .eq("type", templateType)
-      .eq("is_active", true)
-      .maybeSingle()
+    let pdfBuffer: Buffer;
+    console.log("📌 Generating PDF for type:", type);
 
-    // fallback to client template if freelancer template doesn't exist
-    if (!template && type === "freelancer") {
-      const fallback = await supabase
-        .from("document_templates")
-        .select("*")
-        .eq("type", "client_agreement")
-        .eq("is_active", true)
-        .single()
-
-      template = fallback.data
-      templateError = fallback.error
-    }
-
-
-    // Generate PDF
-    let pdfBuffer: Buffer
     if (type === "client") {
-      pdfBuffer = await PDFGenerator.generateClientAgreementPDF(agreement, template)
+      pdfBuffer = await PDFGenerator.generateClientAgreementPDF(agreement);
     } else {
-      pdfBuffer = await PDFGenerator.generateFreelancerAgreementPDF(agreement, template)
+      pdfBuffer = await PDFGenerator.generateFreelancerAgreementPDF(agreement);
     }
-    console.log("new agreement:-", pdfBuffer)
-    // Upload to Vercel Blob
-    const filename = `${type}-agreement-${agreementId}-${Date.now()}.pdf`
+
+    console.log("✅ PDF generated, uploading to blob...");
+
+    const filename = `${type}-agreement-${agreementId}-${Date.now()}.pdf`;
     const blob = await put(filename, pdfBuffer, {
       access: "public",
       contentType: "application/pdf",
-    })
+    });
 
-    // Update agreement with PDF URL
+    console.log("✅ PDF uploaded:", blob.url);
+
     const { error: updateError } = await supabase
       .from(tableName)
       .update({
         pdf_url: blob.url,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", agreementId)
+      .eq("id", agreementId);
 
     if (updateError) {
-      console.error("Error updating agreement with PDF URL:", updateError)
+      console.error("❌ Error updating DB with PDF URL:", updateError);
+    } else {
+      console.log("✅ Supabase updated with PDF URL");
     }
 
     return NextResponse.json({
       pdfUrl: blob.url,
       message: "PDF generated successfully",
-    })
+    });
   } catch (error) {
-    console.error("Error generating PDF:", error)
-    return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 })
+    console.error("🔥 Fatal error generating PDF:", error);
+    return NextResponse.json({ error: "Failed to generate PDF" }, { status: 500 });
   }
 }

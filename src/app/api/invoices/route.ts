@@ -87,7 +87,6 @@ export async function POST(request: NextRequest) {
 
       if (itemsError) {
         console.error("Error inserting invoice items:", itemsError)
-        // Don't fail the entire request, just log the error
       }
     }
 
@@ -138,10 +137,8 @@ export async function PUT(request: NextRequest) {
 
     // Update invoice items if provided
     if (items) {
-      // Delete existing items
       await supabase.from("invoice_items").delete().eq("invoice_id", id)
 
-      // Insert new items
       if (items.length > 0) {
         const invoiceItems = items.map((item: any) => ({
           invoice_id: id,
@@ -175,10 +172,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Invoice ID is required" }, { status: 400 })
     }
 
-    // Delete invoice items first (cascade should handle this, but being explicit)
     await supabase.from("invoice_items").delete().eq("invoice_id", id)
-
-    // Delete invoice
     const { error } = await supabase.from("invoices").delete().eq("id", id)
 
     if (error) {
