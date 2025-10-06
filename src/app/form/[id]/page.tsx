@@ -1,20 +1,20 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { supabase } from "../../../lib/SupabaseAuthClient"
 import type { Form } from "../../../types/database"
+import { FileUpload } from "../../../components/file-upload"
 
 interface FormPageProps {
   params: Promise<{
     id: string
-  }> // Updated to Promise type for Next.js 15+
+  }>
 }
 
 export default function FormPage({ params }: FormPageProps) {
-  const [formId, setFormId] = useState<string | null>(null) // Added state to store resolved form ID
+  const [formId, setFormId] = useState<string | null>(null)
   const [form, setForm] = useState<Form | null>(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -34,39 +34,21 @@ export default function FormPage({ params }: FormPageProps) {
 
   // Fetch form details
   useEffect(() => {
-    if (!formId) return // Wait for formId to be resolved
+    if (!formId) return
 
     const fetchForm = async () => {
       try {
-        console.log("[v0] Attempting to fetch form with formId:", formId)
-
         const { data: allForms, error: listError } = await supabase.from("forms").select("*")
-        console.log("[v0] All forms in database:", allForms)
-        console.log("[v0] Total forms found:", allForms?.length || 0)
-
-        if (allForms && allForms.length > 0) {
-          console.log(
-            "[v0] Available form_ids:",
-            allForms.map((f) => f.form_id),
-          )
-        } else {
-          console.log("[v0] No forms found in database!")
-        }
 
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(formId)
         const queryField = isUUID ? "id" : "form_id"
 
-        console.log("[v0] Detected parameter type:", isUUID ? "UUID" : "text")
-        console.log("[v0] Querying by field:", queryField)
-
         const { data, error } = await supabase.from("forms").select("*").eq(queryField, formId).single()
 
         if (error) {
-          console.log("[v0] Supabase error:", error)
           throw error
         }
 
-        console.log("[v0] Successfully fetched form:", data)
         setForm(data)
 
         const initialData: Record<string, any> = {}
@@ -85,11 +67,9 @@ export default function FormPage({ params }: FormPageProps) {
         })
         setCustomResponses(initialCustomResponses)
       } catch (err: any) {
-        console.error("[v0] Error fetching form:", err)
+        console.error("Error fetching form:", err)
         if (err.code === "PGRST116") {
-          setError(
-            `Form with ID "${formId}" not found. Please check the URL or contact the administrator. Check browser console for available forms.`,
-          )
+          setError(`Form with ID "${formId}" not found. Please check the URL or contact the administrator.`)
         } else {
           setError("Form not found or no longer available")
         }
@@ -99,7 +79,7 @@ export default function FormPage({ params }: FormPageProps) {
     }
 
     fetchForm()
-  }, [formId]) // Use formId instead of params.id
+  }, [formId])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -108,7 +88,7 @@ export default function FormPage({ params }: FormPageProps) {
 
     try {
       const submissionData: Record<string, any> = {
-        form_id: formId, // Use resolved formId (this will be the text form_id, not UUID)
+        form_id: formId,
         custom_responses: customResponses,
       }
 
@@ -131,8 +111,6 @@ export default function FormPage({ params }: FormPageProps) {
           submissionData[field] = formData[field] || null
         }
       })
-
-      console.log("[v0] Submitting data:", submissionData) // Debug log to see what's being sent
 
       const response = await fetch("/api/submissions", {
         method: "POST",
@@ -177,7 +155,7 @@ export default function FormPage({ params }: FormPageProps) {
       phone: "Phone Number",
       portfolio_link: "Portfolio URL",
       github_link: "GitHub Profile",
-      resume_link: "Resume URL",
+      resume_link: "Resume",
       years_experience: "Years of Experience",
       proposal_link: "Proposal/Cover Letter",
     }
@@ -351,12 +329,6 @@ export default function FormPage({ params }: FormPageProps) {
           <p className="text-gray-600 mb-6">
             Thank you for your interest. We'll review your application and get back to you soon.
           </p>
-          {/* <button
-            onClick={() => window.location.reload()}
-            className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black font-semibold py-2 px-6 rounded-lg transition-all duration-200"
-          >
-            Submit Another Application
-          </button> */}
         </motion.div>
       </div>
     )
@@ -378,7 +350,7 @@ export default function FormPage({ params }: FormPageProps) {
             dangerouslySetInnerHTML={{
               __html: (form?.form_description || "No description provided.").replace(
                 /(https?:\/\/[^\s]+)/g,
-                '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline">$1</a>'
+                '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-400 underline">$1</a>',
               ),
             }}
           />
@@ -404,7 +376,35 @@ export default function FormPage({ params }: FormPageProps) {
           <form onSubmit={handleSubmit} className="space-y-6">
             {form?.required_fields?.map((fieldKey: string) => {
               const label = getFieldLabel(fieldKey)
-              const isRequired = true // All required_fields are required
+              const isRequired = true
+
+              if (fieldKey === "resume_link") {
+                return (
+                  <FileUpload
+                    key={fieldKey}
+                    label="Resume"
+                    required={isRequired}
+                    accept=".pdf,.doc,.docx"
+                    maxSize={5}
+                    onUploadComplete={(url) => handleInputChange(fieldKey, url)}
+                    currentFile={formData[fieldKey]}
+                  />
+                )
+              }
+
+              if (fieldKey === "proposal_link") {
+                return (
+                  <FileUpload
+                    key={fieldKey}
+                    label="Proposal/Cover Letter"
+                    required={isRequired}
+                    accept=".pdf,.doc,.docx"
+                    maxSize={5}
+                    onUploadComplete={(url) => handleInputChange(fieldKey, url)}
+                    currentFile={formData[fieldKey]}
+                  />
+                )
+              }
 
               if (fieldKey === "years_experience") {
                 return (
@@ -421,24 +421,6 @@ export default function FormPage({ params }: FormPageProps) {
                       onChange={(e) => handleInputChange(fieldKey, e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFE01B] focus:border-transparent transition-all duration-200"
                       placeholder="e.g., 3"
-                    />
-                  </div>
-                )
-              }
-
-              if (fieldKey === "proposal_link") {
-                return (
-                  <div key={fieldKey}>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {label} {isRequired && <span className="text-red-500">*</span>}
-                    </label>
-                    <textarea
-                      required={isRequired}
-                      value={formData[fieldKey] || ""}
-                      onChange={(e) => handleInputChange(fieldKey, e.target.value)}
-                      rows={4}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FFE01B] focus:border-transparent transition-all duration-200"
-                      placeholder="Tell us about yourself and why you're interested in this position..."
                     />
                   </div>
                 )
@@ -472,7 +454,7 @@ export default function FormPage({ params }: FormPageProps) {
                           : fieldKey === "phone"
                             ? "1234567890"
                             : fieldKey.includes("link")
-                              ? `https://your${fieldKey.replace("link", "")}.com`
+                              ? `https://your${fieldKey.replace("_link", "")}.com`
                               : `Enter your ${label.toLowerCase()}`
                     }
                   />
