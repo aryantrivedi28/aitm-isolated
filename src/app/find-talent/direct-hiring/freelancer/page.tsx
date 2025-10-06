@@ -13,6 +13,7 @@ import {
   Wrench,
   ArrowRight,
   ArrowLeft,
+  CheckCircle2,
 } from "lucide-react";
 
 type CategoryOptionsType = typeof categoryOptions;
@@ -327,153 +328,217 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#241C15] text-white px-4">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="bg-white text-black rounded-2xl shadow-2xl p-8 w-full max-w-2xl"
-      >
-        <AnimatePresence mode="wait">
-          {step === 1 && (
-            <motion.div
-              key="step1"
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 40 }}
-              transition={{ duration: 0.4 }}
-            >
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-[#241C15]">
-                <User className="w-6 h-6 text-[#FFE01B]" />
-                Step 1: Client Details
-              </h2>
+    <>
+      <style jsx global>{`
+        @keyframes float {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(20px, -20px); }
+        }
 
-              {Object.entries(clientDetails).map(([key, value]) => (
-                <div key={key} className="mb-4">
-                  <label className="block text-gray-600 text-sm mb-1">
-                    {key.replace("_", " ").toUpperCase()}
+        .animate-float { animation: float 20s ease-in-out infinite; }
+      `}</style>
+
+      <div className="client-form min-h-screen flex items-center justify-center bg-[#fbf5e5] px-4 py-8 relative overflow-hidden pt-[100px] sm:pt-[120px]">
+        
+        {/* Animated Background */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-20 right-10 w-64 h-64 bg-[#FFE01B]/10 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-20 left-10 w-80 h-80 bg-[#FCD34D]/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '5s' }} />
+        </div>
+
+        {/* Main Card */}
+        <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 w-full max-w-3xl border-2 border-[#241C15]/10 relative overflow-hidden">
+          
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-[#241C15]/70">Step {step} of 2</span>
+              <span className="text-sm font-semibold text-[#241C15]/70">{step === 1 ? '50%' : '100%'}</span>
+            </div>
+            <div className="h-2 bg-[#241C15]/10 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] transition-all duration-500 ease-out"
+                style={{ width: step === 1 ? '50%' : '100%' }}
+              />
+            </div>
+          </div>
+
+          {/* Step 1: Client Details */}
+          {step === 1 && (
+            <div>
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-[#241C15] px-4 py-2 rounded-full mb-6">
+                <User className="w-4 h-4 text-[#FFE01B]" />
+                <span className="text-sm font-semibold text-[#fbf5e5]">Client Information</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 text-[#241C15]">
+                Tell Us About
+                <span className="block bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent mt-1">
+                  Your Company
+                </span>
+              </h2>
+              <p className="text-[#241C15]/70 mb-8 text-sm sm:text-base font-medium">
+                We need some basic information to get started
+              </p>
+
+              <div className="space-y-5">
+                {Object.entries(clientDetails).map(([key, value]) => (
+                  <div key={key}>
+                    <label className="block text-[#241C15] text-sm font-semibold mb-2">
+                      {key.replace("_", " ").toUpperCase()}
+                      <span className="text-red-500 ml-1">*</span>
+                    </label>
+                    <input
+                      className="border-2 border-[#241C15]/20 rounded-xl px-4 py-3 w-full focus:ring-2 focus:ring-[#FFE01B] focus:border-[#FFE01B] outline-none transition-all bg-[#fbf5e5] text-[#241C15]"
+                      placeholder={`Enter your ${key.replace("_", " ")}`}
+                      value={value}
+                      onChange={(e) =>
+                        setClientDetails({
+                          ...clientDetails,
+                          [key]: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={handleClientSubmit}
+                className="mt-8 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] text-[#241C15] px-8 py-4 rounded-xl font-bold w-full flex items-center justify-center gap-2 transition transform hover:scale-[1.02] active:scale-95 shadow-lg hover:shadow-xl"
+              >
+                Continue to Job Details <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          {/* Step 2: Hiring Details */}
+          {step === 2 && (
+            <div>
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-[#241C15] px-4 py-2 rounded-full mb-6">
+                <Briefcase className="w-4 h-4 text-[#FFE01B]" />
+                <span className="text-sm font-semibold text-[#fbf5e5]">Job Requirements</span>
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black mb-3 text-[#241C15]">
+                Describe Your
+                <span className="block bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent mt-1">
+                  Hiring Needs
+                </span>
+              </h2>
+              <p className="text-[#241C15]/70 mb-8 text-sm sm:text-base font-medium">
+                Help us match you with the perfect talent
+              </p>
+
+              {/* Role Type Display */}
+              <div className="mb-6 p-4 border-2 border-[#FFE01B]/30 rounded-xl bg-[#FFE01B]/10 flex items-center gap-3">
+                <FileText className="w-5 h-5 text-[#241C15]" />
+                <div>
+                  <span className="text-sm text-[#241C15]/70 font-medium">Role Type:</span>
+                  <span className="ml-2 font-bold text-[#241C15]">{hiringDetails.role_type}</span>
+                </div>
+              </div>
+
+              <div className="space-y-5 mb-6">
+                {/* Job Title */}
+                <div>
+                  <label className="block text-[#241C15] text-sm font-semibold mb-2">
+                    Job Title <span className="text-red-500">*</span>
                   </label>
                   <input
-                    className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-[#FFE01B] outline-none"
-                    placeholder={key.replace("_", " ")}
-                    value={value}
+                    className="border-2 border-[#241C15]/20 rounded-xl px-4 py-3 w-full focus:ring-2 focus:ring-[#FFE01B] focus:border-[#FFE01B] outline-none transition-all bg-[#fbf5e5] text-[#241C15]"
+                    placeholder="e.g. Senior React Developer"
+                    value={hiringDetails.job_title}
                     onChange={(e) =>
-                      setClientDetails({
-                        ...clientDetails,
-                        [key]: e.target.value,
+                      setHiringDetails({
+                        ...hiringDetails,
+                        job_title: e.target.value,
                       })
                     }
                   />
                 </div>
-              ))}
 
-              <button
-                onClick={handleClientSubmit}
-                className="mt-4 bg-[#FFE01B] text-black px-6 py-3 rounded-xl font-bold w-full flex items-center justify-center gap-2 transition transform hover:scale-105 hover:bg-[#FCD34D] active:scale-95"
-              >
-                Next <ArrowRight className="w-5 h-5" />
-              </button>
-            </motion.div>
-          )}
+                {/* Description */}
+                <div>
+                  <label className="block text-[#241C15] text-sm font-semibold mb-2">
+                    Job Description <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    className="border-2 border-[#241C15]/20 rounded-xl px-4 py-3 w-full focus:ring-2 focus:ring-[#FFE01B] focus:border-[#FFE01B] outline-none transition-all bg-[#fbf5e5] text-[#241C15] resize-none"
+                    placeholder="Describe the role, responsibilities, and requirements..."
+                    rows={4}
+                    value={hiringDetails.description}
+                    onChange={(e) =>
+                      setHiringDetails({
+                        ...hiringDetails,
+                        description: e.target.value,
+                      })
+                    }
+                  />
+                </div>
 
-          {step === 2 && (
-            <motion.div
-              key="step2"
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.4 }}
-            >
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-[#241C15]">
-                <Briefcase className="w-6 h-6 text-[#FFE01B]" />
-                Step 2: Hiring Request
-              </h2>
-
-              {/* Role Type Display */}
-              <div className="mb-4 p-3 border rounded-lg bg-gray-50 flex items-center gap-2 text-gray-700">
-                <FileText className="w-5 h-5 text-[#241C15]" />
-                Role Type: <b>{hiringDetails.role_type}</b>
-              </div>
-
-              {/* Job Title */}
-              <input
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4 focus:ring-2 focus:ring-[#FFE01B] outline-none"
-                placeholder="Job Title"
-                value={hiringDetails.job_title}
-                onChange={(e) =>
-                  setHiringDetails({
-                    ...hiringDetails,
-                    job_title: e.target.value,
-                  })
-                }
-              />
-
-              {/* Description */}
-              <textarea
-                className="border border-gray-300 rounded-lg px-3 py-2 w-full mb-4 focus:ring-2 focus:ring-[#FFE01B] outline-none"
-                placeholder="Job Description"
-                rows={4}
-                value={hiringDetails.description}
-                onChange={(e) =>
-                  setHiringDetails({
-                    ...hiringDetails,
-                    description: e.target.value,
-                  })
-                }
-              />
-
-              {/* Budget */}
-              <div className="relative mb-4">
-                <DollarSign className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
-                <input
-                  className="border border-gray-300 rounded-lg pl-10 pr-3 py-2 w-full focus:ring-2 focus:ring-[#FFE01B] outline-none"
-                  placeholder="Budget Range"
-                  value={hiringDetails.budget_range}
-                  onChange={(e) =>
-                    setHiringDetails({
-                      ...hiringDetails,
-                      budget_range: e.target.value,
-                    })
-                  }
-                />
+                {/* Budget */}
+                <div>
+                  <label className="block text-[#241C15] text-sm font-semibold mb-2">
+                    Budget Range <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-[#241C15]/40 w-5 h-5" />
+                    <input
+                      className="border-2 border-[#241C15]/20 rounded-xl pl-11 pr-4 py-3 w-full focus:ring-2 focus:ring-[#FFE01B] focus:border-[#FFE01B] outline-none transition-all bg-[#fbf5e5] text-[#241C15]"
+                      placeholder="e.g. $3000 - $5000/month"
+                      value={hiringDetails.budget_range}
+                      onChange={(e) =>
+                        setHiringDetails({
+                          ...hiringDetails,
+                          budget_range: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
               </div>
 
               {/* Categories */}
-              <label className="mb-2 font-semibold text-[#241C15] flex items-center gap-2">
-                <Layers className="w-5 h-5 text-[#FFE01B]" /> Categories
-              </label>
-              <div className="mb-4 flex flex-wrap gap-2">
-                {Object.keys(categoryOptions).map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() =>
-                      setHiringDetails({
-                        ...hiringDetails,
-                        categories: toggleSelect(
-                          hiringDetails.categories,
-                          cat
-                        ),
-                      })
-                    }
-                    className={`px-3 py-1 rounded-full border transition ${
-                      hiringDetails.categories.includes(cat)
-                        ? "bg-[#FFE01B] text-black"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
+              <div className="mb-6">
+                <label className="mb-3 font-bold text-[#241C15] flex items-center gap-2 text-base">
+                  <Layers className="w-5 h-5 text-[#FFE01B]" /> Select Category
+                  <span className="text-red-500">*</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {Object.keys(categoryOptions).map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() =>
+                        setHiringDetails({
+                          ...hiringDetails,
+                          categories: toggleSelect(hiringDetails.categories, cat),
+                          subcategories: [],
+                          tools: [],
+                        })
+                      }
+                      className={`px-4 py-2.5 rounded-xl border-2 transition-all font-semibold text-sm ${
+                        hiringDetails.categories.includes(cat)
+                          ? "bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] text-[#241C15] border-[#FFE01B] shadow-md scale-105"
+                          : "bg-white text-[#241C15]/70 border-[#241C15]/20 hover:border-[#FFE01B] hover:bg-[#fbf5e5]"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Subcategories */}
               {getAvailableSubcategories().length > 0 && (
-                <>
-                  <label className="mb-2 font-semibold text-[#241C15] flex items-center gap-2">
-                    <Wrench className="w-5 h-5 text-[#FFE01B]" /> Subcategories
+                <div className="mb-6">
+                  <label className="mb-3 font-bold text-[#241C15] flex items-center gap-2 text-base">
+                    <Wrench className="w-5 h-5 text-[#FFE01B]" /> Specialization
                   </label>
-                  <div className="mb-4 flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {getAvailableSubcategories().map((sub) => (
                       <button
                         key={sub}
@@ -481,33 +546,29 @@ useEffect(() => {
                         onClick={() =>
                           setHiringDetails({
                             ...hiringDetails,
-                            subcategories: toggleSelect(
-                              hiringDetails.subcategories,
-                              sub
-                            ),
+                            subcategories: toggleSelect(hiringDetails.subcategories, sub),
                           })
                         }
-                        className={`px-3 py-1 rounded-full border transition ${
+                        className={`px-4 py-2 rounded-xl border-2 transition-all font-medium text-sm ${
                           hiringDetails.subcategories.includes(sub)
-                            ? "bg-[#FFE01B] text-black"
-                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            ? "bg-[#FFE01B] text-[#241C15] border-[#FFE01B]"
+                            : "bg-white text-[#241C15]/70 border-[#241C15]/20 hover:border-[#FFE01B] hover:bg-[#fbf5e5]"
                         }`}
                       >
                         {sub}
                       </button>
                     ))}
                   </div>
-                </>
+                </div>
               )}
 
               {/* Tools */}
               {getAvailableToolsMerged().length > 0 && (
-                <>
-                  <label className="mb-2 font-semibold text-[#241C15] flex items-center gap-2">
-                    <Wrench className="w-5 h-5 text-[#FFE01B]" /> Tools / Tech
-                    Stacks
+                <div className="mb-6">
+                  <label className="mb-3 font-bold text-[#241C15] flex items-center gap-2 text-base">
+                    <Wrench className="w-5 h-5 text-[#FFE01B]" /> Required Skills / Tech Stack
                   </label>
-                  <div className="mb-4 flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 max-h-64 overflow-y-auto p-2 bg-[#fbf5e5] rounded-xl border-2 border-[#241C15]/10">
                     {getAvailableToolsMerged().map((tool) => (
                       <button
                         key={tool}
@@ -515,44 +576,41 @@ useEffect(() => {
                         onClick={() =>
                           setHiringDetails({
                             ...hiringDetails,
-                            tools: toggleSelect(
-                              hiringDetails.tools,
-                              tool
-                            ),
+                            tools: toggleSelect(hiringDetails.tools, tool),
                           })
                         }
-                        className={`px-3 py-1 rounded-full border transition ${
+                        className={`px-3 py-2 rounded-lg border-2 transition-all font-medium text-sm ${
                           hiringDetails.tools.includes(tool)
-                            ? "bg-[#FFE01B] text-black"
-                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            ? "bg-[#FFE01B] text-[#241C15] border-[#FFE01B]"
+                            : "bg-white text-[#241C15]/70 border-[#241C15]/20 hover:border-[#FFE01B]"
                         }`}
                       >
                         {tool}
                       </button>
                     ))}
                   </div>
-                </>
+                </div>
               )}
 
               {/* Actions */}
-              <div className="flex items-center justify-between gap-4 mt-6">
+              <div className="flex flex-col sm:flex-row items-center gap-4 mt-8">
                 <button
-                  onClick={() => window.location.reload()}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-200 text-gray-700 font-semibold transition hover:bg-gray-300 active:scale-95"
+                  onClick={() => setStep(1)}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white border-2 border-[#241C15]/20 text-[#241C15] font-semibold transition hover:bg-[#fbf5e5] hover:border-[#241C15]/40 active:scale-95"
                 >
                   <ArrowLeft className="w-5 h-5" /> Back
                 </button>
                 <button
                   onClick={handleHiringSubmit}
-                  className="bg-[#FFE01B] text-black px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition transform hover:scale-105 hover:bg-[#FCD34D] active:scale-95"
+                  className="w-full flex-1 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] text-[#241C15] px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition transform hover:scale-[1.02] active:scale-95 shadow-lg hover:shadow-xl"
                 >
-                  Submit Request <ArrowRight className="w-5 h-5" />
+                  Submit Request <CheckCircle2 className="w-5 h-5" />
                 </button>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
-      </motion.div>
-    </div>
+        </div>
+      </div>
+    </>
   );
 }

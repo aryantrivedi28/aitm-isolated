@@ -2,11 +2,12 @@
 
 import { ArrowRight, Sparkles, Play } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation" 
 
 const Hero = () => {
   const [scrollY, setScrollY] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
-
+  const router = useRouter()
   useEffect(() => {
     setIsLoaded(true);
 
@@ -17,6 +18,10 @@ const Hero = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+    const handleNavigation = (path: string) => {
+    router.push(path) // ✅ navigate to the given path
+  }
 
   return (
     <>
@@ -136,6 +141,7 @@ const Hero = () => {
               <button
                 className="group bg-[#FFE01B] hover:bg-[#FCD34D] text-[#241C15] font-semibold px-7 py-4 rounded-lg transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start shadow-md hover:shadow-lg"
                 style={{ fontSize: '1.0625rem', fontWeight: '600' }}
+                onClick={() => handleNavigation("/find-talent")}
               >
                 Hire Top Talent
                 <ArrowRight className="ml-2.5 w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -144,6 +150,8 @@ const Hero = () => {
               <button
                 className="group bg-transparent hover:bg-[#241C15] text-[#241C15] hover:text-[#fbf5e5] font-semibold px-7 py-4 rounded-lg border-2 border-[#241C15] transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start"
                 style={{ fontSize: '1.0625rem', fontWeight: '600' }}
+                onClick={() => handleNavigation("/get-hired")}
+
               >
                 <Play className="mr-2.5 w-4 h-4 fill-current" />
                 Join as Freelancer
