@@ -5,27 +5,30 @@ import GoogleAnalytics from '../components/GoogleAnalytic';
 import Footer from '../components/Footer';
 import PageTransition from '../components/PageTransition';
 import { Toaster } from '@/components/ui/toaster';
+import type { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Finzie',
   description: '',
   icons: {
-    icon: '/finzie-logo.png', // You can also use .png or .svg
+    icon: '/finzie-logo.png',
   },
 };
-export default function RootLayout({ children }: { children: React.ReactNode; }) {
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <head>
-        <GoogleAnalytics />
-      </head>
       <body>
+        <GoogleAnalytics /> {/* ✅ Correct placement */}
         <Header />
         <PageTransition>
-          <main className="bg-[#fbf5e5]"> {/* Adjust 'pt-16' as per your header height */}
+          <main className="bg-[#fbf5e5]">
             {children}
           </main>
-
         </PageTransition>
         <Toaster />
         <Footer />
