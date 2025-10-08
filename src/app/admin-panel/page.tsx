@@ -25,6 +25,7 @@ import {
   Trash2,
   Bell,
   FileCheck,
+  Send,
 } from "lucide-react"
 import { supabase } from "../../lib/SupabaseAuthClient"
 import { supabaseAdmin } from "../../lib/supabase-admin"
@@ -423,7 +424,8 @@ export default function AdminPanel() {
   const [showOtherSubcategory, setShowOtherSubcategory] = useState(false)
   const [showOtherTechStack, setShowOtherTechStack] = useState(false)
   const [showOtherTools, setShowOtherTools] = useState(false)
-
+  const [emailMessage, setEmailMessage] = useState("")
+  const [sending, setSending] = useState(false)
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([])
   const [selectedTechStacks, setSelectedTechStacks] = useState<string[]>([])
   const [selectedTools, setSelectedTools] = useState<string[]>([])
@@ -443,6 +445,39 @@ export default function AdminPanel() {
       options?: string[]
     }>
   >([])
+
+
+
+  const handleSendEmails = async () => {
+    if (!emailMessage.trim()) return alert("Please enter a message before sending.")
+    if (!freelancers.length) return alert("No freelancers found to send emails to.")
+
+    setSending(true)
+    try {
+      const res = await fetch("/api/send-bulk-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          freelancers: freelancers.map((f) => ({ email: f.email, name: f.full_name })),
+          message: emailMessage,
+        }),
+      })
+
+      const data = await res.json()
+      if (data.success) {
+        alert(`✅ Emails sent: ${data.sent}, Failed: ${data.failed}`)
+        setEmailMessage("")
+      } else {
+        alert("❌ Some emails failed to send.")
+      }
+    } catch (err) {
+      console.error("Email send error:", err)
+      alert("Something went wrong while sending emails.")
+    } finally {
+      setSending(false)
+    }
+  }
+
 
   const availableStandardFields = [
     { key: "name", label: "Full Name" },
@@ -1849,6 +1884,60 @@ export default function AdminPanel() {
                     </motion.div>
                   ))}
                 </div>
+
+                {/* Send Email Box */}
+                {freelancers.length > 0 && (
+                  <motion.div
+                    className="mt-12 bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30">
+                        <Mail className="w-5 h-5 text-[#FFE01B]" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-white">Send Email to Filtered Freelancers</h3>
+                    </div>
+
+                    <p className="text-gray-400 mb-4 text-sm">
+                      Type your message below and click “Send Email”. This will send to all freelancers currently shown in the list.
+                    </p>
+
+                    <textarea
+                      value={emailMessage}
+                      onChange={(e) => setEmailMessage(e.target.value)}
+                      placeholder="Write your message here..."
+                      className="w-full bg-white/10 border border-white/20 text-white rounded-2xl p-4 mb-6 focus:outline-none focus:border-[#FFE01B] transition-colors duration-300 placeholder-gray-400"
+                      rows={5}
+                    />
+
+                    <motion.button
+                      onClick={handleSendEmails}
+                      disabled={sending}
+                      className="w-full sm:w-auto bg-[#FFE01B] hover:bg-yellow-300 text-[#241C15] font-bold py-4 px-10 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      whileHover={{ scale: sending ? 1 : 1.03, y: sending ? 0 : -2 }}
+                      whileTap={{ scale: sending ? 1 : 0.97 }}
+                    >
+                      {sending ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                            className="w-5 h-5 border-2 border-[#241C15] border-t-transparent rounded-full"
+                          />
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-5 h-5" />
+                          Send Email
+                        </>
+                      )}
+                    </motion.button>
+                  </motion.div>
+                )}
+
               </motion.div>
             </section>
           )}

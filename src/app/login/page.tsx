@@ -72,7 +72,7 @@ export default function LoginPage() {
           <Mail className="absolute left-3 top-3 text-[#FFE01B]" size={20} />
           <input
             type="email"
-            placeholder="you@finzie.in"
+            placeholder=""
             className="w-full pl-10 pr-4 py-3 rounded-lg bg-[#241C15] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFE01B]"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
