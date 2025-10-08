@@ -204,7 +204,6 @@ export class GoogleSheetsService {
       if (!sheet) return false
 
       await sheet.loadHeaderRow()
-
       // Add the new column header
       const newColumnIndex = sheet.headerValues.length
       await sheet.loadCells(`${this.getColumnLetter(newColumnIndex)}1`)

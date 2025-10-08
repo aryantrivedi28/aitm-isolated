@@ -1,8 +1,8 @@
 export const CONFIG = {
   // OpenAI Configuration (use defaults unless overridden)
-  OPENAI_MODEL: "gpt-3.5-turbo",
-  OPENAI_MAX_TOKENS: 800,
-  OPENAI_TEMPERATURE: 0.2,
+  OPENAI_MODEL: "gpt-4o-mini",
+  OPENAI_MAX_TOKENS: 1000,
+  OPENAI_TEMPERATURE: 0.7,
 
   // Google Service Account (keep static)
   GOOGLE_SERVICE_ACCOUNT_EMAIL: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
