@@ -29,6 +29,7 @@ import {
 } from "lucide-react"
 import { supabase } from "../../lib/SupabaseAuthClient"
 import { supabaseAdmin } from "../../lib/supabase-admin"
+import toast from "react-hot-toast"
 
 // Animation variants
 const fadeUp: Variants = {
@@ -448,35 +449,49 @@ export default function AdminPanel() {
 
 
 
+
   const handleSendEmails = async () => {
-    if (!emailMessage.trim()) return alert("Please enter a message before sending.")
-    if (!freelancers.length) return alert("No freelancers found to send emails to.")
+    if (!emailMessage.trim()) {
+      toast.error("Please enter a message before sending.")
+      return
+    }
+
+    if (!freelancers.length) {
+      toast.error("No freelancers found to send emails to.")
+      return
+    }
 
     setSending(true)
+
     try {
       const res = await fetch("/api/send-bulk-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          freelancers: freelancers.map((f) => ({ email: f.email, name: f.full_name })),
+          freelancers: freelancers.map((f) => ({
+            email: f.email,
+            name: f.full_name,
+          })),
           message: emailMessage,
         }),
       })
 
       const data = await res.json()
+
       if (data.success) {
-        alert(`✅ Emails sent: ${data.sent}, Failed: ${data.failed}`)
+        toast.success(`✅ Emails sent: ${data.sent}, Failed: ${data.failed}`)
         setEmailMessage("")
       } else {
-        alert("❌ Some emails failed to send.")
+        toast.error("❌ Some emails failed to send.")
       }
     } catch (err) {
       console.error("Email send error:", err)
-      alert("Something went wrong while sending emails.")
+      toast.error("Something went wrong while sending emails.")
     } finally {
       setSending(false)
     }
   }
+
 
 
   const availableStandardFields = [
