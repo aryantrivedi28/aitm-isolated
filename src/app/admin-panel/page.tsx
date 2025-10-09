@@ -30,6 +30,7 @@ import {
 import { supabase } from "../../lib/SupabaseAuthClient"
 import { supabaseAdmin } from "../../lib/supabase-admin"
 import toast from "react-hot-toast"
+import { Toaster } from "@/components/ui/toaster"
 
 // Animation variants
 const fadeUp: Variants = {
@@ -1349,6 +1350,7 @@ export default function AdminPanel() {
       {/* Header Section */}
       <section className="relative py-20 px-4 z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-[#241C15] via-[#2a1f16] to-[#241C15]" />
+
 
         <motion.div
           className="relative max-w-6xl mx-auto"
