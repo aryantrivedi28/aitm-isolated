@@ -280,6 +280,8 @@ Respond ONLY with valid JSON in this exact format:
     requiredFields: string[]
     fieldDescriptions: Record<string, string>
   } {
+
+    console.warn("[v0] Using simplified fallback field extraction (OpenAI quota likely exceeded)")
     const fields: string[] = []
     const descriptions: Record<string, string> = {}
 
