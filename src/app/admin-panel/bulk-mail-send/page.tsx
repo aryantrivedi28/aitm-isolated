@@ -214,7 +214,7 @@ export default function HomePage() {
           <div className="p-8 space-y-6">
             {/* File Upload Section */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold block text-[#241C15] flex items-center gap-2">
+              <label className="text-sm font-semibold text-[#241C15] flex items-center gap-2">
                 <Upload className="w-4 h-4" />
                 CSV File Upload
               </label>
@@ -241,7 +241,7 @@ export default function HomePage() {
 
             {/* Google Sheets Section */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold block text-[#241C15] flex items-center gap-2">
+              <label className="text-sm font-semibold text-[#241C15] flex items-center gap-2">
                 <Sheet className="w-4 h-4" />
                 Google Sheet URL
               </label>
@@ -259,7 +259,7 @@ export default function HomePage() {
 
             {/* Subject Field */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold block text-[#241C15] flex items-center gap-2">
+              <label className="text-sm font-semibold text-[#241C15] flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 Email Subject
               </label>
@@ -273,7 +273,7 @@ export default function HomePage() {
 
             {/* Message Field */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold block text-[#241C15] flex items-center gap-2">
+              <label className="text-sm font-semibold text-[#241C15] flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 Email Message
               </label>
