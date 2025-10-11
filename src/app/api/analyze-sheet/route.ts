@@ -170,6 +170,7 @@ async function extractRowData(row: any, columnMapping: any, scrapingService: Scr
         : githubLink
     }
   } catch (error) {
+    console.error(`⚠️ Content extraction error for ${data.name}:`, error)
   }
 
   return data
