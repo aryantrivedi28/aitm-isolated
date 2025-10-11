@@ -44,11 +44,8 @@ export async function POST(req: NextRequest) {
 
     const openaiService = new OpenAIService()
 
-    console.log("🔍 Analyzing prompt for required fields...")
     const fieldAnalysis = await openaiService.analyzePromptForFields(prompt)
-    console.log("📋 Required fields:", fieldAnalysis.requiredFields)
 
-    console.log("📊 Ensuring required columns exist...")
     const columnsCreated = await sheetService.ensureColumnsExist(
       fieldAnalysis.requiredFields,
       fieldAnalysis.fieldDescriptions,
@@ -71,13 +68,10 @@ export async function POST(req: NextRequest) {
     const rows = await sheetService.getUnprocessedRows(fieldAnalysis.requiredFields, sheetName)
     let processedCount = 0
 
-    console.log(`🔄 Processing ${rows.length} rows with custom prompt analysis on sheet: ${sheetInfo.sheetTitle}`)
-
     for (const row of rows) {
       try {
         const extractedData = await extractRowData(row, columnMapping, scrapingService)
 
-        console.log(`📊 Processing candidate: ${extractedData.name}`)
 
         const analysisResults = await openaiService.analyzeWithCustomPrompt(
           extractedData,
@@ -94,7 +88,6 @@ export async function POST(req: NextRequest) {
 
         if (success) {
           processedCount++
-          console.log(`✅ Successfully processed ${extractedData.name}`)
         }
       } catch (error) {
         console.error(`❌ Error processing row ${row.rowNumber}:`, error)
@@ -136,7 +129,6 @@ function autoDetectColumns(headers: string[]) {
     if (lower.includes("experience")) mapping.experienceColumn = header
   })
 
-  console.log("[v0] Auto-detected column mapping:", mapping)
 
   return mapping
 }
@@ -178,7 +170,6 @@ async function extractRowData(row: any, columnMapping: any, scrapingService: Scr
         : githubLink
     }
   } catch (error) {
-    console.error(`⚠️ Content extraction error for ${data.name}:`, error)
   }
 
   return data
