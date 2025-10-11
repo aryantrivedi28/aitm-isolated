@@ -1526,6 +1526,18 @@ export default function AdminPanel() {
                 <Mail className="w-5 h-5 shrink-0" />
                 Email Personalization
               </button>
+
+              <button
+                onClick={() => handleNavigation("/admin-panel/bulk-mail-send")}
+                className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 w-full text-left 
+    ${dashboard === "/admin-panel/bulk-mail-send"
+                    ? "bg-[#FFE01B] text-[#241C15]"
+                    : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+              >
+                <Mail className="w-5 h-5 shrink-0" />
+                Bulk Mail Sending
+              </button>
             </motion.div>
 
             {/* Stats */}
