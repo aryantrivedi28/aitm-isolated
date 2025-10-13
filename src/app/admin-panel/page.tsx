@@ -428,6 +428,181 @@ const toolsOptions: string[] = [
   "Netlify",
 ];
 
+const categoryOptionss: Record<string, string[]> = {
+  "Software Development": [
+    "Full Stack Development",
+    "Full-Stack Development",
+    "Fullstack Development",
+    "Frontend Development",
+    "Front-End Development",
+    "Backend Development",
+    "Web Development",
+    "MERN Stack Development",
+    "Machine Learning",
+    "Machine Learning and AI",
+    "AI and Machine Learning",
+    "AI Development",
+    "Data Science",
+    "Data Analytics",
+    "Data Science & Development",
+    "Embedded Systems",
+    "Computer Vision",
+    "MLOps and Cloud",
+    "Quality Assurance",
+    "Java Development",
+    "DevOps",
+    "Not Mentioned",
+  ],
+  "Data Science": [
+    "Machine Learning",
+    "Data Analysis",
+    "Data Engineering",
+    "Not Mentioned",
+  ],
+  "Data Analysis": [
+    "Data Analytics",
+    "Data Engineering",
+    "Business Analysis",
+  ],
+  "Machine Learning": [
+    "AI Engineering",
+    "Computer Vision",
+    "Data Analysis",
+  ],
+  "Machine Learning & AI": [
+    "MLOps",
+    "AI Development",
+    "Data Science",
+  ],
+  "Artificial Intelligence": [
+    "Machine Learning",
+    "AI Engineering",
+  ],
+  "Bioinformatics": [
+    "Machine Learning",
+  ],
+  "Marketing & Content": [
+    "Digital Marketing",
+    "Performance Marketing",
+    "Media Buying",
+    "PPC Management",
+  ],
+  "E-commerce Marketing": [
+    "Digital Marketing",
+  ],
+  "AI Automation": [
+    "Automation Development",
+  ],
+  "Customer Support Automation": [
+    "Workflow Automation",
+  ],
+  "Operations Management": [
+    "Operational Efficiency",
+  ],
+  "Accounting": [
+    "Bookkeeping",
+  ],
+  "Lead Generation": [
+    "Not Mentioned",
+  ],
+  "Cybersecurity": [
+    "Web Application Security",
+  ],
+  "Video Editing": [
+    "Video Production",
+    "Content Creation",
+    "Motion Graphics",
+    "Social Media Management",
+    "Visual Effects",
+    "Editing",
+    "Film Production",
+    "Not Mentioned",
+  ],
+  "Content Creation": [
+    "Video Production",
+    "Video Editing",
+  ],
+  "Design": [
+    "Graphic Design",
+    "Branding",
+    "UI/UX Design",
+    "Digital Art",
+    "Portfolio Presentation",
+    "Illustration",
+    "Design",
+  ],
+  "Graphic Design": [
+    "Visual Design",
+    "Portfolio Design",
+    "Visual Arts",
+    "Illustration",
+    "Design",
+    "Not Mentioned",
+  ],
+  "Visual Design": [
+    "Brand Identity",
+    "Web Design",
+  ],
+  "Web Design": [
+    "UI/UX Design",
+  ],
+  "Web Development": [
+    "Portfolio Creation",
+  ],
+  "Portfolio Development": [
+    "Web Design",
+    "Web Development",
+    "Graphic Design",
+    "Design",
+    "Visual Design",
+  ],
+  "Portfolio Design": [
+    "Graphic Design",
+    "Web Design",
+  ],
+  "Portfolio Creation": [
+    "Graphic Design",
+    "Web Development",
+    "Design",
+  ],
+  "Portfolio Presentation": [
+    "Not Mentioned",
+  ],
+  "Portfolio": [
+    "Design",
+    "Graphic Design",
+    "Not Mentioned",
+  ],
+  "Custom Portfolio Development": [
+    "Web Development",
+  ],
+  "Digital Portfolio": [
+    "Design",
+  ],
+  "Creative": [
+    "Social Media Management",
+  ],
+  "Creative Portfolio": [
+    "Design",
+  ],
+  "Consulting": [
+    "Management",
+  ],
+  "DevOps": [
+    "Cloud Automation",
+  ],
+  "Data Engineering": [
+    "Data Pipeline Design",
+  ],
+  "Photography": [
+    "Not Mentioned",
+  ],
+  "Video Production": [
+    "Not Mentioned",
+  ],
+  "Not Mentioned": ["Not Mentioned"],
+};
+
 // ⭐ Rating options
 const ratingOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((r) => ({
   label: r.toString(),
@@ -534,6 +709,11 @@ export default function AdminPanel() {
     }
     return Array.from(subs)
   }, [forms])
+
+  const uniqueSubcategoriess = Array.from(
+  new Set(Object.values(categoryOptionss).flat())
+);
+
 
   useEffect(() => {
     setMounted(true)
@@ -1631,7 +1811,7 @@ export default function AdminPanel() {
                       label="Category"
                       value={filters.category || ""}
                       onChange={(v) => setFilters({ ...filters, category: v })}
-                      options={Object.keys(categoryOptions)}
+                      options={Object.keys(categoryOptionss)}
                       placeholder="Categories"
                     />
 
@@ -1641,7 +1821,7 @@ export default function AdminPanel() {
                       label="Subcategory"
                       value={filters.subcategory || ""}
                       onChange={(v) => setFilters({ ...filters, subcategory: v })}
-                      options={uniqueSubcategories}
+                      options={uniqueSubcategoriess}
                       placeholder="Subcategories"
                     />
 
