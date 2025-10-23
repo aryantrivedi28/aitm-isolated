@@ -19,9 +19,11 @@ import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const pathname = usePathname() || "";
-  if (pathname.startsWith("/landing")) return null;
+  if (pathname.startsWith("/h")) return null;
   if (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") return null;
   if (pathname.startsWith("/form/") && pathname !== "/form") return null;
+  if (pathname.startsWith("/find-talent/") && pathname !== "/find-talent") return null;
+
 
 
   const [theme, setTheme] = useState<"light" | "dark">("light");

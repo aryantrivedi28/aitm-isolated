@@ -8,11 +8,16 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const router = useRouter();
-
   const pathname = usePathname() || "";
-  if (pathname.startsWith("/landing")) return null;
-  if (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") return null;
-  if (pathname.startsWith("/form/") && pathname !== "/form") return null;
+
+
+  // ✅ Only hide header on specific routes
+  const shouldHideHeader =
+    pathname === "/h" ||
+    pathname.startsWith("/form/") ||
+    pathname.startsWith("/find-talent/") ||
+    pathname.startsWith("/case-studies/");
+
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -57,6 +62,10 @@ export default function Header() {
     router.push(path);
     setIsMobileMenuOpen(false)
   }
+
+  // ✅ Return null if header should be hidden
+  if (shouldHideHeader) return null;
+
 
   return (
     <>
