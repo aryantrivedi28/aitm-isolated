@@ -10,13 +10,10 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname() || "";
 
-
-  // ✅ Only hide header on specific routes
-  const shouldHideHeader =
-    pathname === "/h" ||
-    pathname.startsWith("/form/") ||
-    pathname.startsWith("/find-talent/") ||
-    pathname.startsWith("/case-studies/");
+  if (pathname.startsWith("/h")) return null;
+  if (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") return null;
+  if (pathname.startsWith("/form/") && pathname !== "/form") return null;
+  if (pathname.startsWith("/find-talent/") && pathname !== "/find-talent") return null;
 
 
   useEffect(() => {
@@ -63,8 +60,6 @@ export default function Header() {
     setIsMobileMenuOpen(false)
   }
 
-  // ✅ Return null if header should be hidden
-  if (shouldHideHeader) return null;
 
 
   return (
