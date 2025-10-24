@@ -139,12 +139,14 @@ export class ScrapingService {
 
     // Try multiple methods to access the file
     const methods = [
+      () => this.trySupabaseFileParsing(fileUrl), // ✅ Add this line
       () => this.tryPdf2JsonParsing(fileUrl),
       () => this.tryGoogleDocsExport(fileUrl),
       () => this.tryPuppeteerScraping(fileUrl),
       () => this.tryDirectDownload(fileUrl),
       () => this.tryAlternativeFormats(fileUrl),
     ]
+
 
     for (let i = 0; i < methods.length; i++) {
       try {
@@ -181,6 +183,37 @@ Current file ID: ${fileId}`
       return `Resume parsing failed - Invalid Google Drive URL format. Please provide a valid Google Drive sharing link.`
     }
   }
+
+
+  //supabase file parsing
+  private async trySupabaseFileParsing(fileUrl: string): Promise<string> {
+    if (!fileUrl.includes("supabase.co") && !fileUrl.includes("storage.googleapis.com")) {
+      throw new Error("Not a Supabase file URL")
+    }
+
+    const response = await axios.get(fileUrl, { responseType: "arraybuffer" })
+    const buffer = Buffer.from(response.data)
+
+    // Try PDF first
+    const pdfHeader = buffer.toString("hex", 0, 4)
+    if (pdfHeader === "25504446") {
+      // %PDF in hex
+      return await this.extractTextWithPdf2Json(buffer)
+    }
+
+    // Try DOCX
+    try {
+      const result = await mammoth.extractRawText({ buffer })
+      if (result && result.value.trim().length > 0) {
+        return result.value
+      }
+    } catch (e) {
+      console.log("❌ DOCX parsing failed", e)
+    }
+
+    throw new Error("Unsupported file format or empty file")
+  }
+
 
   private tryPdf2JsonParsing = (fileUrl: string): Promise<string> => {
     return new Promise(async (resolve, reject) => {
@@ -785,55 +818,6 @@ Current file ID: ${fileId}`
     return cleaned
   }
 
-  private extractDriveFileId(url: string): string | null {
-    const match = url.match(/(?:\/d\/|id=)([a-zA-Z0-9_-]{10,})/)
-    return match ? match[1] : null
-  }
-
-  private async fetchPdfBufferFromDrive(url: string): Promise<Buffer | null> {
-    const fileId = this.extractDriveFileId(url)
-    if (!fileId) return null
-
-    const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`
-
-    try {
-      const response = await axios.get(downloadUrl, {
-        responseType: "arraybuffer",
-      })
-      return Buffer.from(response.data)
-    } catch (error: any) {
-      console.error("Failed to fetch PDF buffer:", error.message)
-      return null
-    }
-  }
-
-  private parsePdfBuffer(buffer: Buffer): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const pdfParser = new PDFParser()
-
-      pdfParser.on("pdfParser_dataError", (errData) => {
-        console.error("PDF parse error:", errData.parserError)
-        resolve("") // Fallback
-      })
-
-      pdfParser.on("pdfParser_dataReady", (pdfData) => {
-        const texts: string[] = []
-
-        const pages = (pdfData as any).FormImage.Pages
-        pages.forEach((page: any) => {
-          page.Texts.forEach((textItem: any) => {
-            const rawText = textItem.R.map((r: any) => decodeURIComponent(r.T)).join(" ")
-            texts.push(rawText)
-          })
-        })
-
-        const fullText = texts.join(" ").replace(/\s+/g, " ").trim()
-        resolve(fullText)
-      })
-
-      pdfParser.parseBuffer(buffer)
-    })
-  }
 
   async parsePortfolio(url: string): Promise<string> {
     if (!this.browser) throw new Error("Browser not initialized")

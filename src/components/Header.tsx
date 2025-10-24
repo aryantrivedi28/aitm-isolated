@@ -1,43 +1,33 @@
-"use client"
-import { useState, useEffect, useRef } from "react"
-import { Menu, X } from "lucide-react"
+"use client";
+import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isVisible, setIsVisible] = useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const router = useRouter();
   const pathname = usePathname() || "";
 
-  if (pathname.startsWith("/h")) return null;
-  if (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") return null;
-  if (pathname.startsWith("/form/") && pathname !== "/form") return null;
-  if (pathname.startsWith("/find-talent/") && pathname !== "/find-talent") return null;
-
-
+  // ✅ All hooks called first
   useEffect(() => {
     let lastScrollY = window.scrollY;
     let lastHideY = 0;
 
     const handleScroll = () => {
       const y = window.scrollY;
-
-      // Scrolling down
       if (y > lastScrollY) {
         if (y > 100 && isVisible) {
           setIsVisible(false);
-          lastHideY = y; // mark where it hid
+          lastHideY = y;
         }
-      }
-      // Scrolling up
-      else {
+      } else {
         const reversed = lastHideY - y;
         if ((y < 50 || reversed > 250) && !isVisible) {
           setIsVisible(true);
         }
       }
-
       setIsScrolled(y > 50);
       lastScrollY = y;
     };
@@ -46,21 +36,22 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isVisible]);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
-  interface NavigationHandler {
-    (path: string): void
-  }
-
-  const handleNavigation: NavigationHandler = (path: string): void => {
-    console.log('Navigate to:', path)
+  const handleNavigation = (path: string) => {
     router.push(path);
-    setIsMobileMenuOpen(false)
+    setIsMobileMenuOpen(false);
+  };
+
+  // ✅ Conditional rendering happens AFTER all hooks
+  if (
+    pathname.startsWith("/h") ||
+    (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") ||
+    (pathname.startsWith("/form/") && pathname !== "/form") ||
+    (pathname.startsWith("/find-talent/") && pathname !== "/find-talent")
+  ) {
+    return null;
   }
-
-
 
   return (
     <>
