@@ -1,17 +1,16 @@
-// src/app/layout.tsx
-import './globals.css';
-import Header from '../components/Header';
-import GoogleAnalytics from '../components/GoogleAnalytic';
-import Footer from '../components/Footer';
-import PageTransition from '../components/PageTransition';
-import { Toaster } from '@/components/ui/toaster';
-import type { Metadata } from 'next';
+import "./globals.css";
+import type { Metadata } from "next";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import GoogleAnalytics from "../components/GoogleAnalytic";
+import PageTransition from "../components/PageTransition";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Finzie',
-  description: '',
+  title: "Finzie",
+  description: "",
   icons: {
-    icon: '/finzie-logo.png',
+    icon: "/finzie-logo.png",
   },
 };
 
@@ -22,15 +21,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <GoogleAnalytics /> {/* ✅ Correct placement */}
+      <body className="min-h-screen flex flex-col bg-[#fbf5e5]">
+        {/* ✅ Google Analytics should be loaded client-side */}
+        <GoogleAnalytics />
+
+        {/* ✅ Header should always appear at top */}
         <Header />
+
+        {/* ✅ Page transition wrapper */}
         <PageTransition>
-          <main className="bg-[#fbf5e5]">
-            {children}
-          </main>
+          <main className="flex-grow">{children}</main>
         </PageTransition>
+
+        {/* ✅ Toast notifications */}
         <Toaster />
+
+        {/* ✅ Footer at bottom */}
         <Footer />
       </body>
     </html>

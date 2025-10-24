@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server"
 import { supabaseAdmin } from "../../../lib/supabase-admin"
+import OpenAI from "openai"
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    console.log("[v0] Received submission data:", body)
 
     const {
       form_id,
@@ -19,35 +21,33 @@ export async function POST(req: Request) {
       custom_responses,
     } = body
 
-    // Validate required fields
+    // Validate required fields (minimal: form_id, name, email)
     if (!form_id || !name || !email) {
       return NextResponse.json({ error: "Missing required fields: form_id, name, email" }, { status: 400 })
     }
 
-    let formQuery = supabaseAdmin.from("forms").select("id, is_active")
-
-    // Check if form_id looks like a UUID (contains hyphens and is 36 chars)
+    // Fetch the client form
+    let formQuery = supabaseAdmin.from("forms").select("*")
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(form_id)
-
-    if (isUUID) {
-      formQuery = formQuery.eq("id", form_id)
-    } else {
-      formQuery = formQuery.eq("form_id", form_id)
-    }
+    formQuery = isUUID ? formQuery.eq("id", form_id) : formQuery.eq("form_id", form_id)
 
     const { data: form, error: formError } = await formQuery.single()
 
-    if (formError || !form) {
-      console.error("[v0] Form not found:", formError)
+    if (formError) {
+      return NextResponse.json({ error: "Form not found" }, { status: 404 })
+    }
+
+    if (!form) {
       return NextResponse.json({ error: "Form not found" }, { status: 404 })
     }
 
     if (!form.is_active) {
-      return NextResponse.json({ error: "Form submissions are currently closed" }, { status: 403 })
+      return NextResponse.json({ error: "Form submissions are closed" }, { status: 403 })
     }
 
-    const submissionData = {
-      form_id: form.id, // Use UUID from forms table
+    // Build submission data
+    const submissionData: any = {
+      form_id: form.id, // Use the actual form UUID, not the custom form_id
       name,
       email,
       phone: phone || null,
@@ -56,54 +56,80 @@ export async function POST(req: Request) {
       resume_link: resume_link || null,
       years_experience: years_experience ? Number(years_experience) : null,
       proposal_link: proposal_link || null,
-      custom_responses: custom_responses || {}, // Ensure custom_responses is properly saved
+      custom_responses: custom_responses || {},
+      profile_rating: null,
     }
 
-    console.log("[v0] Inserting submission with data:", submissionData)
-
-    const { data, error } = await supabaseAdmin
+    const { data: insertedSubmission, error: insertError } = await supabaseAdmin
       .from("freelancer_submissions")
       .insert([submissionData])
       .select()
       .single()
 
-    if (error) {
-      console.error("[v0] Supabase error:", error)
-      throw error
+    if (insertError) {
+      throw insertError
     }
 
-    console.log("[v0] Successfully created submission:", data)
+    // Build AI prompt including dynamic required fields and form description
+    const clientRequirements = {
+      category: form.category,
+      subcategory: form.subcategory,
+      tech_stack: form.tech_stack,
+      tools: form.tools,
+      required_fields: form.required_fields,
+      custom_questions: form.custom_questions,
+      description: form.form_description || "",
+    }
 
-    return NextResponse.json({
-      submission: data,
-      success: true,
+    console.log("[v0] Client Requirements:", clientRequirements)
+
+    const aiPrompt = `
+You are an AI evaluator for a client hiring platform.
+Evaluate the freelancer's profile according to the client requirements.
+
+Client Requirements: ${JSON.stringify(clientRequirements, null, 2)}
+
+Freelancer Submission: ${JSON.stringify(submissionData, null, 2)}
+
+Instructions:
+- Consider only the required_fields defined in the client form.
+- Evaluate skills, experience, and relevance to the client requirements.
+- Return only JSON: {"profile_rating": number between 1-10}
+`
+
+    // Call OpenAI
+    const aiRes = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: aiPrompt }],
     })
+
+    // Safely parse AI response
+    let profileRating = 1
+    try {
+      let aiMessage = aiRes.choices[0].message?.content || ""
+      aiMessage = aiMessage.replace(/```json|```/g, "").trim()
+      const parsed = JSON.parse(aiMessage)
+      profileRating = Math.max(1, Math.min(10, parsed.profile_rating || 1))
+    } catch (err) {
+      profileRating = 1
+    }
+
+    // Update submission with profile rating
+    const { data: updatedSubmission, error: updateError } = await supabaseAdmin
+      .from("freelancer_submissions")
+      .update({ profile_rating: profileRating })
+      .eq("id", insertedSubmission.id)
+      .select()
+      .single()
+
+    if (updateError) {
+      console.error("[v0] Update error:", updateError)
+      throw updateError
+    }
+
+    return NextResponse.json({ submission: updatedSubmission, success: true })
   } catch (err: any) {
     console.error("[v0] Error creating submission:", err)
     return NextResponse.json({ error: err.message || "Failed to create submission" }, { status: 500 })
-  }
-}
-
-export async function GET(req: Request) {
-  try {
-    const { searchParams } = new URL(req.url)
-    const formId = searchParams.get("form_id")
-
-    if (!formId) {
-      return NextResponse.json({ error: "Form ID is required" }, { status: 400 })
-    }
-
-    const { data, error } = await supabaseAdmin
-      .from("freelancer_submissions")
-      .select("*")
-      .eq("form_id", formId)
-      .order("created_at", { ascending: false })
-
-    if (error) throw error
-
-    return NextResponse.json({ submissions: data })
-  } catch (err: any) {
-    console.error("Error fetching submissions:", err)
-    return NextResponse.json({ error: err.message || "Failed to fetch submissions" }, { status: 500 })
   }
 }
