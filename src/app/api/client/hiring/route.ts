@@ -96,32 +96,32 @@ export async function POST(req: Request) {
     if (formError) throw formError;
 
     // // ✅ Send admin and client notifications (reuse your existing email templates)
-    // try {
-    //   const adminEmailHtml = `
-    //     <h2>New Client Hiring Submission</h2>
-    //     <p><strong>Client:</strong> ${clientData.name} (${clientData.email})</p>
-    //     <p><strong>Form:</strong> ${form_name}</p>
-    //     <p><strong>Category:</strong> ${category.join(", ")}</p>
-    //     <p><strong>Subcategory:</strong> ${subcategory.join(", ")}</p>
-    //     <p><strong>Tools:</strong> ${tools.join(", ")}</p>
-    //     <p><strong>Status:</strong> Pending Review</p>
-    //   `;
-    //   await sendEmail(process.env.SMTP_USER!, "New Client Form Submission", adminEmailHtml);
-    // } catch (err) {
-    //   console.error("❌ Failed to send admin email:", err);
-    // }
+    try {
+      const adminEmailHtml = `
+        <h2>New Client Hiring Submission</h2>
+        <p><strong>Client:</strong> ${clientData.name} (${clientData.email})</p>
+        <p><strong>Form:</strong> ${form_name}</p>
+        <p><strong>Category:</strong> ${category.join(", ")}</p>
+        <p><strong>Subcategory:</strong> ${subcategory.join(", ")}</p>
+        <p><strong>Tools:</strong> ${tools.join(", ")}</p>
+        <p><strong>Status:</strong> Pending Review</p>
+      `;
+      await sendEmail(process.env.SMTP_USER!, "New Client Form Submission", adminEmailHtml);
+    } catch (err) {
+      console.error("❌ Failed to send admin email:", err);
+    }
 
-    // try {
-    //   const clientEmailHtml = `
-    //     <p>Dear ${clientData.name},</p>
-    //     <p>Your hiring request has been received. Our team will review your requirements and get in touch shortly.</p>
-    //     <p>Form ID: ${form_id}</p>
-    //     <p>Best regards,<br/>The Finzie Team</p>
-    //   `;
-    //   await sendEmail(clientData.email, "Hiring Request Received", clientEmailHtml);
-    // } catch (err) {
-    //   console.error("❌ Failed to send client confirmation email:", err);
-    // }
+    try {
+      const clientEmailHtml = `
+        <p>Dear ${clientData.name},</p>
+        <p>Your hiring request has been received. Our team will review your requirements and get in touch shortly.</p>
+        <p>Form ID: ${form_id}</p>
+        <p>Best regards,<br/>The Finzie Team</p>
+      `;
+      await sendEmail(clientData.email, "Hiring Request Received", clientEmailHtml);
+    } catch (err) {
+      console.error("❌ Failed to send client confirmation email:", err);
+    }
 
     return NextResponse.json({ success: true, hiring: hiringData, form: formData });
   } catch (err: any) {
