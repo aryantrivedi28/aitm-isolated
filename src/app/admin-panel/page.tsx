@@ -454,34 +454,34 @@ const categoryOptionss: Record<string, string[]> = {
     "DevOps",
     "Not Mentioned",
   ],
-  "Data Science": [
-    "Machine Learning",
-    "Data Analysis",
-    "Data Engineering",
-    "Not Mentioned",
-  ],
-  "Data Analysis": [
-    "Data Analytics",
-    "Data Engineering",
-    "Business Analysis",
-  ],
-  "Machine Learning": [
-    "AI Engineering",
-    "Computer Vision",
-    "Data Analysis",
-  ],
-  "Machine Learning & AI": [
-    "MLOps",
-    "AI Development",
-    "Data Science",
-  ],
+  // "Data Science": [
+  //   "Machine Learning",
+  //   "Data Analysis",
+  //   "Data Engineering",
+  //   "Not Mentioned",
+  // ],
+  // "Data Analysis": [
+  //   "Data Analytics",
+  //   "Data Engineering",
+  //   "Business Analysis",
+  // ],
+  // "Machine Learning": [
+  //   "AI Engineering",
+  //   "Computer Vision",
+  //   "Data Analysis",
+  // ],
+  // "Machine Learning & AI": [
+  //   "MLOps",
+  //   "AI Development",
+  //   "Data Science",
+  // ],
   "Artificial Intelligence": [
     "Machine Learning",
     "AI Engineering",
   ],
-  "Bioinformatics": [
-    "Machine Learning",
-  ],
+  // "Bioinformatics": [
+  //   "Machine Learning",
+  // ],
   "Marketing & Content": [
     "Digital Marketing",
     "Performance Marketing",
@@ -491,24 +491,24 @@ const categoryOptionss: Record<string, string[]> = {
   "E-commerce Marketing": [
     "Digital Marketing",
   ],
-  "AI Automation": [
-    "Automation Development",
-  ],
-  "Customer Support Automation": [
-    "Workflow Automation",
-  ],
-  "Operations Management": [
-    "Operational Efficiency",
-  ],
-  "Accounting": [
-    "Bookkeeping",
-  ],
-  "Lead Generation": [
-    "Not Mentioned",
-  ],
-  "Cybersecurity": [
-    "Web Application Security",
-  ],
+  // "AI Automation": [
+  //   "Automation Development",
+  // ],
+  // "Customer Support Automation": [
+  //   "Workflow Automation",
+  // ],
+  // "Operations Management": [
+  //   "Operational Efficiency",
+  // ],
+  // "Accounting": [
+  //   "Bookkeeping",
+  // ],
+  // "Lead Generation": [
+  //   "Not Mentioned",
+  // ],
+  // "Cybersecurity": [
+  //   "Web Application Security",
+  // ],
   "Video Editing": [
     "Video Production",
     "Content Creation",
@@ -544,42 +544,42 @@ const categoryOptionss: Record<string, string[]> = {
     "Brand Identity",
     "Web Design",
   ],
-  "Web Design": [
-    "UI/UX Design",
-  ],
-  "Web Development": [
-    "Portfolio Creation",
-  ],
-  "Portfolio Development": [
-    "Web Design",
-    "Web Development",
-    "Graphic Design",
-    "Design",
-    "Visual Design",
-  ],
-  "Portfolio Design": [
-    "Graphic Design",
-    "Web Design",
-  ],
-  "Portfolio Creation": [
-    "Graphic Design",
-    "Web Development",
-    "Design",
-  ],
-  "Portfolio Presentation": [
-    "Not Mentioned",
-  ],
-  "Portfolio": [
-    "Design",
-    "Graphic Design",
-    "Not Mentioned",
-  ],
-  "Custom Portfolio Development": [
-    "Web Development",
-  ],
-  "Digital Portfolio": [
-    "Design",
-  ],
+  // "Web Design": [
+  //   "UI/UX Design",
+  // ],
+  // "Web Development": [
+  //   "Portfolio Creation",
+  // ],
+  // "Portfolio Development": [
+  //   "Web Design",
+  //   "Web Development",
+  //   "Graphic Design",
+  //   "Design",
+  //   "Visual Design",
+  // ],
+  // "Portfolio Design": [
+  //   "Graphic Design",
+  //   "Web Design",
+  // ],
+  // "Portfolio Creation": [
+  //   "Graphic Design",
+  //   "Web Development",
+  //   "Design",
+  // ],
+  // "Portfolio Presentation": [
+  //   "Not Mentioned",
+  // ],
+  // "Portfolio": [
+  //   "Design",
+  //   "Graphic Design",
+  //   "Not Mentioned",
+  // ],
+  // "Custom Portfolio Development": [
+  //   "Web Development",
+  // ],
+  // "Digital Portfolio": [
+  //   "Design",
+  // ],
   "Creative": [
     "Social Media Management",
   ],
