@@ -129,6 +129,10 @@ type FormSubmission = {
   custom_responses?: any
   created_at: string
   profile_rating?: number
+  is_selected: boolean
+  selection_notes?: string | null
+  selection_date?: string | null
+  selected_by?: string | null
   updated_at: string
 }
 
@@ -698,6 +702,62 @@ export default function AdminPanel() {
     new Set(Object.values(categoryOptionss).flat())
   );
 
+  const [filterType, setFilterType] = useState<"all" | "selected" | "not_selected">("all");
+
+  const toggleCandidateSelection = async (submissionId: string, isSelected: boolean) => {
+    try {
+      // Attempt to get current user's id from supabase auth (supporting both new and older clients)
+      let clientId: string | null = null;
+      try {
+        if (supabase && typeof (supabase as any).auth?.getUser === "function") {
+          const { data } = await (supabase as any).auth.getUser();
+          clientId = data?.user?.id ?? null;
+        } else if ((supabase as any).auth?.user) {
+          // older supabase client API
+          const user = (supabase as any).auth.user?.();
+          clientId = user?.id ?? null;
+        }
+      } catch (err) {
+        console.warn("Could not determine client id from supabase auth:", err);
+        clientId = null;
+      }
+
+      const res = await fetch("/api/client/select-candidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          submission_id: submissionId,
+          is_selected: isSelected,
+          selected_by: clientId, // may be null if not authenticated
+        }),
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        toast.success(`Candidate ${isSelected ? "selected" : "unselected"} successfully`);
+        setFormSubmissions((prev) =>
+          prev.map((sub) =>
+            sub.id === submissionId
+              ? {
+                ...sub,
+                is_selected: isSelected,
+                selection_date: new Date().toISOString(),
+                selected_by: clientId,
+              }
+              : sub
+          )
+        );
+      } else {
+        toast.error("Failed to update selection");
+      }
+    } catch (err) {
+      console.error("Error updating selection:", err);
+      toast.error("An error occurred while updating selection");
+    }
+  };
+
+
 
   useEffect(() => {
     setMounted(true)
@@ -1216,26 +1276,82 @@ export default function AdminPanel() {
     }
   }
 
-  // Function to download data as CSV
-  const downloadCSVForForm = (formId: string) => {
+  // Updated CSV download function with filter support
+  const downloadCSVForForm = (formId: string, filter: "all" | "selected" | "not_selected" = "all") => {
     if (!formSubmissions.length) {
       alert("No submissions available to download")
       return
     }
 
-    const headers = Object.keys(formSubmissions[0]).join(",")
-    const rows = formSubmissions
-      .map((obj) => Object.values(obj).map((v) => `"${v}"`).join(","))
-      .join("\n")
+    // Apply filter
+    const filteredSubmissions = formSubmissions.filter((sub) =>
+      filter === "selected"
+        ? sub.is_selected
+        : filter === "not_selected"
+          ? !sub.is_selected
+          : true
+    )
 
-    const csvContent = `${headers}\n${rows}`
+    if (!filteredSubmissions.length) {
+      alert(`No ${filter} submissions to download`)
+      return
+    }
+
+    // Define the CSV fields you want to include
+    const headers = [
+      "Name",
+      "Email",
+      "Phone",
+      "Portfolio Link",
+      "GitHub Link",
+      "Resume Link",
+      "Years Experience",
+      "Profile Rating",
+      "Is Selected",
+      "Selection Date",
+      "Selected By",
+    ]
+
+    const rows = filteredSubmissions.map((s) => [
+      s.name || "",
+      s.email || "",
+      s.phone || "",
+      s.portfolio_link || "",
+      s.github_link || "",
+      s.resume_link || "",
+      s.years_experience ?? "",
+      s.profile_rating ?? "",
+      s.is_selected ? "Yes" : "No",
+      s.selection_date ? new Date(s.selection_date).toLocaleString() : "",
+      s.selected_by || "",
+    ])
+
+    // Build CSV string
+    const csvContent =
+      headers.join(",") +
+      "\n" +
+      rows
+        .map((row) =>
+          row
+            .map((value) =>
+              typeof value === "string" && value.includes(",")
+                ? `"${value.replace(/"/g, '""')}"`
+                : value
+            )
+            .join(",")
+        )
+        .join("\n")
+
+    // Create and download file
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
     const url = URL.createObjectURL(blob)
     const link = document.createElement("a")
     link.href = url
-    link.download = `form_${formId}_submissions.csv`
+    link.download = `form_${formId}_${filter}_submissions.csv`
     link.click()
+    URL.revokeObjectURL(url)
   }
+
 
 
 
@@ -2847,16 +2963,37 @@ export default function AdminPanel() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     {/* Header */}
-                    <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
+                    <div className="flex flex-wrap items-center justify-between mb-8 border-b border-white/10 pb-4 gap-3">
                       <h3 className="text-2xl font-bold text-white">📄 Form Submissions</h3>
 
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => selectedForm && downloadCSVForForm(selectedForm)}
-                          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-all"
+                      <div className="flex flex-wrap items-center gap-3">
+                        {/* Filter Dropdown */}
+                        <select
+                          value={filterType}
+                          onChange={(e) => setFilterType(e.target.value as "all" | "selected" | "not_selected")}
+                          className="bg-white/10 text-white px-3 py-2 rounded-md border border-white/20 focus:outline-none"
                         >
-                          <Download size={16} /> Download CSV
+                          <option value="all">All</option>
+                          <option value="selected">Selected</option>
+                          <option value="not_selected">Not Selected</option>
+                        </select>
+
+                        {/* CSV Buttons */}
+                        <button
+                          onClick={() => downloadCSVForForm(selectedForm, "selected")}
+                          className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition-all"
+                        >
+                          <Download size={16} /> Selected CSV
                         </button>
+
+                        <button
+                          onClick={() => downloadCSVForForm(selectedForm, "not_selected")}
+                          className="flex items-center gap-2 bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-md transition-all"
+                        >
+                          <Download size={16} /> Not Selected CSV
+                        </button>
+
+
                         <button
                           onClick={() => setSelectedForm(null)}
                           className="text-gray-400 hover:text-white text-xl transition-colors"
@@ -2866,104 +3003,141 @@ export default function AdminPanel() {
                       </div>
                     </div>
 
-                    {/* Submissions List */}
-                    {formSubmissions.length > 0 ? (
+                    {/* Filtered Submissions */}
+                    {formSubmissions.filter((sub) =>
+                      filterType === "selected"
+                        ? sub.is_selected
+                        : filterType === "not_selected"
+                          ? !sub.is_selected
+                          : true
+                    ).length > 0 ? (
                       <div className="space-y-6">
-                        {formSubmissions.map((submission, index) => (
-                          <motion.div
-                            key={submission.id}
-                            className="bg-white/5 rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                          >
-                            {/* Title */}
-                            <div className="flex items-center justify-between mb-4">
-                              <h4 className="text-lg font-semibold text-white">
-                                Submission {index + 1}
-                              </h4>
-                              <span className="text-xs text-gray-400">
-                                {new Date(submission.created_at).toLocaleString()}
-                              </span>
-                            </div>
-
-                            {/* Details Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                              <Field label="Name" value={submission.name} />
-                              <Field label="Email" value={submission.email} />
-                              <Field label="Phone" value={submission.phone || "N/A"} />
-
-                              {submission.years_experience != null && (
-                                <Field
-                                  label="Years of Experience"
-                                  value={submission.years_experience}
-                                />
-                              )}
-
-                              {submission.profile_rating && (
-                                <Field
-                                  label="Profile Rating"
-                                  value={`⭐ ${submission.profile_rating.toFixed(1)} / 10`}
-                                  highlight
-                                />
-                              )}
-
-                              {submission.portfolio_link && (
-                                <FieldLink
-                                  label="Portfolio"
-                                  href={submission.portfolio_link}
-                                />
-                              )}
-
-                              {submission.github_link && (
-                                <FieldLink label="GitHub" href={submission.github_link} />
-                              )}
-
-                              {submission.resume_link && (
-                                <FieldLink label="Resume" href={submission.resume_link} />
-                              )}
-                            </div>
-
-                            {/* Proposal */}
-                            {submission.proposal_link && (
-                              <div className="mt-4">
-                                <p className="text-gray-400 text-sm mb-1">Proposal:</p>
-                                <p className="text-white break-words">{submission.proposal_link}</p>
+                        {formSubmissions
+                          .filter((sub) =>
+                            filterType === "selected"
+                              ? sub.is_selected
+                              : filterType === "not_selected"
+                                ? !sub.is_selected
+                                : true
+                          )
+                          .map((submission, index) => (
+                            <motion.div
+                              key={submission.id}
+                              className={`rounded-2xl p-6 border transition-all duration-300 ${submission.is_selected
+                                ? "bg-green-900/30 border-green-500/30"
+                                : "bg-white/5 border-white/10 hover:bg-white/10"
+                                }`}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                            >
+                              {/* Header */}
+                              <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-lg font-semibold text-white">
+                                  Submission {index + 1}
+                                </h4>
+                                <span className="text-xs text-gray-400">
+                                  {new Date(submission.created_at).toLocaleString()}
+                                </span>
                               </div>
-                            )}
 
-                            {/* Custom Responses */}
-                            {submission.custom_responses &&
-                              Object.keys(submission.custom_responses).length > 0 && (
-                                <div className="mt-5 border-t border-white/10 pt-4">
-                                  <p className="text-gray-400 text-sm mb-2">Custom Responses:</p>
-                                  <div className="space-y-1">
-                                    {Object.entries(submission.custom_responses).map(([key, value]) => (
-                                      <p key={key} className="text-white text-sm">
-                                        <span className="text-gray-400">{key}:</span>{" "}
-                                        {String(value)}
-                                      </p>
-                                    ))}
-                                  </div>
+                              {/* Candidate Info */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <Field label="Name" value={submission.name} />
+                                <Field label="Email" value={submission.email} />
+                                <Field label="Phone" value={submission.phone || "N/A"} />
+
+                                {submission.years_experience != null && (
+                                  <Field
+                                    label="Years of Experience"
+                                    value={submission.years_experience}
+                                  />
+                                )}
+
+                                {submission.profile_rating && (
+                                  <Field
+                                    label="Profile Rating"
+                                    value={`⭐ ${submission.profile_rating.toFixed(1)} / 10`}
+                                    highlight
+                                  />
+                                )}
+
+                                {submission.portfolio_link && (
+                                  <FieldLink label="Portfolio" href={submission.portfolio_link} />
+                                )}
+
+                                {submission.github_link && (
+                                  <FieldLink label="GitHub" href={submission.github_link} />
+                                )}
+
+                                {submission.resume_link && (
+                                  <FieldLink label="Resume" href={submission.resume_link} />
+                                )}
+                              </div>
+
+                              {/* Proposal */}
+                              {submission.proposal_link && (
+                                <div className="mt-4">
+                                  <p className="text-gray-400 text-sm mb-1">Proposal:</p>
+                                  <p className="text-white break-words">{submission.proposal_link}</p>
                                 </div>
                               )}
 
-                            {/* Updated Time */}
-                            {submission.updated_at && (
-                              <div className="mt-3 text-right text-xs text-gray-500">
-                                Updated: {new Date(submission.updated_at).toLocaleString()}
+                              {/* Custom Responses */}
+                              {submission.custom_responses &&
+                                Object.keys(submission.custom_responses).length > 0 && (
+                                  <div className="mt-5 border-t border-white/10 pt-4">
+                                    <p className="text-gray-400 text-sm mb-2">Custom Responses:</p>
+                                    <div className="space-y-1">
+                                      {Object.entries(submission.custom_responses).map(([key, value]) => (
+                                        <p key={key} className="text-white text-sm">
+                                          <span className="text-gray-400">{key}:</span>{" "}
+                                          {String(value)}
+                                        </p>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                              {/* Selection Button */}
+                              <div className="mt-5 flex justify-between items-center border-t border-white/10 pt-4">
+                                <span
+                                  className={`text-sm ${submission.is_selected
+                                    ? "text-green-400"
+                                    : "text-gray-400"
+                                    }`}
+                                >
+                                  {submission.is_selected
+                                    ? `✅ Selected on ${submission.selection_date ? new Date(submission.selection_date).toLocaleDateString() : "Unknown date"}`
+                                    : "❌ Not Selected"}
+                                </span>
+
+                                <button
+                                  onClick={() =>
+                                    toggleCandidateSelection(
+                                      submission.id,
+                                      !submission.is_selected
+                                    )
+                                  }
+                                  className={`px-4 py-2 rounded-md font-medium transition-all ${submission.is_selected
+                                    ? "bg-red-600 hover:bg-red-700 text-white"
+                                    : "bg-green-600 hover:bg-green-700 text-white"
+                                    }`}
+                                >
+                                  {submission.is_selected ? "Unselect" : "Select Candidate"}
+                                </button>
                               </div>
-                            )}
-                          </motion.div>
-                        ))}
+                            </motion.div>
+                          ))}
                       </div>
                     ) : (
                       <div className="text-center py-10 text-gray-400 text-sm">
-                        No submissions found for this form.
+                        No submissions found for this filter.
                       </div>
                     )}
                   </motion.div>
                 </motion.div>
               )}
+
 
             </motion.div>
           </section>

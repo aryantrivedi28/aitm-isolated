@@ -5,55 +5,46 @@ import { supabaseAdmin } from "../../../../lib/supabase-admin";
 import { cookies } from "next/headers";
 import { sendEmail } from "../../../../lib/mailer";
 
+
 export async function POST(req: Request) {
   try {
-
     const body = await req.json();
-
     const { role_type, job_title, description, budget_range, category, subcategory, tools } = body;
 
-    // ✅ Basic validation
-    if (!role_type || !job_title || !description || !budget_range || !category?.length) {
+    // ✅ Basic validation (allow simplified form)
+    if (!category?.length || !subcategory?.length || !tools?.length) {
       return NextResponse.json(
-        { success: false, error: "Missing required fields" },
+        { success: false, error: "Missing required fields (category, subcategory, or tools)" },
         { status: 400 }
       );
     }
 
-    // ✅ Read cookie for client session
+    // ✅ Read client session
     const cookieStore = await cookies();
     const session = cookieStore.get("client_auth")?.value;
-
-    if (!session) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-    }
+    if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
 
     let email: string | undefined;
     try {
-      const parsed = JSON.parse(session);
-      email = parsed?.email;
+      email = JSON.parse(session)?.email;
     } catch {
       return NextResponse.json({ success: false, error: "Invalid session cookie" }, { status: 400 });
     }
+    if (!email) return NextResponse.json({ success: false, error: "Invalid session" }, { status: 400 });
 
-    if (!email) {
-      return NextResponse.json({ success: false, error: "Invalid session" }, { status: 400 });
-    }
-
-    // ✅ Get client info from database
+    // ✅ Fetch client record
     const { data: clientData, error: clientError } = await supabaseAdmin
       .from("client_table")
       .select("*")
       .eq("email", email)
       .single();
 
-    if (clientError || !clientData) {
+    if (clientError || !clientData)
       return NextResponse.json({ success: false, error: "Client not found" }, { status: 404 });
-    }
 
     const client_id = clientData.id;
 
-    // ✅ Insert new hiring request
+    // ✅ Insert client hiring request
     const { data: hiringData, error: hiringError } = await supabaseAdmin
       .from("hiring_requests")
       .insert([
@@ -71,110 +62,70 @@ export async function POST(req: Request) {
       .select("*")
       .single();
 
-    if (hiringError) {
-      console.error("❌ DB insert error:", hiringError);
-      return NextResponse.json({ success: false, error: "Failed to save hiring request" }, { status: 500 });
-    }
+    if (hiringError) throw hiringError;
 
-    // ✅ Fetch all hiring requests for this client
-    const { data: allRequests } = await supabaseAdmin
-      .from("hiring_requests")
+    // ✅ Auto-generate form draft for admin
+    const form_id = `${subcategory[0]?.toLowerCase()}-${tools[0]?.toLowerCase()}-${Date.now().toString().slice(-4)}`;
+    const form_name = `${subcategory[0]} Freelancer Form`;
+    const form_description =
+      description ||
+      `We are seeking ${subcategory[0]} freelancers skilled in ${tools.join(", ")} for ${clientData.industry} projects.`;
+    const message = "Please fill out the details below to apply.";
+
+    const { data: formData, error: formError } = await supabaseAdmin
+      .from("forms")
+      .insert([
+        {
+          form_id,
+          form_name,
+          form_description,
+          industry: clientData.industry,
+          category: category[0],
+          subcategory: subcategory[0],
+          tech_stack: tools,
+          message,
+          created_by: client_id,
+          is_active: false,
+          status: "pending_review",
+          auto_generated: true,
+        },
+      ])
       .select("*")
-      .eq("client_id", client_id);
+      .single();
 
-    // ✅ Prepare HTML for admin email
-    const requestsHtml = allRequests
-      ?.map((req) => {
-        const categories = Array.isArray(req.category) ? req.category : [];
-        const subcategories = Array.isArray(req.subcategory) ? req.subcategory : [];
-        const tools = Array.isArray(req.tools) ? req.tools : [];
+    if (formError) throw formError;
 
-        return `
-      <tr style="border-bottom:1px solid #e5e7eb;">
-        <td style="padding:16px;">
-          <p style="margin:0; font-size:15px;">
-            <strong style="color:#111827;">Role:</strong> ${req.role_type} - ${req.job_title}
-          </p>
-          <p style="margin:6px 0; font-size:15px;">
-            <strong style="color:#111827;">Description:</strong> ${req.description}
-          </p>
-          <p style="margin:6px 0; font-size:15px;">
-            <strong style="color:#111827;">Budget:</strong> ${req.budget_range}
-          </p>
-          <p style="margin:6px 0; font-size:15px;">
-            <strong style="color:#111827;">Category:</strong> ${categories.join(", ") || "N/A"}
-          </p>
-          <p style="margin:6px 0; font-size:15px;">
-            <strong style="color:#111827;">Subcategories:</strong> ${subcategories.join(", ") || "N/A"}
-          </p>
-          <p style="margin:6px 0; font-size:15px;">
-            <strong style="color:#111827;">Tools:</strong> ${tools.join(", ") || "N/A"}
-          </p>
-        </td>
-      </tr>
-    `;
-      })
-      .join("");
+    // // ✅ Send admin and client notifications (reuse your existing email templates)
+    // try {
+    //   const adminEmailHtml = `
+    //     <h2>New Client Hiring Submission</h2>
+    //     <p><strong>Client:</strong> ${clientData.name} (${clientData.email})</p>
+    //     <p><strong>Form:</strong> ${form_name}</p>
+    //     <p><strong>Category:</strong> ${category.join(", ")}</p>
+    //     <p><strong>Subcategory:</strong> ${subcategory.join(", ")}</p>
+    //     <p><strong>Tools:</strong> ${tools.join(", ")}</p>
+    //     <p><strong>Status:</strong> Pending Review</p>
+    //   `;
+    //   await sendEmail(process.env.SMTP_USER!, "New Client Form Submission", adminEmailHtml);
+    // } catch (err) {
+    //   console.error("❌ Failed to send admin email:", err);
+    // }
 
-    const adminEmailHtml = `
-  <div style="font-family:Arial, sans-serif; color:#111827; max-width:800px; margin:auto; border:1px solid #e5e7eb; border-radius:8px; overflow:hidden;">
-    <div style="background-color:#241C15; padding:20px;">
-      <h2 style="margin:0; color:white; font-size:22px;"> New Hiring Submission</h2>
-    </div>
-    <div style="padding:20px;">
-      <h3 style="margin-top:0; color:#241C15; font-size:18px;">Client Details</h3>
-      <table style="width:100%; border-collapse:collapse; margin-bottom:24px;">
-        <tr><td style="padding:6px;"><strong>Name:</strong></td><td>${clientData.name}</td></tr>
-        <tr><td style="padding:6px;"><strong>Company:</strong></td><td>${clientData.company_name || "N/A"}</td></tr>
-        <tr><td style="padding:6px;"><strong>Website:</strong></td><td>${clientData.website || "N/A"}</td></tr>
-        <tr><td style="padding:6px;"><strong>Industry:</strong></td><td>${clientData.industry || "N/A"}</td></tr>
-        <tr><td style="padding:6px;"><strong>Email:</strong></td><td>${clientData.email}</td></tr>
-        <tr><td style="padding:6px;"><strong>Phone:</strong></td><td>${clientData.phone || "N/A"}</td></tr>
-      </table>
+    // try {
+    //   const clientEmailHtml = `
+    //     <p>Dear ${clientData.name},</p>
+    //     <p>Your hiring request has been received. Our team will review your requirements and get in touch shortly.</p>
+    //     <p>Form ID: ${form_id}</p>
+    //     <p>Best regards,<br/>The Finzie Team</p>
+    //   `;
+    //   await sendEmail(clientData.email, "Hiring Request Received", clientEmailHtml);
+    // } catch (err) {
+    //   console.error("❌ Failed to send client confirmation email:", err);
+    // }
 
-      <h3 style="color:#241C15; font-size:18px;">Hiring Requests</h3>
-      <table style="width:100%; border-collapse:collapse; border:1px solid #e5e7eb;">
-        ${requestsHtml}
-      </table>
-    </div>
-    <div style="background-color:#f9fafb; padding:14px; text-align:center; font-size:13px; color:#6b7280;">
-      Finzie Hiring Platform • Confidential Report
-    </div>
-  </div>
-`;
-
-
-    // ✅ Send emails safely
-    try {
-      if (!process.env.SMTP_USER) {
-        throw new Error("SMTP_USER not configured");
-      }
-      await sendEmail(process.env.SMTP_USER, "New Client Hiring Submission", adminEmailHtml);
-      console.log("✅ Admin email sent");
-    } catch (err) {
-      console.error("❌ Failed to send admin email:", err);
-    }
-
-    try {
-      const clientEmailHtml = `
-        <p>Dear ${clientData.name},</p>
-        <p>Thank you for submitting your hiring request with Finzie. We have successfully received your information and our team will review your requirements promptly.</p>
-        <p>One of our representatives will reach out to you shortly to discuss the next steps and ensure a smooth onboarding process.</p>
-        <p>We appreciate your trust in Finzie and look forward to assisting you in finding the best talent for your project.</p>
-        <p>Best regards,<br/>The Finzie Team</p>
-      `;
-      await sendEmail(clientData.email, "Thank you for your hiring request", clientEmailHtml);
-      console.log("✅ Client email sent");
-    } catch (err) {
-      console.error("❌ Failed to send client confirmation email:", err);
-    }
-
-    return NextResponse.json({ success: true, hiring: hiringData });
+    return NextResponse.json({ success: true, hiring: hiringData, form: formData });
   } catch (err: any) {
-    console.error("🔥 Unexpected error in hiring request API:", err);
-    return NextResponse.json(
-      { success: false, error: "Something went wrong, please try again later." },
-      { status: 500 }
-    );
+    console.error("🔥 Error in client hiring route:", err);
+    return NextResponse.json({ success: false, error: "Something went wrong" }, { status: 500 });
   }
 }

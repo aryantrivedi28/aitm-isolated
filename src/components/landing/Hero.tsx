@@ -71,24 +71,24 @@ export default function Hero({
   const titleLines = splitTitle(title)
 
   return (
-    <div className="relative bg-gradient-to-br from-[#241C15] via-[#2A1F17] to-[#1F1811] overflow-hidden min-h-[80vh] md:min-h-screen">
+    <div className="relative bg-gradient-to-br from-[#fbf5e5] via-[#fff9ed] to-[#f5eed9] overflow-hidden min-h-[80vh] md:min-h-screen">
       {/* Enhanced background pattern with multiple layers */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Main radial gradient */}
-        <div className="absolute inset-0 bg-gradient-radial from-[#FFE01B]/8 via-transparent to-transparent opacity-40 md:opacity-60" />
+        <div className="absolute inset-0 bg-gradient-radial from-[#FFE01B]/15 via-transparent to-transparent opacity-40 md:opacity-60" />
 
         {/* Mesh gradient overlay */}
         <div className="absolute inset-0">
           <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
             <defs>
               <radialGradient id="g1" cx="20%" cy="20%">
-                <stop offset="0%" stopColor="#FFE01B" stopOpacity="0.12" />
-                <stop offset="40%" stopColor="#FFE01B" stopOpacity="0.04" />
-                <stop offset="100%" stopColor="#241C15" stopOpacity="0" />
+                <stop offset="0%" stopColor="#FFE01B" stopOpacity="0.18" />
+                <stop offset="40%" stopColor="#FFE01B" stopOpacity="0.06" />
+                <stop offset="100%" stopColor="#fbf5e5" stopOpacity="0" />
               </radialGradient>
               <radialGradient id="g2" cx="80%" cy="80%">
-                <stop offset="0%" stopColor="#FFE01B" stopOpacity="0.08" />
-                <stop offset="60%" stopColor="#241C15" stopOpacity="0" />
+                <stop offset="0%" stopColor="#FFE01B" stopOpacity="0.12" />
+                <stop offset="60%" stopColor="#fbf5e5" stopOpacity="0" />
               </radialGradient>
             </defs>
             <rect x="0" y="0" width="100" height="100" fill="url(#g1)" />
@@ -98,15 +98,46 @@ export default function Hero({
 
         {/* Subtle grid pattern */}
         <div
-          className="absolute inset-0 opacity-[0.02]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(255, 224, 27, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255, 224, 27, 0.1) 1px, transparent 1px)
+              linear-gradient(rgba(36, 28, 21, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(36, 28, 21, 0.1) 1px, transparent 1px)
             `,
             backgroundSize: '40px 40px'
           }}
         />
+
+        {/* Decorative box pattern lines */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Top left corner boxes */}
+          <div className="absolute left-[10%] top-[15%] w-16 h-16 border-l-2 border-t-2 border-[#FFE01B]/20" />
+          <div className="absolute left-[15%] top-[25%] w-12 h-12 border-r-2 border-b-2 border-[#241C15]/10" />
+          
+          {/* Top right corner boxes */}
+          <div className="absolute right-[12%] top-[20%] w-20 h-20 border-r-2 border-t-2 border-[#FFE01B]/15" />
+          <div className="absolute right-[8%] top-[35%] w-14 h-14 border-l-2 border-b-2 border-[#241C15]/10" />
+          
+          {/* Middle left boxes */}
+          <div className="absolute left-[8%] top-[45%] w-10 h-10 border-l-2 border-b-2 border-[#FFE01B]/25" />
+          <div className="absolute left-[18%] top-[55%] w-16 h-16 border-r-2 border-t-2 border-[#241C15]/8" />
+          
+          {/* Middle right boxes */}
+          <div className="absolute right-[15%] top-[50%] w-12 h-12 border-l-2 border-t-2 border-[#FFE01B]/20" />
+          <div className="absolute right-[10%] top-[62%] w-18 h-18 border-r-2 border-b-2 border-[#241C15]/10" />
+          
+          {/* Bottom left boxes */}
+          <div className="absolute left-[12%] bottom-[20%] w-14 h-14 border-l-2 border-b-2 border-[#FFE01B]/15" />
+          <div className="absolute left-[20%] bottom-[30%] w-10 h-10 border-r-2 border-t-2 border-[#241C15]/12" />
+          
+          {/* Bottom right boxes */}
+          <div className="absolute right-[18%] bottom-[25%] w-16 h-16 border-r-2 border-b-2 border-[#FFE01B]/18" />
+          <div className="absolute right-[25%] bottom-[15%] w-12 h-12 border-l-2 border-t-2 border-[#241C15]/10" />
+          
+          {/* Center accent boxes */}
+          <div className="absolute left-[35%] top-[30%] w-8 h-8 border-2 border-[#FFE01B]/10 rotate-45" />
+          <div className="absolute right-[35%] bottom-[35%] w-10 h-10 border-2 border-[#241C15]/8 rotate-12" />
+        </div>
       </div>
 
       {backgroundImage && (
@@ -115,10 +146,10 @@ export default function Hero({
             src={urlFor(backgroundImage).url()}
             alt={title || 'hero-bg'}
             fill
-            className="object-cover opacity-20 md:opacity-30"
+            className="object-cover opacity-15 md:opacity-20"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#241C15]/80 via-transparent to-[#241C15]/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#fbf5e5]/90 via-transparent to-[#fbf5e5]/60" />
         </div>
       )}
 
@@ -127,11 +158,11 @@ export default function Hero({
         {particles.map((p, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-[#FFE01B]/20 rounded-full"
+            className="absolute w-1 h-1 bg-[#FFE01B]/30 rounded-full"
             style={{ left: p.left, top: p.top }}
             animate={{
               y: [-10, -20, -10],
-              opacity: [0.2, 0.6, 0.2],
+              opacity: [0.3, 0.7, 0.3],
               scale: [1, 1.2, 1],
             }}
             transition={{
@@ -155,7 +186,7 @@ export default function Hero({
                 alt="hero illustration"
                 width={600}
                 height={400}
-                className="object-contain w-full h-auto drop-shadow-xl"
+                className="object-contain w-full h-auto drop-shadow-2xl"
                 priority
               />
             </motion.div>
@@ -178,14 +209,14 @@ export default function Hero({
             className="flex flex-col sm:flex-row items-center justify-center gap-2 md:gap-3 mb-6 md:mb-8"
           >
             <div className="group relative">
-              <div className="absolute -inset-1 bg-gradient-to-r from-[#FFE01B]/20 to-[#FFE01B]/10 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300" />
-              <div className="relative flex items-center gap-2 bg-[#FFE01B] text-black px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold tracking-wide shadow-lg">
+              <div className="absolute -inset-1 bg-gradient-to-r from-[#FFE01B]/30 to-[#FFE01B]/15 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-300" />
+              <div className="relative flex items-center gap-2 bg-[#FFE01B] text-[#241C15] px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold tracking-wide shadow-lg">
                 <Sparkles size={12} className="md:w-3.5 md:h-3.5" />
                 <span>Premium • Enterprise</span>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-gray-300 text-xs md:text-sm">
-              <Star size={12} className="text-[#FFE01B] md:w-3.5 md:h-3.5" />
+            <div className="flex items-center gap-1 text-[#241C15]/70 text-xs md:text-sm">
+              <Star size={12} className="text-[#FFE01B] md:w-3.5 md:h-3.5 fill-[#FFE01B]" />
               <span>Trusted by 50+ Companies</span>
             </div>
           </motion.div>
@@ -197,7 +228,7 @@ export default function Hero({
             transition={{ delay: 0.4, duration: 0.8 }}
             className="mb-6 md:mb-8 px-2"
           >
-            <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight max-w-5xl mx-auto">
+            <h1 className="text-[#241C15] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight max-w-5xl mx-auto">
               {titleLines.map((line, index) => (
                 <motion.span
                   key={index}
@@ -210,10 +241,13 @@ export default function Hero({
                 </motion.span>
               ))}
               <motion.span
-                className="block mt-3 md:mt-4 text-transparent bg-clip-text bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B] text-lg sm:text-xl md:text-2xl lg:text-3xl font-black"
+                className="block mt-3 md:mt-4 text-transparent bg-clip-text bg-gradient-to-r from-[#FFE01B] via-[#f5d000] to-[#FFE01B] text-lg sm:text-xl md:text-2xl lg:text-3xl font-black"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.8 }}
+                style={{
+                  filter: 'drop-shadow(0 2px 4px rgba(255, 224, 27, 0.2))'
+                }}
               >
                 Accelerate · Delight · Scale
               </motion.span>
@@ -227,7 +261,7 @@ export default function Hero({
               transition={{ delay: 1 }}
               className="mb-8 md:mb-12 px-4"
             >
-              <p className="text-gray-300 text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="text-[#241C15]/70 text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light">
                 {subtitle}
               </p>
             </motion.div>
@@ -249,8 +283,8 @@ export default function Hero({
                     href={cta.href}
                     className={
                       isSecondary
-                        ? 'group relative inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl border-2 border-gray-600/50 text-gray-300 hover:text-white hover:border-gray-400 transition-all duration-300 text-sm md:text-base backdrop-blur-sm bg-black/20'
-                        : 'group relative inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-bold shadow-xl md:shadow-2xl text-sm md:text-base transition-all duration-300 transform hover:-translate-y-0.5 md:hover:-translate-y-1 hover:shadow-[#FFE01B]/25'
+                        ? 'group relative inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl border-2 border-[#241C15]/20 text-[#241C15]/70 hover:text-[#241C15] hover:border-[#241C15]/40 transition-all duration-300 text-sm md:text-base backdrop-blur-sm bg-white/40'
+                        : 'group relative inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-bold shadow-xl md:shadow-2xl text-sm md:text-base transition-all duration-300 transform hover:-translate-y-0.5 md:hover:-translate-y-1 hover:shadow-[#FFE01B]/30'
                     }
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -260,8 +294,8 @@ export default function Hero({
                   >
                     {!isSecondary && (
                       <>
-                        <div className="absolute -inset-0.5 md:-inset-1 bg-gradient-to-r from-[#FFE01B] to-[#FFF045] rounded-xl md:rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-300" />
-                        <div className="relative bg-[#FFE01B] text-black px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-2 w-full">
+                        <div className="absolute -inset-0.5 md:-inset-1 bg-gradient-to-r from-[#FFE01B] to-[#f5d000] rounded-xl md:rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-300" />
+                        <div className="relative bg-[#FFE01B] text-[#241C15] px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl flex items-center justify-center gap-2 w-full font-bold">
                           <span className="truncate">{cta.label}</span>
                           <ArrowRight size={16} className="md:w-5 md:h-5 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
                         </div>
@@ -317,7 +351,7 @@ export default function Hero({
             cy="50"
             r="45"
             stroke="#FFE01B"
-            strokeOpacity="0.2"
+            strokeOpacity="0.3"
             strokeWidth="2"
             strokeDasharray="10 5"
           />
@@ -326,13 +360,13 @@ export default function Hero({
             cy="50"
             r="30"
             stroke="#FFE01B"
-            strokeOpacity="0.1"
+            strokeOpacity="0.2"
             strokeWidth="1"
           />
           <path
             d="M30 50 C40 35, 60 35, 70 50 C60 65, 40 65, 30 50"
             stroke="#FFE01B"
-            strokeOpacity="0.15"
+            strokeOpacity="0.25"
             strokeWidth="2"
             strokeLinecap="round"
             fill="none"
@@ -349,7 +383,7 @@ export default function Hero({
         <motion.div
           animate={{ y: [-3, 3, -3] }}
           transition={{ duration: 3, repeat: Infinity }}
-          className="text-[#FFE01B]/30"
+          className="text-[#FFE01B]/40"
         >
           <Sparkles size={16} className="sm:w-5 sm:h-5 md:w-6 md:h-6" />
         </motion.div>

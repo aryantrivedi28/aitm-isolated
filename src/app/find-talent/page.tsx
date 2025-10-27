@@ -1,101 +1,94 @@
-"use client";
-export const dynamic = "force-dynamic";
+"use client"
+export const dynamic = "force-dynamic"
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
-import toast, { Toaster } from "react-hot-toast";
-import {
-  Mail,
-  ShieldCheck,
-  KeyRound,
-  Send,
-  CheckCircle2,
-  AlertCircle,
-} from "lucide-react";
+import { useEffect, useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { useRouter } from "next/navigation"
+import toast, { Toaster } from "react-hot-toast"
+import { Mail, ShieldCheck, KeyRound, Send, CheckCircle2, AlertCircle } from "lucide-react"
 
 export default function FindTalentPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [verified, setVerified] = useState(false);
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [otpSent, setOtpSent] = useState(false)
+  const [otp, setOtp] = useState("")
+  const [verified, setVerified] = useState(false)
+  const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function checkSession() {
       try {
-        const res = await fetch("/api/otp/session", { cache: "no-store" });
-        const data = await res.json();
+        const res = await fetch("/api/otp/session", { cache: "no-store" })
+        const data = await res.json()
         if (data.authenticated) {
-          router.replace("/find-talent/option");
+          router.replace("/find-talent/client/dashboard")
         } else {
-          setLoading(false);
+          setLoading(false)
         }
       } catch {
-        setLoading(false);
+        setLoading(false)
       }
     }
-    checkSession();
-  }, [router]);
+    checkSession()
+  }, [router])
 
   async function sendOtp() {
-    setError("");
-    setSuccessMessage("");
-    const toastId = toast.loading("Sending OTP...");
+    setError("")
+    setSuccessMessage("")
+    const toastId = toast.loading("Sending OTP...")
     try {
       const res = await fetch("/api/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
-      });
-      const data = await res.json();
-      toast.dismiss(toastId);
+      })
+      const data = await res.json()
+      toast.dismiss(toastId)
 
       if (data.success) {
-        setOtpSent(true);
-        setSuccessMessage("✅ OTP sent successfully! Check your inbox.");
-        toast.success("OTP sent! Check your inbox.");
+        setOtpSent(true)
+        setSuccessMessage("OTP sent successfully! Check your inbox.")
+        toast.success("OTP sent! Check your inbox.")
       } else {
-        setError(data.error || "Failed to send OTP.");
-        toast.error(data.error || "Failed to send OTP.");
+        setError(data.error || "Failed to send OTP.")
+        toast.error(data.error || "Failed to send OTP.")
       }
     } catch {
-      toast.dismiss(toastId);
-      setError("Something went wrong. Please try again.");
-      toast.error("Something went wrong.");
+      toast.dismiss(toastId)
+      setError("Something went wrong. Please try again.")
+      toast.error("Something went wrong.")
     }
   }
 
   async function verifyOtp() {
-    setError("");
-    setSuccessMessage("");
-    const toastId = toast.loading("Verifying OTP...");
+    setError("")
+    setSuccessMessage("")
+    const toastId = toast.loading("Verifying OTP...")
     try {
       const res = await fetch("/api/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
-      });
+      })
 
-      const data = await res.json();
-      toast.dismiss(toastId);
+      const data = await res.json()
+      toast.dismiss(toastId)
 
       if (res.ok && data.success) {
-        setVerified(true);
-        setSuccessMessage("🎉 Email verified successfully!");
-        toast.success("🎉 Verified! Redirecting...");
-        setTimeout(() => router.push("/find-talent/option"), 2000);
+        setVerified(true)
+        setSuccessMessage("Email verified successfully!")
+        toast.success("Verified! Redirecting...")
+        setTimeout(() => router.push("/find-talent/client/dashboard"), 2000)
       } else {
-        setError(data.error || "Invalid OTP");
-        toast.error(data.error || "Invalid OTP");
+        setError(data.error || "Invalid OTP")
+        toast.error(data.error || "Invalid OTP")
       }
     } catch {
-      toast.dismiss(toastId);
-      setError("Something went wrong. Please try again.");
-      toast.error("Something went wrong.");
+      toast.dismiss(toastId)
+      setError("Something went wrong. Please try again.")
+      toast.error("Something went wrong.")
     }
   }
 
@@ -115,12 +108,12 @@ export default function FindTalentPage() {
         <motion.div
           className="absolute w-72 h-72 bg-[#FFE01B] rounded-full mix-blend-multiply filter blur-3xl opacity-30"
           animate={{ x: [0, 100, -100, 0], y: [0, 50, -50, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute top-40 left-20 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
           animate={{ x: [0, -80, 80, 0], y: [0, -50, 50, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
         />
       </div>
 
@@ -272,5 +265,5 @@ export default function FindTalentPage() {
         </AnimatePresence>
       </motion.div>
     </div>
-  );
+  )
 }

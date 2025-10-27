@@ -88,7 +88,7 @@ export default function FormPage({ params }: FormPageProps) {
 
     try {
       const submissionData: Record<string, any> = {
-        form_id: formId,
+        form_id: form?.id || formId, // Use the actual form UUID
         custom_responses: customResponses,
       }
 
@@ -112,6 +112,8 @@ export default function FormPage({ params }: FormPageProps) {
         }
       })
 
+      console.log("[v0] Submitting form data:", submissionData)
+
       const response = await fetch("/api/submissions", {
         method: "POST",
         headers: {
@@ -123,11 +125,14 @@ export default function FormPage({ params }: FormPageProps) {
       const data = await response.json()
 
       if (!response.ok) {
+        console.error("[v0] Submission failed:", data)
         throw new Error(data.error || "Failed to submit application")
       }
 
+      console.log("[v0] Submission successful:", data)
       setSubmitted(true)
     } catch (err: any) {
+      console.error("[v0] Error in handleSubmit:", err)
       setError(err.message)
     } finally {
       setSubmitting(false)

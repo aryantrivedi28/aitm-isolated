@@ -7,13 +7,20 @@
 ├── components
 │   └── ui
 │       ├── accordion.tsx
+│       ├── alert-dialog.tsx
 │       ├── badge.tsx
 │       ├── button.tsx
 │       ├── card.tsx
+│       ├── dialog.tsx
+│       ├── dropdown-menu.tsx
 │       ├── input.tsx
 │       ├── select.tsx
 │       ├── tabs.tsx
-│       └── textarea.tsx
+│       ├── textarea.tsx
+│       ├── toast.tsx
+│       └── toaster.tsx
+├── hooks
+│   └── use-toast.ts
 ├── lib
 │   └── utils.ts
 ├── public
@@ -34,6 +41,7 @@
 │   ├── deals.svg
 │   ├── file.svg
 │   ├── finzie-logo.png
+│   ├── finzie-logo2.png
 │   ├── globe.svg
 │   ├── income.png
 │   ├── kunal.png
@@ -61,6 +69,10 @@
 │   │   │       └── [id]
 │   │   ├── admin-panel
 │   │   │   ├── agreements
+│   │   │   │   └── page.tsx
+│   │   │   ├── bulk-mail-send
+│   │   │   │   └── page.tsx
+│   │   │   ├── generate-form
 │   │   │   │   └── page.tsx
 │   │   │   ├── notifications
 │   │   │   │   └── page.tsx
@@ -100,6 +112,10 @@
 │   │   │   │   └── webhook
 │   │   │   │       └── route.ts
 │   │   │   ├── forms
+│   │   │   │   ├── create
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── upload
+│   │   │   │   │   └── route.ts
 │   │   │   │   └── route.ts
 │   │   │   ├── freelancer
 │   │   │   │   ├── cron
@@ -127,16 +143,23 @@
 │   │   │   │   │   └── route.ts
 │   │   │   │   └── verify
 │   │   │   │       └── route.ts
+│   │   │   ├── parse-client-text
+│   │   │   │   └── route.ts
 │   │   │   ├── personalize-chunk
 │   │   │   │   └── route.ts
 │   │   │   ├── preview-sheet
 │   │   │   │   └── route.ts
 │   │   │   ├── process-chunk
 │   │   │   │   └── route.ts
+│   │   │   ├── send-bulk
+│   │   │   │   └── route.ts
+│   │   │   ├── send-bulk-email
+│   │   │   │   └── route.ts
 │   │   │   └── submissions
 │   │   │       └── route.ts
 │   │   ├── case-studies
 │   │   │   ├── [slug]
+│   │   │   ├── layout.tsx
 │   │   │   └── page.tsx
 │   │   ├── client-request
 │   │   │   └── page.tsx
@@ -145,6 +168,9 @@
 │   │   ├── find-talent
 │   │   │   ├── assisted-hiring
 │   │   │   │   └── page.tsx
+│   │   │   ├── client
+│   │   │   │   └── dashboard
+│   │   │   │       └── page.tsx
 │   │   │   ├── direct-hiring
 │   │   │   │   ├── freelancer
 │   │   │   │   │   └── page.tsx
@@ -157,9 +183,13 @@
 │   │   │   ├── option
 │   │   │   │   ├── layout.tsx
 │   │   │   │   └── page.tsx
+│   │   │   ├── site-header
+│   │   │   │   └── page.tsx
 │   │   │   ├── thank-you
 │   │   │   │   └── page.tsx
 │   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── flows
 │   │   │   └── page.tsx
 │   │   ├── form
 │   │   │   └── [id]
@@ -188,6 +218,7 @@
 │   │   ├── thank-you-client
 │   │   │   └── page.tsx
 │   │   ├── App.css
+│   │   ├── find-talent.zip
 │   │   ├── globals.css
 │   │   ├── home-sections.tsx
 │   │   ├── layout.tsx
@@ -206,6 +237,7 @@
 │   │   ├── landing
 │   │   │   ├── CTA.tsx
 │   │   │   ├── FAQ.tsx
+│   │   │   ├── Footer.tsx
 │   │   │   ├── Hero.tsx
 │   │   │   ├── HowItWorks.tsx
 │   │   │   ├── HowWeSolve.tsx
@@ -213,10 +245,18 @@
 │   │   │   ├── PainPoints.tsx
 │   │   │   ├── SectionWrapper.tsx
 │   │   │   ├── ShortCaseStudies.tsx
+│   │   │   ├── Testimonial.tsx
 │   │   │   └── WhyUs.tsx
 │   │   ├── ai-prompt-input.tsx
+│   │   ├── client-agreement-form.tsx
+│   │   ├── file-upload.tsx
+│   │   ├── Footer.tsx
+│   │   ├── freelancer-agreement-form.tsx
+│   │   ├── GoogleAnalytic.tsx
 │   │   ├── Header.tsx
 │   │   ├── invoice-form.tsx
+│   │   ├── MultiSelectFilter.tsx
+│   │   ├── PageTransition.tsx
 │   │   └── signature-status.tsx
 │   ├── lib
 │   │   ├── agreements
@@ -225,6 +265,7 @@
 │   │   │   ├── email-service.ts
 │   │   │   ├── notification-helper.ts
 │   │   │   ├── pdf-generator.ts
+│   │   │   ├── pdf-templates.tsx
 │   │   │   ├── storage.ts
 │   │   │   ├── supabase-server.ts
 │   │   │   └── templates.ts
@@ -262,11 +303,13 @@
 │   │   │   ├── sections
 │   │   │   │   ├── ctaSection.ts
 │   │   │   │   ├── faqSection.ts
+│   │   │   │   ├── footerSection.ts
 │   │   │   │   ├── howItWorksSection.ts
 │   │   │   │   ├── howWeSolveSection.ts
 │   │   │   │   ├── logosSection.ts
 │   │   │   │   ├── painPointsSections.ts
 │   │   │   │   ├── shortCaseStudiesSection.ts
+│   │   │   │   ├── testimonialSection.ts
 │   │   │   │   └── whyUsSection.ts
 │   │   │   ├── caseStudy.ts
 │   │   │   ├── index.ts
