@@ -706,36 +706,35 @@ export default function AdminPanel() {
 
   const toggleCandidateSelection = async (submissionId: string, isSelected: boolean) => {
     try {
-      // Attempt to get current user's id from supabase auth (supporting both new and older clients)
-      let clientId: string | null = null;
-      try {
-        if (supabase && typeof (supabase as any).auth?.getUser === "function") {
-          const { data } = await (supabase as any).auth.getUser();
-          clientId = data?.user?.id ?? null;
-        } else if ((supabase as any).auth?.user) {
-          // older supabase client API
-          const user = (supabase as any).auth.user?.();
-          clientId = user?.id ?? null;
-        }
-      } catch (err) {
-        console.warn("Could not determine client id from supabase auth:", err);
-        clientId = null;
+      // 1️⃣ Get the Supabase session token
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        toast.error("You must be logged in to select a candidate.");
+        return;
       }
 
+      // 2️⃣ Call your Next.js API route
       const res = await fetch("/api/client/select-candidate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({
           submission_id: submissionId,
           is_selected: isSelected,
-          selected_by: clientId, // may be null if not authenticated
         }),
       });
 
       const result = await res.json();
 
+      // 3️⃣ Handle response
       if (result.success) {
         toast.success(`Candidate ${isSelected ? "selected" : "unselected"} successfully`);
+
         setFormSubmissions((prev) =>
           prev.map((sub) =>
             sub.id === submissionId
@@ -743,19 +742,20 @@ export default function AdminPanel() {
                 ...sub,
                 is_selected: isSelected,
                 selection_date: new Date().toISOString(),
-                selected_by: clientId,
+                selected_by: result.data?.[0]?.selected_by ?? null,
               }
               : sub
           )
         );
       } else {
-        toast.error("Failed to update selection");
+        toast.error(result.error || "Failed to update selection");
       }
     } catch (err) {
       console.error("Error updating selection:", err);
       toast.error("An error occurred while updating selection");
     }
   };
+
 
 
 
@@ -3111,7 +3111,7 @@ export default function AdminPanel() {
                                     : "❌ Not Selected"}
                                 </span>
 
-                                <button
+                                {/* <button
                                   onClick={() =>
                                     toggleCandidateSelection(
                                       submission.id,
@@ -3124,7 +3124,7 @@ export default function AdminPanel() {
                                     }`}
                                 >
                                   {submission.is_selected ? "Unselect" : "Select Candidate"}
-                                </button>
+                                </button> */}
                               </div>
                             </motion.div>
                           ))}
