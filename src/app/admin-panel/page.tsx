@@ -2971,7 +2971,7 @@ export default function AdminPanel() {
                         <select
                           value={filterType}
                           onChange={(e) => setFilterType(e.target.value as "all" | "selected" | "not_selected")}
-                          className="bg-white/10 text-white px-3 py-2 rounded-md border border-white/20 focus:outline-none"
+                          className="bg-white/10 text-black px-3 py-2 rounded-md border border-white/20 focus:outline-none"
                         >
                           <option value="all">All</option>
                           <option value="selected">Selected</option>
