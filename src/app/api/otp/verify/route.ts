@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { cookies } from "next/headers"
 import { supabaseAdmin } from "../../../../lib/supabase-admin"
 
 export async function POST(req: Request) {
@@ -8,7 +7,7 @@ export async function POST(req: Request) {
 
     const { data, error } = await supabaseAdmin
       .from("client_table")
-      .select("otp, expires_at")
+      .select("id, email, name, otp, expires_at")
       .eq("email", email)
       .single()
 
@@ -27,19 +26,14 @@ export async function POST(req: Request) {
     // ✅ Mark as verified
     await supabaseAdmin.from("client_table").update({ verified: true }).eq("email", email)
 
-    // ✅ Set cookie for auth (httpOnly so frontend can't tamper with it)
     const res = NextResponse.json({ success: true })
-    res.cookies.set(
-      "client_auth",
-      JSON.stringify({ email }), // <-- this is key
-      {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 60 * 60 * 2, // 2 hour
-        path: "/",
-      }
-    )
-
+    res.cookies.set("client_auth", JSON.stringify({ id: data.id, email: data.email, name: data.name }), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    })
 
     return res
   } catch (err: any) {

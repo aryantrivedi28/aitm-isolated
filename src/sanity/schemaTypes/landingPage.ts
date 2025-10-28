@@ -1,4 +1,4 @@
-import {defineType, defineField} from 'sanity'
+import { defineType, defineField } from 'sanity'
 
 export default defineType({
   name: 'landingPage',
@@ -18,7 +18,7 @@ export default defineType({
       name: 'type',
       title: 'Type',
       type: 'string',
-      options: { list: [{title: 'Service', value: 'service'}, {title: 'Industry', value: 'industry'}] },
+      options: { list: [{ title: 'Service', value: 'service' }, { title: 'Industry', value: 'industry' }] },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -40,10 +40,10 @@ export default defineType({
       title: 'Hero Section',
       type: 'object',
       fields: [
-        defineField({name: 'title', type: 'string', title: 'Title', validation: (Rule) => Rule.required()}),
-        defineField({name: 'subtitle', type: 'text', title: 'Subtitle'}),
-        defineField({name: 'backgroundImage', type: 'richImage', title: 'Background Image'}),
-        defineField({name: 'foregroundImage', type: 'richImage', title: 'Foreground/Illustration Image'}),
+        defineField({ name: 'title', type: 'string', title: 'Title', validation: (Rule) => Rule.required() }),
+        defineField({ name: 'subtitle', type: 'text', title: 'Subtitle' }),
+        defineField({ name: 'backgroundImage', type: 'richImage', title: 'Background Image' }),
+        defineField({ name: 'foregroundImage', type: 'richImage', title: 'Foreground/Illustration Image' }),
         defineField({
           name: 'ctas',
           title: 'CTAs',
@@ -51,13 +51,13 @@ export default defineType({
           of: [{
             type: 'object',
             fields: [
-              defineField({name: 'label', type: 'string', title: 'Label', validation: (Rule) => Rule.required()}),
-              defineField({name: 'href', type: 'url', title: 'Link', validation: (Rule) => Rule.required()}),
+              defineField({ name: 'label', type: 'string', title: 'Label', validation: (Rule) => Rule.required() }),
+              defineField({ name: 'href', type: 'url', title: 'Link', validation: (Rule) => Rule.required() }),
               defineField({
                 name: 'variant',
                 title: 'Variant',
                 type: 'string',
-                options: { list: [{title:'Primary', value:'primary'}, {title:'Secondary', value:'secondary'}] },
+                options: { list: [{ title: 'Primary', value: 'primary' }, { title: 'Secondary', value: 'secondary' }] },
               }),
             ],
           }],
@@ -71,16 +71,19 @@ export default defineType({
       title: 'Sections',
       type: 'array',
       of: [
-        {type: 'painPointsSection'},
-        {type: 'howWeSolveSection'},
-        {type: 'whyUsSection'},
-        {type: 'shortCaseStudiesSection'},
-        {type: 'logosSection'},
-        {type: 'howItWorksSection'},
-        {type: 'faqSection'},
-        {type: 'ctaSection'},      // inline CTA block you can drop anywhere
-        {type: 'testimonialSection' },
-        {type: 'footerSection' },  // ← added footer section as an option
+        { type: 'painPointsSection' },
+        { type: 'howWeSolveSection' },
+        { type: 'whyUsSection' },
+        { type: 'shortCaseStudiesSection' },
+        { type: 'logosSection' },
+        { type: 'howItWorksSection' },
+        { type: "whatWeDoSection" },
+        { type: "aboutUsSection" },
+        { type: "howWeWorkSection" },
+        { type: 'faqSection' },
+        { type: 'ctaSection' },      // inline CTA block you can drop anywhere
+        { type: 'testimonialSection' },
+        { type: 'footerSection' },  // ← added footer section as an option
       ],
     }),
 
@@ -90,8 +93,8 @@ export default defineType({
 
   preview: {
     select: { title: 'title', subtitle: 'type', media: 'hero.backgroundImage' },
-    prepare({title, subtitle, media}) {
-      return {title, subtitle: subtitle ? subtitle.toUpperCase() : 'Landing', media}
+    prepare({ title, subtitle, media }) {
+      return { title, subtitle: subtitle ? subtitle.toUpperCase() : 'Landing', media }
     }
   }
 })

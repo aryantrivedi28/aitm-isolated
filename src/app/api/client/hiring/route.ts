@@ -1,50 +1,46 @@
-"use server";
+"use server"
 
-import { NextResponse } from "next/server";
-import { supabaseAdmin } from "../../../../lib/supabase-admin";
-import { cookies } from "next/headers";
-import { sendEmail } from "../../../../lib/mailer";
-
+import { NextResponse } from "next/server"
+import { supabaseAdmin } from "../../../../lib/supabase-admin"
+import { cookies } from "next/headers"
+import { sendEmail } from "../../../../lib/mailer"
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { role_type, job_title, description, budget_range, category, subcategory, tools } = body;
+    const body = await req.json()
+    const { role_type, job_title, description, budget_range, category, subcategory, tools } = body
 
-    // ✅ Basic validation (allow simplified form)
     if (!category?.length || !subcategory?.length || !tools?.length) {
       return NextResponse.json(
         { success: false, error: "Missing required fields (category, subcategory, or tools)" },
-        { status: 400 }
-      );
+        { status: 400 },
+      )
     }
 
-    // ✅ Read client session
-    const cookieStore = await cookies();
-    const session = cookieStore.get("client_auth")?.value;
-    if (!session) return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+    const cookieStore = await cookies()
+    const sessionCookie = cookieStore.get("client_auth")
 
-    let email: string | undefined;
+    if (!sessionCookie) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 })
+    }
+
+    let client_id: string
     try {
-      email = JSON.parse(session)?.email;
+      const session = JSON.parse(sessionCookie.value)
+      client_id = session.id
     } catch {
-      return NextResponse.json({ success: false, error: "Invalid session cookie" }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Invalid session" }, { status: 401 })
     }
-    if (!email) return NextResponse.json({ success: false, error: "Invalid session" }, { status: 400 });
 
-    // ✅ Fetch client record
     const { data: clientData, error: clientError } = await supabaseAdmin
       .from("client_table")
       .select("*")
-      .eq("email", email)
-      .single();
+      .eq("id", client_id)
+      .single()
 
     if (clientError || !clientData)
-      return NextResponse.json({ success: false, error: "Client not found" }, { status: 404 });
+      return NextResponse.json({ success: false, error: "Client not found" }, { status: 404 })
 
-    const client_id = clientData.id;
-
-    // ✅ Insert client hiring request
     const { data: hiringData, error: hiringError } = await supabaseAdmin
       .from("hiring_requests")
       .insert([
@@ -60,17 +56,16 @@ export async function POST(req: Request) {
         },
       ])
       .select("*")
-      .single();
+      .single()
 
-    if (hiringError) throw hiringError;
+    if (hiringError) throw hiringError
 
-    // ✅ Auto-generate form draft for admin
-    const form_id = `${subcategory[0]?.toLowerCase()}-${tools[0]?.toLowerCase()}-${Date.now().toString().slice(-4)}`;
-    const form_name = `${subcategory[0]} Freelancer Form`;
+    const form_id = `${subcategory[0]?.toLowerCase()}-${tools[0]?.toLowerCase()}-${Date.now().toString().slice(-4)}`
+    const form_name = `${subcategory[0]} Freelancer Form`
     const form_description =
       description ||
-      `We are seeking ${subcategory[0]} freelancers skilled in ${tools.join(", ")} for ${clientData.industry} projects.`;
-    const message = "Please fill out the details below to apply.";
+      `We are seeking ${subcategory[0]} freelancers skilled in ${tools.join(", ")} for ${clientData.industry} projects.`
+    const message = "Please fill out the details below to apply."
 
     const { data: formData, error: formError } = await supabaseAdmin
       .from("forms")
@@ -91,11 +86,10 @@ export async function POST(req: Request) {
         },
       ])
       .select("*")
-      .single();
+      .single()
 
-    if (formError) throw formError;
+    if (formError) throw formError
 
-    // // ✅ Send admin and client notifications (reuse your existing email templates)
     try {
       const adminEmailHtml = `
         <h2>New Client Hiring Submission</h2>
@@ -105,10 +99,10 @@ export async function POST(req: Request) {
         <p><strong>Subcategory:</strong> ${subcategory.join(", ")}</p>
         <p><strong>Tools:</strong> ${tools.join(", ")}</p>
         <p><strong>Status:</strong> Pending Review</p>
-      `;
-      await sendEmail(process.env.SMTP_USER!, "New Client Form Submission", adminEmailHtml);
+      `
+      await sendEmail(process.env.SMTP_USER!, "New Client Form Submission", adminEmailHtml)
     } catch (err) {
-      console.error("❌ Failed to send admin email:", err);
+      console.error("Failed to send admin email:", err)
     }
 
     try {
@@ -117,15 +111,15 @@ export async function POST(req: Request) {
         <p>Your hiring request has been received. Our team will review your requirements and get in touch shortly.</p>
         <p>Form ID: ${form_id}</p>
         <p>Best regards,<br/>The Finzie Team</p>
-      `;
-      await sendEmail(clientData.email, "Hiring Request Received", clientEmailHtml);
+      `
+      await sendEmail(clientData.email, "Hiring Request Received", clientEmailHtml)
     } catch (err) {
-      console.error("❌ Failed to send client confirmation email:", err);
+      console.error("Failed to send client confirmation email:", err)
     }
 
-    return NextResponse.json({ success: true, hiring: hiringData, form: formData });
+    return NextResponse.json({ success: true, hiring: hiringData, form: formData })
   } catch (err: any) {
-    console.error("🔥 Error in client hiring route:", err);
-    return NextResponse.json({ success: false, error: "Something went wrong" }, { status: 500 });
+    console.error("Error in client hiring route:", err)
+    return NextResponse.json({ success: false, error: "Something went wrong" }, { status: 500 })
   }
 }

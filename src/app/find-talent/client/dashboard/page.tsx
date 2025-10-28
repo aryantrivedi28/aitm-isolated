@@ -3,7 +3,6 @@
 import useSWR from "swr"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "../../../../lib/SupabaseAuthClient"
 import {
   Calendar,
   ClipboardList,
@@ -30,7 +29,7 @@ import { SubmissionDetailCard } from "./components/submission-detail-card"
 import toast from "react-hot-toast"
 
 const fetcher = async (url: string) => {
-  const res = await fetch(url)
+  const res = await fetch(url, { credentials: "include" })
   if (!res.ok) throw new Error("Failed to fetch")
   return res.json()
 }
@@ -38,10 +37,7 @@ const fetcher = async (url: string) => {
 export default function ClientDashboardPage() {
   const router = useRouter()
   const [isClient, setIsClient] = useState(false)
-  const [clientId, setClientId] = useState<string | null>(null)
   const [expandedForm, setExpandedForm] = useState<string | null>(null)
-  const [localForms, setLocalForms] = useState<any[]>([])
-  const [localSubs, setLocalSubs] = useState<any[]>([])
   const [directSubmissions, setDirectSubmissions] = useState<any[]>([])
   const [loadingSubmissions, setLoadingSubmissions] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -67,45 +63,29 @@ export default function ClientDashboardPage() {
 
   useEffect(() => {
     setIsClient(true)
-    const storedClientId = localStorage.getItem("client_id")
-    setClientId(storedClientId)
-    console.log("🆔 Client ID set:", storedClientId)
   }, [])
 
-  const { data: serverForms, isLoading: loadingForms } = useSWR(
-    isClient && clientId ? `/api/client/hirings?client_id=${clientId}` : null,
-    fetcher,
-    {
-      onSuccess: (data) => {
-        console.log("📋 Forms fetched:", data?.forms?.length)
-      },
-      onError: (error) => {
-        console.error("❌ Error fetching forms:", error)
-      },
+  const { data: serverForms, isLoading: loadingForms } = useSWR(isClient ? "/api/client/hirings" : null, fetcher, {
+    onSuccess: (data) => {
+      console.log("📋 Forms fetched:", data?.forms?.length)
     },
-  )
+    onError: (error) => {
+      console.error("❌ Error fetching forms:", error)
+    },
+  })
 
   useEffect(() => {
-    if (!isClient) return
-    const forms = JSON.parse(localStorage.getItem("client_forms") || "[]")
-    const subs = JSON.parse(localStorage.getItem("client_submissions") || "[]")
-    console.log("💾 Local forms:", forms.length, "Local submissions:", subs.length)
-    setLocalForms(forms)
-    setLocalSubs(subs)
-  }, [isClient])
-
-  useEffect(() => {
-    if (!isClient || !clientId) {
-      console.log("[v0] Waiting for client ID:", { isClient, clientId })
+    if (!isClient) {
+      console.log("[v0] Waiting for client initialization")
       return
     }
 
     const fetchSubmissions = async () => {
       setLoadingSubmissions(true)
       try {
-        console.log("[v0] Starting submission fetch for client:", clientId)
+        console.log("[v0] Starting submission fetch")
 
-        const response = await fetch(`/api/client/submissions?client_id=${clientId}`)
+        const response = await fetch("/api/client/submissions", { credentials: "include" })
 
         if (!response.ok) {
           console.error("[v0] API error:", response.status)
@@ -132,35 +112,38 @@ export default function ClientDashboardPage() {
     }
 
     fetchSubmissions()
-  }, [isClient, clientId])
+  }, [isClient])
 
-  const forms = serverForms?.forms?.length > 0 ? serverForms.forms : localForms
-  const submissions = directSubmissions.length > 0 ? directSubmissions : localSubs
+  const forms = serverForms?.forms || []
+  const submissions = directSubmissions
 
   console.log("📊 Final data:", {
     formsCount: forms?.length,
     submissionsCount: submissions?.length,
-    directSubmissionsCount: directSubmissions.length,
-    localSubsCount: localSubs.length,
-    source: directSubmissions.length > 0 ? "database" : localSubs.length > 0 ? "local" : "none",
+    source: "database",
   })
 
   useEffect(() => {
-    if (!isClient || !forms) return
+    if (!isClient || !serverForms) return
 
-    const activeForms = Array.isArray(forms)
-      ? forms.filter((f: any) => f.status === "active" || f.is_active === true).length
+    const formsArray = serverForms?.forms || []
+    const submissionsArray = directSubmissions || []
+
+    const activeForms = Array.isArray(formsArray)
+      ? formsArray.filter((f: any) => f.status === "active" || f.is_active === true).length
       : 0
 
-    const pendingSubs = Array.isArray(submissions) ? submissions.filter((s: any) => s.status === "new").length : 0
+    const pendingSubs = Array.isArray(submissionsArray)
+      ? submissionsArray.filter((s: any) => s.status === "new").length
+      : 0
 
     setStats({
-      totalForms: Array.isArray(forms) ? forms.length : 0,
-      totalSubmissions: Array.isArray(submissions) ? submissions.length : 0,
+      totalForms: Array.isArray(formsArray) ? formsArray.length : 0,
+      totalSubmissions: Array.isArray(submissionsArray) ? submissionsArray.length : 0,
       activeHirings: activeForms,
       pendingReview: pendingSubs,
     })
-  }, [forms, submissions, isClient])
+  }, [serverForms, directSubmissions, isClient])
 
   const toggleForm = (id: string) => {
     console.log("📋 Toggling form:", id)
@@ -170,14 +153,11 @@ export default function ClientDashboardPage() {
   const getFormSubmissions = (formId: string) => {
     const formSubs = submissions.filter((s) => s.form_id === formId)
 
-    // Sort by profile_rating descending (highest first), then by is_selected
     const sortedSubs = formSubs.sort((a, b) => {
-      // First sort by selection status (selected candidates first)
       if (a.is_selected !== b.is_selected) {
         return a.is_selected ? -1 : 1
       }
 
-      // Then sort by profile rating (highest first)
       const ratingA = a.profile_rating || 0
       const ratingB = b.profile_rating || 0
       return ratingB - ratingA
@@ -194,14 +174,11 @@ export default function ClientDashboardPage() {
       filtered = filtered.filter((s) => s.form_id === selectedFormFilter)
     }
 
-    // Sort by profile_rating descending (highest first), then by is_selected
     const sortedSubs = filtered.sort((a, b) => {
-      // First sort by selection status (selected candidates first)
       if (a.is_selected !== b.is_selected) {
         return a.is_selected ? -1 : 1
       }
 
-      // Then sort by profile rating (highest first)
       const ratingA = a.profile_rating || 0
       const ratingB = b.profile_rating || 0
       return ratingB - ratingA
@@ -242,46 +219,35 @@ export default function ClientDashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           submission_id: sub.id,
-          client_id: clientId,
           notes: "Client selected this candidate",
         }),
-      });
+        credentials: "include",
+      })
 
-      const result = await res.json();
+      const result = await res.json()
       if (result.success) {
-        // Update both forms and submissions states
         setForms((prev: any[]) =>
           prev.map((f) =>
             f.id === formId
               ? {
-                ...f,
-                submissions: f.submissions?.map((s: any) =>
-                  s.id === sub.id ? { ...s, is_selected: true } : s
-                ),
-              }
-              : f
-          )
-        );
+                  ...f,
+                  submissions: f.submissions?.map((s: any) => (s.id === sub.id ? { ...s, is_selected: true } : s)),
+                }
+              : f,
+          ),
+        )
 
-        // Update submissions state - THIS IS THE KEY FIX
-        setDirectSubmissions((prev: any[]) =>
-          prev.map((s) => (s.id === sub.id ? { ...s, is_selected: true } : s))
-        );
+        setDirectSubmissions((prev: any[]) => prev.map((s) => (s.id === sub.id ? { ...s, is_selected: true } : s)))
 
-        // Also update localSubs if you're using local storage
-        setLocalSubs((prev: any[]) =>
-          prev.map((s) => (s.id === sub.id ? { ...s, is_selected: true } : s))
-        );
-
-        toast.success(`${sub.name} selected successfully ✅`);
+        toast.success(`${sub.name} selected successfully ✅`)
       } else {
-        toast.error(result.error || "Failed to select candidate");
+        toast.error(result.error || "Failed to select candidate")
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
+      console.error(err)
+      toast.error("Something went wrong")
     }
-  };
+  }
 
   const handleDeselectCandidate = async (sub: any, formId: string) => {
     try {
@@ -290,43 +256,34 @@ export default function ClientDashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           submission_id: sub.id,
-          client_id: clientId,
         }),
-      });
+        credentials: "include",
+      })
 
-      const result = await res.json();
+      const result = await res.json()
       if (result.success) {
-        // Update all states
         setForms((prev: any[]) =>
           prev.map((f) =>
             f.id === formId
               ? {
-                ...f,
-                submissions: f.submissions?.map((s: any) =>
-                  s.id === sub.id ? { ...s, is_selected: false } : s
-                ),
-              }
-              : f
-          )
-        );
+                  ...f,
+                  submissions: f.submissions?.map((s: any) => (s.id === sub.id ? { ...s, is_selected: false } : s)),
+                }
+              : f,
+          ),
+        )
 
-        setDirectSubmissions((prev: any[]) =>
-          prev.map((s) => (s.id === sub.id ? { ...s, is_selected: false } : s))
-        );
+        setDirectSubmissions((prev: any[]) => prev.map((s) => (s.id === sub.id ? { ...s, is_selected: false } : s)))
 
-        setLocalSubs((prev: any[]) =>
-          prev.map((s) => (s.id === sub.id ? { ...s, is_selected: false } : s))
-        );
-
-        toast.success(`${sub.name} deselected`);
+        toast.success(`${sub.name} deselected`)
       } else {
-        toast.error(result.error || "Failed to deselect candidate");
+        toast.error(result.error || "Failed to deselect candidate")
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
+      console.error(err)
+      toast.error("Something went wrong")
     }
-  };
+  }
 
   return (
     <>
@@ -572,10 +529,11 @@ export default function ClientDashboardPage() {
                                 {form.form_name || form.job_title || "Untitled Form"}
                               </h3>
                               <span
-                                className={`px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ${form.status === "active" || form.is_active
-                                  ? "bg-green-500/20 text-green-700 border-2 border-green-500/30"
-                                  : "bg-gray-500/20 text-gray-700 border-2 border-gray-500/30"
-                                  }`}
+                                className={`px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ${
+                                  form.status === "active" || form.is_active
+                                    ? "bg-green-500/20 text-green-700 border-2 border-green-500/30"
+                                    : "bg-gray-500/20 text-gray-700 border-2 border-gray-500/30"
+                                }`}
                               >
                                 {form.status || (form.is_active ? "active" : "closed")}
                               </span>
@@ -674,7 +632,9 @@ export default function ClientDashboardPage() {
                                       <div className="flex flex-col items-end gap-2 flex-shrink-0">
                                         <div className="flex items-center gap-1">
                                           <Star className="w-3 h-3 text-[#FFE01B] fill-current" />
-                                          <span className={`text-xs font-bold ${sub.profile_rating >= 4 ? 'text-green-600' : sub.profile_rating >= 3 ? 'text-yellow-600' : 'text-gray-600'}`}>
+                                          <span
+                                            className={`text-xs font-bold ${sub.profile_rating >= 4 ? "text-green-600" : sub.profile_rating >= 3 ? "text-yellow-600" : "text-gray-600"}`}
+                                          >
                                             {sub.profile_rating ? sub.profile_rating.toFixed(1) : "N/A"}
                                           </span>
                                         </div>
@@ -682,8 +642,8 @@ export default function ClientDashboardPage() {
                                         {sub.is_selected ? (
                                           <button
                                             onClick={async (e) => {
-                                              e.stopPropagation();
-                                              await handleDeselectCandidate(sub, form.id);
+                                              e.stopPropagation()
+                                              await handleDeselectCandidate(sub, form.id)
                                             }}
                                             className="px-3 py-1.5 text-xs font-bold rounded-lg border-2 bg-red-100 text-red-700 border-red-400 hover:bg-red-200 transition-all"
                                           >
@@ -692,8 +652,8 @@ export default function ClientDashboardPage() {
                                         ) : (
                                           <button
                                             onClick={async (e) => {
-                                              e.stopPropagation();
-                                              await handleSelectCandidate(sub, form.id);
+                                              e.stopPropagation()
+                                              await handleSelectCandidate(sub, form.id)
                                             }}
                                             className="px-3 py-1.5 text-xs font-bold rounded-lg border-2 bg-[#FFE01B]/20 border-[#FFE01B]/30 hover:bg-[#FFE01B]/40 text-[#241C15] transition-all"
                                           >
@@ -727,7 +687,6 @@ export default function ClientDashboardPage() {
                                     </div>
                                   </div>
                                 ))}
-
                               </div>
                             ) : (
                               <div className="text-center py-8 bg-[#fbf5e5] rounded-lg">

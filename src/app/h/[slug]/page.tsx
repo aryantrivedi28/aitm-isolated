@@ -11,6 +11,9 @@ import FAQ from '../../../components/landing/FAQ'
 import CTA from '../../../components/landing/CTA'
 import TestimonialSection from '../../../components/landing/Testimonial' // ← import it
 import Footer from '@/src/components/landing/Footer'
+import WhatWeDo from '../../../components/landing/WhatWeDo'
+import AboutUs from "../../../components/landing/AboutUs"
+import HowWeWork from '../../../components/landing/HowWeWork'
 
 type Section =
   | { _type: 'painPointsSection';[key: string]: any }
@@ -22,7 +25,10 @@ type Section =
   | { _type: 'faqSection';[key: string]: any }
   | { _type: 'ctaSection';[key: string]: any }
   | { _type: 'testimonialSection';[key: string]: any }
-  | { _type: 'footerSection'; [key: string]: any }
+  | { _type: 'footerSection';[key: string]: any }
+  | { _type: 'whatWeDoSection';[key: string]: any }
+  | { _type: 'aboutUsSection';[key: string]: any }
+  | { _type: 'howWeWorkSection';[key: string]: any }
 
 
 interface LandingPageData {
@@ -42,6 +48,9 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   ctaSection: CTA,
   testimonialSection: TestimonialSection, // ← added
   footerSection: Footer,
+  whatWeDoSection: WhatWeDo,
+  aboutUsSection: AboutUs,
+  howWeWorkSection: HowWeWork,
 }
 
 export default async function LandingPage({
@@ -162,6 +171,26 @@ export default async function LandingPage({
   _key,
   text
 },
+
+ _type == "whatWeDoSection" => {
+          _type, _key,
+          heading,
+          description
+        },
+        _type == "aboutUsSection" => {
+          _type, _key,
+          title,
+          description,
+          image{asset->{url}},
+          cta{label, href}
+        },
+        _type == "howWeWorkSection" => {
+          _type, _key,
+          title,
+          description,
+          videoUrl,
+          cta{label, href}
+        }
 
       }
     }`,

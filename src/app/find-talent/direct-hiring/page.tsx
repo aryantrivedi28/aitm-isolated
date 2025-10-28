@@ -172,10 +172,10 @@ export default function DirectHiringPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(clientDetails),
+        credentials: "include",
       })
       const data = await res.json()
       if (data.success) {
-        localStorage.setItem("client_id", data.client.id)
         setStep(2)
       }
     } catch (err) {
@@ -185,12 +185,6 @@ export default function DirectHiringPage() {
 
   const handleCreateForm = async () => {
     try {
-      const client_id = localStorage.getItem("client_id")
-      if (!client_id) {
-        alert("Client ID missing - please go back and complete step 1")
-        return false
-      }
-
       const form_id = `client-${crypto.randomUUID().slice(0, 8)}`
       const form_name = `${hiringDetails.categories[0] || "General"} Hiring Form`
       const form_description =
@@ -208,7 +202,6 @@ export default function DirectHiringPage() {
         tools: hiringDetails.tools,
         required_fields: ["name", "email", "phone", "resume_link"],
         custom_questions: [],
-        owner_id: client_id,
       }
 
       console.log("[v0] Creating form with payload:", payload)
@@ -217,6 +210,7 @@ export default function DirectHiringPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        credentials: "include",
       })
 
       const result = await res.json()
@@ -235,16 +229,7 @@ export default function DirectHiringPage() {
         return false
       }
 
-      const createdForm = result.data[0]
-      localStorage.setItem(
-        "client_forms",
-        JSON.stringify([
-          ...(JSON.parse(localStorage.getItem("client_forms") || "[]") || []),
-          { ...payload, id: createdForm.id, created_at: new Date().toISOString() },
-        ]),
-      )
-
-      console.log("[v0] Form stored locally and in database")
+      console.log("[v0] Form stored in database")
       return true
     } catch (err: any) {
       console.error("[v0] Error in form creation:", err)
@@ -255,14 +240,7 @@ export default function DirectHiringPage() {
 
   const handleHiringSubmit = async () => {
     try {
-      const client_id = localStorage.getItem("client_id")
-      if (!client_id) {
-        alert("Client ID missing")
-        return
-      }
-
       const payload = {
-        client_id,
         role_type: hiringDetails.role_type,
         job_title: hiringDetails.job_title,
         description: hiringDetails.description,
@@ -274,23 +252,16 @@ export default function DirectHiringPage() {
 
       console.log("[v0] Submitting hiring request:", payload)
 
-      const local = JSON.parse(localStorage.getItem("client_forms") || "[]")
-      local.push({ id: Date.now().toString(), ...payload, created_at: new Date().toISOString() })
-      localStorage.setItem("client_forms", JSON.stringify(local))
-
-      try {
-        const res = await fetch("/api/client/hiring", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
-        const data = await res.json()
-        console.log("[v0] Hiring request response:", data)
-      } catch (err) {
-        console.error("[v0] Hiring request error (non-blocking):", err)
-      }
-    } catch (err: any) {
-      console.error("[v0] Error in hiring submit:", err)
+      const res = await fetch("/api/client/hiring", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        credentials: "include",
+      })
+      const data = await res.json()
+      console.log("[v0] Hiring request response:", data)
+    } catch (err) {
+      console.error("[v0] Hiring request error (non-blocking):", err)
     }
   }
 

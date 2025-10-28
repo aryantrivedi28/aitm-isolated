@@ -1,11 +1,22 @@
-// app/api/client/submissions/route.ts
 import { supabase } from "../../../../lib/SupabaseAuthClient"
+import { cookies } from "next/headers"
 
 export async function GET(req: Request) {
-
   try {
-    const { searchParams } = new URL(req.url)
-    const client_id = searchParams.get("client_id")
+    const cookieStore = await cookies()
+    const sessionCookie = cookieStore.get("client_auth")
+
+    if (!sessionCookie) {
+      return Response.json({ success: false, error: "Unauthorized" }, { status: 401 })
+    }
+
+    let client_id: string
+    try {
+      const session = JSON.parse(sessionCookie.value)
+      client_id = session.id
+    } catch {
+      return Response.json({ success: false, error: "Invalid session" }, { status: 401 })
+    }
 
     if (!client_id) {
       return Response.json({ success: false, error: "client_id missing" }, { status: 400 })
@@ -16,7 +27,6 @@ export async function GET(req: Request) {
       .select("id, form_name")
       .eq("owner_id", client_id)
 
-
     if (formsError) {
       throw new Error(formsError.message)
     }
@@ -26,9 +36,6 @@ export async function GET(req: Request) {
     }
 
     const formIds = forms.map((form) => form.id)
-    // Get submissions for all forms owned by this client - INCLUDING is_selected field
-    // app/api/client/submissions/route.ts - Update the submissions query
-    // Get submissions for all forms owned by this client - INCLUDING is_selected field
     const { data: submissions, error: subsError } = await supabase
       .from("freelancer_submissions")
       .select(`
@@ -52,8 +59,8 @@ export async function GET(req: Request) {
     selected_by
   `)
       .in("form_id", formIds)
-      .order("profile_rating", { ascending: false, nullsFirst: false }) // Sort by rating descending
-      .order("created_at", { ascending: false }) // Then by submission date
+      .order("profile_rating", { ascending: false, nullsFirst: false })
+      .order("created_at", { ascending: false })
 
     console.log("[submissions.route] submissions result:", {
       submissionsCount: submissions?.length || 0,
@@ -63,13 +70,12 @@ export async function GET(req: Request) {
       throw new Error(subsError.message)
     }
 
-    // Normalize the data to match frontend expectations
     const normalized = (submissions || []).map((sub) => {
       const form = forms.find((f) => f.id === sub.form_id)
       return {
         id: sub.id,
         form_id: sub.form_id,
-        name: sub.name, // Changed from candidate_name to name to match frontend
+        name: sub.name,
         email: sub.email,
         phone: sub.phone,
         portfolio_link: sub.portfolio_link,

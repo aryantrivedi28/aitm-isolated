@@ -21,6 +21,9 @@ import faqSection from './sections/faqSection'
 import ctaSection from './sections/ctaSection'
 import testimonialSection from './sections/testimonialSection'
 import footerSection from './sections/footerSection'
+import whatWeDoSection from './sections/whatWeDoSection'
+import aboutUsSection from './sections/AboutUsSection'
+import howWeWorkSection from './sections/howWeWorkSection'
 
 // export schema definition for Sanity Studio
 export const schema: { types: SchemaTypeDefinition[] } = {
@@ -43,5 +46,8 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     ctaSection,
     testimonialSection,
     footerSection,
+    whatWeDoSection,
+    aboutUsSection,
+    howWeWorkSection,
   ],
 }
