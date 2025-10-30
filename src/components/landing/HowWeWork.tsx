@@ -133,25 +133,6 @@ export default function HowWeWorkSection({
                 </p>
               )}
 
-              {/* Feature Points */}
-              <div className="space-y-3 py-4">
-                {[
-                  "Simple & transparent process",
-                  "Fast delivery guaranteed",
-                  "Expert team support",
-                ].map((feature, idx) => (
-                  <div 
-                    key={idx} 
-                    className={`flex items-center gap-3 ${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}
-                    style={{ animationDelay: `${0.3 + idx * 0.1}s` }}
-                  >
-                    <div className="p-1.5 bg-gradient-to-br from-[#FFE01B] to-[#FCD34D] rounded-lg shadow-sm">
-                      <CheckCircle2 className="w-4 h-4 text-[#241C15]" />
-                    </div>
-                    <span className="text-sm sm:text-base text-[#241C15]/80 font-semibold">{feature}</span>
-                  </div>
-                ))}
-              </div>
 
               {/* CTA Button */}
               {cta && (
@@ -171,19 +152,6 @@ export default function HowWeWorkSection({
                   </div>
                 </div>
               )}
-
-              {/* Trust Badge */}
-              <div className={`pt-6 ${isVisible ? 'animate-fadeIn' : 'opacity-0'}`} style={{ animationDelay: '0.8s' }}>
-                <div className="inline-flex items-center gap-4 bg-white px-5 py-4 rounded-xl border-2 border-[#241C15]/10 shadow-sm">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#FFE01B] to-[#FCD34D] rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-[#241C15]">
-                        {i}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

@@ -76,35 +76,24 @@ export default function ClientDashboardPage() {
 
   useEffect(() => {
     if (!isClient) {
-      console.log("[v0] Waiting for client initialization")
       return
     }
 
     const fetchSubmissions = async () => {
       setLoadingSubmissions(true)
       try {
-        console.log("[v0] Starting submission fetch")
-
         const response = await fetch("/api/client/submissions", { credentials: "include" })
-
         if (!response.ok) {
-          console.error("[v0] API error:", response.status)
           setDirectSubmissions([])
           return
         }
-
         const result = await response.json()
-
         if (!result.success) {
-          console.error("[v0] API returned error:", result.error)
           setDirectSubmissions([])
           return
         }
-
-        console.log("[v0] Submissions fetched from API:", result.submissions?.length || 0)
         setDirectSubmissions(result.submissions || [])
       } catch (err) {
-        console.error("[v0] Error in submission fetch:", err)
         setDirectSubmissions([])
       } finally {
         setLoadingSubmissions(false)
@@ -116,12 +105,6 @@ export default function ClientDashboardPage() {
 
   const forms = serverForms?.forms || []
   const submissions = directSubmissions
-
-  console.log("📊 Final data:", {
-    formsCount: forms?.length,
-    submissionsCount: submissions?.length,
-    source: "database",
-  })
 
   useEffect(() => {
     if (!isClient || !serverForms) return
@@ -162,8 +145,6 @@ export default function ClientDashboardPage() {
       const ratingB = b.profile_rating || 0
       return ratingB - ratingA
     })
-
-    console.log(`🔍 Getting sorted submissions for form ${formId}:`, sortedSubs.length)
     return sortedSubs
   }
 

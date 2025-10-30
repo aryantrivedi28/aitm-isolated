@@ -236,7 +236,7 @@ const Logos = () => {
           </div>
 
           <h2
-            className="font-black leading-tight mb-6 text-gray-900"
+            className="font-black leading-tight mb-6 text-[#241C15]"
             style={{
               fontSize: "clamp(2rem, 7vw, 3.5rem)",
               textShadow: "0 4px 20px rgba(0,0,0,0.1)",
@@ -244,7 +244,7 @@ const Logos = () => {
           >
             Trusted {" "}
             <span className="relative inline-block">
-              <span className="bg-gradient-to-r from-[#FFE01B] via-amber-500 to-[#FFE01B] bg-clip-text text-transparent animate-gradient bg-300%">
+              <span className="bg-[#241C15] bg-clip-text text-transparent animate-gradient bg-300%">
                 Partners
               </span>
               <div className="absolute -inset-2 bg-gradient-to-r from-[#FFE01B]/20 to-amber-500/20 blur-xl -z-10 animate-pulse" />

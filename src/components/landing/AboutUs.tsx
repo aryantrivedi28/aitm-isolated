@@ -56,7 +56,7 @@ export default function AboutSection({
         .animate-float { animation: float 3s ease-in-out infinite; }
       `}</style>
 
-      <section className="about-section relative flex flex-col md:flex-row items-center justify-between py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-[#fbf5e5] overflow-hidden">
+      <section className="about-section relative flex flex-col md:flex-row items-center justify-between w-full max-w-[1600px] mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-16 sm:py-20 md:py-24 bg-[#fbf5e5] overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-10 right-10 w-64 h-64 bg-[#FFE01B]/8 rounded-full blur-3xl animate-float" />
@@ -82,26 +82,6 @@ export default function AboutSection({
           <p className="text-base sm:text-lg lg:text-xl text-[#241C15]/75 leading-relaxed mb-8 font-medium">
             {description}
           </p>
-
-          {/* Feature List */}
-          <div className="space-y-3 mb-8">
-            {[
-              "Pre-vetted professionals",
-              "Quick turnaround time",
-              "Quality guarantee",
-            ].map((feature, idx) => (
-              <div 
-                key={idx} 
-                className={`flex items-center gap-3 ${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}
-                style={{ animationDelay: `${0.2 + idx * 0.1}s` }}
-              >
-                <div className="p-1.5 bg-gradient-to-br from-[#FFE01B] to-[#FCD34D] rounded-lg">
-                  <CheckCircle className="w-4 h-4 text-[#241C15]" />
-                </div>
-                <span className="text-sm sm:text-base text-[#241C15]/80 font-semibold">{feature}</span>
-              </div>
-            ))}
-          </div>
 
           {/* CTA Button */}
           {cta && (

@@ -9,27 +9,26 @@ import Logos from '../../../components/landing/Logos'
 import HowItWorks from '../../../components/landing/HowItWorks'
 import FAQ from '../../../components/landing/FAQ'
 import CTA from '../../../components/landing/CTA'
-import TestimonialSection from '../../../components/landing/Testimonial' // ← import it
+import TestimonialSection from '../../../components/landing/Testimonial'
 import Footer from '@/src/components/landing/Footer'
 import WhatWeDo from '../../../components/landing/WhatWeDo'
 import AboutUs from "../../../components/landing/AboutUs"
 import HowWeWork from '../../../components/landing/HowWeWork'
 
 type Section =
-  | { _type: 'painPointsSection';[key: string]: any }
-  | { _type: 'howWeSolveSection';[key: string]: any }
-  | { _type: 'whyUsSection';[key: string]: any }
-  | { _type: 'shortCaseStudiesSection';[key: string]: any }
-  | { _type: 'logosSection';[key: string]: any }
-  | { _type: 'howItWorksSection';[key: string]: any }
-  | { _type: 'faqSection';[key: string]: any }
-  | { _type: 'ctaSection';[key: string]: any }
-  | { _type: 'testimonialSection';[key: string]: any }
-  | { _type: 'footerSection';[key: string]: any }
-  | { _type: 'whatWeDoSection';[key: string]: any }
-  | { _type: 'aboutUsSection';[key: string]: any }
-  | { _type: 'howWeWorkSection';[key: string]: any }
-
+  | { _type: 'painPointsSection'; [key: string]: any }
+  | { _type: 'howWeSolveSection'; [key: string]: any }
+  | { _type: 'whyUsSection'; [key: string]: any }
+  | { _type: 'shortCaseStudiesSection'; [key: string]: any }
+  | { _type: 'logosSection'; [key: string]: any }
+  | { _type: 'howItWorksSection'; [key: string]: any }
+  | { _type: 'faqSection'; [key: string]: any }
+  | { _type: 'ctaSection'; [key: string]: any }
+  | { _type: 'testimonialSection'; [key: string]: any }
+  | { _type: 'footerSection'; [key: string]: any }
+  | { _type: 'whatWeDoSection'; [key: string]: any }
+  | { _type: 'aboutUsSection'; [key: string]: any }
+  | { _type: 'howWeWorkSection'; [key: string]: any }
 
 interface LandingPageData {
   title: string
@@ -46,7 +45,7 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   howItWorksSection: HowItWorks,
   faqSection: FAQ,
   ctaSection: CTA,
-  testimonialSection: TestimonialSection, // ← added
+  testimonialSection: TestimonialSection,
   footerSection: Footer,
   whatWeDoSection: WhatWeDo,
   aboutUsSection: AboutUs,
@@ -66,9 +65,16 @@ export default async function LandingPage({
       hero {
         title,
         subtitle,
-        backgroundImage{asset->{url}},
-        foregroundImage{asset->{url}},
-        ctas[]{label, href, variant}
+        backgroundImage { asset->{ url } },
+        ctas[] { label, href, variant },
+        screenshots[] {
+          image { asset->{ url } },
+          caption
+        },
+        blogButton {
+          label,
+          href
+        }
       },
       sections[] {
         _type,
@@ -94,16 +100,15 @@ export default async function LandingPage({
           }
         },
         _type == "whyUsSection" => {
-  _type,
-  _key,
-  heading,
-  "features": reasons[] {
-    title,
-    description,
-    icon{asset->{url}}
-  }
-},
-
+          _type,
+          _key,
+          heading,
+          "features": reasons[] {
+            title,
+            description,
+            icon{asset->{url}}
+          }
+        },
         _type == "shortCaseStudiesSection" => {
           _type,
           _key,
@@ -119,10 +124,10 @@ export default async function LandingPage({
         _type == "logosSection" => {
           _type,
           _key,
-          heading, // may be null
+          heading,
           logos[] {
-            name, // optional
-            image{asset->{url}} // required when logo exists
+            name,
+            image{asset->{url}}
           }
         },
         _type == "howItWorksSection" => {
@@ -167,16 +172,25 @@ export default async function LandingPage({
           }
         },
         _type == "footerSection" => {
+          _type,
+          _key,
+          text
+        },
+        _type == "whatWeDoSection" => {
   _type,
   _key,
-  text
+  heading,
+  cards[] {
+    title,
+    description
+  },
+  ctas[] {
+    label,
+    href,
+    variant
+  }
 },
 
- _type == "whatWeDoSection" => {
-          _type, _key,
-          heading,
-          description
-        },
         _type == "aboutUsSection" => {
           _type, _key,
           title,
@@ -191,7 +205,6 @@ export default async function LandingPage({
           videoUrl,
           cta{label, href}
         }
-
       }
     }`,
     { slug }
@@ -212,13 +225,12 @@ export default async function LandingPage({
         if (!SectionComponent) return null
 
         return (
-          <section
-            key={section._key || i}
-          >
+          <section key={section._key || i}>
             <SectionComponent {...section} />
           </section>
         )
       })}
+
       <Footer />
     </main>
   )

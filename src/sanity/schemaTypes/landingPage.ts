@@ -6,7 +6,12 @@ export default defineType({
   type: 'document',
   fields: [
     // Meta
-    defineField({ name: 'title', title: 'Page Title', type: 'string', validation: (Rule) => Rule.required() }),
+    defineField({
+      name: 'title',
+      title: 'Page Title',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({
       name: 'slug',
       title: 'Slug',
@@ -18,7 +23,12 @@ export default defineType({
       name: 'type',
       title: 'Type',
       type: 'string',
-      options: { list: [{ title: 'Service', value: 'service' }, { title: 'Industry', value: 'industry' }] },
+      options: {
+        list: [
+          { title: 'Service', value: 'service' },
+          { title: 'Industry', value: 'industry' },
+        ],
+      },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -40,30 +50,109 @@ export default defineType({
       title: 'Hero Section',
       type: 'object',
       fields: [
-        defineField({ name: 'title', type: 'string', title: 'Title', validation: (Rule) => Rule.required() }),
-        defineField({ name: 'subtitle', type: 'text', title: 'Subtitle' }),
-        defineField({ name: 'backgroundImage', type: 'richImage', title: 'Background Image' }),
-        defineField({ name: 'foregroundImage', type: 'richImage', title: 'Foreground/Illustration Image' }),
+        defineField({
+          name: 'title',
+          type: 'string',
+          title: 'Title',
+          validation: (Rule) => Rule.required(),
+        }),
+        defineField({
+          name: 'subtitle',
+          type: 'text',
+          title: 'Subtitle',
+        }),
+
+        // CTAs on the left
         defineField({
           name: 'ctas',
-          title: 'CTAs',
+          title: 'CTA Buttons',
           type: 'array',
-          of: [{
-            type: 'object',
-            fields: [
-              defineField({ name: 'label', type: 'string', title: 'Label', validation: (Rule) => Rule.required() }),
-              defineField({ name: 'href', type: 'url', title: 'Link', validation: (Rule) => Rule.required() }),
-              defineField({
-                name: 'variant',
-                title: 'Variant',
-                type: 'string',
-                options: { list: [{ title: 'Primary', value: 'primary' }, { title: 'Secondary', value: 'secondary' }] },
-              }),
-            ],
-          }],
+          of: [
+            {
+              type: 'object',
+              fields: [
+                defineField({
+                  name: 'label',
+                  type: 'string',
+                  title: 'Label',
+                  validation: (Rule) => Rule.required(),
+                }),
+                defineField({
+                  name: 'href',
+                  type: 'url',
+                  title: 'Link',
+                  validation: (Rule) => Rule.required(),
+                }),
+                defineField({
+                  name: 'variant',
+                  title: 'Variant',
+                  type: 'string',
+                  options: {
+                    list: [
+                      { title: 'Primary', value: 'primary' },
+                      { title: 'Secondary', value: 'secondary' },
+                    ],
+                  },
+                }),
+              ],
+            },
+          ],
+        }),
+
+        // Screenshots on the right
+        defineField({
+          name: 'screenshots',
+          title: 'Screenshots Section',
+          type: 'array',
+          of: [
+            {
+              type: 'object',
+              fields: [
+                defineField({
+                  name: 'image',
+                  title: 'Screenshot Image',
+                  type: 'richImage',
+                  validation: (Rule) => Rule.required(),
+                }),
+                defineField({
+                  name: 'caption',
+                  title: 'Caption (optional)',
+                  type: 'string',
+                }),
+              ],
+            },
+          ],
+        }),
+
+        // Blog button at the bottom
+        defineField({
+          name: 'blogButton',
+          title: 'Blog Button',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'label',
+              type: 'string',
+              title: 'Label',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'href',
+              type: 'url',
+              title: 'Link',
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+        }),
+
+        // Optional background image for entire hero section
+        defineField({
+          name: 'backgroundImage',
+          type: 'richImage',
+          title: 'Background Image',
         }),
       ],
-    }),
+    }), // ← ✅ this comma is important
 
     // Flexible content builder
     defineField({
@@ -77,24 +166,33 @@ export default defineType({
         { type: 'shortCaseStudiesSection' },
         { type: 'logosSection' },
         { type: 'howItWorksSection' },
-        { type: "whatWeDoSection" },
-        { type: "aboutUsSection" },
-        { type: "howWeWorkSection" },
+        { type: 'whatWeDoSection' },
+        { type: 'aboutUsSection' },
+        { type: 'howWeWorkSection' },
         { type: 'faqSection' },
-        { type: 'ctaSection' },      // inline CTA block you can drop anywhere
+        { type: 'ctaSection' },
         { type: 'testimonialSection' },
-        { type: 'footerSection' },  // ← added footer section as an option
+        { type: 'footerSection' },
       ],
     }),
 
     // Optional flags
-    defineField({ name: 'isFeatured', title: 'Show on /landing index', type: 'boolean', initialValue: true }),
+    defineField({
+      name: 'isFeatured',
+      title: 'Show on /landing index',
+      type: 'boolean',
+      initialValue: true,
+    }),
   ],
 
   preview: {
     select: { title: 'title', subtitle: 'type', media: 'hero.backgroundImage' },
     prepare({ title, subtitle, media }) {
-      return { title, subtitle: subtitle ? subtitle.toUpperCase() : 'Landing', media }
-    }
-  }
+      return {
+        title,
+        subtitle: subtitle ? subtitle.toUpperCase() : 'Landing',
+        media,
+      }
+    },
+  },
 })

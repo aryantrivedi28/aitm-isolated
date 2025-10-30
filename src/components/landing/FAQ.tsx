@@ -14,7 +14,7 @@ export default function FAQ({
   heading?: string
   faqs?: FAQItem[]
 }) {
-  const [open, setOpen] = useState<number | null>(0) // open first by default
+  const [open, setOpen] = useState<number | null>(null)
 
   return (
     <section className="relative bg-[#fbf5e5] py-12 md:py-20 text-[#241C15] overflow-hidden">
