@@ -101,11 +101,8 @@ export default function AboutSection({
         {image?.asset?.url && (
           <div className={`relative z-10 w-full md:w-1/2 ${isVisible ? 'animate-slideInRight' : 'opacity-0'}`}>
             <div className="relative">
-              {/* Decorative Background */}
-              <div className="absolute -top-6 -right-6 w-full h-full bg-gradient-to-br from-[#FFE01B]/20 to-[#FCD34D]/20 rounded-2xl blur-xl" />
-              
               {/* Image Container */}
-              <div className="relative bg-white p-3 sm:p-4 rounded-2xl shadow-2xl border-2 border-[#241C15]/10">
+              <div className="relative bg-white p-3 sm:p-4 rounded-2xl border-[1px] border-[#241C15]/10">
                 <img
                   src={image.asset.url}
                   alt={title || "About us"}
@@ -113,7 +110,7 @@ export default function AboutSection({
                 />
                 
                 {/* Overlay Badge */}
-                <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] p-4 sm:p-6 rounded-2xl shadow-xl border-4 border-white">
+                <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] p-2 sm:p-4 rounded-2xl shadow-xl border-4 border-white">
                   <div className="flex items-center gap-3">
                     <div className="p-2 sm:p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                       <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-[#241C15]" />
@@ -127,7 +124,7 @@ export default function AboutSection({
               </div>
 
               {/* Decorative Dots */}
-              <div className="absolute -top-4 -left-4 w-20 h-20 grid grid-cols-4 gap-2 opacity-30">
+              <div className="absolute -top-4 -left-4 w-18 h-18 grid grid-cols-4 gap-2 opacity-30">
                 {[...Array(16)].map((_, i) => (
                   <div key={i} className="w-2 h-2 bg-[#FFE01B] rounded-full" />
                 ))}

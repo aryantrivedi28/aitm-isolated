@@ -18,22 +18,6 @@ export default function FAQ({
 
   return (
     <section className="relative bg-[#fbf5e5] py-12 md:py-20 text-[#241C15] overflow-hidden">
-      {/* Background glowing accents */}
-      <div className="absolute inset-0 pointer-events-none">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.25 }}
-          transition={{ duration: 1.5 }}
-          className="absolute -right-20 top-0 w-64 h-64 rounded-full bg-[#FFE01B] blur-3xl"
-        />
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.25 }}
-          transition={{ duration: 1.5 }}
-          className="absolute -left-20 bottom-0 w-56 h-56 rounded-full bg-[#FFE01B] blur-3xl"
-        />
-      </div>
-
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <motion.div
@@ -43,9 +27,9 @@ export default function FAQ({
           transition={{ duration: 0.6 }}
           className="text-center mb-12 md:mb-16"
         >
-          <div className="inline-flex items-center gap-2 bg-[#FFE01B] text-[#241C15] px-4 py-2 rounded-full text-sm font-semibold mb-4 md:mb-6 shadow-md">
-            <Zap size={16} />
-            <span>Frequently Asked Questions</span> {/* static */}
+          <div className="inline-flex items-center gap-2 bg-[#241C15] text-[#fbf5e5] px-4 py-2 rounded-full text-sm font-semibold mb-4 md:mb-6 shadow-md">
+            <Zap size={16} className="w-5 h-5 text-[#FFE01B] animate-pulse"/>
+            <span>FAQs</span> {/* static */}
           </div>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center max-w-3xl mx-auto leading-tight text-[#241C15]">
             Frequently Asked Questions {/* static */}

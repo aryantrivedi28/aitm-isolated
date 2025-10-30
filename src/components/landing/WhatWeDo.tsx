@@ -60,7 +60,7 @@ export default function WhatWeDoSection({
         />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto">
+      <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
           {/* Badge */}
@@ -90,7 +90,7 @@ export default function WhatWeDoSection({
             {safeCards.map((card, index) => (
               <div
                 key={index}
-                className={`group bg-white/80 backdrop-blur-sm rounded-2xl p-8 border border-[#241C15]/10 hover:border-[#FFE01B]/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                className={`group bg-[#241C15] backdrop-blur-sm rounded-2xl p-8 border border-[#241C15]/10 hover:border-[#FFE01B]/50 transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
                 style={{ transitionDelay: `${0.3 + index * 0.1}s` }}
               >
                 {/* Card Number */}
@@ -102,10 +102,10 @@ export default function WhatWeDoSection({
                 </div>
 
                 {/* Card Content */}
-                <h3 className="text-xl font-bold text-[#241C15] mb-3 group-hover:text-[#FFE01B] transition-colors">
+                <h3 className="text-xl font-bold text-[#fbf5e5] mb-3 group-hover:text-[#FFE01B] transition-colors">
                   {card.title}
                 </h3>
-                <p className="text-[#241C15]/70 leading-relaxed">
+                <p className="text-[#fbf5e5]/70 leading-relaxed">
                   {card.description}
                 </p>
 

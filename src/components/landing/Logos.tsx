@@ -229,9 +229,9 @@ const Logos = () => {
         {/* Enhanced Header */}
         <div className={`text-center mb-12 sm:mb-18 lg:mb-20 transition-all duration-1000`}>
           {/* Subtitle Badge */}
-          <div className="inline-flex items-center gap-3 backdrop-blur-sm bg-white/70 border border-gray-200/60 px-5 py-3 rounded-full mb-8 shadow-lg hover:shadow-xl transition-all duration-300 group">
+          <div className="inline-flex items-center gap-3 backdrop-blur-sm bg-[#241C15] border border-gray-200/60 px-5 py-3 rounded-full mb-8 shadow-lg hover:shadow-xl transition-all duration-300 group">
             <Sparkles className="w-5 h-5 text-[#FFE01B] animate-pulse" />
-            <span className="text-sm font-semibold text-gray-700">Clients</span>
+            <span className="text-sm font-semibold text-[#fbf5e5]">Clients</span>
             <div className="w-2 h-2 bg-[#FFE01B] rounded-full animate-ping" />
           </div>
 
@@ -275,7 +275,7 @@ const Logos = () => {
                 <div
                   className="w-28 h-16 sm:w-36 sm:h-20 md:w-44 md:h-24 lg:w-52 lg:h-32
                   flex items-center justify-center 
-                  bg-[#fbf5e5] rounded-lg shadow-sm p-2"
+                  bg-[#fbf5e5] rounded-lg p-2"
                 >
                   <img
                     src={logo.src}

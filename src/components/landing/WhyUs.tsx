@@ -57,7 +57,7 @@ export default function WhyUs({
         />
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6">
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
         {/* Enhanced heading */}
         {heading && (
           <motion.div
@@ -215,34 +215,6 @@ export default function WhyUs({
             ))}
           </div>
         )}
-
-        {/* Bottom decorative element */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.8, duration: 1 }}
-          className="mt-20 flex justify-center"
-        >
-          <div className="flex items-center gap-2 text-[#FFE01B]/60">
-            {[...Array(5)].map((_, i) => (
-              <motion.div
-                key={i}
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.6, 1, 0.6]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.2
-                }}
-              >
-                <Star size={8} fill="currentColor" />
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
       </div>
     </section>
   )

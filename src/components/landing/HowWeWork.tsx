@@ -72,11 +72,8 @@ export default function HowWeWorkSection({
             {/* Left Video */}
             <div className={`w-full md:w-1/2 ${isVisible ? 'animate-slideInLeft' : 'opacity-0'}`}>
               <div className="relative">
-                {/* Decorative Background */}
-                <div className="absolute -inset-4 bg-gradient-to-br from-[#FFE01B]/20 to-[#FCD34D]/20 rounded-3xl blur-2xl" />
-                
                 {/* Video Container */}
-                <div className="relative bg-white p-3 sm:p-4 rounded-2xl shadow-2xl border-2 border-[#241C15]/10">
+                <div className="relative p-3 sm:p-4 rounded-2xl border-[1px] border-[#241C15]/10">
                   {videoUrl ? (
                     <div className="relative group">
                       <video
