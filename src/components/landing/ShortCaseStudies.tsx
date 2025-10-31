@@ -32,7 +32,7 @@ export default function ShortCaseStudies({
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
     }
-    
+
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -40,28 +40,28 @@ export default function ShortCaseStudies({
 
   // Auto-sliding animation for desktop only
   useEffect(() => {
-    if (studies.length > 0 && !isMobile) {
+    if ((studies?.length ?? 0) > 0 && !isMobile) {
       controls.start({
         x: "-50%",
         transition: {
           x: {
             repeat: Infinity,
             repeatType: "loop",
-            duration: studies.length * 10,
+            duration: (studies?.length ?? 1) * 10,
             ease: "linear",
           },
         },
-      })
+      });
     } else {
-      controls.stop()
+      controls.stop();
     }
-  }, [controls, studies.length, isMobile])
+  }, [controls, studies?.length, isMobile]);
 
   // Mobile swipe handlers
   const onDragEnd = () => {
     const threshold = 100
     const x = dragX.get()
-    
+
     if (x <= -threshold) {
       // Swipe left - next card
       setCurrentIndex(prev => (prev + 1) % studies.length)
@@ -197,7 +197,7 @@ export default function ShortCaseStudies({
                   >
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ 
+                      animate={{
                         opacity: currentIndex === index ? 1 : 0.7,
                         scale: currentIndex === index ? 1 : 0.95
                       }}
@@ -219,21 +219,20 @@ export default function ShortCaseStudies({
                 >
                   <ChevronLeft size={20} />
                 </button>
-                
+
                 {/* Indicator dots */}
                 <div className="flex space-x-2 mx-4">
                   {studies.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        currentIndex === index ? 'bg-[#FFE01B] scale-125' : 'bg-gray-400'
-                      }`}
+                      className={`w-2 h-2 rounded-full transition-all ${currentIndex === index ? 'bg-[#FFE01B] scale-125' : 'bg-gray-400'
+                        }`}
                       aria-label={`Go to case study ${index + 1}`}
                     />
                   ))}
                 </div>
-                
+
                 <button
                   onClick={goToNext}
                   className="p-2 rounded-full bg-[#FFE01B] text-[#241C15] hover:bg-[#FCD34D] transition-colors shadow-md"
@@ -251,8 +250,8 @@ export default function ShortCaseStudies({
                 className="text-center mt-4"
               >
                 <p className="text-gray-300 text-sm flex items-center justify-center gap-2">
-                  <motion.span 
-                    animate={{ x: [-5, 5, -5] }} 
+                  <motion.span
+                    animate={{ x: [-5, 5, -5] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
                     👆

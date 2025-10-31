@@ -199,12 +199,22 @@ export default async function LandingPage({
           cta{label, href}
         },
         _type == "howWeWorkSection" => {
-          _type, _key,
-          title,
-          description,
-          videoUrl,
-          cta{label, href}
-        }
+  _type,
+  _key,
+  title,
+  video,
+  steps[] {
+    stepNumber,
+    heading,
+    subheading,
+    description
+  },
+  cta {
+    label,
+    href
+  }
+}
+
       }
     }`,
     { slug }
