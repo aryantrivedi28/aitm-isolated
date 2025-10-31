@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight, Play, Sparkles, CheckCircle2, Video, ChevronRight, ChevronDown } from "lucide-react"
+import { ArrowRight, Play, Sparkles, CheckCircle2, Video, ArrowRightCircle } from "lucide-react"
 import { useState, useEffect } from "react"
 
 export default function HowWeWorkSection({
@@ -25,42 +25,49 @@ export default function HowWeWorkSection({
     setIsVisible(true)
   }, [])
 
-  // Fixed YouTube URL parsing
+  // Fixed YouTube URL parsing - more reliable
   const getYouTubeEmbedUrl = (url: string) => {
     if (!url) return null
-
+    
     try {
+      let videoId = '';
+      
+      // Handle different YouTube URL formats
       if (url.includes('youtube.com/watch?v=')) {
-        const videoId = url.split('v=')[1]?.split('&')[0]
-        return videoId ? `https://www.youtube.com/embed/${videoId}` : null
+        videoId = url.split('v=')[1]?.split('&')[0] || '';
+      } else if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1]?.split('?')[0] || '';
+      } else if (url.includes('youtube.com/embed/')) {
+        videoId = url.split('embed/')[1]?.split('?')[0] || '';
+      } else {
+        // Try regex as fallback
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const match = url.match(regExp);
+        videoId = (match && match[2].length === 11) ? match[2] : '';
       }
-      if (url.includes('youtu.be/')) {
-        const videoId = url.split('youtu.be/')[1]?.split('?')[0]
-        return videoId ? `https://www.youtube.com/embed/${videoId}` : null
-      }
-      if (url.includes('youtube.com/embed/')) {
-        return url
+      
+      if (videoId && videoId.length === 11) {
+        return `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
       }
     } catch (error) {
-      console.error('Error parsing YouTube URL:', error)
+      console.error('Error parsing YouTube URL:', error);
     }
-
-    return null
+    
+    return null;
   }
 
-  const embedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null
+  const embedUrl = videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
+  const hasValidVideo = !!embedUrl;
+
+  // Don't return null if videoUrl is missing - only hide video section
+  if (!title) return null
 
   return (
     <>
       <style jsx global>{`
-        @keyframes slideInLeft {
-          from { opacity: 0; transform: translateX(-50px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes slideInRight {
-          from { opacity: 0; transform: translateX(50px); }
-          to { opacity: 1; transform: translateX(0); }
+        @keyframes slideInUp {
+          from { opacity: 0; transform: translateY(50px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes fadeIn {
@@ -78,22 +85,27 @@ export default function HowWeWorkSection({
           50% { opacity: 0.8; }
         }
 
-        .animate-slideInLeft { animation: slideInLeft 0.8s ease-out; }
-        .animate-slideInRight { animation: slideInRight 0.8s ease-out; }
+        @keyframes bounceRight {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(10px); }
+        }
+
+        .animate-slideInUp { animation: slideInUp 0.8s ease-out; }
         .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
         .animate-float { animation: float 3s ease-in-out infinite; }
         .animate-pulse-slow { animation: pulse 2s ease-in-out infinite; }
+        .animate-bounce-right { animation: bounceRight 2s ease-in-out infinite; }
       `}</style>
 
-      <section className="how-we-work relative bg-[#fbf5e5] py-10 sm:py-12 md:py-14 lg:py-16 overflow-hidden">
+      <section className="how-we-work relative bg-[#fbf5e5] py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden">
         {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-[#FFE01B]/6 rounded-full blur-3xl animate-float" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#FCD34D]/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
         </div>
 
-        <div className="relative z-10 max-w-[1500px] mx-auto px-2 sm:px-6 md:px-8 lg:px-8 xl:px-6">
-          {/* Header */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
+          {/* Header Section */}
           <div className="text-center mb-12 md:mb-16">
             <div className="inline-flex items-center gap-2 bg-[#241C15] px-4 py-2 rounded-full shadow-md mb-6">
               <Sparkles className="w-4 h-4 text-[#FFE01B] animate-pulse-slow" />
@@ -106,159 +118,152 @@ export default function HowWeWorkSection({
             </h2>
           </div>
 
-          {/* Snake Layout Container */}
-          <div className="relative">
-            {/* Video Section - Top Left */}
-            <div className={`mb-8 md:mb-12 lg:absolute lg:left-0 lg:top-0 lg:w-5/12 xl:w-4/12 ${isVisible ? 'animate-slideInLeft' : 'opacity-0'}`}>
-              <div className="bg-[#fbf5e5] rounded-2xl overflow-hidden">
-                <div className="relative aspect-video bg-black">
-                  {embedUrl ? (
-                    <iframe
-                      src={embedUrl}
-                      title="How We Work Video"
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  ) : videoUrl ? (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-white bg-gradient-to-br from-gray-900 to-gray-700">
-                      <Video className="w-16 h-16 mb-4 text-gray-400" />
-                      <p className="text-lg font-semibold">Invalid YouTube URL</p>
-                      <p className="text-sm mt-2 text-gray-400">Please check the URL format</p>
-                    </div>
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-[#241C15]/50 bg-gradient-to-br from-[#fbf5e5] to-white">
-                      <Video className="w-16 h-16 mb-4 text-[#241C15]/30" />
-                      <p className="text-lg font-semibold">Video not available</p>
-                      <p className="text-sm mt-2">Add a YouTube URL in Sanity</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Video Info */}
-                <div className="p-6 bg-[#fbf5e5]">
-                  <h3 className="font-bold text-[#241C15] text-xl mb-2">Process Overview</h3>
-                  <p className="text-[#241C15]/70">Watch our workflow in action</p>
-                </div>
+          {/* Video Section - Always render but conditionally show content */}
+          <div className={`mb-12 md:mb-16 max-w-2xl mx-auto ${isVisible ? 'animate-slideInUp' : 'opacity-0'}`}>
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-[#241C15]/10">
+              <div className="relative aspect-video">
+                {hasValidVideo ? (
+                  <iframe
+                    src={embedUrl}
+                    title="How We Work Video"
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : videoUrl ? (
+                  // Show error state if videoUrl exists but parsing failed
+                  <div className="w-full h-full flex flex-col items-center justify-center text-white bg-gradient-to-br from-red-500 to-red-700">
+                    <Video className="w-16 h-16 mb-4 text-white" />
+                    <p className="text-lg font-semibold">Invalid YouTube URL</p>
+                    <p className="text-sm mt-2 text-white/80">Please check: {videoUrl}</p>
+                  </div>
+                ) : (
+                  // Show placeholder if no videoUrl
+                  <div className="w-full h-full bg-gradient-to-br from-[#fbf5e5] to-white flex flex-col items-center justify-center text-[#241C15]/50">
+                    <Video className="w-16 h-16 mb-4 text-[#241C15]/30" />
+                    <p className="text-lg font-semibold">Video not available</p>
+                    <p className="text-sm mt-2">Add a YouTube URL in Sanity</p>
+                  </div>
+                )}
               </div>
-
-              {/* CTA Section */}
-              {cta && (
-                <div className={`mt-16 md:mt-20 text-center ${isVisible ? 'animate-fadeIn' : 'opacity-0'}`} style={{ animationDelay: '0.8s' }}>
-                  <div className="bg-[#241C15] rounded-2xl p-8 border border-[#FFE01B]/30 max-w-2xl mx-auto">
-                    <h3 className="text-2xl font-bold text-[#fbf5e5] mb-3">Ready to Start Your Project?</h3>
-                    <p className="text-[#fbf5e5]/70 mb-6">Let's begin your journey with our proven process</p>
-
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                      <a
-                        href={cta.href}
-                        className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] text-[#241C15] rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-base min-w-[180px]"
-                      >
-                        {cta.label}
-                        <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-                      </a>
+              
+              {/* Video CTA - Only show if we have a valid video */}
+              {hasValidVideo && (
+                <div className="p-6 bg-gradient-to-r from-[#FFE01B]/10 to-[#FCD34D]/10 border-t border-[#241C15]/5">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="text-center sm:text-left">
+                      <h3 className="font-bold text-[#241C15] text-lg">See Our Process in Action</h3>
+                      <p className="text-[#241C15]/70 text-sm">Watch how we deliver exceptional results</p>
                     </div>
+                    <button className="inline-flex items-center gap-2 px-6 py-3 bg-[#241C15] text-white rounded-xl font-semibold hover:bg-[#FFE01B] hover:text-[#241C15] transition-all duration-300 whitespace-nowrap">
+                      <Play className="w-4 h-4" />
+                      Play Demo
+                    </button>
                   </div>
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Steps Snake Layout - Wrapping around video */}
-            <div className="lg:ml-[45%] xl:ml-[38%]">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                {steps.map((step, index) => {
-                  // Snake pattern: even indexes on right column, odd on left (but shifted for visual flow)
-                  const isRightColumn = index % 2 === 0;
-                  const stepDelay = 0.2 + index * 0.1;
+          {/* Steps Section - Full Width with Arrows */}
+          {steps && steps.length > 0 && (
+            <div className={`relative ${isVisible ? 'animate-fadeIn' : 'opacity-0'}`}>
+              {/* Main Timeline Line */}
+              <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#FFE01B] to-[#FCD34D] transform -translate-x-1/2 hidden md:block" />
+              
+              <div className="space-y-8 md:space-y-12">
+                {steps.map((step, index) => (
+                  <div
+                    key={index}
+                    className={`relative group ${
+                      isVisible ? 'animate-fadeIn' : 'opacity-0'
+                    }`}
+                    style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+                  >
+                    {/* Step Connector - Mobile */}
+                    {index < steps.length - 1 && (
+                      <div className="absolute left-6 top-20 w-0.5 h-8 bg-gradient-to-b from-[#FFE01B] to-[#FCD34D] opacity-30 md:hidden" />
+                    )}
 
-                  return (
-                    <div
-                      key={index}
-                      className={`relative group ${isVisible ? 'animate-fadeIn' : 'opacity-0'
-                        } ${isRightColumn ? 'md:mt-0' : 'md:mt-16'}`}
-                      style={{ animationDelay: `${stepDelay}s` }}
-                    >
-                      {/* Snake Connectors */}
-                      {index < steps.length - 1 && (
-                        <>
-                          {/* Horizontal connector for right column steps */}
-                          {isRightColumn && index % 4 === 0 && (
-                            <div className="hidden md:block absolute top-1/2 -right-4 w-4 h-0.5 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] z-10">
-                              <ChevronRight className="w-4 h-4 text-[#FFE01B] absolute -right-2 -top-2" />
-                            </div>
-                          )}
-
-                          {/* Vertical connector from right to left column */}
-                          {isRightColumn && (index + 1) < steps.length && (
-                            <div className="hidden md:block absolute top-full -right-4 w-0.5 h-16 bg-gradient-to-b from-[#FFE01B] to-[#FCD34D] z-10">
-                              <ChevronDown className="w-4 h-4 text-[#FFE01B] absolute -bottom-1 -left-1" />
-                            </div>
-                          )}
-
-                          {/* Horizontal connector for left column steps */}
-                          {!isRightColumn && index % 4 === 1 && (
-                            <div className="hidden md:block absolute top-1/2 -left-4 w-4 h-0.5 bg-gradient-to-l from-[#FFE01B] to-[#FCD34D] z-10">
-                              <ChevronRight className="w-4 h-4 text-[#FFE01B] absolute -left-1 -top-2 rotate-180" />
-                            </div>
-                          )}
-                        </>
-                      )}
-
-                      {/* Step Card */}
-                      <div className={`bg-[#241C15] backdrop-blur-sm border border-[#241C15]/10 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:border-[#FFE01B] group-hover:scale-[1.02] relative ${isRightColumn ? 'md:mr-4' : 'md:ml-4'
-                        }`}>
-                        {/* Step Number Badge */}
-                        <div className={`absolute -top-3 -left-3 w-8 h-8 rounded-full bg-gradient-to-br from-[#FFE01B] to-[#FCD34D] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform z-20 ${isRightColumn ? 'md:-left-3' : 'md:-right-3 md:left-auto'
-                          }`}>
-                          <span className="text-sm font-black text-[#241C15]">{step.stepNumber}</span>
+                    <div className={`flex flex-col md:flex-row items-start gap-6 md:gap-12 ${
+                      index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                    }`}>
+                      {/* Step Number & Icon - Desktop */}
+                      <div className="hidden md:flex relative flex-shrink-0">
+                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FFE01B] to-[#FCD34D] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform z-10">
+                          <span className="text-2xl font-black text-[#241C15]">{step.stepNumber}</span>
                         </div>
+                        
+                        {/* Arrow for desktop */}
+                        {index < steps.length - 1 && (
+                          <div className={`absolute top-1/2 ${
+                            index % 2 === 0 ? 'right-0 translate-x-8' : 'left-0 -translate-x-8'
+                          } transform -translate-y-1/2`}>
+                            <ArrowRightCircle className={`w-8 h-8 text-[#FFE01B] animate-bounce-right ${
+                              index % 2 === 1 ? 'rotate-180' : ''
+                            }`} />
+                          </div>
+                        )}
+                      </div>
 
-                        {/* Step Content */}
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h3 className="text-lg md:text-xl font-bold text-[#fbf5e5] mb-2 pr-6">
-                                {step.heading}
-                              </h3>
-                              {step.subheading && (
-                                <p className="text-sm font-semibold text-[#FFE01B] italic mb-3">
-                                  "{step.subheading}"
-                                </p>
-                              )}
+                      {/* Step Content */}
+                      <div className="flex-1 bg-white/80 backdrop-blur-sm border border-[#241C15]/10 rounded-2xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:border-[#FFE01B]">
+                        <div className="flex items-start gap-4">
+                          {/* Step Number - Mobile */}
+                          <div className="flex-shrink-0 md:hidden">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFE01B] to-[#FCD34D] flex items-center justify-center shadow-md">
+                              <span className="text-lg font-black text-[#241C15]">{step.stepNumber}</span>
                             </div>
-
-                            {/* Check Icon */}
-                            <CheckCircle2 className="w-5 h-5 text-[#FFE01B] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-1" />
                           </div>
 
-                          <p className="text-[#fbf5e5]/80 leading-relaxed text-sm md:text-base">
-                            {step.description}
-                          </p>
-
-                          {/* Progress Line */}
-                          <div className="pt-3">
-                            <div className="flex items-center gap-2">
-                              <div className="w-full bg-[#241C15]/10 rounded-full h-1.5">
-                                <div
-                                  className="bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] h-1.5 rounded-full transition-all duration-500"
-                                  style={{ width: `${(step.stepNumber / steps.length) * 75 + 25}%` }}
-                                />
+                          <div className="flex-1 space-y-3">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h3 className="text-xl md:text-2xl font-bold text-[#241C15]">
+                                  {step.heading}
+                                </h3>
+                                {step.subheading && (
+                                  <p className="text-base font-semibold text-[#FFE01B] italic mt-1">
+                                    "{step.subheading}"
+                                  </p>
+                                )}
                               </div>
+                              
+                              {/* Check Icon */}
+                              <CheckCircle2 className="w-6 h-6 text-[#FFE01B] opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                             </div>
+                            
+                            <p className="text-[#241C15]/80 leading-relaxed text-base md:text-lg">
+                              {step.description}
+                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
-
-              {/* Connecting main snake line */}
-              <div className="hidden md:block absolute top-0 bottom-0 left-1/2 w-0.5 bg-gradient-to-b from-[#FFE01B] via-[#FCD34D] to-[#FFE01B] opacity-20 -z-10 -ml-0.5" />
             </div>
-          </div>
+          )}
 
-
+          {/* CTA Section */}
+          {cta && (
+            <div className={`text-center mt-12 md:mt-16 ${isVisible ? 'animate-fadeIn' : 'opacity-0'}`} style={{ animationDelay: '0.8s' }}>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a
+                  href={cta.href}
+                  className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] text-[#241C15] rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-base"
+                >
+                  {cta.label}
+                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </a>
+                <button className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-white border-2 border-[#241C15]/20 text-[#241C15] rounded-xl font-semibold hover:border-[#FFE01B] hover:bg-[#fbf5e5] transition-all duration-300 text-base">
+                  <Play className="w-5 h-5" />
+                  Watch Full Process
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </>
