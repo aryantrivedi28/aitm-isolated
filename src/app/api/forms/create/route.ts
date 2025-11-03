@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
-import { supabase } from "../../../../lib/SupabaseAuthClient"; // your Supabase server client
+import { supabase } from "../../../../lib/SupabaseAuthClient";
 
 export async function POST(req: Request) {
+
   try {
+
+    // --- Parse body ---
     const body = await req.json();
 
     const {
+      form_id: incomingFormId,
       form_name,
       form_description,
       industry,
@@ -15,24 +19,13 @@ export async function POST(req: Request) {
       tools,
       required_fields,
       custom_questions,
-      user, // { role, email }
-      form_id: incomingFormId, // admin only
+      message,
+      hiring_request_id,
+      client_id,
+      owner_id,
     } = body;
 
-    if (!user) {
-      return NextResponse.json(
-        { error: "Missing user context." },
-        { status: 400 }
-      );
-    }
-
-    // Role-based logic
-    const isAdmin = user.role === "admin";
-
-    const form_id = isAdmin
-      ? incomingFormId
-      : `client_${Date.now()}`;
-
+    // --- Validate required fields ---
     if (!form_name || !industry) {
       return NextResponse.json(
         { error: "Form name and industry are required." },
@@ -40,7 +33,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const created_by = isAdmin ? "admin" : user.email;
+    // --- Define form identity ---
+    const form_id = incomingFormId || `admin_${Date.now()}`;
+    const created_by = "admin";
+    const role = "admin";
 
     const { data, error } = await supabase
       .from("forms")
@@ -56,12 +52,16 @@ export async function POST(req: Request) {
           tools,
           required_fields,
           custom_questions,
+          message,
           created_by,
+          role,
+          owner_id: owner_id || null,
+          client_id: client_id || null,
+          hiring_request_id: hiring_request_id || null,
         },
       ])
       .select()
       .single();
-
     if (error) {
       if (error.code === "23505") {
         return NextResponse.json(
@@ -69,6 +69,7 @@ export async function POST(req: Request) {
           { status: 400 }
         );
       }
+
       return NextResponse.json(
         { error: "Database error: " + error.message },
         { status: 500 }
@@ -77,10 +78,17 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, data });
   } catch (err: any) {
-    console.error("Error creating form:", err);
+    console.error("🔥 [DEBUG] Caught Exception:", {
+      name: err.name,
+      message: err.message,
+      stack: err.stack,
+    });
+
     return NextResponse.json(
       { error: "Internal Server Error: " + err.message },
       { status: 500 }
     );
+  } finally {
+    console.groupEnd();
   }
 }
