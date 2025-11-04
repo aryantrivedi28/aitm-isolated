@@ -15,7 +15,9 @@ interface FreelancerAgreementFormData {
   work_type: string
   scope: string
   terms: string
-  hourly_rate: string
+  rate_amount: string
+  rate_type: string
+  currency: string
   project_duration: string
 }
 
@@ -80,7 +82,9 @@ export function FreelancerAgreementForm({
     work_type: "",
     scope: "",
     terms: DEFAULT_FREELANCER_TERMS,
-    hourly_rate: "",
+    rate_amount: "",
+    rate_type: "hour",
+    currency: "",
     project_duration: "",
   })
 
@@ -99,7 +103,9 @@ export function FreelancerAgreementForm({
       work_type: "",
       scope: "",
       terms: DEFAULT_FREELANCER_TERMS,
-      hourly_rate: "",
+      rate_amount: "",
+      rate_type: "hour",
+      currency: "",
       project_duration: "",
     })
   }
@@ -159,16 +165,49 @@ export function FreelancerAgreementForm({
                 <div>
                   <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
                     <Coins className="w-4 h-4" />
-                    Hourly Rate ($)
+                    Rate
                   </label>
-                  <Input
-                    type="number"
-                    value={formData.hourly_rate}
-                    onChange={(e) => handleInputChange("hourly_rate", e.target.value)}
-                    className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
-                    placeholder="0.00"
-                  />
+
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    {/* Amount Input */}
+                    <Input
+                      type="number"
+                      value={formData.rate_amount}
+                      onChange={(e) => handleInputChange("rate_amount", e.target.value)}
+                      className="bg-white/5 border-white/20 text-white/70 transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] w-full sm:w-1/3"
+                      placeholder="0.00"
+                    />
+
+                    {/* Currency Selector */}
+                    <select
+                      value={formData.currency || "USD"}
+                      onChange={(e) => handleInputChange("currency", e.target.value)}
+                      className="bg-white/5 border border-white/20 text-black rounded-lg px-3 py-2 w-full sm:w-1/3 focus:ring-2 focus:ring-[#FFE01B]"
+                    >
+                      <option value="USD">USD ($)</option>
+                      <option value="EUR">EUR (€)</option>
+                      <option value="INR">INR (₹)</option>
+                      <option value="GBP">GBP (£)</option>
+                      <option value="AUD">AUD (A$)</option>
+                      <option value="CAD">CAD (C$)</option>
+                      <option value="JPY">JPY (¥)</option>
+                    </select>
+
+                    {/* Rate Type Dropdown */}
+                    <select
+                      value={formData.rate_type}
+                      onChange={(e) => handleInputChange("rate_type", e.target.value)}
+                      className="bg-white/5 border border-white/20 text-black rounded-lg px-3 py-2 w-full sm:w-1/3 focus:ring-2 focus:ring-[#FFE01B]"
+                    >
+                      <option value="hour">Per Hour</option>
+                      <option value="video">Per Video</option>
+                      <option value="day">Per Day</option>
+                      <option value="month">Per Month</option>
+                      <option value="project">Per Project</option>
+                    </select>
+                  </div>
                 </div>
+
                 <div>
                   <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
