@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { supabaseAdmin } from "../../../lib/supabase-admin"
 import OpenAI from "openai"
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY2 })
 
 export async function POST(req: Request) {
   try {
@@ -81,7 +81,6 @@ export async function POST(req: Request) {
       description: form.form_description || "",
     }
 
-    console.log("[v0] Client Requirements:", clientRequirements)
 
     const aiPrompt = `
 You are an AI evaluator for a client hiring platform.
@@ -123,7 +122,6 @@ Instructions:
       .single()
 
     if (updateError) {
-      console.error("[v0] Update error:", updateError)
       throw updateError
     }
 
