@@ -349,7 +349,26 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
     year: "numeric",
     month: "long",
     day: "numeric",
-  })
+  });
+
+  // --- Currency Symbol Map ---
+  const currencySymbols: Record<string, string> = {
+    USD: "$",
+    EUR: "€",
+    GBP: "£",
+    INR: "₹",
+    CAD: "C$",
+    AUD: "A$",
+    JPY: "¥",
+    SGD: "S$",
+    AED: "د.إ",
+  };
+
+  const currencySymbol =
+    currencySymbols[agreement.currency || "USD"] || agreement.currency || "$";
+
+  const hasContent = (value?: string | null) =>
+    value !== undefined && value !== null && value.toString().trim() !== "";
 
   return `
     <!DOCTYPE html>
@@ -357,33 +376,29 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
       <head>
         <meta charset="UTF-8">
         <style>
-         * {
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Arial", sans-serif;
-        line-height: 1.6;
-        color: #241c15;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 20px;
-        background: #ffffff;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-      }
+          * { box-sizing: border-box; }
+          body {
+            font-family: "Arial", sans-serif;
+            line-height: 1.6;
+            color: #241c15;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+          }
           .logo-container {
-        text-align: start;
-        margin-top: 0px;
-        margin-bottom: 10px;
-      }
-
-      .logo {
-        max-width: 100px;
-        height: auto;
-        display: block;
-      }
+            text-align: start;
+            margin-top: 0px;
+            margin-bottom: 10px;
+          }
+          .logo {
+            max-width: 100px;
+            height: auto;
+            display: block;
+          }
           .header {
             text-align: center;
             margin-bottom: 40px;
@@ -417,9 +432,7 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
             border-radius: 8px;
             margin: 20px 0;
           }
-          .party-info {
-            margin-bottom: 15px;
-          }
+          .party-info { margin-bottom: 15px; }
           .party-label {
             font-weight: bold;
             color: #241C15;
@@ -433,9 +446,7 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
             padding: 20px;
             border-radius: 8px;
           }
-          .info-item {
-            padding: 10px;
-          }
+          .info-item { padding: 10px; }
           .info-label {
             font-weight: bold;
             color: #666;
@@ -447,33 +458,31 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
             font-size: 16px;
             margin-top: 5px;
           }
-          .signature-section {
-            margin-top: 60px;
-            display: flex;
-            justify-content: space-between;
-          }
-          .signature-box {
-            width: 45%;
-          }
-          .signature-line {
-            border-top: 2px solid #241C15;
-            margin-top: 60px;
-            padding-top: 10px;
-          }
-          .footer {
-        text-align: center;
-        font-size: 12px;
-        color: #666;
-        border-top: 1px solid #ddd;
-        padding: 10px 0;
-        margin-top: auto;
-      }
           .rate {
             font-weight: bold;
             color: #FFE01B;
             background: #241C15;
             padding: 2px 8px;
             border-radius: 4px;
+          }
+          .signature-section {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+          }
+          .signature-box { width: 45%; }
+          .signature-line {
+            border-top: 2px solid #241C15;
+            margin-top: 60px;
+            padding-top: 10px;
+          }
+          .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding: 10px 0;
+            margin-top: auto;
           }
           pre {
             white-space: pre-wrap;
@@ -484,7 +493,11 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
       </head>
       <body>
         <div class="logo-container">
-          <img src="https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/finzie-logo-removebg-preview.png" alt="Finzie Logo" class="logo" />
+          <img
+            src="https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/finzie-logo-removebg-preview.png"
+            alt="Finzie Logo"
+            class="logo"
+          />
         </div>
 
         <div class="header">
@@ -493,8 +506,8 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
 
         <div class="section">
           <p>
-            This Freelancer Agreement ("Agreement") is made and entered into as of <strong>${currentDate}</strong>
-            ("Effective Date"), by and between:
+            This Freelancer Agreement ("Agreement") is made and entered into as of
+            <strong>${currentDate}</strong> ("Effective Date"), by and between:
           </p>
           
           <div class="parties">
@@ -504,26 +517,24 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
               <span class="party-label">Freelancer:</span> ${agreement.freelancer_name}
               ${hasContent(agreement.freelancer_email) ? `<br/>Email: ${agreement.freelancer_email}` : ""}
               <br/>hereinafter referred to as the "Freelancer."
-            </div>
-            `
+            </div>`
       : ""
     }
-            
+
             ${hasContent(agreement.client_name)
       ? `
             <div class="party-info">
               <span class="party-label">Client:</span> ${agreement.client_name}
               ${hasContent(agreement.client_email) ? `<br/>Email: ${agreement.client_email}` : ""}
               <br/>hereinafter referred to as the "Client."
-            </div>
-            `
+            </div>`
       : ""
     }
           </div>
         </div>
 
         ${hasContent(agreement.work_type) ||
-      hasContent(agreement.hourly_rate?.toString()) ||
+      hasContent(agreement.rate_amount?.toString()) ||
       hasContent(agreement.project_duration)
       ? `
         <div class="section">
@@ -534,31 +545,43 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
             <div class="info-item">
               <div class="info-label">Work Type</div>
               <div class="info-value">${agreement.work_type}</div>
-            </div>
-            `
+            </div>`
         : ""
       }
-            ${hasContent(agreement.hourly_rate?.toString())
+
+            ${hasContent(agreement.rate_amount?.toString())
         ? `
             <div class="info-item">
-              <div class="info-label">Hourly Rate</div>
-              <div class="info-value"><span class="rate">$${agreement.hourly_rate}/hour</span></div>
-            </div>
-            `
+              <div class="info-label">Rate</div>
+              <div class="info-value">
+                <span class="rate">
+                  ${currencySymbol}${agreement.rate_amount?.toFixed(2) || "0.00"}
+                  ${agreement.rate_type ? `/${agreement.rate_type}` : ""}
+                </span>
+              </div>
+            </div>`
         : ""
       }
+
+            ${hasContent(agreement.currency)
+        ? `
+            <div class="info-item">
+              <div class="info-label">Currency</div>
+              <div class="info-value">${agreement.currency}</div>
+            </div>`
+        : ""
+      }
+
             ${hasContent(agreement.project_duration)
         ? `
             <div class="info-item">
               <div class="info-label">Project Duration</div>
               <div class="info-value">${agreement.project_duration}</div>
-            </div>
-            `
+            </div>`
         : ""
       }
           </div>
-        </div>
-        `
+        </div>`
       : ""
     }
 
@@ -566,11 +589,8 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
       ? `
         <div class="section">
           <div class="section-title">Scope of Work</div>
-          <div class="content">
-            <pre>${agreement.nda}</pre>
-          </div>
-        </div>
-        `
+          <div class="content"><pre>${agreement.nda}</pre></div>
+        </div>`
       : ""
     }
 
@@ -578,11 +598,8 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
       ? `
         <div class="section">
           <div class="section-title">Deliverables</div>
-          <div class="content">
-            <pre>${agreement.deliverables}</pre>
-          </div>
-        </div>
-        `
+          <div class="content"><pre>${agreement.deliverables}</pre></div>
+        </div>`
       : ""
     }
 
@@ -590,11 +607,8 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
       ? `
         <div class="section">
           <div class="section-title">Intellectual Property Rights</div>
-          <div class="content">
-            <pre>${agreement.ip_rights}</pre>
-          </div>
-        </div>
-        `
+          <div class="content"><pre>${agreement.ip_rights}</pre></div>
+        </div>`
       : ""
     }
 
@@ -602,11 +616,8 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
       ? `
         <div class="section">
           <div class="section-title">Terms & Conditions</div>
-          <div class="content">
-            <pre>${agreement.terms}</pre>
-          </div>
-        </div>
-        `
+          <div class="content"><pre>${agreement.terms}</pre></div>
+        </div>`
       : ""
     }
 
@@ -632,8 +643,10 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
         </div>
       </body>
     </html>
-  `
+  `;
 }
+
+
 
 export function generateInvoiceTemplate(invoice: any, items: any[] = []): string {
   const currentDate = new Date().toLocaleDateString("en-US", {

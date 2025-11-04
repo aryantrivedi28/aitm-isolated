@@ -105,7 +105,8 @@ interface FormData {
   work_type: string
   nda: string
   ip_rights: string
-  hourly_rate: string
+  rate_amount: string
+  rate_type: string
   project_duration: string
   // Client specific
   responsibilities?: string
@@ -129,7 +130,7 @@ function AgreementAutomationPageContent() {
       ? toastApi.toast
       : typeof toastApi?.addToast === "function"
         ? toastApi.addToast
-        : () => {} // no-op fallback
+        : () => { } // no-op fallback
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
@@ -192,7 +193,8 @@ prior written consent.`
     work_type: "",
     nda: "",
     ip_rights: "",
-    hourly_rate: "",
+    rate_amount: "",
+    rate_type: "hour",
     project_duration: "",
   })
 
@@ -254,7 +256,8 @@ prior written consent.`
         requestData = {
           type: "freelancer",
           workType: formData.work_type,
-          hourlyRate: Number.parseFloat(formData.hourly_rate) || 0,
+          rateAmount: Number.parseFloat(formData.rate_amount) || 0,
+          rateType: formData.rate_type,
           projectDuration: formData.project_duration,
         }
       } else {
@@ -400,7 +403,8 @@ prior written consent.`
         work_type: "",
         nda: "",
         ip_rights: "",
-        hourly_rate: "",
+        rate_amount: "",
+        rate_type: "hour",
         project_duration: "",
         responsibilities: "", // Clear client specific extra fields
         termination: "",
@@ -446,8 +450,10 @@ prior written consent.`
         ip_rights: source.ip_rights || "",
         deliverables: source.deliverables || "",
         terms: source.terms || "",
-        hourly_rate:
-          source.hourly_rate && source.hourly_rate !== "" ? Number.parseFloat(String(source.hourly_rate)) : null,
+        rate_amount:
+          source.rate_amount && source.rate_amount !== "" ? Number.parseFloat(String(source.rate_amount)) : null,
+        rate_type: source.rate_type || "hour",
+        currency: source.currency || "USD",
         project_duration: source.project_duration || "",
       }
 
@@ -490,7 +496,8 @@ prior written consent.`
         work_type: "",
         nda: "",
         ip_rights: "",
-        hourly_rate: "",
+        rate_amount: "",
+        rate_type: "hour",
         project_duration: "",
       })
       setActiveTab("dashboard")
@@ -1124,7 +1131,7 @@ prior written consent.`
             setEditDialogOpen(false)
           }
         }}>
-          <DialogContent className="bg-[#241C15] border-white/10 max-w-2xl max-h-[80vh] overflow-y-auto" style={{zIndex: 10000, position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+          <DialogContent className="bg-[#241C15] border-white/10 max-w-2xl max-h-[80vh] overflow-y-auto" style={{ zIndex: 10000, position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
             <DialogHeader>
               <DialogTitle className="text-white">Edit Document</DialogTitle>
               <DialogDescription className="text-white/70">
@@ -1292,17 +1299,39 @@ prior written consent.`
                           className="bg-white/5 border-white/20 text-white"
                         />
                       </div>
-                      <div>
-                        <label className="text-white/70 text-sm mb-2 block">Hourly Rate</label>
-                        <Input
-                          type="number"
-                          value={editFormData.hourly_rate || ""}
-                          onChange={(e) =>
-                            setEditFormData({ ...editFormData, hourly_rate: Number.parseFloat(String(e.target.value)) })
-                          }
-                          className="bg-white/5 border-white/20 text-white"
-                        />
+                      <div className="flex flex-col gap-2">
+                        <label className="text-white/70 text-sm">Freelancer Rate</label>
+
+                        <div className="flex items-center gap-3">
+                          {/* Rate Input */}
+                          <Input
+                            type="number"
+                            placeholder="Enter amount"
+                            value={editFormData.rate_amount || ""}
+                            onChange={(e) =>
+                              setEditFormData({ ...editFormData, rate_amount: e.target.value })
+                            }
+                            className="bg-white/5 border-white/20 text-white w-1/2"
+                          />
+
+                          {/* Rate Type Dropdown */}
+                          <select
+                            value={editFormData.rate_type || "hour"}
+                            onChange={(e) =>
+                              setEditFormData({ ...editFormData, rate_type: e.target.value })
+                            }
+                            className="bg-white/5 border border-white/20 text-white text-sm rounded-md px-3 py-2 w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="hour">Per Hour</option>
+                            <option value="day">Per Day</option>
+                            <option value="month">Per Month</option>
+                            <option value="video">Per Video</option>
+                            <option value="project">Per Project</option>
+                            <option value="other">Other</option>
+                          </select>
+                        </div>
                       </div>
+
                       <div>
                         <label className="text-white/70 text-sm mb-2 block">Project Duration</label>
                         <Input
