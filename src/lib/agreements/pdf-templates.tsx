@@ -351,7 +351,6 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
     day: "numeric",
   });
 
-  // --- Currency Symbol Map ---
   const currencySymbols: Record<string, string> = {
     USD: "$",
     EUR: "€",
@@ -364,287 +363,311 @@ export function generateFreelancerAgreementTemplate(agreement: FreelancerAgreeme
     AED: "د.إ",
   };
 
-  const currencySymbol =
-    currencySymbols[agreement.currency || "USD"] || agreement.currency || "$";
+  const currencySymbol = currencySymbols[agreement.currency || "USD"] || agreement.currency || "$";
 
   const hasContent = (value?: string | null) =>
     value !== undefined && value !== null && value.toString().trim() !== "";
 
+  const formatText = (text?: string | null) => {
+    if (!text) return "";
+    return text
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+      .join("\n");
+  };
+
   return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <style>
-          * { box-sizing: border-box; }
-          body {
-            font-family: "Arial", sans-serif;
-            line-height: 1.6;
-            color: #241c15;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 20px;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        @page { margin: 25px 35px; }
+
+        body {
+          font-family: "Times New Roman", "Arial", sans-serif;
+          font-size: 13pt;
+          line-height: 1.75;
+          color: #222;
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 0 20px;
+          background: #ffffff;
+        }
+
+        .header-section {
+          text-align: center;
+          margin-bottom: 35px;
+          padding-bottom: 20px;
+          border-bottom: 2px solid #FFE01B;
+        }
+
+        .header-section h1 {
+          color: #241C15;
+          font-size: 26pt;
+          font-weight: bold;
+          text-transform: uppercase;
+          margin-bottom: 10px;
+        }
+
+        .date-section {
+          text-align: right;
+          margin-bottom: 20px;
+          font-style: italic;
+          font-size: 12pt;
+        }
+
+        .section {
+          margin-bottom: 30px;
+        }
+
+        .section-title {
+          color: #241C15;
+          font-size: 16pt;
+          font-weight: bold;
+          margin-bottom: 14px;
+          border-bottom: 1px solid #ddd;
+          padding-bottom: 6px;
+          text-transform: uppercase;
+        }
+
+        .content {
+          margin-left: 0;
+          text-align: justify;
+          white-space: pre-line;
+          font-size: 12.5pt;
+          line-height: 1.8;
+        }
+
+        .parties-container {
+          display: flex;
+          justify-content: space-between;
+          margin: 25px 0;
+          gap: 30px;
+        }
+
+        .party {
+          flex: 1;
+          padding: 20px;
+          font-size: 12.5pt;
+        }
+
+        .party-title {
+          font-weight: bold;
+          color: #241C15;
+          margin-bottom: 10px;
+          font-size: 13.5pt;
+          border-bottom: 2px solid #FFE01B;
+          padding-bottom: 5px;
+        }
+
+        .party-info {
+          margin-bottom: 8px;
+        }
+
+        .info-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 20px;
+          margin: 20px 0;
+          padding: 20px;
+        }
+
+        .info-label {
+          font-weight: bold;
+          color: #555;
+          font-size: 11pt;
+          text-transform: uppercase;
+          margin-bottom: 4px;
+        }
+
+        .info-value {
+          color: #241C15;
+          font-size: 13pt;
+        }
+
+        .rate-display {
+          font-weight: bold;
+          color: #241C15;
+          background: #FFE01B;
+          padding: 8px 14px;
+          border-radius: 5px;
+          display: inline-block;
+          font-size: 12.5pt;
+        }
+
+        .terms-content {
+          padding: 20px;
+          margin-top: 10px;
+          font-size: 12pt;
+          line-height: 1.75;
+        }
+
+        .terms-content pre {
+          white-space: pre-line;
+          font-family: inherit;
+          margin: 0;
+        }
+
+        .signature-section {
+          margin-top: 60px;
+          display: flex;
+          justify-content: space-between;
+          gap: 40px;
+        }
+
+        .signature-box {
+          flex: 1;
+          text-align: center;
+        }
+
+        .signature-line {
+          border-top: 1px solid #333;
+          margin-top: 70px;
+          padding-top: 10px;
+          font-size: 11.5pt;
+        }
+
+        .signature-name {
+          font-weight: bold;
+          margin-top: 5px;
+          font-size: 12pt;
+        }
+
+        .signature-date {
+          margin-top: 5px;
+          font-style: italic;
+          font-size: 11pt;
+        }
+
+        .footer {
+          text-align: center;
+          font-size: 10.5pt;
+          color: #666;
+          border-top: 1px solid #ddd;
+          padding: 15px 0;
+          margin-top: 45px;
+        }
+
+        .terms-list {
+          counter-reset: clause;
+        }
+
+        .terms-clause {
+          margin-bottom: 15px;
+          padding-left: 25px;
+          position: relative;
+        }
+
+        .terms-clause::before {
+          counter-increment: clause;
+          content: counter(clause) ". ";
+          font-weight: bold;
+          position: absolute;
+          left: 0;
+          color: #241C15;
+        }
+
+        .page-break {
+            page-break-before: always;
+            margin-top: 30px;
           }
-          .logo-container {
-            text-align: start;
-            margin-top: 0px;
-            margin-bottom: 10px;
-          }
-          .logo {
-            max-width: 100px;
-            height: auto;
-            display: block;
-          }
-          .header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 3px solid #FFE01B;
-            padding-bottom: 20px;
-          }
-          .header h1 {
-            color: #241C15;
-            font-size: 32px;
-            margin: 0;
-            font-weight: bold;
-          }
-          .section {
-            margin-bottom: 30px;
-          }
-          .section-title {
-            color: #241C15;
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            border-left: 4px solid #FFE01B;
-            padding-left: 15px;
-          }
-          .content {
-            margin-left: 20px;
-            text-align: justify;
-          }
-          .parties {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-          }
-          .party-info { margin-bottom: 15px; }
-          .party-label {
-            font-weight: bold;
-            color: #241C15;
-          }
-          .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 20px 0;
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-          }
-          .info-item { padding: 10px; }
-          .info-label {
-            font-weight: bold;
-            color: #666;
-            font-size: 12px;
-            text-transform: uppercase;
-          }
-          .info-value {
-            color: #241C15;
-            font-size: 16px;
-            margin-top: 5px;
-          }
-          .rate {
-            font-weight: bold;
-            color: #FFE01B;
-            background: #241C15;
-            padding: 2px 8px;
-            border-radius: 4px;
-          }
-          .signature-section {
-            margin-top: 60px;
-            display: flex;
-            justify-content: space-between;
-          }
-          .signature-box { width: 45%; }
-          .signature-line {
-            border-top: 2px solid #241C15;
-            margin-top: 60px;
-            padding-top: 10px;
-          }
-          .footer {
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-            border-top: 1px solid #ddd;
-            padding: 10px 0;
-            margin-top: auto;
-          }
-          pre {
-            white-space: pre-wrap;
-            font-family: inherit;
-            margin: 0;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="logo-container">
-          <img
-            src="https://vdxmxeprvqiwbuimjmzh.supabase.co/storage/v1/object/public/logo/finzie-logo-removebg-preview.png"
-            alt="Finzie Logo"
-            class="logo"
-          />
+      </style>
+    </head>
+    <body>
+      <div class="header-section">
+        <h1>FREELANCER AGREEMENT</h1>
+        <div class="date-section">
+          <strong>Effective Date:</strong> ${currentDate}
         </div>
+      </div>
 
-        <div class="header">
-          <h1>FREELANCER AGREEMENT</h1>
-        </div>
+      <div class="section">
+        <div class="section-title">Parties</div>
+        <p>This Freelancer Agreement ("Agreement") is made and entered into as of the Effective Date by and between:</p>
+        
+        <div class="parties-container">
+          <div class="party">
+            <div class="party-title">FREELANCER</div>
+            ${hasContent(agreement.freelancer_name) ? `
+              <div class="party-info"><strong>Name:</strong> ${agreement.freelancer_name}</div>
+              ${hasContent(agreement.freelancer_email) ? `<div class="party-info"><strong>Email:</strong> ${agreement.freelancer_email}</div>` : ''}
+            ` : '<div class="party-info">[Freelancer Information]</div>'}
+          </div>
 
-        <div class="section">
-          <p>
-            This Freelancer Agreement ("Agreement") is made and entered into as of
-            <strong>${currentDate}</strong> ("Effective Date"), by and between:
-          </p>
-          
-          <div class="parties">
-            ${hasContent(agreement.freelancer_name)
-      ? `
-            <div class="party-info">
-              <span class="party-label">Freelancer:</span> ${agreement.freelancer_name}
-              ${hasContent(agreement.freelancer_email) ? `<br/>Email: ${agreement.freelancer_email}` : ""}
-              <br/>hereinafter referred to as the "Freelancer."
-            </div>`
-      : ""
-    }
-
-            ${hasContent(agreement.client_name)
-      ? `
-            <div class="party-info">
-              <span class="party-label">Client:</span> ${agreement.client_name}
-              ${hasContent(agreement.client_email) ? `<br/>Email: ${agreement.client_email}` : ""}
-              <br/>hereinafter referred to as the "Client."
-            </div>`
-      : ""
-    }
+          <div class="party">
+            <div class="party-title">CLIENT</div>
+            ${hasContent(agreement.client_name) ? `
+              <div class="party-info"><strong>Name:</strong> ${agreement.client_name}</div>
+              ${hasContent(agreement.client_email) ? `<div class="party-info"><strong>Email:</strong> ${agreement.client_email}</div>` : ''}
+            ` : '<div class="party-info">[Client Information]</div>'}
           </div>
         </div>
+      </div>
 
-        ${hasContent(agreement.work_type) ||
-      hasContent(agreement.rate_amount?.toString()) ||
-      hasContent(agreement.project_duration)
-      ? `
-        <div class="section">
-          <div class="section-title">Engagement Details</div>
-          <div class="info-grid">
-            ${hasContent(agreement.work_type)
-        ? `
-            <div class="info-item">
-              <div class="info-label">Work Type</div>
-              <div class="info-value">${agreement.work_type}</div>
-            </div>`
-        : ""
-      }
+      ${hasContent(agreement.work_type) || hasContent(agreement.rate_amount?.toString()) || hasContent(agreement.project_duration) ? `
+      <div class="section">
+        <div class="section-title">Engagement Details</div>
+        <div class="info-grid">
+          ${hasContent(agreement.work_type) ? `
+          <div>
+            <div class="info-label">Work Type</div>
+            <div class="info-value">${agreement.work_type}</div>
+          </div>` : ''}
 
-            ${hasContent(agreement.rate_amount?.toString())
-        ? `
-            <div class="info-item">
-              <div class="info-label">Rate</div>
-              <div class="info-value">
-                <span class="rate">
-                  ${currencySymbol}${agreement.rate_amount?.toFixed(2) || "0.00"}
-                  ${agreement.rate_type ? `/${agreement.rate_type}` : ""}
-                </span>
-              </div>
-            </div>`
-        : ""
-      }
-
-            ${hasContent(agreement.currency)
-        ? `
-            <div class="info-item">
-              <div class="info-label">Currency</div>
-              <div class="info-value">${agreement.currency}</div>
-            </div>`
-        : ""
-      }
-
-            ${hasContent(agreement.project_duration)
-        ? `
-            <div class="info-item">
-              <div class="info-label">Project Duration</div>
-              <div class="info-value">${agreement.project_duration}</div>
-            </div>`
-        : ""
-      }
-          </div>
-        </div>`
-      : ""
-    }
-
-        ${hasContent(agreement.nda)
-      ? `
-        <div class="section">
-          <div class="section-title">Scope of Work</div>
-          <div class="content"><pre>${agreement.nda}</pre></div>
-        </div>`
-      : ""
-    }
-
-        ${hasContent(agreement.deliverables)
-      ? `
-        <div class="section">
-          <div class="section-title">Deliverables</div>
-          <div class="content"><pre>${agreement.deliverables}</pre></div>
-        </div>`
-      : ""
-    }
-
-        ${hasContent(agreement.ip_rights)
-      ? `
-        <div class="section">
-          <div class="section-title">Intellectual Property Rights</div>
-          <div class="content"><pre>${agreement.ip_rights}</pre></div>
-        </div>`
-      : ""
-    }
-
-        ${hasContent(agreement.terms)
-      ? `
-        <div class="section">
-          <div class="section-title">Terms & Conditions</div>
-          <div class="content"><pre>${agreement.terms}</pre></div>
-        </div>`
-      : ""
-    }
-
-        <div class="signature-section">
-          <div class="signature-box">
-            <div class="signature-line">
-              <strong>Freelancer Signature</strong><br/>
-              ${hasContent(agreement.freelancer_name) ? agreement.freelancer_name : ""}<br/>
-              Date: _________________
+          ${hasContent(agreement.rate_amount?.toString()) ? `
+          <div>
+            <div class="info-label">Compensation Rate</div>
+            <div class="info-value">
+              <span class="rate-display">
+                ${currencySymbol}${agreement.rate_amount?.toFixed(2) || "0.00"}
+                ${agreement.rate_type ? `per ${agreement.rate_type}` : ''}
+              </span>
             </div>
-          </div>
-          <div class="signature-box">
-            <div class="signature-line">
-              <strong>Client Signature</strong><br/>
-              ${hasContent(agreement.client_name) ? agreement.client_name : ""}<br/>
-              Date: _________________
-            </div>
-          </div>
-        </div>
+          </div>` : ''}
 
-        <div class="footer">
-          <p>This agreement was generated on ${currentDate}</p>
+          ${hasContent(agreement.project_duration) ? `
+          <div>
+            <div class="info-label">Project Duration</div>
+            <div class="info-value">${agreement.project_duration}</div>
+          </div>` : ''}
         </div>
-      </body>
-    </html>
+      </div>` : ''}
+
+      ${hasContent(agreement.terms) ? `
+      <div class="section page-break">
+        <div class="section-title">Terms & Conditions</div>
+        <div class="terms-content">
+          <pre>${formatText(agreement.terms)}</pre>
+        </div>
+      </div>` : ''}
+
+      <div class="signature-section">
+        <div class="signature-box">
+          <div class="signature-line"></div>
+          <div class="signature-name">${hasContent(agreement.freelancer_name) ? agreement.freelancer_name : 'Freelancer Signature'}</div>
+          <div class="signature-date">Date: _________________</div>
+        </div>
+        
+        <div class="signature-box">
+          <div class="signature-line"></div>
+          <div class="signature-name">${hasContent(agreement.client_name) ? agreement.client_name : 'Client Signature'}</div>
+          <div class="signature-date">Date: _________________</div>
+        </div>
+      </div>
+
+      <div class="footer">
+        This agreement was electronically generated on ${currentDate} and is legally binding when signed by both parties.
+      </div>
+    </body>
+  </html>
   `;
 }
+
+
 
 
 

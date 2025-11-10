@@ -3,6 +3,8 @@ import * as cheerio from "cheerio"
 import mammoth from "mammoth"
 import PDFParser from "pdf2json"
 import axios from "axios"
+import OpenAI from "openai"
+
 
 // Configuration constants
 const CONFIG = {
@@ -197,19 +199,22 @@ Current file ID: ${fileId}`
     // Try PDF first
     const pdfHeader = buffer.toString("hex", 0, 4)
     if (pdfHeader === "25504446") {
-      // %PDF in hex
+      console.log("📄 Detected PDF format, parsing with pdf2json...")
       return await this.extractTextWithPdf2Json(buffer)
     }
 
-    // Try DOCX
     try {
+      console.log("📄 Attempting DOCX parsing with mammoth...")
       const result = await mammoth.extractRawText({ buffer })
       if (result && result.value.trim().length > 0) {
+        console.log("✅ DOCX parsing successful")
         return result.value
       }
-    } catch (e) {
-      console.log("❌ DOCX parsing failed", e)
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error)
+      console.log("❌ DOCX parsing failed", msg)
     }
+
 
     throw new Error("Unsupported file format or empty file")
   }
@@ -420,6 +425,56 @@ Current file ID: ${fileId}`
       throw error
     }
   }
+
+
+  private async extractStructuredResumeData(rawText: string) {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+    })
+
+    console.log("🧠 Sending resume text to OpenAI for structured parsing...")
+
+    const prompt = `
+You are a professional resume parser. Extract structured JSON fields from the following resume text.
+
+Resume text:
+"""
+${rawText.slice(0, 10000)}  // limit to avoid tokens overflow
+"""
+
+Return a JSON with these keys:
+{
+  "name": string,
+  "email": string,
+  "phone": string,
+  "title": string,
+  "skills": string[],
+  "education": string[],
+  "experience": [
+    { "title": string, "company": string, "years": string, "details": string }
+  ],
+  "projects": string[],
+  "certifications": string[]
+}
+Only return JSON, no explanation.
+`
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.2,
+    })
+
+    try {
+      const parsed = JSON.parse(response.choices[0].message?.content || "{}")
+      console.log("✅ Parsed structured data:", parsed)
+      return parsed
+    } catch (error) {
+      console.error("❌ Failed to parse structured resume data:", error)
+      return { error: "Failed to parse structured data" }
+    }
+  }
+
 
   private async tryGoogleDocsExport(fileUrl: string): Promise<string> {
     const fileId = this.extractFileId(fileUrl)

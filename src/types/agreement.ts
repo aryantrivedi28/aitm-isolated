@@ -38,7 +38,9 @@ export interface FreelancerAgreement {
   ip_rights?: string
   deliverables?: string
   terms: string
-  hourly_rate?: number
+  rate_amount?: number
+  rate_type?: "hour" | "fixed"
+  currency?: string
   project_duration?: string
   pdf_url?: string
   signed_pdf_url?: string

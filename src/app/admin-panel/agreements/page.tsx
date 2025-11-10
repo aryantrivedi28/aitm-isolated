@@ -137,45 +137,41 @@ function AgreementAutomationPageContent() {
   const [editFormData, setEditFormData] = useState<any>({})
 
 
-  const defaultFreelancerTerms = `Professional Conduct & Communication
-Terms and Conditions
-The freelancer is expected to maintain the highest level of professionalism in all interactions—
-internal and external.
-All communication with clients must be courteous, respectful, and aligned with Finzie's standards.
-Poaching, discussing payment terms directly with the client, or engaging in independent side
-conversations unrelated to the project shall be considered a breach of contract.
-Attendance in client meetings is mandatory. In case of emergencies, prior notice of at least 5–6
-hours must be given to the Finzie team.
+const defaultFreelancerTerms = `
+**1. Professional Conduct & Communication**
 
-Commitment & Duration
-The minimum duration of engagement is 2 months.
-A 10-day notice period is required in case of termination by either party. If the freelancer
-chooses to discontinue before the minimum duration period, a 50% deduction will be applied
-to the pending payout.
+      Freelancers are expected to maintain the highest level of professionalism in all interactions, both internal and external.  
+      All communication with clients must be courteous, respectful, and consistent with Finzie’s professional standards.  
+      Discussing payments directly with clients, soliciting projects independently, or engaging in side communications unrelated to the engagement is strictly prohibited and will be considered a breach of contract.  
+      Attendance in scheduled client meetings is mandatory. In case of emergencies, a prior notice of at least 5–6 hours must be provided to the Finzie team.
 
-Ownership & Accountability
-The freelancer is expected to take complete ownership of their assigned work, from planning
-to delivery.
-Finzie reserves the right to terminate the engagement without notice in case of serious
-misconduct, repeated underperformance, or breach of trust.
+**2. Commitment & Duration**
 
-Performance & Deliverables
-Freelancers are expected to meet deadlines, follow briefs precisely, and deliver high-quality
-work.
-Failure to meet performance standards may result in review, deduction, or termination.
-Specific deliverables and timelines will be communicated per project. Delays must be informed
-in advance.
+The minimum engagement duration is two (2) months.  
+Either party may terminate the agreement by providing a 10-day written notice.  
+If the freelancer discontinues the engagement before completing the minimum duration, 50% of the pending payout will be deducted as a penalty.
 
-Confidentiality & Conflict of Interest
-The freelancer shall not disclose or misuse any confidential information, documents, strategies,
-or trade secrets of Finzie or its clients during or after the term of engagement.
-Any potential conflict of interest must be disclosed immediately. Freelancers must not work
-with direct competitors of Finzie or its clients without written approval.
+**3. Ownership & Accountability**
 
-Intellectual Property Rights
-All work created during the engagement is the sole property of Finzie or its clients.
-The freelancer waives the right to reuse, reproduce, or republish any part of the work without
-prior written consent.`
+Freelancers are expected to take full ownership of their assigned work—from planning to final delivery.  
+Finzie reserves the right to terminate the engagement without prior notice in cases of serious misconduct, repeated underperformance, or breach of trust.
+
+**4. Performance & Deliverables**
+
+Freelancers must meet deadlines, follow briefs accurately, and deliver high-quality work.  
+Failure to meet agreed performance standards may result in a performance review, payment deductions, or termination.  
+Specific deliverables, formats, and timelines will be communicated per project. Any anticipated delay must be reported in advance.
+
+**5. Confidentiality & Conflict of Interest**
+
+Freelancers shall not disclose, share, or misuse any confidential information, documents, strategies, or trade secrets belonging to Finzie or its clients—both during and after the engagement.  
+Any potential conflict of interest must be disclosed immediately. Freelancers are prohibited from working with direct competitors of Finzie or its clients without prior written approval.
+
+**6. Intellectual Property Rights**
+
+All work created during the engagement shall be the exclusive property of Finzie or its respective clients.  
+Freelancers waive any rights to reuse, reproduce, or republish any part of the work without prior written consent from Finzie or the client.
+`
 
   const [formData, setFormData] = useState<FormData>({
     client_name: "",
@@ -364,8 +360,6 @@ prior written consent.`
         ownership: source.ownership || "",
       }
 
-      console.log("[v0] Submitting client agreement payload:", payload)
-
       const response = await fetch("/api/agreements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -377,7 +371,6 @@ prior written consent.`
         throw new Error(errorData.error || `Failed to create client agreement: ${response.status}`)
       }
 
-      console.log("[v0] Client agreement created successfully ✅")
       await fetchAgreements()
 
       toast({

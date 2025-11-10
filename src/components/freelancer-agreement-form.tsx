@@ -28,45 +28,42 @@ interface FreelancerAgreementFormProps {
   aiLoading: boolean
 }
 
-const DEFAULT_FREELANCER_TERMS = `Professional Conduct & Communication
-Terms and Conditions
-The freelancer is expected to maintain the highest level of professionalism in all interactions—
-internal and external.
-All communication with clients must be courteous, respectful, and aligned with Finzie's standards.
-Poaching, discussing payment terms directly with the client, or engaging in independent side
-conversations unrelated to the project shall be considered a breach of contract.
-Attendance in client meetings is mandatory. In case of emergencies, prior notice of at least 5–6
-hours must be given to the Finzie team.
+// Clean, well-formatted default terms
+const DEFAULT_FREELANCER_TERMS = `1. PROFESSIONAL CONDUCT & COMMUNICATION
+    - Freelancers are expected to maintain the highest level of professionalism in all interactions, both internal
+       and external.
+    - All communication with clients must be courteous, respectful, and consistent with professional standards.
+    - Discussing payments directly with clients, soliciting projects independently, or engaging in side communications 
+       unrelated to the engagement is strictly prohibited and will be considered a breach of contract.
+    - Attendance in scheduled client meetings is mandatory. In case of emergencies, a prior notice of at least 5-6 
+       hours must be provided.
 
-Commitment & Duration
-The minimum duration of engagement is 2 months.
-A 10-day notice period is required in case of termination by either party. If the freelancer
-chooses to discontinue before the minimum duration period, a 50% deduction will be applied
-to the pending payout.
+2. COMMITMENT & DURATION
+    - The minimum engagement duration is two (2) months.
+    - Either party may terminate the agreement by providing a 10-day written notice.
+    - If the freelancer discontinues the engagement before completing the minimum duration, 50% of the pending payout will 
+       be deducted as a penalty.
 
-Ownership & Accountability
-The freelancer is expected to take complete ownership of their assigned work, from planning
-to delivery.
-Finzie reserves the right to terminate the engagement without notice in case of serious
-misconduct, repeated underperformance, or breach of trust.
+3. OWNERSHIP & ACCOUNTABILITY
+    - Freelancers are expected to take full ownership of their assigned work—from planning to final delivery.
+    - The company reserves the right to terminate the engagement without prior notice in cases of serious misconduct, 
+       repeated underperformance, or breach of trust.
 
-Performance & Deliverables
-Freelancers are expected to meet deadlines, follow briefs precisely, and deliver high-quality
-work.
-Failure to meet performance standards may result in review, deduction, or termination.
-Specific deliverables and timelines will be communicated per project. Delays must be informed
-in advance.
+4. PERFORMANCE & DELIVERABLES
+    - Freelancers must meet deadlines, follow briefs accurately, and deliver high-quality work.
+    - Failure to meet agreed performance standards may result in a performance review, payment deductions, or termination.
+    - Specific deliverables, formats, and timelines will be communicated per project. Any anticipated delay must be reported 
+       in advance.
 
-Confidentiality & Conflict of Interest
-The freelancer shall not disclose or misuse any confidential information, documents, strategies,
-or trade secrets of Finzie or its clients during or after the term of engagement.
-Any potential conflict of interest must be disclosed immediately. Freelancers must not work
-with direct competitors of Finzie or its clients without written approval.
+5. CONFIDENTIALITY & CONFLICT OF INTEREST
+    - Freelancers shall not disclose, share, or misuse any confidential information, documents, strategies, or trade secrets 
+       belonging to the company or its clients—both during and after the engagement.
+    - Any potential conflict of interest must be disclosed immediately. Freelancers are prohibited from working with direct 
+       competitors without prior written approval.
 
-Intellectual Property Rights
-All work created during the engagement is the sole property of Finzie or its clients.
-The freelancer waives the right to reuse, reproduce, or republish any part of the work without
-prior written consent.`
+6. INTELLECTUAL PROPERTY RIGHTS
+    - All work created during the engagement shall be the exclusive property of the company or its respective clients.
+    - Freelancers waive any rights to reuse, reproduce, or republish any part of the work without prior written consent.`
 
 export function FreelancerAgreementForm({
   onSubmitAction,
@@ -84,7 +81,7 @@ export function FreelancerAgreementForm({
     terms: DEFAULT_FREELANCER_TERMS,
     rate_amount: "",
     rate_type: "hour",
-    currency: "",
+    currency: "USD",
     project_duration: "",
   })
 
@@ -105,7 +102,7 @@ export function FreelancerAgreementForm({
       terms: DEFAULT_FREELANCER_TERMS,
       rate_amount: "",
       rate_type: "hour",
-      currency: "",
+      currency: "USD",
       project_duration: "",
     })
   }
@@ -160,6 +157,19 @@ export function FreelancerAgreementForm({
                     placeholder="Enter client name"
                   />
                 </div>
+                <div>
+                  <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
+                    <Mail className="w-4 h-4" />
+                    Client Email
+                  </label>
+                  <Input
+                    type="email"
+                    value={formData.client_email}
+                    onChange={(e) => handleInputChange("client_email", e.target.value)}
+                    className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B]"
+                    placeholder="client@example.com"
+                  />
+                </div>
               </div>
               <div className="space-y-3 md:space-y-4">
                 <div>
@@ -167,22 +177,18 @@ export function FreelancerAgreementForm({
                     <Coins className="w-4 h-4" />
                     Rate
                   </label>
-
                   <div className="flex flex-col sm:flex-row items-center gap-3">
-                    {/* Amount Input */}
                     <Input
                       type="number"
                       value={formData.rate_amount}
                       onChange={(e) => handleInputChange("rate_amount", e.target.value)}
-                      className="bg-white/5 border-white/20 text-white/70 transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] w-full sm:w-1/3"
+                      className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] w-full sm:w-1/3"
                       placeholder="0.00"
                     />
-
-                    {/* Currency Selector */}
                     <select
-                      value={formData.currency || "USD"}
+                      value={formData.currency}
                       onChange={(e) => handleInputChange("currency", e.target.value)}
-                      className="bg-white/5 border border-white/20 text-black rounded-lg px-3 py-2 w-full sm:w-1/3 focus:ring-2 focus:ring-[#FFE01B]"
+                      className="bg-white/5 border border-white/20 text-white rounded-lg px-3 py-2 w-full sm:w-1/3 focus:ring-2 focus:ring-[#FFE01B]"
                     >
                       <option value="USD">USD ($)</option>
                       <option value="EUR">EUR (€)</option>
@@ -192,12 +198,10 @@ export function FreelancerAgreementForm({
                       <option value="CAD">CAD (C$)</option>
                       <option value="JPY">JPY (¥)</option>
                     </select>
-
-                    {/* Rate Type Dropdown */}
                     <select
                       value={formData.rate_type}
                       onChange={(e) => handleInputChange("rate_type", e.target.value)}
-                      className="bg-white/5 border border-white/20 text-black rounded-lg px-3 py-2 w-full sm:w-1/3 focus:ring-2 focus:ring-[#FFE01B]"
+                      className="bg-white/5 border border-white/20 text-white rounded-lg px-3 py-2 w-full sm:w-1/3 focus:ring-2 focus:ring-[#FFE01B]"
                     >
                       <option value="hour">Per Hour</option>
                       <option value="video">Per Video</option>
@@ -207,7 +211,6 @@ export function FreelancerAgreementForm({
                     </select>
                   </div>
                 </div>
-
                 <div>
                   <label className="text-white/70 text-sm mb-2 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
@@ -273,12 +276,12 @@ export function FreelancerAgreementForm({
                 <Textarea
                   value={formData.terms}
                   onChange={(e) => handleInputChange("terms", e.target.value)}
-                  className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[200px]"
+                  className="bg-white/5 border-white/20 text-white transition-all duration-200 focus:ring-2 focus:ring-[#FFE01B] min-h-[200px] font-mono text-sm"
                   placeholder="Enter terms and conditions"
                 />
               </div>
             </div>
-            <div className="flex gap-3 md:gap-4 w-12">
+            <div className="flex gap-3 md:gap-4">
               <Button
                 onClick={handleSubmit}
                 disabled={loading}
