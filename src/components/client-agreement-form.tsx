@@ -45,45 +45,56 @@ interface ClientAgreementFormData {
 interface ClientAgreementFormProps {
   onSubmitAction: (data: ClientAgreementFormData) => Promise<void>
   loading: boolean
-  onGenerateAIContent: (
+  onGenerateAIContentAction: (
     prompt: string,
     type: "terms" | "payment_terms" | "deliverables" | "scope"
   ) => Promise<void>   // <-- narrowed type
-  onGenerateAITerms: (type: "client" | "payment") => Promise<void>
+  onGenerateAITermsAction: (type: "client" | "payment") => Promise<void>
   aiLoading: boolean
 }
 
 
 const DEFAULT_RESPONSIBILITIES = `3.1 Service Provider (Finzie)
-• Source and manage qualified service providers based on project needs.
-• Coordinate project timelines, quality assurance, and communications.
-• Ensure completion of tasks within timelines and scope.
-• Provide replacements for underperforming providers within 3 working days.
+    • Source and manage qualified service providers based on project needs.
+    • Coordinate project timelines, quality assurance, and communications.
+    • Ensure completion of tasks within timelines and scope.
+    • Provide replacements for underperforming providers within 3 working days.
 
 3.2 Client
-• Provide clear briefs, goals, references, and timely feedback.
-• Approve freelancer costs and project scopes as required.
-• Make payments according to agreed terms.
-• Raise performance or delivery concerns promptly.`
+    • Provide clear briefs, goals, references, and timely feedback.
+    • Approve freelancer costs and project scopes as required.
+    • Make payments according to agreed terms.
+    • Raise performance or delivery concerns promptly.`
 
 const DEFAULT_TERMINATION = `4.1 Either party may terminate this Agreement with 7 days written notice.
-4.2 In the event of termination, the Client shall pay the Service Provider for all approved and completed work up to the date of termination, within 15 days of final invoicing.`
+4.2 In the event of termination, the Client shall pay the Service Provider for all approved and completed work 
+      up to the date of termination, within 15 days of final invoicing.`
 
-const DEFAULT_CONFIDENTIALITY = `5.1 Both parties agree to maintain the confidentiality of all sensitive, proprietary, or business-specific information shared during the engagement.
-5.2 All communication related to payment, scope, or freelancer engagements shall be handled exclusively through the Service Provider.
+const DEFAULT_CONFIDENTIALITY = `
+5.1 Both parties agree to maintain the confidentiality of all sensitive, proprietary, or 
+      business-specific information shared during the engagement.
+5.2 All communication related to payment, scope, or freelancer engagements shall be 
+      handled exclusively through the Service Provider.
 5.3 This clause will survive the termination of this Agreement.`
 
-const DEFAULT_GOVERNING_LAW = `This Agreement shall be governed by the laws of India and California. In the event of a dispute, both parties agree to first attempt to resolve the matter through informal negotiation. If unresolved, the matter may be referred to arbitration or legal proceedings in either Chhindwara, Madhya Pradesh, India or Santa Barbara, California, based on mutual agreement.`
+const DEFAULT_GOVERNING_LAW = `
+6.1 This Agreement shall be governed by the laws of India and California. In the event of a dispute, 
+      both parties agree to first attempt to resolve the matter through informal negotiation. If unresolved, 
+      the matter may be referred to arbitration or legal proceedings in either Chhindwara, Madhya Pradesh, 
+      India or Santa Barbara, California, based on mutual agreement.`
 
-const DEFAULT_OWNERSHIP = `8.1 All work produced under this Agreement will be the sole and exclusive property of the Client upon final payment.
-8.2 The Service Provider shall ensure that freelancers avoid the use of any unlicensed or third-party intellectual property unless provided or approved by the Client.
-8.3 Neither the Service Provider nor any engaged freelancer may publicly share or refer to the Client's brand, content, or projects without prior written approval.`
+const DEFAULT_OWNERSHIP = `
+8.1 All work produced under this Agreement will be the sole and exclusive property of the Client upon final payment.
+8.2 The Service Provider shall ensure that freelancers avoid the use of any unlicensed or third-party intellectual
+      property unless provided or approved by the Client.
+8.3 Neither the Service Provider nor any engaged freelancer may publicly share or refer to the Client's brand, content, 
+      or projects without prior written approval.`
 
 export function ClientAgreementForm({
   onSubmitAction,
   loading,
-  onGenerateAIContent,
-  onGenerateAITerms,
+  onGenerateAIContentAction,
+  onGenerateAITermsAction,
   aiLoading,
 }: ClientAgreementFormProps) {
   const [formData, setFormData] = useState<ClientAgreementFormData>({
@@ -276,7 +287,7 @@ export function ClientAgreementForm({
                   type="button"
                   size="sm"
                   variant="outline"
-                  onClick={() => onGenerateAITerms("payment")}
+                  onClick={() => onGenerateAITermsAction("payment")}
                   disabled={aiLoading}
                   className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
                 >
@@ -378,7 +389,7 @@ export function ClientAgreementForm({
                   type="button"
                   size="sm"
                   variant="outline"
-                  onClick={() => onGenerateAITerms("client")}
+                  onClick={() => onGenerateAITermsAction("client")}
                   disabled={aiLoading}
                   className="border-[#FFE01B]/30 text-[#FFE01B] hover:bg-[#FFE01B]/10 transition-all duration-200"
                 >
@@ -441,7 +452,7 @@ export function ClientAgreementForm({
       {/* AI Prompt Inputs Sidebar */}
       <div className="space-y-3 md:space-y-4">
         <AIPromptInput
-          onGenerateAction={(prompt, type) => onGenerateAIContent(
+          onGenerateAction={(prompt, type) => onGenerateAIContentAction(
             prompt,
             type as "terms" | "payment_terms" | "deliverables" | "scope"
           )}
@@ -452,7 +463,7 @@ export function ClientAgreementForm({
           icon={<Shield className="w-4 h-4" />}
         />
         <AIPromptInput
-          onGenerateAction={(prompt, type) => onGenerateAIContent(
+          onGenerateAction={(prompt, type) => onGenerateAIContentAction(
             prompt,
             type as "terms" | "payment_terms" | "deliverables" | "scope"
           )}
@@ -463,7 +474,7 @@ export function ClientAgreementForm({
           icon={<CalendarDays className="w-4 h-4" />}
         />
         <AIPromptInput
-          onGenerateAction={(prompt, type) => onGenerateAIContent(
+          onGenerateAction={(prompt, type) => onGenerateAIContentAction(
             prompt,
             type as "terms" | "payment_terms" | "deliverables" | "scope"
           )}

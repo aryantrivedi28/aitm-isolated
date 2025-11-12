@@ -30,40 +30,40 @@ interface FreelancerAgreementFormProps {
 
 // Clean, well-formatted default terms
 const DEFAULT_FREELANCER_TERMS = `1. PROFESSIONAL CONDUCT & COMMUNICATION
-    - Freelancers are expected to maintain the highest level of professionalism in all interactions, 
+    • Freelancers are expected to maintain the highest level of professionalism in all interactions, 
        both internal and external.
-    - All communication with clients must be courteous, respectful, and consistent with professional standards.
-    - Discussing payments directly with clients, soliciting projects independently, or engaging in side 
+    • All communication with clients must be courteous, respectful, and consistent with professional standards.
+    • Discussing payments directly with clients, soliciting projects independently, or engaging in side 
        communications unrelated to the engagement is strictly prohibited and will be considered a breach of contract.
-    - Attendance in scheduled client meetings is mandatory. In case of emergencies, a prior notice of at 
+    • Attendance in scheduled client meetings is mandatory. In case of emergencies, a prior notice of at 
        least 5-6 hours must be provided.
 
 2. COMMITMENT & DURATION
-    - The minimum engagement duration is two (2) months.
-    - Either party may terminate the agreement by providing a 10-day written notice.
-    - If the freelancer discontinues the engagement before completing the minimum duration, 50% of the 
+    • The minimum engagement duration is two (2) months.
+    • Either party may terminate the agreement by providing a 10-day written notice.
+    • If the freelancer discontinues the engagement before completing the minimum duration, 50% of the 
        pending payout will be deducted as a penalty.
 
 3. OWNERSHIP & ACCOUNTABILITY
-    - Freelancers are expected to take full ownership of their assigned work—from planning to final delivery.
-    - The company reserves the right to terminate the engagement without prior notice in cases of serious 
+    • Freelancers are expected to take full ownership of their assigned work—from planning to final delivery.
+    • The company reserves the right to terminate the engagement without prior notice in cases of serious 
        misconduct, repeated underperformance, or breach of trust.
 
 4. PERFORMANCE & DELIVERABLES
-    - Freelancers must meet deadlines, follow briefs accurately, and deliver high-quality work.
-    - Failure to meet agreed performance standards may result in a performance review, payment deductions, or termination.
-    - Specific deliverables, formats, and timelines will be communicated per project. Any anticipated delay 
+    • Freelancers must meet deadlines, follow briefs accurately, and deliver high-quality work.
+    • Failure to meet agreed performance standards may result in a performance review, payment deductions, or termination.
+    • Specific deliverables, formats, and timelines will be communicated per project. Any anticipated delay 
        must be reported in advance.
 
 5. CONFIDENTIALITY & CONFLICT OF INTEREST
-    - Freelancers shall not disclose, share, or misuse any confidential information, documents, strategies,
+    • Freelancers shall not disclose, share, or misuse any confidential information, documents, strategies,
        or trade secrets belonging to the company or its clients—both during and after the engagement.
-    - Any potential conflict of interest must be disclosed immediately. Freelancers are prohibited from 
+    • Any potential conflict of interest must be disclosed immediately. Freelancers are prohibited from 
        working with direct competitors without prior written approval.
 
 6. INTELLECTUAL PROPERTY RIGHTS
-    - All work created during the engagement shall be the exclusive property of the company or its respective clients.
-    - Freelancers waive any rights to reuse, reproduce, or republish any part of the work without prior written consent.`
+    • All work created during the engagement shall be the exclusive property of the company or its respective clients.
+    • Freelancers waive any rights to reuse, reproduce, or republish any part of the work without prior written consent.`
 
 export function FreelancerAgreementForm({
   onSubmitAction,
