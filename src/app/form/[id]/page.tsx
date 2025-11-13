@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { supabase } from "../../../lib/SupabaseAuthClient"
 import type { Form } from "../../../types/database"
 import { FileUpload } from "../../../components/file-upload"
+import { useRouter } from "next/navigation"
 
 interface FormPageProps {
   params: Promise<{
@@ -23,6 +24,7 @@ export default function FormPage({ params }: FormPageProps) {
 
   const [formData, setFormData] = useState<Record<string, any>>({})
   const [customResponses, setCustomResponses] = useState<Record<string, any>>({})
+  const router = useRouter()
 
   useEffect(() => {
     const resolveParams = async () => {
@@ -88,11 +90,10 @@ export default function FormPage({ params }: FormPageProps) {
 
     try {
       const submissionData: Record<string, any> = {
-        form_id: form?.id || formId, // Use the actual form UUID
+        form_id: form?.id || formId,
         custom_responses: customResponses,
       }
 
-      // Add all standard fields to submission data
       const standardFields = [
         "name",
         "email",
@@ -125,19 +126,23 @@ export default function FormPage({ params }: FormPageProps) {
       const data = await response.json()
 
       if (!response.ok) {
-        console.error("[v0] Submission failed:", data)
         throw new Error(data.error || "Failed to submit application")
       }
 
-      console.log("[v0] Submission successful:", data)
       setSubmitted(true)
+
+      // ✅ Redirect to freelancer dashboard after success
+      setTimeout(() => {
+        router.push("/get-hired/freelancer/dashboard")
+      }, 2000)
+
     } catch (err: any) {
-      console.error("[v0] Error in handleSubmit:", err)
       setError(err.message)
     } finally {
       setSubmitting(false)
     }
   }
+
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({

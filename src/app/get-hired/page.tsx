@@ -2,11 +2,24 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import {
-  Calendar, ExternalLink, CheckCircle, XCircle,
-  ClipboardList, Layers, Briefcase, Grid,
-  Search, Filter, Users, BarChart3,
-  Rocket, Target, Zap, Star, ArrowRight
+  Calendar,
+  ExternalLink,
+  CheckCircle,
+  XCircle,
+  ClipboardList,
+  Layers,
+  Briefcase,
+  Grid,
+  Search,
+  Users,
+  Rocket,
+  Target,
+  Zap,
+  Star,
+  ArrowRight,
+  User,
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 type Form = {
   id: string
@@ -29,6 +42,7 @@ export default function GetHiredPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState("all")
+  const router = useRouter()
 
   useEffect(() => {
     const fetchForms = async () => {
@@ -36,7 +50,7 @@ export default function GetHiredPage() {
         setIsLoading(true)
         // First try to fetch from the API
         const res = await fetch("/api/forms")
-        
+
         if (res.ok) {
           const data = await res.json()
           setForms(data.forms || [])
@@ -51,69 +65,45 @@ export default function GetHiredPage() {
         setIsLoading(false)
       }
     }
-    
+
     fetchForms()
   }, [])
 
   useEffect(() => {
     let results = forms
-    
+
     // Apply search filter
     if (searchTerm) {
-      results = results.filter(form => 
-        form.form_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        form.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        form.subcategory.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        form.industry.toLowerCase().includes(searchTerm.toLowerCase())
+      results = results.filter(
+        (form) =>
+          form.form_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          form.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          form.subcategory.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          form.industry.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     }
-    
+
     // Apply status filter
     if (activeFilter !== "all") {
-      results = results.filter(form => 
-        activeFilter === "active" ? form.is_active : !form.is_active
-      )
+      results = results.filter((form) => (activeFilter === "active" ? form.is_active : !form.is_active))
     }
-    
+
     setFilteredForms(results)
   }, [searchTerm, activeFilter, forms])
 
   const statusCounts = {
-    active: forms.filter(form => form.is_active).length,
-    inactive: forms.filter(form => !form.is_active).length,
-    total: forms.length
+    active: forms.filter((form) => form.is_active).length,
+    inactive: forms.filter((form) => !form.is_active).length,
+    total: forms.length,
   }
 
   return (
-    <div className="min-h-screen bg-[#fbf5e5] text-[#241C15] overflow-hidden pt-[100px] sm:pt-[120px] lg:pt-[120px]">
-      {/* Navigation - commented but kept as is */}
-      {/* <nav className="border-b border-gray-700 bg-[#241C15]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex-shrink-0 font-bold text-xl text-[#FFE01B]"
-              >
-                TalentConnect
-              </motion.div>
-            </div>
-            <div className="hidden md:block">
-              <div className="ml-4 flex items-center md:ml-6">
-                <button className="bg-[#FFE01B] hover:bg-yellow-300 text-black font-medium py-2 px-4 rounded-lg text-sm transition-colors">
-                  Create Profile
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav> */}
-
+    <div className="min-h-screen bg-[#fbf5e5] text-[#241C15] overflow-hidden pt-[90px] sm:pt-[100px] lg:pt-[100px]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Enhanced Hero Section */}
         <section className="text-center mb-12 relative overflow-hidden">
           <div className="relative z-10">
+            {/* Tagline */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -125,6 +115,7 @@ export default function GetHiredPage() {
               <ArrowRight className="h-4 w-4 text-[#241C15]" />
             </motion.div>
 
+            {/* Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -134,14 +125,27 @@ export default function GetHiredPage() {
               Available Opportunities
             </motion.h1>
 
+            {/* Subtext */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.6 }}
               className="text-xl text-[#241C15] max-w-3xl mx-auto mb-8 leading-relaxed"
             >
-              Connect with top companies and discover opportunities that match your skills and ambitions
+              Connect with top companies and discover opportunities that match your skills and ambitions.
             </motion.p>
+
+            {/* ✅ CTA Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => router.push("/get-hired/freelancer")}
+              transition={{ duration: 0.2 }}
+              className="group bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold px-8 py-4 rounded-xl text-base mt-6 shadow-md hover:shadow-lg transition-all flex items-center gap-2 mx-auto"
+            >
+              <User className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+              Visit Your Profile
+            </motion.button>
 
             {/* Feature Icons */}
             <motion.div
@@ -168,7 +172,7 @@ export default function GetHiredPage() {
 
         {/* Stats Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-2xl p-6 border border-[#241C15]/10 shadow-lg hover:shadow-xl transition-all duration-300"
@@ -184,7 +188,7 @@ export default function GetHiredPage() {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -218,14 +222,14 @@ export default function GetHiredPage() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              
+
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setActiveFilter("all")}
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    activeFilter === "all" 
-                      ? 'bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25' 
-                      : 'bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20'
+                    activeFilter === "all"
+                      ? "bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25"
+                      : "bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20"
                   }`}
                 >
                   All Forms
@@ -233,9 +237,9 @@ export default function GetHiredPage() {
                 <button
                   onClick={() => setActiveFilter("active")}
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    activeFilter === "active" 
-                      ? 'bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25' 
-                      : 'bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20'
+                    activeFilter === "active"
+                      ? "bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25"
+                      : "bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20"
                   }`}
                 >
                   Active
@@ -243,16 +247,16 @@ export default function GetHiredPage() {
                 <button
                   onClick={() => setActiveFilter("inactive")}
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                    activeFilter === "inactive" 
-                      ? 'bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25' 
-                      : 'bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20'
+                    activeFilter === "inactive"
+                      ? "bg-[#FFE01B] text-black shadow-lg shadow-[#FFE01B]/25"
+                      : "bg-white text-[#241C15] hover:bg-[#FFE01B] border border-[#241C15]/20"
                   }`}
                 >
                   Inactive
                 </button>
               </div>
             </div>
-            
+
             <div className="mt-4 text-sm text-[#241C15]/70">
               Showing {filteredForms.length} of {forms.length} forms
             </div>
@@ -304,7 +308,7 @@ export default function GetHiredPage() {
                       </span>
                     )}
                   </div>
-                  
+
                   <div className="mt-4 space-y-2 text-sm text-[#241C15]/80">
                     <div className="flex items-center gap-2">
                       <Layers className="w-4 h-4 text-[#241C15]/60" />
@@ -323,13 +327,13 @@ export default function GetHiredPage() {
                       <span>{new Date(form.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-4">
                     {form.is_active ? (
                       <motion.a
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        href={`/form/${form.id}`}
+                        href={`/get-hired/verify-and-apply/${form.id}`}
                         className="block w-full text-center bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
                         Apply Now <ExternalLink className="inline w-4 h-4 ml-1" />
@@ -343,7 +347,7 @@ export default function GetHiredPage() {
                 </motion.div>
               ))
             ) : (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="text-center py-12 bg-white rounded-2xl border border-[#241C15]/10 shadow-lg"
@@ -367,31 +371,31 @@ export default function GetHiredPage() {
                 <tr>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <ClipboardList className="w-4 h-4 text-[#241C15]" /> 
+                      <ClipboardList className="w-4 h-4 text-[#241C15]" />
                       Opportunity Name
                     </div>
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-[#241C15]" /> 
+                      <Layers className="w-4 h-4 text-[#241C15]" />
                       Category
                     </div>
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <Grid className="w-4 h-4 text-[#241C15]" /> 
+                      <Grid className="w-4 h-4 text-[#241C15]" />
                       Subcategory
                     </div>
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-[#241C15]" /> 
+                      <Briefcase className="w-4 h-4 text-[#241C15]" />
                       Industry
                     </div>
                   </th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-[#241C15]">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-[#241C15]" /> 
+                      <Calendar className="w-4 h-4 text-[#241C15]" />
                       Created
                     </div>
                   </th>

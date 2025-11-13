@@ -23,6 +23,8 @@ export default function Footer() {
   if (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") return null;
   if (pathname.startsWith("/form/") && pathname !== "/form") return null;
   if (pathname.startsWith("/find-talent/") && pathname !== "/find-talent") return null;
+  if (pathname.startsWith("/get-hired/") && pathname !== "/get-hired") return null;
+
 
 
 

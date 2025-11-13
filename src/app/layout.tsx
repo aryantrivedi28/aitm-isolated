@@ -29,9 +29,9 @@ export default function RootLayout({
         <Header />
 
         {/* ✅ Page transition wrapper */}
-        <PageTransition>
+        {/* <PageTransition> */}
           <main className="flex-grow">{children}</main>
-        </PageTransition>
+        {/* </PageTransition> */}
 
         {/* ✅ Toast notifications */}
         <Toaster />
