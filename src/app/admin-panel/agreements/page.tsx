@@ -1073,8 +1073,8 @@ Freelancers waive any rights to reuse, reproduce, or republish any part of the w
             <ClientAgreementForm
               onSubmitAction={handleClientSubmit}
               loading={loading}
-              onGenerateAIContent={generateAIContent}
-              onGenerateAITerms={generateAITerms}
+              onGenerateAIContentAction={generateAIContent}
+              onGenerateAITermsAction={generateAITerms}
               aiLoading={aiLoading}
             />
           </TabsContent>
