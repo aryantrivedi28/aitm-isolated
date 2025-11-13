@@ -152,7 +152,7 @@ export default function FreelancerDashboardPage() {
                   <FileText className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/get-hired/freelancer/jobs">
+              {/* <Link href="/get-hired/freelancer/jobs">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -161,7 +161,7 @@ export default function FreelancerDashboardPage() {
                 >
                   <Briefcase className="h-4 w-4" />
                 </Button>
-              </Link>
+              </Link> */}
               <Link href="/get-hired/freelancer/profile">
                 <Button
                   variant="ghost"
