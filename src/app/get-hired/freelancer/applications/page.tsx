@@ -213,7 +213,7 @@ export default function FreelancerApplications() {
                   <span>Dashboard</span>
                 </Button>
               </Link>
-              <Link href="/get-hired/freelancer/jobs">
+              {/* <Link href="/get-hired/freelancer/jobs">
                 <Button
                   variant="ghost"
                   size="lg"
@@ -223,7 +223,7 @@ export default function FreelancerApplications() {
                   <Briefcase className="h-4 w-4 xl:h-5 xl:w-5" />
                   <span>Browse Jobs</span>
                 </Button>
-              </Link>
+              </Link> */}
               <Link href="/get-hired/freelancer/profile">
                 <Button
                   variant="ghost"
@@ -254,11 +254,11 @@ export default function FreelancerApplications() {
                   <Briefcase className="h-4 w-4" />
                 </Button>
               </Link>
-              <Link href="/get-hired/freelancer/jobs">
+              {/* <Link href="/get-hired/freelancer/jobs">
                 <Button variant="ghost" size="sm" className="p-2">
                   <Briefcase className="h-4 w-4" />
                 </Button>
-              </Link>
+              </Link> */}
               <Link href="/get-hired/freelancer/profile">
                 <Button variant="ghost" size="sm" className="p-2">
                   <User className="h-4 w-4" />

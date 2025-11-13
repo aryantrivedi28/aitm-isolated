@@ -107,7 +107,7 @@ export default function FreelancerDashboardPage() {
                   <span>Applications</span>
                 </Button>
               </Link>
-              <Link href="/get-hired/freelancer/jobs">
+              {/* <Link href="/get-hired/freelancer/jobs">
                 <Button
                   variant="ghost"
                   size="lg"
@@ -117,7 +117,7 @@ export default function FreelancerDashboardPage() {
                   <Briefcase className="h-4 w-4 xl:h-5 xl:w-5" />
                   <span>Browse Jobs</span>
                 </Button>
-              </Link>
+              </Link> */}
               <Link href="/get-hired/freelancer/profile">
                 <Button
                   variant="ghost"
@@ -211,7 +211,7 @@ export default function FreelancerDashboardPage() {
                     <span>Applications</span>
                   </Button>
                 </Link>
-                <Link href="/get-hired/freelancer/jobs">
+                {/* <Link href="/get-hired/freelancer/jobs">
                   <Button
                     variant="ghost"
                     className="w-full justify-start space-x-3 text-base"
@@ -221,7 +221,7 @@ export default function FreelancerDashboardPage() {
                     <Briefcase className="h-4 w-4" />
                     <span>Browse Jobs</span>
                   </Button>
-                </Link>
+                </Link> */}
                 <Link href="/get-hired/freelancer/profile">
                   <Button
                     variant="ghost"
