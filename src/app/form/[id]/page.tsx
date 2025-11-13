@@ -113,8 +113,6 @@ export default function FormPage({ params }: FormPageProps) {
         }
       })
 
-      console.log("[v0] Submitting form data:", submissionData)
-
       const response = await fetch("/api/submissions", {
         method: "POST",
         headers: {
@@ -321,28 +319,28 @@ export default function FormPage({ params }: FormPageProps) {
     )
   }
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-[#241C15] flex items-center justify-center px-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="text-center bg-white rounded-lg p-8 max-w-md mx-auto"
-        >
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Application Submitted!</h2>
-          <p className="text-gray-600 mb-6">
-            Thank you for your interest. We'll review your application and get back to you soon.
-          </p>
-        </motion.div>
-      </div>
-    )
-  }
+  // if (submitted) {
+  //   return (
+  //     <div className="min-h-screen bg-[#241C15] flex items-center justify-center px-4">
+  //       <motion.div
+  //         initial={{ opacity: 0, scale: 0.9 }}
+  //         animate={{ opacity: 1, scale: 1 }}
+  //         transition={{ duration: 0.6 }}
+  //         className="text-center bg-white rounded-lg p-8 max-w-md mx-auto"
+  //       >
+  //         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+  //           <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+  //             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+  //           </svg>
+  //         </div>
+  //         <h2 className="text-2xl font-bold text-gray-900 mb-2">Application Submitted!</h2>
+  //         <p className="text-gray-600 mb-6">
+  //           Thank you for your interest. We'll review your application and get back to you soon.
+  //         </p>
+  //       </motion.div>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="min-h-screen bg-[#241C15] py-12 px-4 pt-[80px] sm:pt-[100px] lg:pt-[130px]">
