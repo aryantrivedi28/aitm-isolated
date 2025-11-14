@@ -1,36 +1,18 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
+import { supabase } from "../../../../../lib/SupabaseAuthClient"
 
 export async function POST(request: NextRequest) {
-  console.log("🟢 [API] /api/freelancer/auth/verify-otp called")
 
   try {
     const { email, otp } = await request.json()
-    console.log("📩 Request body:", { email, otp })
 
     if (!email || !otp) {
       return NextResponse.json({ error: "Email and OTP are required" }, { status: 400 })
     }
 
     const cookieStore = await cookies()
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          },
-        },
-      }
-    )
 
     // 🔍 Fetch freelancer
     const { data: freelancer, error: fetchError } = await supabase
