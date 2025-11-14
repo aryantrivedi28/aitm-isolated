@@ -90,12 +90,10 @@ export default function FreelancerOnboardingPage() {
       // Step 1: Upload resume
       const resumeUrl = await uploadFile(resume, "resume")
       setProgress((p) => ({ ...p, resume: 50 }))
-      console.log("📄 Resume uploaded:", resumeUrl)
 
       // Step 2: Upload photo
       const photoUrl = await uploadFile(photo, "photo")
       setProgress((p) => ({ ...p, photo: 50 }))
-      console.log("🖼️ Photo uploaded:", photoUrl)
 
       // Step 3: Parse resume via AI
       const parseResponse = await fetch("/api/freelancer/parse-resume", {
@@ -106,7 +104,6 @@ export default function FreelancerOnboardingPage() {
       })
       const parseData = await parseResponse.json()
       if (!parseResponse.ok) throw new Error(parseData.error || "Failed to parse resume")
-      console.log("🧩 [DEBUG] Parsed data:", parseData)
 
       const parsed = parseData.profile || parseData
 
@@ -137,8 +134,6 @@ export default function FreelancerOnboardingPage() {
         availability: "full-time",
       }
 
-      console.log("📤 [DEBUG] Sending full payload to Supabase:", payload)
-
       const saveResponse = await fetch("/api/freelancer/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -148,8 +143,6 @@ export default function FreelancerOnboardingPage() {
 
       const saveData = await saveResponse.json()
       if (!saveResponse.ok) throw new Error(saveData.error || "Failed to save profile")
-
-      console.log("✅ [DEBUG] Profile saved successfully:", saveData)
       setProgress({ resume: 100, photo: 100 })
 
       // Step 5: Redirect to dashboard after short delay

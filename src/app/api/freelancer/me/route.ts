@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
+import { supabase } from "../../../../lib/SupabaseAuthClient"
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,25 +14,6 @@ export async function GET(request: NextRequest) {
 
     const session = JSON.parse(sessionCookie.value)
     const freelancerId = session.id
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
-            } catch {
-              // Handle cookie setting errors
-            }
-          },
-        },
-      },
-    )
 
     const { data: freelancer } = await supabase.from("freelancers").select("*").eq("id", freelancerId).single()
 

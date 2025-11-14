@@ -1,148 +1,103 @@
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
-import { OpenAIProfileRater } from "../../../../lib/open-ai-profile-rater"
 import { supabase } from "../../../../lib/SupabaseAuthClient"
+import { OpenAIProfileRater } from "../../../../lib/open-ai-profile-rater"
+import { cookies } from "next/headers"
 
 const DEFAULT_AVATAR =
-  "https://cdn-icons-png.flaticon.com/512/3177/3177440.png" // fallback image if no photo
+  "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
 
-// 🟢 GET — Fetch Freelancer Profile + Image
-export async function GET(request: NextRequest) {
-  console.log("📥 [DEBUG] GET /api/freelancer/profile called")
+// 🛠️ Helper — Get logged-in freelancer ID
+async function getFreelancerId() {
+  const cookieStore = await cookies()
+  const sessionCookie = cookieStore.get("freelancer_session")
+
+  if (!sessionCookie?.value) return null
 
   try {
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get("freelancer_session")
-
-    if (!sessionCookie?.value) {
-      console.warn("⚠️ [DEBUG] Missing freelancer_session cookie")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const session = JSON.parse(sessionCookie.value)
-    const freelancerId = session.id
+    return session.id
+  } catch {
+    return null
+  }
+}
 
+// 📌 GET — Fetch Profile
+export async function GET() {
+  try {
+    const freelancerId = await getFreelancerId()
+    if (!freelancerId)
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    // Fetch full freelancer profile
     const { data: profile, error } = await supabase
       .from("freelancers")
       .select("*")
       .eq("id", freelancerId)
       .single()
 
-
-    // 🖼️ Generate valid image URL
-    let photoUrl = profile?.photo_url || null
-    if (!photoUrl) {
-      console.log("ℹ️ [DEBUG] No photo_url found in profile — using default avatar")
-      photoUrl = DEFAULT_AVATAR
-    }
-    console.log("✅ [DEBUG] Fetched profile photo", photoUrl)
+    if (error || !profile)
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 })
 
     return NextResponse.json({
       profile: {
         ...profile,
-        photo_url: photoUrl,
+        photo_url: profile.photo_url || DEFAULT_AVATAR,
       },
     })
   } catch (error) {
-    console.error("🔥 [DEBUG] Get profile error:", error)
+    console.error("GET Profile Error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
 
-// 🟢 PUT — Update Freelancer Profile + Rating
+// 📌 PUT — Update Profile + Generate Rating
 export async function PUT(request: NextRequest) {
-  console.log("📤 [DEBUG] PUT /api/freelancer/profile called")
-
   try {
-    const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get("freelancer_session")
-
-    if (!sessionCookie?.value) {
-      console.warn("⚠️ [DEBUG] Missing freelancer_session cookie")
+    const freelancerId = await getFreelancerId()
+    if (!freelancerId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
 
-    const session = JSON.parse(sessionCookie.value)
-    const freelancerId = session.id
     const updates = await request.json()
+    const timestamp = new Date().toISOString()
 
-
-    // 🧠 Prepare data for AI rating
-    const profileForRating = {
-      name: updates.name,
-      title: updates.title,
-      bio: updates.bio,
-      skills: updates.skills,
-      experience_years: updates.experience_years,
-      portfolio_url: updates.portfolio_url,
-      github_url: updates.github_url,
-      education: updates.education,
-      certifications: updates.certifications,
-      hourly_rate: updates.hourly_rate,
-      projects: updates.projects,
-    }
-
-    let ratingData: { profile_rating: number | null; rating_feedback: any[] } = {
-      profile_rating: null,
-      rating_feedback: [],
-    }
+    // 🧠 AI Rating
+    let profile_rating: number | null = null
+    let rating_feedback: string[] = []
 
     try {
       const rater = new OpenAIProfileRater()
-      const ratingResult = await rater.calculateAverageRating(profileForRating)
-      ratingData = {
-        profile_rating: ratingResult.rating,
-        rating_feedback: ratingResult.feedback,
-      }
-      console.log("[Profile Update] ✅ Rating calculated:", ratingData)
-    } catch (ratingError) {
-      console.error("[Profile Update] ⚠️ Rating calculation error:", ratingError)
+      const result = await rater.calculateAverageRating(updates)
+      profile_rating = result.rating
+      rating_feedback = result.feedback
+    } catch (err) {
+      console.warn("⚠️ AI Rating skipped due to error:", err)
     }
 
+    // 🔄 Final update payload
     const updatedFields = {
       ...updates,
-      ...ratingData,
-      updated_at: new Date().toISOString(),
+      profile_rating,
+      rating_feedback,
+      updated_at: timestamp,
     }
 
-    // 🧾 Verify freelancer exists
-    const { data: existingFreelancer } = await supabase
-      .from("freelancers")
-      .select("id")
-      .eq("id", freelancerId)
-      .single()
-
-    if (!existingFreelancer) {
-      return NextResponse.json({ error: "Freelancer not found" }, { status: 404 })
-    }
-
-    // 📝 Update profile
-    const { data: updatedProfile, error: updateError } = await supabase
+    const { data: updatedProfile, error } = await supabase
       .from("freelancers")
       .update(updatedFields)
       .eq("id", freelancerId)
       .select()
       .single()
 
-    if (updateError) {
-      console.error("[Profile Update] ❌ Supabase update error:", updateError)
-      return NextResponse.json({ error: "Failed to update profile" }, { status: 500 })
-    }
+    if (error || !updatedProfile)
+      return NextResponse.json({ error: "Update failed" }, { status: 500 })
 
-    // 🖼️ Attach photo URL (default if missing)
-    const finalProfile = {
-      ...updatedProfile,
-      photo_url: updatedProfile.photo_url || DEFAULT_AVATAR,
-    }
-
-    console.log("✅ [Profile Update] Successfully updated profile for:", freelancerId)
-
-    return NextResponse.json({ profile: finalProfile })
+    return NextResponse.json({
+      profile: {
+        ...updatedProfile,
+        photo_url: updatedProfile.photo_url || DEFAULT_AVATAR,
+      },
+    })
   } catch (error) {
-    console.error("🔥 [DEBUG] Update profile error:", error)
+    console.error("PUT Profile Error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

@@ -432,7 +432,7 @@ export default function FreelancerDashboardPage() {
                         </div>
 
                         {/* Apply Button */}
-                        <Link href={`/get-hired/freelancer/verify/${form.id}`} className="flex-shrink-0 self-start lg:self-center">
+                        <Link href={`/form/${form.id}`} className="flex-shrink-0 self-start lg:self-center">
                           <Button
                             size="sm"
                             className="font-semibold transition-all duration-200 hover:shadow-md group-hover:translate-x-1 flex items-center gap-2 w-full lg:w-auto text-xs sm:text-sm"
