@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       otp_verified: false,
       updated_at: timestamp,
     }
-    
+
     if (!freelancer) {
       upsertData["name"] = ""
       upsertData["created_at"] = timestamp
@@ -48,12 +48,14 @@ export async function POST(request: NextRequest) {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
-      secure: Number(process.env.SMTP_PORT) === 587, // secure only if port 465
+      secure: false, // ❌ SSL disabled for port 587
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      requireTLS: true, // 🔒 use STARTTLS upgrade
     })
+
 
     // Send OTP Email
     await transporter.sendMail({
