@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
 import { OpenAIProfileRater } from "../../../../lib/open-ai-profile-rater"
+import { supabase } from "../../../../lib/SupabaseAuthClient"
 
 const DEFAULT_AVATAR =
   "https://cdn-icons-png.flaticon.com/512/3177/3177440.png" // fallback image if no photo
@@ -22,24 +23,6 @@ export async function GET(request: NextRequest) {
     const session = JSON.parse(sessionCookie.value)
     const freelancerId = session.id
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll: () => cookieStore.getAll(),
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch (e) {
-              console.error("⚠️ [DEBUG] Cookie set error:", e)
-            }
-          },
-        },
-      }
-    )
 
     // Fetch full freelancer profile
     const { data: profile, error } = await supabase
@@ -86,24 +69,6 @@ export async function PUT(request: NextRequest) {
     const freelancerId = session.id
     const updates = await request.json()
 
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll: () => cookieStore.getAll(),
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch (e) {
-              console.error("⚠️ [DEBUG] Cookie set error:", e)
-            }
-          },
-        },
-      }
-    )
 
     // 🧠 Prepare data for AI rating
     const profileForRating = {

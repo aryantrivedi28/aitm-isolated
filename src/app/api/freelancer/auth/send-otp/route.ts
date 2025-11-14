@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js"
 import { type NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
+import { supabase } from "../../../../../lib/SupabaseAuthClient"
 
 export async function POST(request: NextRequest) {
   console.log("🟢 [API] /api/freelancer/auth/send-otp called")
@@ -12,12 +13,6 @@ export async function POST(request: NextRequest) {
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 })
     }
-
-    // Create Supabase admin client
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    )
 
     // Check if freelancer already exists
     const { data: existingFreelancer, error: fetchError } = await supabase

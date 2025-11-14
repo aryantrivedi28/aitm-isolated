@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
+import { supabase } from "../../../../lib/SupabaseAuthClient"
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,25 +19,6 @@ export async function POST(request: NextRequest) {
     if (!formId || !answers) {
       return NextResponse.json({ error: "Form ID and answers are required" }, { status: 400 })
     }
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet) {
-            try {
-              cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
-            } catch {
-              // Handle cookie setting errors
-            }
-          },
-        },
-      },
-    )
 
     // Create submission
     const { data: submission, error } = await supabase
