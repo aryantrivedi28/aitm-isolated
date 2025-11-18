@@ -49,7 +49,8 @@ export default function Header() {
     (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") ||
     (pathname.startsWith("/form/") && pathname !== "/form") ||
     (pathname.startsWith("/find-talent/") && pathname !== "/find-talent") ||
-    (pathname.startsWith("/get-hired/") && pathname !== "/get-hired")
+    (pathname.startsWith("/get-hired/") && pathname !== "/get-hired") ||
+    (pathname.startsWith("/freelancer/") && pathname !== "/freelancer")
 
   ) {
     return null;
