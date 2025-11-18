@@ -1,27 +1,44 @@
 import { generateText } from "ai"
-import { openai } from "@ai-sdk/openai" // ✅ Use direct OpenAI provider
+import { openai } from "@ai-sdk/openai"
 
 // -------------------------------
 // TYPE DEFINITIONS
 // -------------------------------
 
 export interface FreelancerProject {
-  name: string
-  description?: string
+  name: string | null
+  description?: string | null
+}
+
+export interface WorkExperience {
+  company: string | null
+  role: string | null
+  start_date: string | null
+  end_date: string | null
+  description: string | null
+}
+
+export interface EducationEntry {
+  degree: string | null
+  institution: string | null
+  year: string | null
 }
 
 export interface FreelancerProfileData {
-  name?: string
-  title?: string
-  bio?: string
-  skills?: string[]
-  experience_years?: number
-  portfolio_url?: string
-  github_url?: string
-  education?: string[]
-  certifications?: string[]
-  hourly_rate?: number | null
-  projects?: FreelancerProject[]
+  name: string | null
+  email: string | null
+  phone: string | null
+  title: string | null
+  bio: string | null
+  skills: string[]
+  experience_years: number | null
+  portfolio_url: string | null
+  github_url: string | null
+  linkedin_url: string | null
+  education: EducationEntry[]
+  certifications: string[]
+  work_experience: WorkExperience[]
+  projects: FreelancerProject[]
 }
 
 // -------------------------------
@@ -29,9 +46,6 @@ export interface FreelancerProfileData {
 // -------------------------------
 
 export class OpenAIProfileRater {
-  /**
-   * Evaluates a freelancer profile and returns a rating, feedback, and analysis.
-   */
   async calculateAverageRating(
     profileData: FreelancerProfileData
   ): Promise<{ rating: number; feedback: string[]; analysis: string }> {
@@ -40,90 +54,61 @@ export class OpenAIProfileRater {
 
       const { text } = await generateText({
         model: openai("gpt-4o-mini"),
-        temperature: 0.5,
-        maxOutputTokens: 1000,
+        temperature: 0.4,
+        maxOutputTokens: 900,
         prompt,
       })
 
-      const result = this.parseResponse(text)
-      return result
+      return this.parseResponse(text)
     } catch (error) {
       console.error("[OpenAI Profile Rater] Error:", error)
       return {
         rating: 5,
-        feedback: ["Unable to rate profile at this time"],
-        analysis: "Rating unavailable due to parsing or API error.",
+        feedback: ["AI evaluation unavailable"],
+        analysis: "Error parsing evaluation result.",
       }
     }
   }
 
-  /**
-   * Builds a structured evaluation prompt.
-   */
   private buildPrompt(data: FreelancerProfileData): string {
     return `
-You are an expert freelancer profile evaluator. Analyze the profile below and respond ONLY with valid JSON.
+Evaluate this freelancer profile and respond ONLY with valid JSON:
 
-Profile Data:
-- Name: ${data.name || "Not provided"}
-- Title: ${data.title || "Not provided"}
-- Bio: ${data.bio || "Not provided"}
-- Skills: ${data.skills?.join(", ") || "Not provided"}
-- Experience Years: ${data.experience_years ?? "Not provided"}
-- Hourly Rate: ${data.hourly_rate ? "$" + data.hourly_rate : "Not provided"}
-- Portfolio: ${data.portfolio_url || "Not provided"}
-- GitHub: ${data.github_url || "Not provided"}
-- Education: ${data.education?.join(", ") || "Not provided"}
-- Certifications: ${data.certifications?.join(", ") || "Not provided"}
-- Projects: ${
-      data.projects?.map((p) => p.name || "Unnamed").join(", ") || "Not provided"
-    }
+Name: ${data.name}
+Title: ${data.title}
+Bio: ${data.bio}
+Skills: ${data.skills.join(", ")}
+Experience: ${data.experience_years}
+Portfolio: ${data.portfolio_url}
+GitHub: ${data.github_url}
+Education: ${data.education.map((e) => e.degree).join(", ")}
+Projects: ${data.projects.map((p) => p.name).join(", ")}
 
-Evaluation Criteria:
-1. Profile completeness and clarity
-2. Experience depth and relevance
-3. Skills quality and modernity
-4. Communication quality (bio, tone)
-5. Professional presentation (links, structure)
-6. Specialization or niche value
-
-Respond ONLY in this JSON structure (no markdown, no commentary):
+Respond using ONLY this structure:
 
 {
-  "rating": <number 1–10>,
-  "feedback": [<list of concrete improvement points>],
-  "analysis": "<short paragraph with summary>"
-}
-`
+  "rating": <number 1 to 10>,
+  "feedback": [ "short actionable improvement point" ],
+  "analysis": "short explanation"
+}`
   }
 
-  /**
-   * Parses AI response and validates JSON structure.
-   */
-  private parseResponse(text: string): {
-    rating: number
-    feedback: string[]
-    analysis: string
-  } {
+  private parseResponse(text: string) {
     try {
-      const jsonMatch = text.match(/\{[\s\S]*\}/)
-      if (!jsonMatch) throw new Error("No valid JSON in response")
-
-      const parsed = JSON.parse(jsonMatch[0])
+      const clean = text.trim().replace(/```json|```/g, "")
+      const json = JSON.parse(clean)
 
       return {
-        rating: Math.max(1, Math.min(10, parsed.rating || 5)),
-        feedback: Array.isArray(parsed.feedback)
-          ? parsed.feedback
-          : ["No feedback provided"],
-        analysis: parsed.analysis || "No analysis provided",
+        rating: Math.max(1, Math.min(10, json.rating ?? 5)),
+        feedback: json.feedback ?? ["No feedback provided"],
+        analysis: json.analysis ?? "No analysis provided",
       }
-    } catch (err) {
-      console.error("[Profile Rater] Parse error:", err)
+    } catch (e) {
+      console.error("Rating Parse Error:", e)
       return {
         rating: 5,
-        feedback: ["Failed to interpret AI rating output."],
-        analysis: "AI output could not be parsed into valid JSON.",
+        feedback: ["Invalid response from evaluator"],
+        analysis: "Parsing failed",
       }
     }
   }
@@ -133,77 +118,104 @@ Respond ONLY in this JSON structure (no markdown, no commentary):
 // RESUME PARSER FUNCTION
 // -------------------------------
 
-export async function parseResumeToProfile(resumeText: string): Promise<FreelancerProfileData> {
+export async function parseResumeToProfile(
+  resumeText: string
+): Promise<FreelancerProfileData> {
   try {
     const { text } = await generateText({
       model: openai("gpt-4o-mini"),
-      temperature: 0.2,
-      maxOutputTokens: 1200,
+      temperature: 0.1,
+      maxOutputTokens: 2000,
       prompt: `
-You are a professional resume parser. Convert the following resume text into a well-structured JSON profile.
+You are an expert Resume Parser. Parse the raw input text extracted from a resume.
 
-Resume text:
+Resume:
 """
-${resumeText.slice(0, 8000)}
+${resumeText.slice(0, 9000)}
 """
 
-Extract and format the following fields as accurately as possible:
+Return ONLY valid JSON with this EXACT structure:
+
 {
-  "name": string,
-  "title": string,
-  "bio": string,
+  "name": string | null,
+  "email": string | null,
+  "phone": string | null,
+  "title": string | null,
+  "bio": string | null,
   "skills": string[],
-  "experience_years": number,
-  "portfolio_url": string,
-  "github_url": string,
-  "education": string[],
+  "experience_years": number | null,
+  "portfolio_url": string | null,
+  "github_url": string | null,
+  "linkedin_url": string | null,
+  "education": [
+    {
+      "degree": string | null,
+      "institution": string | null,
+      "year": string | null
+    }
+  ],
   "certifications": string[],
-  "projects": [{"name": string, "description": string}],
-  "hourly_rate": number | null
+  "projects": [
+    {
+      "name": string | null,
+      "description": string | null
+    }
+  ],
+  "work_experience": [
+    {
+      "company": string | null,
+      "role": string | null,
+      "start_date": string | null,
+      "end_date": string | null,
+      "description": string | null
+    }
+  ]
 }
 
-Return ONLY valid JSON with no commentary.
-`,
+No markdown, no commentary.
+`
     })
 
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) throw new Error("No JSON found in AI response")
+    const clean = text.trim().replace(/```json|```/g, "")
+    const parsed = JSON.parse(clean)
 
-    const parsed = JSON.parse(jsonMatch[0])
-
-    // Normalize some values
     return {
-      name: parsed.name?.trim() || "",
-      title: parsed.title?.trim() || "",
-      bio: parsed.bio?.trim() || "",
-      skills: Array.isArray(parsed.skills) ? parsed.skills : [],
-      experience_years: Number(parsed.experience_years) || 0,
-      portfolio_url: parsed.portfolio_url || "",
-      github_url: parsed.github_url || "",
+      name: parsed.name ?? null,
+      email: parsed.email ?? null,
+      phone: parsed.phone ?? null,
+      title: parsed.title ?? null,
+      bio: parsed.bio ?? null,
+      skills: parsed.skills ?? [],
+      experience_years: parsed.experience_years ?? null,
+      portfolio_url: parsed.portfolio_url ?? null,
+      github_url: parsed.github_url ?? null,
+      linkedin_url: parsed.linkedin_url ?? null,
       education: Array.isArray(parsed.education) ? parsed.education : [],
       certifications: Array.isArray(parsed.certifications)
         ? parsed.certifications
         : [],
+      work_experience: Array.isArray(parsed.work_experience)
+        ? parsed.work_experience
+        : [],
       projects: Array.isArray(parsed.projects) ? parsed.projects : [],
-      hourly_rate:
-        typeof parsed.hourly_rate === "number"
-          ? parsed.hourly_rate
-          : Number(parsed.hourly_rate) || null,
     }
   } catch (error) {
-    console.error("[parseResumeToProfile] Error:", error)
+    console.error("[parseResumeToProfile Error]:", error)
     return {
-      name: "",
-      title: "",
-      bio: "",
+      name: null,
+      email: null,
+      phone: null,
+      title: null,
+      bio: null,
       skills: [],
-      experience_years: 0,
-      portfolio_url: "",
-      github_url: "",
+      experience_years: null,
+      portfolio_url: null,
+      github_url: null,
+      linkedin_url: null,
       education: [],
       certifications: [],
+      work_experience: [],
       projects: [],
-      hourly_rate: null,
     }
   }
 }

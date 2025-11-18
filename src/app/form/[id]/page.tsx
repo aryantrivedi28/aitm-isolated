@@ -83,6 +83,65 @@ export default function FormPage({ params }: FormPageProps) {
     fetchForm()
   }, [formId])
 
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setSubmitting(true)
+  //   setError(null)
+
+  //   try {
+  //     const submissionData: Record<string, any> = {
+  //       form_id: form?.id || formId,
+  //       custom_responses: customResponses,
+  //     }
+
+  //     const standardFields = [
+  //       "name",
+  //       "email",
+  //       "phone",
+  //       "portfolio_link",
+  //       "github_link",
+  //       "resume_link",
+  //       "years_experience",
+  //       "proposal_link",
+  //     ]
+
+  //     standardFields.forEach((field: string) => {
+  //       if (field === "years_experience") {
+  //         submissionData[field] = formData[field] ? Number(formData[field]) : null
+  //       } else {
+  //         submissionData[field] = formData[field] || null
+  //       }
+  //     })
+
+  //     const response = await fetch("/api/submissions", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(submissionData),
+  //     })
+
+  //     const data = await response.json()
+
+  //     if (!response.ok) {
+  //       throw new Error(data.error || "Failed to submit application")
+  //     }
+
+  //     setSubmitted(true)
+
+  //     // ✅ Redirect to freelancer dashboard after success
+  //     // setTimeout(() => {
+  //     //   router.push("/get-hired/freelancer/dashboard")
+  //     // }, 2000)
+
+  //   } catch (err: any) {
+  //     setError(err.message)
+  //   } finally {
+  //     setSubmitting(false)
+  //   }
+  // }
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
@@ -94,6 +153,7 @@ export default function FormPage({ params }: FormPageProps) {
         custom_responses: customResponses,
       }
 
+      // Map form data to match freelancer_submissions table
       const standardFields = [
         "name",
         "email",
@@ -113,6 +173,7 @@ export default function FormPage({ params }: FormPageProps) {
         }
       })
 
+      // Submit to your API
       const response = await fetch("/api/submissions", {
         method: "POST",
         headers: {
@@ -129,10 +190,12 @@ export default function FormPage({ params }: FormPageProps) {
 
       setSubmitted(true)
 
-      // ✅ Redirect to freelancer dashboard after success
-      setTimeout(() => {
-        router.push("/get-hired/freelancer/dashboard")
-      }, 2000)
+      // Optional: You can redirect to the public profile after submission
+      // if (data.freelancerId) {
+      //   setTimeout(() => {
+      //     router.push(`/freelancer/temp/${data.freelancerId}`)
+      //   }, 2000)
+      // }
 
     } catch (err: any) {
       setError(err.message)
@@ -319,28 +382,28 @@ export default function FormPage({ params }: FormPageProps) {
     )
   }
 
-  // if (submitted) {
-  //   return (
-  //     <div className="min-h-screen bg-[#241C15] flex items-center justify-center px-4">
-  //       <motion.div
-  //         initial={{ opacity: 0, scale: 0.9 }}
-  //         animate={{ opacity: 1, scale: 1 }}
-  //         transition={{ duration: 0.6 }}
-  //         className="text-center bg-white rounded-lg p-8 max-w-md mx-auto"
-  //       >
-  //         <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-  //           <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-  //             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-  //           </svg>
-  //         </div>
-  //         <h2 className="text-2xl font-bold text-gray-900 mb-2">Application Submitted!</h2>
-  //         <p className="text-gray-600 mb-6">
-  //           Thank you for your interest. We'll review your application and get back to you soon.
-  //         </p>
-  //       </motion.div>
-  //     </div>
-  //   )
-  // }
+  if (submitted) {
+    return (
+      <div className="min-h-screen bg-[#241C15] flex items-center justify-center px-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="text-center bg-white rounded-lg p-8 max-w-md mx-auto"
+        >
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Application Submitted!</h2>
+          <p className="text-gray-600 mb-6">
+            Thank you for your interest. We'll review your application and get back to you soon.
+          </p>
+        </motion.div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-[#241C15] py-12 px-4 pt-[80px] sm:pt-[100px] lg:pt-[130px]">
