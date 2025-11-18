@@ -333,7 +333,7 @@ export default function GetHiredPage() {
                       <motion.a
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        href={`/get-hired/verify-and-apply/${form.id}`}
+                        href={`/form/${form.id}`}
                         className="block w-full text-center bg-[#FFE01B] hover:bg-yellow-300 text-black font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
                       >
                         Apply Now <ExternalLink className="inline w-4 h-4 ml-1" />
