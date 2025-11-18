@@ -253,14 +253,10 @@ async function findOrCreateFreelancer(formData: any) {
 }
 
 // Process resume in background using your existing API
-// Process resume in background using your existing API
 async function processResumeBackground(submissionId: string, freelancerId: string, resumeUrl: string, formData: any) {
   try {
     // Get the base URL for the application
-    const baseUrl = process.env.NEXTAUTH_URL ||
-      process.env.VERCEL_URL ?
-      `https://${process.env.VERCEL_URL}` :
-      'http://localhost:3000'
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
     // Call your existing parse-resume API with absolute URL
     const response = await fetch(`${baseUrl}/api/freelancer/parse-resume`, {
@@ -309,8 +305,7 @@ async function updateFreelancerWithParsedData(freelancerId: string, parsedData: 
     const publicId = generatePublicId()
 
     // Determine base URL based on environment
-    const baseUrl = process.env.NEXTAUTH_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
     const publicProfileUrl = `${baseUrl}/freelancer/p/${publicId}`
 
