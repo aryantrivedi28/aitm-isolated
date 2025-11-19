@@ -89,8 +89,6 @@ import { ScrapingService } from "../../../../lib/services/scrapingService"
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
-  console.log("🚀 [API HIT] /api/freelancer/parse-resume")
-
   try {
     // Step 1: Get file URL from request body
     const body = await request.json()

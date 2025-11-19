@@ -256,7 +256,7 @@ async function findOrCreateFreelancer(formData: any) {
 async function processResumeBackground(submissionId: string, freelancerId: string, resumeUrl: string, formData: any) {
   try {
     // Get the base URL for the application
-    const baseUrl = process.env.NEXTAUTH_URL
+    const baseUrl = process.env.NEXTAUTH_URL || "https://finzie.co"
 
     // Call your existing parse-resume API with absolute URL
     const response = await fetch(`${baseUrl}/api/freelancer/parse-resume`, {
@@ -305,7 +305,7 @@ async function updateFreelancerWithParsedData(freelancerId: string, parsedData: 
     const publicId = generatePublicId()
 
     // Determine base URL based on environment
-    const baseUrl = process.env.NEXTAUTH_URL
+    const baseUrl = process.env.NEXTAUTH_URL || "https://finzie.co"
 
     const publicProfileUrl = `${baseUrl}/freelancer/p/${publicId}`
 
