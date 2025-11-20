@@ -136,6 +136,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '../../../lib/SupabaseAuthClient'
+import { OpenAIProfileRater, parseResumeToProfile } from '../../../lib/open-ai-profile-rater'
+import { ScrapingService } from '../../../lib/services/scrapingService'
 
 export async function POST(request: NextRequest) {
   try {
@@ -252,45 +254,53 @@ async function findOrCreateFreelancer(formData: any) {
   return newFreelancer
 }
 
-// Process resume in background using your existing API
+// Process resume in background - directly call parsing logic instead of HTTP fetch
 async function processResumeBackground(submissionId: string, freelancerId: string, resumeUrl: string, formData: any) {
   try {
-    // Get the base URL for the application
-    const baseUrl = process.env.NEXTAUTH_URL || "https://finzie.co"
+    console.log('🔄 Starting resume processing for submission:', submissionId)
+    
+    // Step 1: Extract text from resume using ScrapingService
+    const parserService = new ScrapingService()
+    const rawText = await parserService.parseResume(resumeUrl)
 
-    // Call your existing parse-resume API with absolute URL
-    const response = await fetch(`${baseUrl}/api/freelancer/parse-resume`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        fileUrl: resumeUrl,
-        // You might need to adjust the payload based on your API requirements
-      }),
-    })
-
-    if (response.ok) {
-      const parseResult = await response.json()
-
-      // Update freelancer with parsed data
-      await updateFreelancerWithParsedData(freelancerId, parseResult.profile, formData)
-
-      // Update submission to mark as processed
-      await supabase
-        .from('freelancer_submissions')
-        .update({
-          processed_at: new Date().toISOString(),
-          extraction_data: parseResult.profile
-        })
-        .eq('id', submissionId)
-
-      console.log('✅ Resume processed successfully for submission:', submissionId)
-    } else {
-      const errorText = await response.text()
-      console.warn('❌ Resume parsing failed:', response.status, errorText)
-      // Continue without extracted data
+    if (!rawText || typeof rawText !== "string" || rawText.length < 50) {
+      console.error('❌ Failed to extract resume text or text too short')
+      return
     }
+
+    console.log('📝 Resume text extracted, length:', rawText.length)
+
+    // Step 2: Convert resume text → structured profile
+    const structuredProfile = await parseResumeToProfile(rawText)
+    console.log('🧩 Structured profile created')
+
+    // Step 3: Rate structured profile
+    const rater = new OpenAIProfileRater()
+    const ratingResult = await rater.calculateAverageRating(structuredProfile)
+    console.log('⭐ Profile rated:', ratingResult.rating)
+
+    // Step 4: Combine profile with rating
+    const parseResult = {
+      profile: {
+        ...structuredProfile,
+        profile_rating: ratingResult.rating,
+        rating_feedback: ratingResult.feedback,
+      },
+    }
+
+    // Step 5: Update freelancer with parsed data
+    await updateFreelancerWithParsedData(freelancerId, parseResult.profile, formData)
+
+    // Step 6: Update submission to mark as processed
+    await supabase
+      .from('freelancer_submissions')
+      .update({
+        processed_at: new Date().toISOString(),
+        extraction_data: parseResult.profile
+      })
+      .eq('id', submissionId)
+
+    console.log('✅ Resume processed successfully for submission:', submissionId)
   } catch (error) {
     console.error('🚨 Background processing error:', error)
     // Don't fail the submission if parsing fails
@@ -304,8 +314,10 @@ async function updateFreelancerWithParsedData(freelancerId: string, parsedData: 
     // Generate public_id if it doesn't exist
     const publicId = generatePublicId()
 
-    // Determine base URL based on environment
-    const baseUrl = process.env.NEXTAUTH_URL || "https://finzie.co"
+    // Determine base URL based on environment (support Vercel and other platforms)
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://finzie.co"
 
     const publicProfileUrl = `${baseUrl}/freelancer/p/${publicId}`
 
