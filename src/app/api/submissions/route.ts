@@ -315,8 +315,8 @@ async function updateFreelancerWithParsedData(freelancerId: string, parsedData: 
     const publicId = generatePublicId()
 
     // Determine base URL based on environment (support Vercel and other platforms)
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
+    const baseUrl = process.env.VERCEL_URL_NEXTAUTH_URL 
+      ? `https://${process.env.VERCEL_URL_NEXTAUTH_URL}` 
       : process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "https://finzie.co"
 
     const publicProfileUrl = `${baseUrl}/freelancer/p/${publicId}`
