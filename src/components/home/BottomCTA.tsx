@@ -33,7 +33,7 @@ const BottomCTA = () => {
 
         {/* Description */}
         <p className="text-[#D1D5DB] text-base sm:text-lg md:text-xl leading-relaxed mb-8 sm:mb-12 max-w-3xl font-medium">
-          Join hundreds of successful startups who've accelerated their growth with{" "}
+          Work with India’s top 1 percent marketing and creative talent. Get an agile team that moves with speed and clarity.{" "}
           <span className="text-[#FFE01B] font-bold">
             Finzie's expert talent.
           </span>
@@ -57,12 +57,12 @@ const BottomCTA = () => {
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center">
           <Link href="/client-request">
             <Button className="bg-[#FFE01B] hover:bg-[#FCD34D] text-black text-lg font-bold px-6 py-4 sm:px-8 sm:py-5 rounded-2xl flex items-center justify-center transition-transform duration-300">
-              Start a Project Now
+              Start a Project
               <ArrowRight className="ml-2 w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:translate-x-2" />
             </Button>
           </Link>
           <div className="text-[#D1D5DB] text-sm sm:text-base md:text-lg font-medium">
-            ✨ Free consultation • No commitment required
+            ✨ Get a Free Consultation
           </div>
         </div>
       </div>

@@ -96,12 +96,13 @@ const Hero = () => {
               }}
             >
               <span className="block text-[#241C15] mb-1">
-                Tier-One Indian Talent
+                Your Agile Marketing Team
+
               </span>
               <span className="block text-[#241C15]">
-                for{" "}
+                On{" "}
                 <span className="inline-block relative">
-                  <span className="relative z-10">Global Companies</span>
+                  <span className="relative z-10">Demand</span>
                   <span className="absolute bottom-[0.12em] left-0 w-full h-[0.1em] bg-[#FFE01B] -z-10 opacity-30"></span>
                 </span>
               </span>
@@ -118,7 +119,7 @@ const Hero = () => {
                 opacity: '0.9'
               }}
             >
-              Finzie connects you with India's top freelancers & professionals—pre-vetted, managed, and ready to deliver.
+              Top 1 percent Indian talent across marketing, design, UI or UX, video, SEO, GHL and Shopify. Flexible. Fast. Fully managed.
             </p>
 
             {/* Secondary Description */}
@@ -131,7 +132,7 @@ const Hero = () => {
                 lineHeight: '1.7'
               }}
             >
-              Whether you need on-demand project execution, freelance hires, or full-time recruitment, we ensure world-class talent with zero hassle.
+              Trusted by global startups for marketing, design, SEO, Shopify and automation.
             </p>
 
             {/* CTA Buttons */}
@@ -143,7 +144,7 @@ const Hero = () => {
                 style={{ fontSize: '1.0625rem', fontWeight: '600' }}
                 onClick={() => handleNavigation("/find-talent")}
               >
-                Hire Top Talent
+                Start a Project
                 <ArrowRight className="ml-2.5 w-5 h-5 transition-transform group-hover:translate-x-1" />
               </button>
 
@@ -154,7 +155,7 @@ const Hero = () => {
 
               >
                 <Play className="mr-2.5 w-4 h-4 fill-current" />
-                Join as Freelancer
+                Find Talent
               </button>
             </div>
           </div>

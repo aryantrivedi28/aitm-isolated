@@ -130,7 +130,7 @@ export default function Footer() {
           {/* Logo + description */}
           <motion.div custom={0} variants={fadeUp} className="md:col-span-1">
             <p className={`${colors.secondaryText} text-base leading-relaxed mb-6`}>
-              Finzie connects you with India's top freelancers & professionals, pre-vetted, managed, and ready to deliver.
+               We provide top 1 percent Indian marketing and creative talent for global companies. Fully managed. Flexible. Outcome driven.
             </p>
             {/* Social Links */}
             <div className="flex gap-4 mt-8">
@@ -192,7 +192,7 @@ export default function Footer() {
               Stay Updated
             </h3>
             <p className={`${colors.secondaryText} text-base mb-6 leading-relaxed`}>
-              Subscribe to our newsletter for updates, tips, and exclusive insights.
+               Subscribe to our newsletter for insights and growth ideas.
             </p>
 
             <motion.form className="space-y-4" whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }}>

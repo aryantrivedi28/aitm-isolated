@@ -12,29 +12,30 @@ const WhatWeDo = () => {
   const services = [
     {
       icon: Users,
-      title: "Managed Freelancers",
+      title: "Fractional Specialists",
       description:
-        "End-to-end execution where we manage the freelancer, delivery, and quality. Perfect for companies who want outcomes, not micro-management.",
+        "Top 1 percent talent that plugs into your workflows across growth, design, SEO, content and automation. One partner. All skills.",
       gradient: "from-[#FFE01B] to-[#FCD34D]",
       bgGradient: "bg-[#FFE01B]/10",
     },
     {
       icon: Search,
-      title: "Freelancer Hiring",
+      title: "End-to-End Project Delivery",
       description:
-        "Need a specific skill for your team? We connect you with rigorously vetted Indian freelancers across tech, design, marketing & more.",
+        "We own the full execution. You get outcomes without managing freelancers or agencies. Perfect for campaigns, SEO, design systems, website revamps and content pipelines.",
       gradient: "from-[#FFE01B] to-[#FCD34D]",
       bgGradient: "bg-white/10",
     },
     {
       icon: Building,
-      title: "Full-Time Recruitment",
+      title: "In-house GHL Automation",
       description:
-        "Hire tier-one Indian professionals for remote or hybrid full-time roles. Faster, cheaper & more reliable than traditional recruiting.",
+        "Our internal unit handles CRM setup, funnels, lead workflows, booking systems, nurture journeys, SaaS deployments and automation for marketing and ops. Built in-house for quality and speed.",
       gradient: "from-[#FFE01B] to-[#FCD34D]",
       bgGradient: "bg-[#241C15]/20",
     },
   ];
+
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -103,8 +104,9 @@ const WhatWeDo = () => {
           </h2>
 
           <p className="text-[#D1D5DB] text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
-            Discover our comprehensive solutions designed to connect you with India's finest talent.
+            A complete marketing and creative team with zero hiring effort. Finzie gives you everything from growth strategy to content to design to automation under one flexible partner.
           </p>
+
         </div>
 
         {/* Services Grid */}

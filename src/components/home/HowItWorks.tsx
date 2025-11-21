@@ -11,9 +11,9 @@ const HowItWorks = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
 
   const steps = [
-    { image: "/Share.png", title: "Share your requirements", description: "Fill Out Our Simple Form", step: "01" },
-    { image: "/match.png", title: "Get matched with pre-vetted talent", description: "AI + Human Screening", step: "02" },
-    { image: "/manage.png", title: "Deliver with confidence", description: "We Manage Quality & Timelines", step: "03" },
+    { image: "/Share.png", title: "Tell us your goal", description: "SEO or content or Shopify or automation or design. We understand your scope in a short call.", step: "01" },
+    { image: "/match.png", title: "We assemble your agile team", description: "A mix of fractional specialists and in-house experts based on your exact needs.", step: "02" },
+    { image: "/manage.png", title: "Begin with a small starter project", description: "Low risk. Clear scope. Quick delivery. If you like the output, we scale into larger monthly work.", step: "03" },
   ];
 
   useEffect(() => {

@@ -19,38 +19,38 @@ const WhyUs = () => {
   const features = [
     {
       icon: CheckCircle,
-      title: "Pre-vetted experts ready to jump in",
+      title: "Top 1 percent talent only",
       description:
-        "Only the best freelancers make the cut - our rigorous screening ensures you can access the most appropriate freelancers portfolios who excel in their craft.",
+        "We screen thousands of applicants and select the top performers using a multi-stage process powered by AI and human evaluation. You always get specialists who deliver world-class work.",
     },
     {
       icon: Brain,
-      title: "AI-driven matching for a perfect fit",
-      description: "Data-powered pairings deliver the exact skills you need",
+      title: "Start with a small project",
+      description: "Every engagement begins with a fixed small starter project.You see the quality before committing to anything larger.",
     },
     {
       icon: Users,
-      title: "Integrated agile teams",
+      title: "All marketing skills under one roof",
       description:
-        "Our freelancers seamlessly join your team in your preferred communication channels, enhancing the candidate hiring experience for freelance work.",
+        "No separate agencies for SEO or design or video or Shopify. Your entire marketing team sits with Finzie.",
     },
     {
       icon: DollarSign,
-      title: "Flexible pricing that adapts to your budget",
+      title: "Managed from start to finish",
       description:
-        "Get tailored freelancers quotes with no hidden fees, making Finzie the best site for hiring freelancers online.",
+        "We handle talent, timelines and quality. You focus on outcomes.",
     },
     {
       icon: Zap,
-      title: "World's first AI talent aggregator",
+      title: "Integrated into your workflows",
       description:
-        "Whether it's workflow automation or a full autonomous agent, we've got the specialists to build it",
+        "Your Finzie team works inside your preferred tools like Slack or WhatsApp or Notion or Trello. They function like an extension of your company.",
     },
     {
       icon: Target,
-      title: "Matchmaking System that Ensures Exact Match",
+      title: "Outcome driven",
       description:
-        "Our proprietary system guarantees the perfect freelancer for your requirements, every time.",
+        "Everything we do ties back to growth and clarity. No fluff work. No unwanted deliverables.",
     },
   ];
 
@@ -91,9 +91,7 @@ const WhyUs = () => {
             </span>
           </h2>
           <p className="text-gray-300 max-w-2xl mx-auto md:mx-0 leading-relaxed font-medium text-sm sm:text-base">
-            Our diverse talent pool supports freelance WFH jobs and
-            international freelance jobs, ensuring flexibility and access to
-            global expertise with{" "}
+            When it comes to quality and growth, we do not compromise.{" "}
             <span className="font-bold text-[#FFE01B]">zero hassles</span>.
           </p>
         </div>

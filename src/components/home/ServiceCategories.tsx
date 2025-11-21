@@ -1,30 +1,142 @@
 'use client';
 
 import React, { useState } from "react";
-import { Code, Megaphone, Palette, Video, Brain, Database, Shield, Headphones, TestTube, FileText, Briefcase, Sparkles } from "lucide-react";
+import { Code, Megaphone, Palette, Video, Brain, Database, Shield, Headphones, TestTube, FileText, Briefcase, Sparkles, Settings } from "lucide-react";
 
-type CategoryKey = "Development" | "Design" | "Data" | "DevOps" | "Cybersecurity" | "ITSupport" | "QA" | "Marketing" | "Content" | "Video" | "Business";
+type CategoryKey =
+  | "Development"
+  | "Design"
+  | "Design & UX/UI"
+  | "Data"
+  | "DevOps"
+  | "Cybersecurity"
+  | "ITSupport"
+  | "QA"
+  | "Marketing"
+  | "Marketing & Growth"
+  | "Content"
+  | "Video"
+  | "Video & Content"
+  | "Business"
+  | "Shopify"
+  | "GHL Automation";
 
 const ServiceCategories = () => {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>('Development');
 
-  const categories: Partial<Record<CategoryKey, {
-    icon: React.ComponentType<{ className?: string }>;
-    subcategories: string[];
-    techStacks: string[];
-  }>> = {
-    Development: { icon: Code, subcategories: ["Frontend", "Backend", "Full Stack", "Mobile App Development", "Game Development", "Blockchain", "Embedded Systems"], techStacks: ["React", "Vue", "Angular", "Node.js", "Python", "Java", "PHP", ".NET", "React Native", "Flutter", "Unity", "Unreal Engine", "Rust", "Solidity"] },
-    //   Design: { icon: Palette, subcategories: ["UI/UX", "Graphic Design", "Web Design", "Product Design", "Motion Graphics", "3D Design"], techStacks: ["Figma", "Adobe XD", "Sketch", "Photoshop", "Illustrator", "After Effects", "Blender"] },
-    //   Data: { icon: Database, subcategories: ["Data Science", "Data Analysis", "Machine Learning", "AI", "Big Data", "ETL"], techStacks: ["Python", "R", "SQL", "Tableau", "Power BI", "TensorFlow", "PyTorch", "Apache Spark"] },
-    //   DevOps: { icon: Brain, subcategories: ["DevOps & Cloud Engineering", "Containerization & Orchestration", "CI/CD", "Cloud Platforms"], techStacks: ["Docker", "Kubernetes", "Terraform", "Jenkins", "GitHub Actions", "GitLab CI/CD", "AWS", "Azure", "Google Cloud", "DigitalOcean"] },
-    //   Cybersecurity: { icon: Shield, subcategories: ["Application Security", "Penetration Testing", "Network Security"], techStacks: ["Kali Linux", "Metasploit", "Snyk", "Veracode", "pfSense", "Cisco ASA", "Fortinet"] },
-    //   ITSupport: { icon: Headphones, subcategories: ["System Administration", "Helpdesk", "Network Administration"], techStacks: ["Linux", "Windows Server", "Active Directory"] },
-    //   QA: { icon: TestTube, subcategories: ["Manual Testing", "Automation Testing", "Performance Testing", "Security Testing"], techStacks: ["Selenium", "Cypress", "Jest", "Postman", "JMeter", "TestRail", "Appium"] },
-    Marketing: { icon: Megaphone, subcategories: ["Digital Marketing", "SEO", "Content Marketing", "Social Media Marketing", "Email Marketing", "Paid Ads"], techStacks: ["Google Ads", "Facebook Ads", "HubSpot", "Hootsuite", "Buffer", "Mailchimp"] },
-    //   Content: { icon: FileText, subcategories: ["Copywriting", "Blog Writing", "Technical Writing", "Script Writing", "Proofreading"], techStacks: ["Grammarly", "Hemingway", "SurferSEO", "Google Docs"] },
-    //   Video: { icon: Video, subcategories: ["Video Editing", "Animation", "YouTube Editing", "Short Videos", "Corporate Videos"], techStacks: ["Adobe Premiere Pro", "Final Cut Pro", "After Effects", "DaVinci Resolve"] },
-    //   Business: { icon: Briefcase, subcategories: ["Virtual Assistance", "Project Management", "Customer Support", "Data Entry", "Finance & Accounting"], techStacks: ["Asana", "Trello", "Slack", "QuickBooks", "Excel"] },
-  };
+ const categories: Partial<Record<CategoryKey, {
+  icon: React.ComponentType<{ className?: string }>;
+  subcategories: string[];
+  techStacks?: string[];
+}>> = {
+  // Development: {
+  //   icon: Code,
+  //   subcategories: [
+  //     "Frontend",
+  //     "Backend",
+  //     "Full Stack",
+  //     "Mobile App Development",
+  //     "Game Development",
+  //     "Blockchain",
+  //     "Embedded Systems"
+  //   ],
+  //   techStacks: [
+  //     "React",
+  //     "Vue",
+  //     "Angular",
+  //     "Node.js",
+  //     "Python",
+  //     "Java",
+  //     "PHP",
+  //     ".NET",
+  //     "React Native",
+  //     "Flutter",
+  //     "Unity",
+  //     "Unreal Engine",
+  //     "Rust",
+  //     "Solidity"
+  //   ]
+  // },
+
+  // Marketing: {
+  //   icon: Megaphone,
+  //   subcategories: [
+  //     "Digital Marketing",
+  //     "SEO",
+  //     "Content Marketing",
+  //     "Social Media Marketing",
+  //     "Email Marketing",
+  //     "Paid Ads",
+  //   ],
+  //   techStacks: ["Google Ads", "Facebook Ads", "HubSpot", "Hootsuite", "Buffer", "Mailchimp"]
+  // },
+
+  "Marketing & Growth": {
+    icon: Megaphone,
+    subcategories: [
+      "Performance marketing",
+      "SEO",
+      "Email and lifecycle",
+      "Funnel design",
+      "Copywriting",
+      "Growth strategy",
+      "Quarter plans",
+      "Fractional CMO"
+    ]
+  },
+
+  "Design & UX/UI": {
+    icon: Palette,
+    subcategories: [
+      "UI design",
+      "UX flows",
+      "Wireframes",
+      "Brand identity",
+      "Pitch decks",
+      "Ad creatives",
+      "Web design",
+      "Marketing collateral"
+    ]
+  },
+
+  Shopify: {
+    icon: Settings,
+    subcategories: [
+      "Theme customisation",
+      "Liquid changes",
+      "CRO",
+      "Page redesign",
+      "Speed optimisation",
+      "Store setup",
+      "Conversions audit"
+    ]
+  },
+
+  "Video & Content": {
+    icon: Video,
+    subcategories: [
+      "Short form edits",
+      "Ads and reels",
+      "Long form videos",
+      "Brand storytelling",
+      "YouTube edits",
+      "Social content",
+      "Creative direction"
+    ]
+  },
+
+  "GHL Automation": {
+    icon: Settings,
+    subcategories: [
+      "CRM structure",
+      "Lead routing",
+      "Funnels and workflows",
+      "Bookings and calendar systems",
+      "Membership or SaaS setup",
+      "Internal dashboards"
+    ]
+  }
+};
 
   return (
     <>
@@ -113,7 +225,7 @@ const ServiceCategories = () => {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 md:mb-8 gap-4">
               <div className="flex items-center">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#FFE01B] rounded-xl flex items-center justify-center mr-4 shadow-lg animate-float">
-                  {categories[activeCategory]?.icon && 
+                  {categories[activeCategory]?.icon &&
                     (() => {
                       const Icon = categories[activeCategory].icon
                       return <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-[#241C15]" />
@@ -138,8 +250,8 @@ const ServiceCategories = () => {
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   {categories[activeCategory]?.subcategories.map((sub, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className="group bg-[#241C15] border-2 border-[#241C15]/10 rounded-xl p-4 hover:border-[#FFE01B] hover:shadow-md hover:scale-[1.02] transition-all duration-300 cursor-pointer"
                     >
                       <span className="text-[#fbf5e5] group-hover:text-[#fbf5e5] font-semibold text-sm sm:text-base">
@@ -151,15 +263,15 @@ const ServiceCategories = () => {
               </div>
 
               {/* Tech Stacks */}
-              <div>
+              {/* <div>
                 <h4 className="text-lg sm:text-xl font-black text-[#241C15] mb-5 flex items-center">
                   <div className="w-1 h-6 sm:h-8 bg-[#FFE01B] rounded-full mr-3"></div>
                   Technologies
                 </h4>
                 <div className="flex flex-wrap gap-2 sm:gap-3">
-                  {categories[activeCategory]?.techStacks.map((tech, idx) => (
-                    <span 
-                      key={idx} 
+                  {(categories[activeCategory]?.techStacks ?? []).map((tech, idx) => (
+                    <span
+                      key={idx}
                       className="inline-flex items-center bg-[#FFE01B] text-[#241C15] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm hover:bg-[#FCD34D] hover:scale-105 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg"
                       style={{ fontWeight: '600' }}
                     >
@@ -167,7 +279,7 @@ const ServiceCategories = () => {
                     </span>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 

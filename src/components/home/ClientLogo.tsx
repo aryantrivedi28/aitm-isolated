@@ -41,10 +41,6 @@ const ClientLogos = () => {
               <div className="absolute -inset-2 bg-gradient-to-r from-[#FFE01B]/20 to-amber-500/20 blur-xl -z-10 animate-pulse" />
             </span>
           </h2>
-
-          <div className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Three simple steps to connect with India's top talent and transform your business
-          </div>
         </div>
 
         <div className="relative w-full overflow-hidden">
