@@ -119,7 +119,7 @@ const Hero = () => {
                 opacity: '0.9'
               }}
             >
-              Top 1 percent Indian talent across marketing, design, UI or UX, video, SEO, GHL and Shopify. Flexible. Fast. Fully managed.
+              Top 1 percent Indian talent across marketing, design, UI or UX, video, SEO, GHL and Shopify.
             </p>
 
             {/* Secondary Description */}
