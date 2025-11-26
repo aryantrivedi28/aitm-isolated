@@ -4,139 +4,86 @@ import React, { useState } from "react";
 import { Code, Megaphone, Palette, Video, Brain, Database, Shield, Headphones, TestTube, FileText, Briefcase, Sparkles, Settings } from "lucide-react";
 
 type CategoryKey =
-  | "Development"
-  | "Design"
   | "Design & UX/UI"
-  | "Data"
-  | "DevOps"
-  | "Cybersecurity"
-  | "ITSupport"
-  | "QA"
-  | "Marketing"
   | "Marketing & Growth"
-  | "Content"
-  | "Video"
-  | "Video & Content"
-  | "Business"
   | "Shopify"
+  | "Video & Content"
   | "GHL Automation";
 
 const ServiceCategories = () => {
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>('Development');
+  const [activeCategory, setActiveCategory] = useState<CategoryKey>("Marketing & Growth");
 
- const categories: Partial<Record<CategoryKey, {
-  icon: React.ComponentType<{ className?: string }>;
-  subcategories: string[];
-  techStacks?: string[];
-}>> = {
-  // Development: {
-  //   icon: Code,
-  //   subcategories: [
-  //     "Frontend",
-  //     "Backend",
-  //     "Full Stack",
-  //     "Mobile App Development",
-  //     "Game Development",
-  //     "Blockchain",
-  //     "Embedded Systems"
-  //   ],
-  //   techStacks: [
-  //     "React",
-  //     "Vue",
-  //     "Angular",
-  //     "Node.js",
-  //     "Python",
-  //     "Java",
-  //     "PHP",
-  //     ".NET",
-  //     "React Native",
-  //     "Flutter",
-  //     "Unity",
-  //     "Unreal Engine",
-  //     "Rust",
-  //     "Solidity"
-  //   ]
-  // },
+  const categories: Record<CategoryKey, {
+    icon: React.ComponentType<{ className?: string }>;
+    subcategories: string[];
+    techStacks?: string[];
+  }> = {
+    "Marketing & Growth": {
+      icon: Megaphone,
+      subcategories: [
+        "Performance marketing",
+        "SEO",
+        "Email and lifecycle",
+        "Funnel design",
+        "Copywriting",
+        "Growth strategy",
+        "Quarter plans",
+        "Fractional CMO"
+      ]
+    },
 
-  // Marketing: {
-  //   icon: Megaphone,
-  //   subcategories: [
-  //     "Digital Marketing",
-  //     "SEO",
-  //     "Content Marketing",
-  //     "Social Media Marketing",
-  //     "Email Marketing",
-  //     "Paid Ads",
-  //   ],
-  //   techStacks: ["Google Ads", "Facebook Ads", "HubSpot", "Hootsuite", "Buffer", "Mailchimp"]
-  // },
+    "Design & UX/UI": {
+      icon: Palette,
+      subcategories: [
+        "UI design",
+        "UX flows",
+        "Wireframes",
+        "Brand identity",
+        "Pitch decks",
+        "Ad creatives",
+        "Web design",
+        "Marketing collateral"
+      ]
+    },
 
-  "Marketing & Growth": {
-    icon: Megaphone,
-    subcategories: [
-      "Performance marketing",
-      "SEO",
-      "Email and lifecycle",
-      "Funnel design",
-      "Copywriting",
-      "Growth strategy",
-      "Quarter plans",
-      "Fractional CMO"
-    ]
-  },
+    Shopify: {
+      icon: Settings,
+      subcategories: [
+        "Theme customisation",
+        "Liquid changes",
+        "CRO",
+        "Page redesign",
+        "Speed optimisation",
+        "Store setup",
+        "Conversions audit"
+      ]
+    },
 
-  "Design & UX/UI": {
-    icon: Palette,
-    subcategories: [
-      "UI design",
-      "UX flows",
-      "Wireframes",
-      "Brand identity",
-      "Pitch decks",
-      "Ad creatives",
-      "Web design",
-      "Marketing collateral"
-    ]
-  },
+    "Video & Content": {
+      icon: Video,
+      subcategories: [
+        "Short form edits",
+        "Ads and reels",
+        "Long form videos",
+        "Brand storytelling",
+        "YouTube edits",
+        "Social content",
+        "Creative direction"
+      ]
+    },
 
-  Shopify: {
-    icon: Settings,
-    subcategories: [
-      "Theme customisation",
-      "Liquid changes",
-      "CRO",
-      "Page redesign",
-      "Speed optimisation",
-      "Store setup",
-      "Conversions audit"
-    ]
-  },
-
-  "Video & Content": {
-    icon: Video,
-    subcategories: [
-      "Short form edits",
-      "Ads and reels",
-      "Long form videos",
-      "Brand storytelling",
-      "YouTube edits",
-      "Social content",
-      "Creative direction"
-    ]
-  },
-
-  "GHL Automation": {
-    icon: Settings,
-    subcategories: [
-      "CRM structure",
-      "Lead routing",
-      "Funnels and workflows",
-      "Bookings and calendar systems",
-      "Membership or SaaS setup",
-      "Internal dashboards"
-    ]
-  }
-};
+    "GHL Automation": {
+      icon: Settings,
+      subcategories: [
+        "CRM structure",
+        "Lead routing",
+        "Funnels and workflows",
+        "Bookings and calendar systems",
+        "Membership or SaaS setup",
+        "Internal dashboards"
+      ]
+    }
+  };
 
   return (
     <>
