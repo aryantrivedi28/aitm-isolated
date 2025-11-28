@@ -1,11 +1,10 @@
 "use client"
 import { motion } from "framer-motion"
-import { 
-  CheckCircle, 
-  Trophy, 
-  TrendingUp, 
-  Target, 
-  Zap, 
+import {
+  Trophy,
+  TrendingUp,
+  Target,
+  Zap,
   Star,
   Award,
   BarChart3,
@@ -19,103 +18,109 @@ interface ResultBenefitProps {
   benefits: string[]
 }
 
-// Icon rotation for benefits
-const benefitIcons = [Trophy, TrendingUp, Target, Zap, Star, Award, BarChart3, Rocket, Crown]
+const benefitIcons = [
+  Trophy,
+  TrendingUp,
+  Target,
+  Zap,
+  Star,
+  Award,
+  BarChart3,
+  Rocket,
+  Crown
+]
 
 export default function ResultBenefit({ heading, subheading, benefits }: ResultBenefitProps) {
   return (
-    <section className="relative py-24 overflow-hidden" style={{ backgroundColor: '#fbf5e5' }}>
-      {/* Background decorative elements */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 0.1, scale: 1 }}
-        transition={{ duration: 1.5, ease: "easeOut" }}
-        className="absolute -left-32 top-0 w-[450px] h-[450px] rounded-full blur-3xl"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 0.08, scale: 1 }}
-        transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-        className="absolute -right-32 bottom-0 w-[500px] h-[500px] rounded-full blur-3xl"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
+    <section className="relative py-24 overflow-hidden bg-[#fbf5e5]">
+      <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8"> {/* Reduced padding */}
 
-      {/* Floating stars animation */}
-      <motion.div
-        animate={{
-          y: [0, -20, 0],
-          rotate: [0, 10, 0],
-          opacity: [0.2, 0.4, 0.2]
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute top-32 right-[15%] hidden lg:block"
-      >
-        <Star className="h-10 w-10" style={{ color: '#FFE01B' }} />
-      </motion.div>
-      <motion.div
-        animate={{
-          y: [0, 20, 0],
-          rotate: [0, -10, 0],
-          opacity: [0.15, 0.35, 0.15]
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1
-        }}
-        className="absolute bottom-40 left-[12%] hidden lg:block"
-      >
-        <Trophy className="h-12 w-12" style={{ color: '#FFE01B' }} />
-      </motion.div>
-
-      <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
-        {/* Icon badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0, rotate: -90 }}
-          whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
-          className="flex justify-center mb-8"
-        >
-          <div 
-            className="inline-flex p-4 rounded-full border-4 shadow-xl"
-            style={{ 
-              backgroundColor: '#FFE01B',
-              borderColor: '#241C15'
-            }}
+        {/* Section Tag */}
+        <div className="flex justify-center py-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-white border shadow-sm border-[#FFE01B]"
           >
-            <Trophy className="h-10 w-10" style={{ color: '#241C15' }} />
-          </div>
-        </motion.div>
+            <BarChart3 className="w-4 h-4 text-[#241C15]" />
+            <span className="text-sm font-semibold text-[#241C15]">
+              RESULTS & BENEFITS
+            </span>
+          </motion.div>
+        </div>
 
-        {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
+        {/* Heading - Fixed width issue */}
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="text-center mb-6"
+          transition={{ duration: 0.5 }}
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-6 leading-tight max-w-4xl mx-auto px-4"
+          style={{ color: "#241C15" }}
         >
-          <h2 className="text-4xl md:text-6xl font-bold leading-tight" style={{ color: '#241C15' }}>
-            {heading}
-          </h2>
-        </motion.div>
+          {heading}
+        </motion.h2>
 
-        {/* Decorative line */}
+        {/* Decorative Line */}
         <motion.div
           initial={{ width: 0 }}
           whileInView={{ width: "160px" }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="h-1 mx-auto mb-8 rounded-full"
-          style={{ backgroundColor: '#FFE01B' }}
+          className="h-1 mx-auto mb-12 rounded-full bg-[#FFE01B]"
         />
+
+        {/* Benefits Grid - Improved responsive layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-4 sm:px-0">
+          {benefits?.map((benefit, index) => {
+            const IconComponent = benefitIcons[index % benefitIcons.length]
+
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.1,
+                  ease: "easeOut"
+                }}
+                whileHover={{ scale: 1.02, y: -4 }}
+                className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 shadow-lg hover:shadow-xl transition-all duration-300 relative group border-[#FFE01B] min-h-[120px] flex items-start"
+              >
+                <div className="flex items-start space-x-3 sm:space-x-4 w-full">
+
+                  {/* Icon */}
+                  <div className="relative flex-shrink-0">
+                    <div
+                      className="p-2 sm:p-3 rounded-lg sm:rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-[#FFE01B]"
+                    >
+                      <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-[#241C15]" />
+                    </div>
+
+                    {/* Number Badge */}
+                    <div
+                      className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-md bg-[#241C15] text-[#FFE01B]"
+                    >
+                      {index + 1}
+                    </div>
+                  </div>
+
+                  {/* Benefit Content - Fixed text issues */}
+                  <div className="flex-1 min-w-0"> {/* Added min-w-0 for text truncation */}
+                    <p
+                      className="text-sm sm:text-base md:text-lg font-semibold leading-relaxed text-[#241C15] break-words"
+                    >
+                      {benefit}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
 
         {/* Subheading */}
         <motion.p
@@ -123,154 +128,11 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-xl md:text-2xl text-center max-w-3xl mx-auto mb-16"
-          style={{ color: '#241C15', opacity: 0.8 }}
+          className="text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mt-12 sm:mt-16 font-semibold px-4 text-[#241C15] opacity-75"
         >
           {subheading}
         </motion.p>
-
-        {/* Benefits Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {benefits?.map((benefit: string, index: number) => {
-            const IconComponent = benefitIcons[index % benefitIcons.length]
-            
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ 
-                  duration: 0.6, 
-                  delay: index * 0.1,
-                  ease: "easeOut"
-                }}
-                whileHover={{ scale: 1.05, y: -8 }}
-                className="bg-white rounded-xl p-6 border-2 shadow-lg hover:shadow-2xl transition-all duration-300 group"
-                style={{ borderColor: '#FFE01B' }}
-              >
-                <div className="flex items-start space-x-4">
-                  {/* Icon with number badge */}
-                  <div className="relative flex-shrink-0">
-                    <div 
-                      className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
-                      style={{ backgroundColor: '#FFE01B' }}
-                    >
-                      <IconComponent className="h-7 w-7" style={{ color: '#241C15' }} />
-                    </div>
-                    {/* Number badge */}
-                    <div 
-                      className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-md"
-                      style={{ backgroundColor: '#241C15', color: '#FFE01B' }}
-                    >
-                      {index + 1}
-                    </div>
-                  </div>
-
-                  {/* Benefit text */}
-                  <div className="flex-1">
-                    <p 
-                      className="text-base md:text-lg leading-relaxed font-medium"
-                      style={{ color: '#241C15', opacity: 0.9 }}
-                    >
-                      {benefit}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Checkmark indicator at bottom */}
-                <div className="flex items-center justify-end mt-4 pt-4 border-t" style={{ borderTopColor: '#fbf5e5' }}>
-                  <div className="flex items-center space-x-2 opacity-70 group-hover:opacity-100 transition-opacity">
-                    <CheckCircle className="h-4 w-4" style={{ color: '#FFE01B' }} />
-                    <span className="text-xs font-semibold" style={{ color: '#241C15' }}>Guaranteed</span>
-                  </div>
-                </div>
-
-                {/* Animated accent bar */}
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
-                  className="h-1 mt-4 rounded-full"
-                  style={{ 
-                    backgroundColor: '#FFE01B',
-                    transformOrigin: 'left'
-                  }}
-                />
-              </motion.div>
-            )
-          })}
-        </div>
-
-        {/* Bottom CTA section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-16 text-center"
-        >
-          <div 
-            className="inline-flex items-center space-x-3 px-10 py-5 rounded-full border-2 shadow-xl"
-            style={{ 
-              backgroundColor: 'white',
-              borderColor: '#FFE01B'
-            }}
-          >
-            <Crown className="h-6 w-6" style={{ color: '#FFE01B' }} />
-            <span className="font-bold text-xl" style={{ color: '#241C15' }}>
-              Start Achieving These Results
-            </span>
-            <Crown className="h-6 w-6" style={{ color: '#FFE01B' }} />
-          </div>
-        </motion.div>
       </div>
-
-      {/* Animated particles */}
-      <motion.div
-        animate={{
-          y: [0, -30, 0],
-          x: [0, 15, 0],
-          opacity: [0.2, 0.5, 0.2]
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute top-48 left-[10%] w-3 h-3 rounded-full hidden lg:block"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
-      <motion.div
-        animate={{
-          y: [0, 30, 0],
-          x: [0, -10, 0],
-          opacity: [0.3, 0.6, 0.3]
-        }}
-        transition={{
-          duration: 4.5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1
-        }}
-        className="absolute bottom-32 right-[12%] w-4 h-4 rounded-full hidden lg:block"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
-      <motion.div
-        animate={{
-          y: [0, -20, 0],
-          opacity: [0.25, 0.45, 0.25]
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 2
-        }}
-        className="absolute top-1/3 right-[8%] w-2 h-2 rounded-full hidden lg:block"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
     </section>
   )
 }

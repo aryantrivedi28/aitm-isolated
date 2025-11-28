@@ -11,29 +11,14 @@ interface TheProblemProps {
 export default function TheProblem({ heading, subheading, paragraph }: TheProblemProps) {
   return (
     <section className="relative py-16 md:py-24 overflow-hidden bg-white">
-      {/* Simplified background accents */}
-      <div className="absolute -left-32 top-20 w-[300px] h-[300px] rounded-full blur-3xl opacity-10"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
-      <div className="absolute -right-32 bottom-20 w-[400px] h-[400px] rounded-full blur-3xl opacity-10"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
 
-      {/* Simplified decorative icons */}
-      <div className="absolute left-[5%] top-32 hidden lg:block opacity-10">
-        <AlertCircle className="h-12 w-12" style={{ color: '#FFE01B' }} />
-      </div>
-      <div className="absolute right-[8%] top-40 hidden lg:block opacity-10">
-        <TrendingDown className="h-10 w-10" style={{ color: '#FFE01B' }} />
-      </div>
-
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-3xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center py-4">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
           >
             <AlertTriangle className="w-4 h-4 text-[#241C15]/70" />
             <span className="text-sm font-semibold text-[#241C15]/70">
@@ -48,8 +33,8 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight"
-          style={{ color: '#241C15' }}
+          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+          style={{ color: '#241C15' }} // change this!
         >
           {heading}
         </motion.h2>
@@ -70,7 +55,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-lg sm:text-xl md:text-2xl text-center font-semibold mb-8 md:mb-12 px-4 text-[#241C15]/60"
+          className="text-lg sm:text-xl md:text-xl text-center font-medium mb-8 md:mb-12 px-4 text-[#241C15]/60"
         >
           {subheading}
         </motion.h3>
@@ -84,7 +69,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
           className="p-6 md:p-8 lg:p-12 mx-2"
         >
           <p
-            className="text-base sm:text-xl md:text-2xl/5 leading-relaxed text-center text-[#241C15]/60"
+            className="text-base sm:text-xl md:text-2xl/5 leading-relaxed text-center text-[#241C15]/60 font-semibold"
           >
             {paragraph}
           </p>

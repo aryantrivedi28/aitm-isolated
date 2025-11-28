@@ -1,11 +1,11 @@
 "use client"
-
-import { 
-  Zap, 
-  Users, 
-  MessageSquare, 
-  BarChart3, 
-  Calendar, 
+import { motion } from "framer-motion"
+import {
+  Zap,
+  Users,
+  MessageSquare,
+  BarChart3,
+  Calendar,
   Mail,
   Phone,
   Target,
@@ -16,13 +16,14 @@ import {
   TrendingUp,
   Check,
   Star,
-  Rocket
+  Rocket,
+  GoalIcon
 } from "lucide-react"
 
 // Icon mapping - you can customize this based on your service titles
 const getServiceIcon = (title: string, index: number) => {
   const titleLower = title?.toLowerCase() || ""
-  
+
   if (titleLower.includes("automation") || titleLower.includes("workflow")) return Zap
   if (titleLower.includes("crm") || titleLower.includes("customer")) return Users
   if (titleLower.includes("message") || titleLower.includes("sms") || titleLower.includes("chat")) return MessageSquare
@@ -38,7 +39,7 @@ const getServiceIcon = (title: string, index: number) => {
   if (titleLower.includes("growth") || titleLower.includes("scale")) return TrendingUp
   if (titleLower.includes("quality") || titleLower.includes("premium")) return Star
   if (titleLower.includes("launch") || titleLower.includes("start")) return Rocket
-  
+
   // Default icons rotation if no match
   const defaultIcons = [Briefcase, Target, TrendingUp, Users, Zap, Star]
   return defaultIcons[index % defaultIcons.length]
@@ -48,11 +49,32 @@ export default function GHLServices({ heading, subheading, services }: any) {
   return (
     <section className="py-20" style={{ backgroundColor: '#fbf5e5' }}>
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
+
+        <div className="flex justify-center py-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
+          >
+            <GoalIcon className="w-4 h-4 text-[#241C15]/70" />
+            <span className="text-sm font-semibold text-[#241C15]/70">
+              GOHIGHLEVEL SERVICE
+            </span>
+          </motion.div>
+        </div>
         {/* Header with Animation */}
         <div className="text-center mb-16 space-y-4 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold" style={{ color: '#241C15' }}>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+            style={{ color: '#241C15' }} // change this!
+          >
             {heading}
-          </h2>
+          </motion.h2>
           {subheading && (
             <p className="text-lg md:text-xl max-w-3xl mx-auto animate-fade-in-delayed" style={{ color: '#241C15', opacity: 0.7 }}>
               {subheading}
@@ -61,22 +83,21 @@ export default function GHLServices({ heading, subheading, services }: any) {
         </div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
           {services?.map((service: any, index: number) => {
             const IconComponent = getServiceIcon(service.title, index)
-            
             return (
               <div
                 key={index}
                 className="bg-white rounded-xl p-8 border-2 shadow-sm hover:shadow-xl transition-all duration-300 group hover:scale-105 animate-fade-in-up"
-                style={{ 
+                style={{
                   borderColor: '#FFE01B',
                   animationDelay: `${index * 100}ms`
                 }}
               >
                 {/* Icon */}
                 <div className="mb-6">
-                  <div 
+                  <div
                     className="inline-flex p-4 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
                     style={{ backgroundColor: '#FFE01B' }}
                   >
@@ -92,14 +113,6 @@ export default function GHLServices({ heading, subheading, services }: any) {
                   <p className="text-base leading-relaxed" style={{ color: '#241C15', opacity: 0.7 }}>
                     {service.description}
                   </p>
-                </div>
-
-                {/* Decorative Element */}
-                <div className="mt-6 pt-4 border-t transition-colors duration-300" style={{ borderTopColor: '#fbf5e5' }}>
-                  <div className="flex items-center space-x-2 text-sm font-semibold group-hover:translate-x-2 transition-transform duration-300" style={{ color: '#241C15', opacity: 0.5 }}>
-                    <Check className="h-4 w-4" />
-                    <span>Available Now</span>
-                  </div>
                 </div>
               </div>
             )

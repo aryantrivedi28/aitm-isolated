@@ -62,12 +62,12 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
 
         {/* Heading */}
         <motion.h2
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="text-4xl md:text-6xl font-bold text-center mb-6 leading-tight"
-          style={{ color: '#241C15' }}
+          transition={{ duration: 0.5 }}
+          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+          style={{ color: '#241C15' }} // change this!
         >
           {heading}
         </motion.h2>
@@ -88,13 +88,13 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-xl md:text-3xl text-center font-semibold mb-16 text-[#241C15]/60"
+          className="text-xl sm:text-xl md:text-[26px] text-center font-medium mb-16 text-[#241C15]/60"
         >
           {subheading}
         </motion.h3>
 
         {/* Solutions Grid */}
-        <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-1 gap-6 max-w-4xl mx-auto">
           {solutions?.map((solution: string, index: number) => (
             <motion.div
               key={index}
@@ -128,25 +128,12 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
 
                 {/* Solution text */}
                 <p
-                  className="text-base md:text-lg leading-relaxed flex-1 pt-1"
+                  className="text-base md:text-lg leading-relaxed flex-1 pt-1 font-semibold"
                   style={{ color: '#241C15', opacity: 0.9 }}
                 >
                   {solution}
                 </p>
               </div>
-
-              {/* Animated bottom accent */}
-              <motion.div
-                initial={{ scaleX: 0 }}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
-                className="h-1 mt-4 rounded-full"
-                style={{
-                  backgroundColor: '#FFE01B',
-                  transformOrigin: 'left'
-                }}
-              />
             </motion.div>
           ))}
         </div>
