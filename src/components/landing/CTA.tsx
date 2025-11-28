@@ -89,15 +89,17 @@ export default function CTA({
           transition={{ delay: 0.3 }}
           className="mt-12 flex justify-center gap-12 text-gray-300 text-sm"
         >
-          <div className="flex flex-col items-center">
-            <span className="opacity-80">Live Support</span>
-            <span className="font-bold text-white">24/7</span>
+
+          <div className='font-semibold text-white text-xl'>Book your free consultation before spots fill up</div>
+          {/* <div className="flex flex-col items-center">
+            <span className="opacity-80">Free consultation</span>
+            {/* <span className="font-bold text-white">24/7</span> 
           </div>
           <div className="w-px bg-gray-600" />
           <div className="flex flex-col items-center">
             <span className="opacity-80">SLA</span>
             <span className="font-bold text-white">99.9%</span>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </section>

@@ -1,9 +1,6 @@
 // app/landing/[slug]/page.tsx
 import { client } from '@/src/sanity/lib/client'
 import Hero from '../../../components/landing/Hero'
-import PainPoints from '../../../components/landing/PainPoints'
-import HowWeSolve from '../../../components/landing/HowWeSolve'
-import WhyUs from '../../../components/landing/WhyUs'
 import ShortCaseStudies from '../../../components/landing/ShortCaseStudies'
 import Logos from '../../../components/landing/Logos'
 import HowItWorks from '../../../components/landing/HowItWorks'
@@ -11,14 +8,16 @@ import FAQ from '../../../components/landing/FAQ'
 import CTA from '../../../components/landing/CTA'
 import TestimonialSection from '../../../components/landing/Testimonial'
 import Footer from '@/src/components/landing/Footer'
-import WhatWeDo from '../../../components/landing/WhatWeDo'
-import AboutUs from "../../../components/landing/AboutUs"
-import HowWeWork from '../../../components/landing/HowWeWork'
+// Import your new components
+import TheProblem from '../../../components/landing/TheProblem'
+import TheSolution from '../../../components/landing/TheSolution'
+import GHLServices from '../../../components/landing/GHLServices'
+import ResultBenefit from '../../../components/landing/ResultBenefit'
+import CRMMigration from '../../../components/landing/CRMMigration'
+import DevIntegration from '../../../components/landing/DevIntegration'
+import IncludesSection from '../../../components/landing/IncludesSection'
 
 type Section =
-  | { _type: 'painPointsSection'; [key: string]: any }
-  | { _type: 'howWeSolveSection'; [key: string]: any }
-  | { _type: 'whyUsSection'; [key: string]: any }
   | { _type: 'shortCaseStudiesSection'; [key: string]: any }
   | { _type: 'logosSection'; [key: string]: any }
   | { _type: 'howItWorksSection'; [key: string]: any }
@@ -26,9 +25,13 @@ type Section =
   | { _type: 'ctaSection'; [key: string]: any }
   | { _type: 'testimonialSection'; [key: string]: any }
   | { _type: 'footerSection'; [key: string]: any }
-  | { _type: 'whatWeDoSection'; [key: string]: any }
-  | { _type: 'aboutUsSection'; [key: string]: any }
-  | { _type: 'howWeWorkSection'; [key: string]: any }
+  | { _type: 'theProblemSection'; [key: string]: any }
+  | { _type: 'theSolutionSection'; [key: string]: any }
+  | { _type: 'ghlServicesSection'; [key: string]: any }
+  | { _type: 'resultBenefitSection'; [key: string]: any }
+  | { _type: 'crmMigrationSection'; [key: string]: any }
+  | { _type: 'devIntegrationSection'; [key: string]: any }
+  | { _type: 'includesSection'; [key: string]: any }
 
 interface LandingPageData {
   title: string
@@ -37,9 +40,6 @@ interface LandingPageData {
 }
 
 const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
-  painPointsSection: PainPoints,
-  howWeSolveSection: HowWeSolve,
-  whyUsSection: WhyUs,
   shortCaseStudiesSection: ShortCaseStudies,
   logosSection: Logos,
   howItWorksSection: HowItWorks,
@@ -47,9 +47,13 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   ctaSection: CTA,
   testimonialSection: TestimonialSection,
   footerSection: Footer,
-  whatWeDoSection: WhatWeDo,
-  aboutUsSection: AboutUs,
-  howWeWorkSection: HowWeWork,
+  theProblemSection: TheProblem,
+  theSolutionSection: TheSolution,
+  ghlServicesSection: GHLServices,
+  resultBenefitSection: ResultBenefit,
+  crmMigrationSection: CRMMigration,
+  devIntegrationSection: DevIntegration,
+  includesSection: IncludesSection,
 }
 
 export default async function LandingPage({
@@ -79,35 +83,63 @@ export default async function LandingPage({
       sections[] {
         _type,
         _key,
-        _type == "painPointsSection" => {
+        _type == "theProblemSection" => {
           _type,
           _key,
           heading,
+          subheading,
+          paragraph
+        },
+        _type == "theSolutionSection" => {
+          _type,
+          _key,
+          heading,
+          subheading,
+          solutions
+        },
+        _type == "ghlServicesSection" => {
+          _type,
+          _key,
+          heading,
+          subheading,
+          services[] {
+            title,
+            description
+          }
+        },
+        _type == "resultBenefitSection" => {
+          _type,
+          _key,
+          heading,
+          subheading,
+          benefits
+        },
+        _type == "crmMigrationSection" => {
+          _type,
+          _key,
+          heading,
+          subheading,
           items[] {
             title,
-            description,
-            icon{asset->{url}}
+            description
           }
         },
-        _type == "howWeSolveSection" => {
+        _type == "devIntegrationSection" => {
           _type,
           _key,
           heading,
-          solutions[] {
+          subheading,
+          items[] {
             title,
-            description,
-            image{asset->{url}}
+            description
           }
         },
-        _type == "whyUsSection" => {
+        _type == "includesSection" => {
           _type,
           _key,
           heading,
-          "features": reasons[] {
-            title,
-            description,
-            icon{asset->{url}}
-          }
+          subheading,
+          items
         },
         _type == "shortCaseStudiesSection" => {
           _type,
@@ -175,46 +207,7 @@ export default async function LandingPage({
           _type,
           _key,
           text
-        },
-        _type == "whatWeDoSection" => {
-  _type,
-  _key,
-  heading,
-  cards[] {
-    title,
-    description
-  },
-  ctas[] {
-    label,
-    href,
-    variant
-  }
-},
-
-        _type == "aboutUsSection" => {
-          _type, _key,
-          title,
-          description,
-          image{asset->{url}},
-          cta{label, href}
-        },
-        _type == "howWeWorkSection" => {
-  _type,
-  _key,
-  title,
-  video,
-  steps[] {
-    stepNumber,
-    heading,
-    subheading,
-    description
-  },
-  cta {
-    label,
-    href
-  }
-}
-
+        }
       }
     }`,
     { slug }
@@ -232,7 +225,10 @@ export default async function LandingPage({
 
       {page.sections?.map((section, i) => {
         const SectionComponent = componentMap[section._type]
-        if (!SectionComponent) return null
+        if (!SectionComponent) {
+          console.warn(`No component found for section type: ${section._type}`)
+          return null
+        }
 
         return (
           <section key={section._key || i}>

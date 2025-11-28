@@ -11,9 +11,7 @@ import landingPage from './landingPage'
 import richImage from './objects/richImage'
 
 // sections
-import painPointsSection from './sections/painPointsSections'
 import howWeSolveSection from './sections/howWeSolveSection'
-import whyUsSection from './sections/whyUsSection'
 import shortCaseStudiesSection from './sections/shortCaseStudiesSection'
 import logosSection from './sections/logosSection'
 import howItWorksSection from './sections/howItWorksSection'
@@ -21,9 +19,14 @@ import faqSection from './sections/faqSection'
 import ctaSection from './sections/ctaSection'
 import testimonialSection from './sections/testimonialSection'
 import footerSection from './sections/footerSection'
-import whatWeDoSection from './sections/whatWeDoSection'
-import aboutUsSection from './sections/AboutUsSection'
-import howWeWorkSection from './sections/howWeWorkSection'
+import { theProblemSection } from './sections/theProblemSection'
+import { theSolutionSection } from './sections/theSolutionSection'
+import { resultBenefitSection } from './sections/resultBenefitSection'
+import { ghlServicesSection } from './sections/ghlServicesSection'
+import { includesSection } from './sections/includesSection'
+import { devIntegrationSection } from './sections/devIntegrationSection'
+import { crmMigrationSection } from './sections/crmMigrationSection'
+// import { bottomSection } from './sections/bottomSection'
 
 // export schema definition for Sanity Studio
 export const schema: { types: SchemaTypeDefinition[] } = {
@@ -36,18 +39,21 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     richImage,
 
     // section objects
-    painPointsSection,
+    theProblemSection,
+    theSolutionSection,
+    resultBenefitSection,
+    ghlServicesSection,
+    devIntegrationSection,
+    crmMigrationSection,
     howWeSolveSection,
-    whyUsSection,
+    includesSection,
     shortCaseStudiesSection,
     logosSection,
     howItWorksSection,
     faqSection,
     ctaSection,
     testimonialSection,
+    // bottomSection,
     footerSection,
-    whatWeDoSection,
-    aboutUsSection,
-    howWeWorkSection,
   ],
 }
