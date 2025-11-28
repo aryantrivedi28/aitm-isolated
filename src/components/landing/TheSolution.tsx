@@ -46,24 +46,19 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
       </motion.div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12">
-        {/* Icon badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0, rotate: -180 }}
-          whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, type: "spring", stiffness: 200 }}
-          className="flex justify-center mb-8"
-        >
-          <div 
-            className="inline-flex p-4 rounded-full border-4 shadow-lg"
-            style={{ 
-              backgroundColor: '#FFE01B',
-              borderColor: '#241C15'
-            }}
+        <div className="flex justify-center py-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
           >
-            <Lightbulb className="h-10 w-10" style={{ color: '#241C15' }} />
-          </div>
-        </motion.div>
+            <Lightbulb className="w-4 h-4 text-[#241C15]/70" />
+            <span className="text-sm font-semibold text-[#241C15]/70">
+              THE SOLUTION
+            </span>
+          </motion.div>
+        </div>
 
         {/* Heading */}
         <motion.h2
@@ -93,8 +88,7 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-xl md:text-3xl text-center font-semibold mb-16"
-          style={{ color: '#241C15', opacity: 0.8 }}
+          className="text-xl md:text-3xl text-center font-semibold mb-16 text-[#241C15]/60"
         >
           {subheading}
         </motion.h3>
@@ -107,33 +101,33 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
               initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ 
-                duration: 0.6, 
+              transition={{
+                duration: 0.6,
                 delay: index * 0.1,
                 ease: "easeOut"
               }}
               whileHover={{ scale: 1.03, y: -5 }}
               className="rounded-xl p-6 border-2 shadow-md hover:shadow-xl transition-all duration-300 group"
-              style={{ 
+              style={{
                 backgroundColor: '#fbf5e5',
                 borderColor: '#FFE01B'
               }}
             >
               <div className="flex items-start space-x-4">
                 {/* Checkmark icon */}
-                <div 
+                <div
                   className="flex-shrink-0 p-2 rounded-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-12"
                   style={{ backgroundColor: '#FFE01B' }}
                 >
-                  <CheckCircle 
-                    className="h-6 w-6" 
+                  <CheckCircle
+                    className="h-6 w-6"
                     style={{ color: '#241C15' }}
                     strokeWidth={2.5}
                   />
                 </div>
 
                 {/* Solution text */}
-                <p 
+                <p
                   className="text-base md:text-lg leading-relaxed flex-1 pt-1"
                   style={{ color: '#241C15', opacity: 0.9 }}
                 >
@@ -148,7 +142,7 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
                 className="h-1 mt-4 rounded-full"
-                style={{ 
+                style={{
                   backgroundColor: '#FFE01B',
                   transformOrigin: 'left'
                 }}
@@ -156,74 +150,7 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
             </motion.div>
           ))}
         </div>
-
-        {/* Call-to-action badge at bottom */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mt-16 text-center"
-        >
-          <div 
-            className="inline-flex items-center space-x-3 px-8 py-4 rounded-full border-2 shadow-lg"
-            style={{ 
-              backgroundColor: 'white',
-              borderColor: '#FFE01B'
-            }}
-          >
-            <Sparkles className="h-5 w-5" style={{ color: '#FFE01B' }} />
-            <span className="font-bold text-lg" style={{ color: '#241C15' }}>
-              Transform Your Business Today
-            </span>
-            <Sparkles className="h-5 w-5" style={{ color: '#FFE01B' }} />
-          </div>
-        </motion.div>
       </div>
-
-      {/* Animated particles */}
-      <motion.div
-        animate={{
-          y: [0, -25, 0],
-          opacity: [0.2, 0.5, 0.2]
-        }}
-        transition={{
-          duration: 5,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute top-40 left-[12%] w-3 h-3 rounded-full hidden lg:block"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
-      <motion.div
-        animate={{
-          y: [0, 25, 0],
-          opacity: [0.3, 0.6, 0.3]
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1.5
-        }}
-        className="absolute bottom-40 right-[15%] w-4 h-4 rounded-full hidden lg:block"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
-      <motion.div
-        animate={{
-          y: [0, -15, 0],
-          x: [0, 10, 0],
-          opacity: [0.2, 0.4, 0.2]
-        }}
-        transition={{
-          duration: 6,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 3
-        }}
-        className="absolute top-1/2 right-[8%] w-2 h-2 rounded-full hidden lg:block"
-        style={{ backgroundColor: '#FFE01B' }}
-      />
     </section>
   )
 }
