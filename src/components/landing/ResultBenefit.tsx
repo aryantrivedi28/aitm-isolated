@@ -128,7 +128,7 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mt-12 sm:mt-16 font-semibold px-4 text-[#241C15] opacity-75"
+          className="text-base sm:text-lg md:text-xl text-center max-w-3xl mx-auto mt-12 sm:mt-16 font-semibold px-4 text-[#241C15]"
         >
           {subheading}
         </motion.p>
