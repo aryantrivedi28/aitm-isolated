@@ -93,7 +93,7 @@ export default function IncludesSection({ heading, subheading, items }: Includes
               {/* Item text */}
               <span
                 className="text-base md:text-lg font-semibold flex-1"
-                style={{ color: '#fbf5e5' }}
+                style={{ color: '#241C15' }}
               >
                 {item}
               </span>
