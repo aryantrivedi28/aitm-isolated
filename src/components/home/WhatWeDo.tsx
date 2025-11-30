@@ -68,21 +68,6 @@ const WhatWeDo = () => {
       ref={sectionRef}
       className="relative py-20 bg-[#241C15] overflow-hidden"
     >
-      {/* Dynamic Background */}
-      {/* <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute w-96 h-96 bg-gradient-to-r from-[#FFE01B]/20 to-[#FCD34D]/20 rounded-full blur-3xl transition-all duration-1000"
-          style={{
-            left: `${mousePosition.x - 192}px`,
-            top: `${mousePosition.y - 192}px`,
-            opacity: hoveredCard !== null ? 0.8 : 0.4,
-          }}
-        />
-      </div> */}
-
-      {/* Floating Shapes */}
-      <div className="absolute top-20 right-10 w-20 h-20 bg-[#FFE01B]/20 rounded-full blur-xl animate-pulse" />
-      <div className="absolute bottom-20 left-10 w-32 h-32 bg-[#FFE01B]/15 rounded-full blur-xl animate-pulse delay-700" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}

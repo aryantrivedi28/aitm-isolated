@@ -71,7 +71,7 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
         />
 
         {/* Benefits Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {benefits?.map((benefit, index) => {
             const IconComponent = benefitIcons[index % benefitIcons.length]
 
@@ -87,25 +87,25 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
                   ease: "easeOut"
                 }}
                 whileHover={{ scale: 1.02, y: -4 }}
-                className="bg-white rounded-2xl p-6 border-2 shadow-lg hover:shadow-xl transition-all duration-300 relative group border-[#FFE01B] min-h-[120px] flex items-start"
+                className="bg-white rounded-2xl p-4 sm:p-6 border-2 shadow-lg hover:shadow-xl transition-all duration-300 relative group border-[#FFE01B] flex flex-col" // Changed to flex-col
               >
-                <div className="flex items-start space-x-4 w-full">
+                <div className="flex items-start space-x-3 sm:space-x-4 mb-3"> {/* Added margin bottom */}
 
                   {/* Icon */}
                   <div className="relative flex-shrink-0">
-                    <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-[#FFE01B]">
-                      <IconComponent className="h-6 w-6 text-[#241C15]" />
+                    <div className="p-2 sm:p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-[#FFE01B]">
+                      <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-[#241C15]" />
                     </div>
 
                     {/* Number Badge */}
-                    <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-md bg-[#241C15] text-[#FFE01B]">
+                    <div className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-md bg-[#241C15] text-[#FFE01B]">
                       {index + 1}
                     </div>
                   </div>
 
-                  {/* Text */}
+                  {/* Text - Takes remaining space */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-base md:text-lg font-semibold leading-relaxed text-[#241C15] break-words">
+                    <p className="text-sm sm:text-base md:text-lg font-semibold leading-relaxed text-[#241C15] break-words">
                       {benefit}
                     </p>
                   </div>

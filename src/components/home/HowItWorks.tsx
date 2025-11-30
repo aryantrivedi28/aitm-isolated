@@ -29,10 +29,6 @@ const HowItWorks = () => {
 
   return (
     <section ref={sectionRef} className="relative py-16 lg:py-20 bg-[#241C15] text-white overflow-hidden">
-      {/* Floating Background Circles */}
-      <div className="absolute top-20 left-10 w-16 h-16 bg-[#FFE01B]/20 rounded-full blur-xl animate-pulse" />
-      <div className="absolute bottom-20 right-10 w-24 h-24 bg-[#FCD34D]/20 rounded-full blur-xl animate-pulse" />
-
       <div className="relative z-10 max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
         {/* Header */}
         <div className="text-center mb-10 sm:mb-14 lg:mb-18">
