@@ -259,7 +259,7 @@ export default function Hero({
                               )}
                               
                               {/* Overlay gradient */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              {/* <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
                             </div>
                           </div>
 
@@ -278,7 +278,7 @@ export default function Hero({
                   )}
 
                   {/* Blog Button with enhanced positioning */}
-                  {blogButton && (
+                  {/* {blogButton && (
                     <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 z-20">
                       <a
                         href={blogButton.href}
@@ -289,7 +289,7 @@ export default function Hero({
                         <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </a>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
