@@ -1,3 +1,4 @@
+import { createClient } from '@/src/lib/supabase-server'
 import { supabase } from '../../../../lib/SupabaseAuthClient'
 import { notFound } from 'next/navigation'
 
@@ -35,19 +36,17 @@ const BRAND_COLORS = {
 }
 
 export default async function PublicFreelancerProfilePage({ params }: ProfilePageProps) {
-  const resolvedParams = await params
+   const resolvedParams = await params
   const publicId = resolvedParams.publicId || (resolvedParams as any).id || (resolvedParams as any).publicID
 
-  if (!publicId || publicId === 'undefined') {
+  if (!publicId || publicId === "undefined") {
     notFound()
   }
 
+  const supabase = await createClient()
+
   // Fetch freelancer data
-  const { data: freelancer, error } = await supabase
-    .from('freelancers')
-    .select('*')
-    .eq('public_id', publicId)
-    .single()
+  const { data: freelancer, error } = await supabase.from("freelancers").select("*").eq("public_id", publicId).single()
 
   if (error || !freelancer) {
     notFound()
