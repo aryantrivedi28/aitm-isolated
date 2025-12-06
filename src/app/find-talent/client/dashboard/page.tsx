@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import useSWR from "swr"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -25,7 +27,6 @@ import {
   Video,
   X,
   User,
-  MapPin,
   Globe,
   Github,
   FileCode,
@@ -33,12 +34,15 @@ import {
   CheckCircle2,
   XCircle,
   ArrowRight,
-  Sparkle,
   Sparkles,
+  Clock3,
+  Check,
+  Mail,
+  Phone,
+  Zap,
+  RefreshCw,
 } from "lucide-react"
-import { SubmissionDetailCard } from "./components/submission-detail-card"
-import toast from "react-hot-toast"
-import CalendlyMeetingModal from "../../../../components/calendly-meeting-model"
+import TimeSlotSelectorModal from "../../../../components/client/TimeSlotSelector"
 
 const fetcher = async (url: string) => {
   const res = await fetch(url, { credentials: "include" })
@@ -68,11 +72,18 @@ interface FreelancerSubmission {
   freelancer_id: string | null
   meeting_scheduled: boolean | null
   meeting_id: string | null
+  status?: string
+  time_slot_selected_at?: string | null
 }
 
 interface ViewAllModalData {
   form: any
   submissions: FreelancerSubmission[]
+}
+
+const toast = {
+  success: (msg: string) => console.log("✅", msg),
+  error: (msg: string) => console.error("❌", msg),
 }
 
 export default function ClientDashboardPage() {
@@ -84,12 +95,12 @@ export default function ClientDashboardPage() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState("all")
-  const [selectedSubmission, setSelectedSubmission] = useState<FreelancerSubmission | null>(null)
-  const [form, setForms] = useState<any[]>([])
+  const [forms, setForms] = useState<any[]>([])
 
-  const [showCalendlyModal, setShowCalendlyModal] = useState(false)
   const [selectedFreelancer, setSelectedFreelancer] = useState<FreelancerSubmission | null>(null)
   const [viewAllModal, setViewAllModal] = useState<ViewAllModalData | null>(null)
+  const [showTimeSlotModal, setShowTimeSlotModal] = useState(false)
+  const [refetchTrigger, setRefetchTrigger] = useState(0)
 
   useEffect(() => {
     setIsLoaded(true)
@@ -100,25 +111,29 @@ export default function ClientDashboardPage() {
     totalSubmissions: 0,
     activeHirings: 0,
     pendingReview: 0,
+    selectedCandidates: 0,
+    pendingTimeSlots: 0,
   })
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  const { data: serverForms, isLoading: loadingForms } = useSWR(isClient ? "/api/client/hirings" : null, fetcher, {
+  const {
+    data: serverForms,
+    isLoading: loadingForms,
+    mutate: mutateForms,
+  } = useSWR(isClient ? "/api/client/hirings" : null, fetcher, {
     onSuccess: (data) => {
-      console.log("📋 Forms fetched:", data?.forms?.length)
+      setForms(data?.forms || [])
     },
     onError: (error) => {
-      console.error("❌ Error fetching forms:", error)
+      console.error("Error fetching forms:", error)
     },
   })
 
   useEffect(() => {
-    if (!isClient) {
-      return
-    }
+    if (!isClient) return
 
     const fetchSubmissions = async () => {
       setLoadingSubmissions(true)
@@ -135,6 +150,7 @@ export default function ClientDashboardPage() {
         }
         setDirectSubmissions(result.submissions || [])
       } catch (err) {
+        console.error("Error fetching submissions:", err)
         setDirectSubmissions([])
       } finally {
         setLoadingSubmissions(false)
@@ -142,46 +158,48 @@ export default function ClientDashboardPage() {
     }
 
     fetchSubmissions()
-  }, [isClient])
+  }, [isClient, refetchTrigger])
 
-  const forms = serverForms?.forms || []
   const submissions = directSubmissions
 
   useEffect(() => {
     if (!isClient || !serverForms) return
 
-    const formsArray = serverForms?.forms || []
-    const submissionsArray = directSubmissions || []
+    const formsArray = forms || []
+    const submissionsArray = submissions || []
 
-    const activeForms = Array.isArray(formsArray)
-      ? formsArray.filter((f: any) => f.status === "active" || f.is_active === true).length
-      : 0
-
-    const pendingSubs = Array.isArray(submissionsArray)
-      ? submissionsArray.filter((s: any) => s.status === "new").length
-      : 0
+    const activeForms = formsArray.filter((f: any) => f.status === "active" || f.is_active === true).length
+    const pendingSubs = submissionsArray.filter((s: any) => s.status === "new").length
+    const selectedCandidates = submissionsArray.filter((s: any) => s.is_selected === true).length
+    const pendingTimeSlots = submissionsArray.filter(
+      (s: any) => s.is_selected === true && s.status === "selected" && !s.time_slot_selected_at,
+    ).length
 
     setStats({
-      totalForms: Array.isArray(formsArray) ? formsArray.length : 0,
-      totalSubmissions: Array.isArray(submissionsArray) ? submissionsArray.length : 0,
+      totalForms: formsArray.length,
+      totalSubmissions: submissionsArray.length,
       activeHirings: activeForms,
       pendingReview: pendingSubs,
+      selectedCandidates,
+      pendingTimeSlots,
     })
-  }, [serverForms, directSubmissions, isClient])
+  }, [serverForms, submissions, isClient, forms])
 
   const toggleForm = (id: string) => {
-    console.log("📋 Toggling form:", id)
     setExpandedForm(expandedForm === id ? null : id)
   }
 
   const getFormSubmissions = (formId: string) => {
     const formSubs = submissions.filter((s) => s.form_id === formId)
-
     const sortedSubs = formSubs.sort((a, b) => {
       if (a.is_selected !== b.is_selected) {
         return a.is_selected ? -1 : 1
       }
-
+      const aWaitingTimeSlot = a.is_selected && a.status === "selected" && !a.time_slot_selected_at
+      const bWaitingTimeSlot = b.is_selected && b.status === "selected" && !b.time_slot_selected_at
+      if (aWaitingTimeSlot !== bWaitingTimeSlot) {
+        return aWaitingTimeSlot ? -1 : 1
+      }
       const ratingA = a.profile_rating || 0
       const ratingB = b.profile_rating || 0
       return ratingB - ratingA
@@ -193,11 +211,12 @@ export default function ClientDashboardPage() {
     const formSubs = getFormSubmissions(form.id)
     setViewAllModal({
       form: form,
-      submissions: formSubs
+      submissions: formSubs,
     })
   }
 
-  const handleSelectCandidate = async (sub: FreelancerSubmission, formId: string) => {
+  const handleSelectCandidate = async (e: React.MouseEvent, sub: FreelancerSubmission, formId: string) => {
+    e.stopPropagation()
     try {
       const res = await fetch("/api/client/select-candidate", {
         method: "POST",
@@ -211,28 +230,8 @@ export default function ClientDashboardPage() {
 
       const result = await res.json()
       if (result.success) {
-        setForms((prev: any[]) =>
-          prev.map((f) =>
-            f.id === formId
-              ? {
-                ...f,
-                submissions: f.submissions?.map((s: any) => (s.id === sub.id ? { ...s, is_selected: true } : s)),
-              }
-              : f,
-          ),
-        )
-
-        setDirectSubmissions((prev: FreelancerSubmission[]) => prev.map((s) => (s.id === sub.id ? { ...s, is_selected: true } : s)))
-
-        // Update modal state if open
-        if (viewAllModal && viewAllModal.form.id === formId) {
-          setViewAllModal((prev: ViewAllModalData | null) => ({
-            ...prev!,
-            submissions: prev!.submissions.map((s: FreelancerSubmission) => s.id === sub.id ? { ...s, is_selected: true } : s)
-          }))
-        }
-
         toast.success(`${sub.name} selected successfully ✅`)
+        setRefetchTrigger((prev) => prev + 1)
       } else {
         toast.error(result.error || "Failed to select candidate")
       }
@@ -242,7 +241,8 @@ export default function ClientDashboardPage() {
     }
   }
 
-  const handleDeselectCandidate = async (sub: FreelancerSubmission, formId: string) => {
+  const handleDeselectCandidate = async (e: React.MouseEvent, sub: FreelancerSubmission, formId: string) => {
+    e.stopPropagation()
     try {
       const res = await fetch("/api/client/deselect-candidate", {
         method: "POST",
@@ -255,28 +255,8 @@ export default function ClientDashboardPage() {
 
       const result = await res.json()
       if (result.success) {
-        setForms((prev: any[]) =>
-          prev.map((f) =>
-            f.id === formId
-              ? {
-                ...f,
-                submissions: f.submissions?.map((s: any) => (s.id === sub.id ? { ...s, is_selected: false } : s)),
-              }
-              : f,
-          ),
-        )
-
-        setDirectSubmissions((prev: FreelancerSubmission[]) => prev.map((s) => (s.id === sub.id ? { ...s, is_selected: false } : s)))
-
-        // Update modal state if open
-        if (viewAllModal && viewAllModal.form.id === formId) {
-          setViewAllModal((prev: ViewAllModalData | null) => ({
-            ...prev!,
-            submissions: prev!.submissions.map((s: FreelancerSubmission) => s.id === sub.id ? { ...s, is_selected: false } : s)
-          }))
-        }
-
         toast.success(`${sub.name} deselected`)
+        setRefetchTrigger((prev) => prev + 1)
       } else {
         toast.error(result.error || "Failed to deselect candidate")
       }
@@ -286,29 +266,78 @@ export default function ClientDashboardPage() {
     }
   }
 
-  // Format date for display
+  const handleScheduleInterview = (sub: FreelancerSubmission) => {
+    setSelectedFreelancer(sub)
+    setShowTimeSlotModal(true)
+  }
+
+  const handleTimeSlotSuccess = () => {
+    toast.success("Time slot selected! Admin has been notified to schedule the meeting.")
+    setRefetchTrigger((prev) => prev + 1)
+  }
+
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     })
   }
 
-  // Check if submission is new (within last 7 days)
+  const formatDateTime = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
+
   const isNewSubmission = (createdAt: string) => {
     const created = new Date(createdAt)
     const now = new Date()
     const diffTime = Math.abs(now.getTime() - created.getTime())
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays <= 7
+    return diffDays <= 3
+  }
+
+  const getStatusBadge = (sub: FreelancerSubmission) => {
+    if (sub.meeting_scheduled) {
+      return {
+        label: "Meeting Scheduled",
+        className: "bg-[#241C15]/5 text-[#241C15] border-[#241C15]/20",
+        icon: <Video className="w-3 h-3" />,
+      }
+    }
+    if (sub.time_slot_selected_at) {
+      return {
+        label: "Awaiting Schedule",
+        className: "bg-[#FFE01B]/10 text-[#241C15] border-[#FFE01B]/30",
+        icon: <Clock3 className="w-3 h-3" />,
+      }
+    }
+    if (sub.is_selected) {
+      return {
+        label: "Selected",
+        className: "bg-[#FFE01B]/20 text-[#241C15] border-[#FFE01B]/40",
+        icon: <Check className="w-3 h-3" />,
+      }
+    }
+    return null
   }
 
   if (!isClient || loadingForms) {
     return (
-      <main className="min-h-screen bg-[#241C15] flex items-center justify-center">
-        <div className="text-gray-300">Loading your dashboard...</div>
-      </main>
+      <div className="min-h-screen bg-[#fbf5e5] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-[#FFE01B]/30 border-t-[#FFE01B] rounded-full animate-spin"></div>
+            <Building2 className="w-8 h-8 text-[#241C15] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          </div>
+          <p className="text-[#241C15] font-medium">Loading your dashboard...</p>
+        </div>
+      </div>
     )
   }
 
@@ -316,513 +345,370 @@ export default function ClientDashboardPage() {
     const matchesSearch =
       form.form_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       form.job_title?.toLowerCase().includes(searchTerm.toLowerCase())
-
     const matchesStatus = filterStatus === "all" || form.status?.toLowerCase() === filterStatus.toLowerCase()
-
     return matchesSearch && matchesStatus
   })
 
   return (
-    <>
-      <style jsx global>{`
-        @keyframes slideInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes slideInLeft {
-          from {
-            opacity: 0;
-            transform: translateX(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes float {
-          0%,
-          100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-
-        @keyframes shimmer {
-          0% {
-            background-position: -1000px 0;
-          }
-          100% {
-            background-position: 1000px 0;
-          }
-        }
-
-        .animate-slideInUp {
-          animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .animate-slideInLeft {
-          animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.6s ease-out;
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-          height: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(36, 28, 21, 0.05);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 224, 27, 0.4);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 224, 27, 0.6);
-        }
-
-        .stat-card {
-          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .stat-card:hover {
-          transform: translateY(-8px);
-        }
-
-        .form-card {
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .form-card:hover {
-          transform: translateY(-2px);
-        }
-
-        .button-primary {
-          position: relative;
-          overflow: hidden;
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .button-primary::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.3),
-            transparent
-          );
-          transition: left 0.5s;
-        }
-
-        .button-primary:hover::before {
-          left: 100%;
-        }
-
-        .button-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 25px -5px rgba(255, 224, 27, 0.4);
-        }
-
-        .button-secondary {
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .button-secondary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 20px -5px rgba(36, 28, 21, 0.15);
-        }
-
-        .badge {
-          transition: all 0.2s ease;
-        }
-
-        .badge:hover {
-          transform: scale(1.05);
-        }
-      `}</style>
-
-      <main className="min-h-screen bg-gradient-to-br from-[#fbf5e5] via-[#fef9ed] to-[#fbf5e5] text-[#241C15] relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[#FFE01B]/10 to-transparent rounded-full blur-3xl animate-float" />
-          <div
-            className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-[#FCD34D]/10 to-transparent rounded-full blur-3xl animate-float"
-            style={{ animationDelay: "2s" }}
-          />
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-[#FFE01B]/5 to-[#FCD34D]/5 rounded-full blur-3xl"
-            style={{ animationDelay: "4s" }}
-          />
-        </div>
-
-        {/* Enhanced Header */}
-        <div className="border-b border-[#241C15]/10 bg-white/80 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
-          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className={isLoaded ? "animate-slideInLeft" : "opacity-0"}>
-                <div className="flex items-center gap-4">
-                  <div className="relative p-3 bg-gradient-to-br from-[#FFE01B] via-[#FFE01B] to-[#FCD34D] rounded-2xl shadow-lg">
-                    <Building2 className="w-7 h-7 text-[#241C15]" />
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-black text-[#241C15] tracking-tight">
-                      Client Dashboard
-                    </h1>
-                    <p className="text-sm text-[#241C15]/60 font-medium mt-0.5">
-                      Manage your hiring pipeline efficiently
-                    </p>
-                  </div>
-                </div>
+    <main className="min-h-screen bg-[#fbf5e5] text-[#241C15]">
+      {/* Header */}
+      <header className="border-b border-[#241C15]/10 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-[#FFE01B] rounded-xl shadow-sm">
+                <Building2 className="w-6 h-6 text-[#241C15]" />
               </div>
-              <div
-                className={`flex flex-wrap items-center gap-3 w-full sm:w-auto ${isLoaded ? "animate-slideInUp" : "opacity-0"
-                  }`}
+              <div>
+                <h1 className="text-2xl font-bold text-[#241C15]">Client Dashboard</h1>
+                <p className="text-sm text-[#241C15]/60 flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-[#FFE01B]" />
+                  Manage your hiring pipeline
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.push("/client/hirings/create")}
+                className="px-5 py-2.5 bg-[#FFE01B] hover:bg-[#e6ca18] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 transition-all shadow-sm hover:shadow-md"
               >
-                <button className="button-primary flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] text-[#241C15] shadow-md flex items-center justify-center gap-2 text-sm">
-                  <Plus className="w-5 h-5" strokeWidth={2.5} />
-                  <span>New Hiring</span>
-                </button>
-                <button className="button-secondary flex-1 sm:flex-none px-6 py-3 rounded-xl font-semibold bg-white border-2 border-[#241C15]/10 text-[#241C15] hover:border-[#FFE01B]/50 hover:bg-[#fbf5e5]/50 flex items-center justify-center gap-2 text-sm">
-                  <Sparkles className="w-5 h-5" strokeWidth={2} />
-                  <span>Assisted Hiring</span>
-                </button>
-              </div>
+                <Plus className="w-4 h-4" strokeWidth={2.5} />
+                New Hiring
+              </button>
+              <button className="px-5 py-2.5 bg-white border border-[#241C15]/15 hover:border-[#FFE01B] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 transition-all">
+                <Sparkles className="w-4 h-4" />
+                Assisted Hiring
+              </button>
             </div>
           </div>
         </div>
+      </header>
 
-        <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Enhanced Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
-            {[
-              {
-                label: "Active Hirings",
-                value: stats.activeHirings,
-                icon: ClipboardList,
-                gradient: "from-[#FFE01B] to-[#FCD34D]",
-                iconBg: "bg-[#FFE01B]/10",
-                textColor: "text-[#FFE01B]",
-              },
-              {
-                label: "Total Submissions",
-                value: stats.totalSubmissions,
-                icon: Users2,
-                gradient: "from-emerald-400 to-emerald-600",
-                iconBg: "bg-emerald-500/10",
-                textColor: "text-emerald-600",
-              },
-              {
-                label: "Pending Review",
-                value: stats.pendingReview,
-                icon: Clock,
-                gradient: "from-orange-400 to-orange-600",
-                iconBg: "bg-orange-500/10",
-                textColor: "text-orange-600",
-              },
-              {
-                label: "Total Forms",
-                value: stats.totalForms,
-                icon: FileText,
-                gradient: "from-purple-400 to-purple-600",
-                iconBg: "bg-purple-500/10",
-                textColor: "text-purple-600",
-              },
-            ].map((stat, idx) => (
-              <div
-                key={idx}
-                className={`stat-card bg-[#241C15] rounded-2xl p-6 border border-[#241C15]/10 hover:border-[#FFE01B]/30 shadow-sm hover:shadow-xl ${isLoaded ? "animate-slideInUp" : "opacity-0"
-                  }`}
-                style={{ animationDelay: `${idx * 0.1}s` }}
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`p-3 rounded-xl ${stat.iconBg}`}>
-                    <stat.icon className={`w-6 h-6 ${stat.textColor}`} strokeWidth={2} />
-                  </div>
-                  <div className="flex items-center gap-1 px-1 py-1 bg-green-300/20 rounded-full">
-                    <TrendingUp className="w-5 h-5 text-green-600" strokeWidth={2.5} />
-                  </div>
-                </div>
-                <div className="text-3xl font-black text-[#FBF5E5] mb-1">{stat.value}</div>
-                <div className="text-sm font-semibold text-[#FBF5E5]/60">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Enhanced Search and Filter */}
-          <div
-            className={`bg-[#241C15] rounded-2xl border border-[#241C15]/10 p-5 mb-8 shadow-sm ${isLoaded ? "animate-fadeIn" : "opacity-0"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+          {[
+            { label: "Active Hirings", value: stats.activeHirings, icon: ClipboardList, accent: true },
+            { label: "Total Submissions", value: stats.totalSubmissions, icon: Users2 },
+            { label: "Pending Review", value: stats.pendingReview, icon: Clock },
+            { label: "Selected", value: stats.selectedCandidates, icon: CheckCircle2 },
+            {
+              label: "Awaiting Slots",
+              value: stats.pendingTimeSlots,
+              icon: Clock3,
+              highlight: stats.pendingTimeSlots > 0,
+            },
+            { label: "Total Forms", value: stats.totalForms, icon: FileText },
+          ].map((stat, idx) => (
+            <div
+              key={idx}
+              className={`rounded-xl p-4 border transition-all hover:shadow-md ${
+                stat.accent
+                  ? "bg-[#241C15] border-[#241C15] text-white"
+                  : stat.highlight
+                    ? "bg-[#FFE01B]/10 border-[#FFE01B]/30"
+                    : "bg-white border-[#241C15]/10"
               }`}
-            style={{ animationDelay: "0.4s" }}
-          >
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#241C15]" />
-                <input
-                  type="text"
-                  placeholder="Search hiring forms by title or role..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-[#241C15]/10 focus:border-[#FFE01B] focus:ring-4 focus:ring-[#FFE01B]/10 outline-none transition-all bg-[#fbf5e5]/60 text-[#241C15] placeholder:text-[#241C15]/40 font-medium"
-                />
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className={`p-2 rounded-lg ${stat.accent ? "bg-[#FFE01B]" : "bg-[#fbf5e5]"}`}>
+                  <stat.icon className={`w-4 h-4 ${stat.accent ? "text-[#241C15]" : "text-[#241C15]/70"}`} />
+                </div>
+                <div className="flex items-center gap-1">
+                  <TrendingUp className={`w-3 h-3 ${stat.accent ? "text-[#FFE01B]" : "text-[#241C15]/40"}`} />
+                </div>
               </div>
-              <div className="flex gap-3">
+              <div className={`text-2xl font-bold mb-0.5 ${stat.accent ? "text-white" : "text-[#241C15]"}`}>
+                {stat.value}
+              </div>
+              <div className={`text-xs font-medium ${stat.accent ? "text-white/70" : "text-[#241C15]/60"}`}>
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Search and Filter */}
+        <div className="bg-white rounded-xl p-4 mb-8 border border-[#241C15]/10 shadow-sm">
+          <div className="flex flex-col lg:flex-row gap-4 items-center">
+            <div className="relative flex-1 w-full">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#241C15]/40" />
+              <input
+                type="text"
+                placeholder="Search hiring forms..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-11 pr-4 py-3 rounded-lg border border-[#241C15]/10 focus:border-[#FFE01B] focus:ring-2 focus:ring-[#FFE01B]/20 outline-none transition-all bg-[#fbf5e5]/50 text-[#241C15] placeholder:text-[#241C15]/40"
+              />
+            </div>
+            <div className="flex gap-3 w-full lg:w-auto">
+              <div className="relative flex-1 lg:flex-none">
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#241C15]/40" />
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="px-5 py-3.5 rounded-xl border-2 border-[#241C15]/10 focus:border-[#FFE01B] focus:ring-4 focus:ring-[#FFE01B]/10 outline-none bg-[#FBF5E5] font-semibold text-[#241C15] cursor-pointer transition-all"
+                  className="w-full lg:w-40 pl-10 pr-4 py-3 rounded-lg border border-[#241C15]/10 focus:border-[#FFE01B] focus:ring-2 focus:ring-[#FFE01B]/20 outline-none bg-[#fbf5e5]/50 font-medium text-[#241C15] cursor-pointer appearance-none"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
                   <option value="closed">Closed</option>
+                  <option value="draft">Draft</option>
                 </select>
-                <button className="px-5 py-3.5 rounded-xl bg-[#FBF5E5] text-[#241C15] hover:bg-[#241C15]/90 transition-all flex items-center gap-2 font-semibold shadow-md hover:shadow-lg">
-                  <Filter className="w-5 h-5" strokeWidth={2} />
-                  <span className="hidden sm:inline">Filters</span>
-                </button>
               </div>
+              <button className="px-4 py-3 rounded-lg bg-[#241C15] text-white hover:bg-[#241C15]/90 transition-all flex items-center gap-2 font-medium">
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Export</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Forms Section */}
+        <div className="bg-white rounded-xl border border-[#241C15]/10 shadow-sm overflow-hidden">
+          <div className="p-6 border-b border-[#241C15]/10 bg-[#fbf5e5]/30">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-[#FFE01B] rounded-lg">
+                  <ClipboardList className="w-5 h-5 text-[#241C15]" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-[#241C15]">Your Hiring Requests</h2>
+                  <p className="text-sm text-[#241C15]/60">
+                    {filteredForms.length} of {forms.length} Request{forms.length !== 1 ? "s" : ""}
+                    {searchTerm && ` matching "${searchTerm}"`}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  mutateForms()
+                  setRefetchTrigger((prev) => prev + 1)
+                }}
+                className="p-2 rounded-lg hover:bg-[#241C15]/5 transition-all"
+                title="Refresh"
+              >
+                <RefreshCw className="w-4 h-4 text-[#241C15]/60" />
+              </button>
             </div>
           </div>
 
-          {/* Enhanced Forms Section */}
-          <div>
-            <div
-              className={`bg-[#241C15] rounded-2xl border border-[#241C15]/10 p-6 shadow-sm ${isLoaded ? "animate-slideInLeft" : "opacity-0"
-                }`}
-              style={{ animationDelay: "0.5s" }}
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#FFE01B] to-[#FCD34D]">
-                    <ClipboardList className="w-6 h-6 text-[#241C15]" strokeWidth={2} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-black text-[#FBF5E5]">Your Hiring Requests</h2>
-                    <p className="text-xs text-[#FBF5E5]/60">
-                      {filteredForms.length} of {forms.length} Request
-                      {searchTerm && ` matching "${searchTerm}"`}
-                    </p>
-                  </div>
+          <div className="p-6">
+            {filteredForms.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="w-20 h-20 mx-auto mb-4 bg-[#fbf5e5] rounded-full flex items-center justify-center">
+                  <ClipboardList className="w-10 h-10 text-[#241C15]/30" />
                 </div>
+                <h3 className="text-lg font-semibold text-[#241C15]/60 mb-2">No hiring forms found</h3>
+                <p className="text-[#241C15]/40 mb-6">
+                  {searchTerm ? "Try a different search term" : "Create your first hiring request"}
+                </p>
+                <button
+                  onClick={() => router.push("/client/hirings/create")}
+                  className="px-6 py-2.5 bg-[#FFE01B] hover:bg-[#e6ca18] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 mx-auto transition-all"
+                >
+                  <Plus className="w-4 h-4" />
+                  Create Hiring Request
+                </button>
               </div>
-
+            ) : (
               <div className="space-y-4">
-                {filteredForms.map((form: any, idx: number) => {
+                {filteredForms.map((form: any) => {
                   const formSubs = getFormSubmissions(form.id)
+                  const selectedSubs = formSubs.filter((s: any) => s.is_selected)
+                  const pendingTimeSlotSubs = selectedSubs.filter((s: any) => !s.time_slot_selected_at)
+
                   return (
                     <div
                       key={form.id}
-                      className="form-card rounded-xl border-2 border-[#241C15]/10 hover:border-[#FFE01B]/40 bg-[#FBF5E5] p-5 shadow-sm hover:shadow-md"
-                      style={{ animationDelay: `${0.6 + idx * 0.1}s` }}
+                      className="rounded-xl border border-[#241C15]/10 bg-white hover:border-[#FFE01B]/50 transition-all hover:shadow-md"
                     >
-                      <div className="flex items-start justify-between gap-4 mb-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 mb-3">
-                            <h3 className="font-black text-lg text-[#241C15]">{form.form_name}</h3>
-                            <span
-                              className={`badge px-3 py-1 rounded-full text-xs font-bold ${form.status === "active"
-                                ? "bg-green-100 text-green-700 border border-green-300"
-                                : "bg-gray-100 text-gray-700 border border-gray-300"
+                      <div className="p-5">
+                        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-3">
+                              <h3 className="font-bold text-lg text-[#241C15]">{form.form_name}</h3>
+                              <span
+                                className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                                  form.status === "active"
+                                    ? "bg-[#FFE01B]/20 text-[#241C15] border border-[#FFE01B]/40"
+                                    : "bg-[#241C15]/5 text-[#241C15]/60 border border-[#241C15]/10"
                                 }`}
-                            >
-                              {form.status}
-                            </span>
-                          </div>
-
-                          <div className="flex flex-wrap gap-4 text-sm text-[#241C15]/70 mb-3">
-                            <span className="flex items-center gap-2 font-medium">
-                              <Briefcase className="w-4 h-4" strokeWidth={2} />
-                              {form.role_type}
-                            </span>
-                            <span className="flex items-center gap-2 font-medium">
-                              <Users2 className="w-4 h-4" strokeWidth={2} />
-                              {formSubs.length} submissions
-                            </span>
-                            <span className="flex items-center gap-2 font-medium">
-                              <Calendar className="w-4 h-4" strokeWidth={2} />
-                              {formatDate(form.created_at)}
-                            </span>
-                          </div>
-
-                          {form.category && (
-                            <div className="flex flex-wrap gap-2">
-                              {Array.isArray(form.category) ? (
-                                form.category.map((cat: string, i: number) => (
-                                  <span
-                                    key={i}
-                                    className="badge px-3 py-1.5 bg-[#FFE01B]/10 rounded-lg text-xs font-bold border border-[#FFE01B]/30 text-[#241C15]"
-                                  >
-                                    {cat}
-                                  </span>
-                                ))
-                              ) : (
-                                <span className="badge px-3 py-1.5 bg-[#FFE01B]/10 rounded-lg text-xs font-bold border border-[#FFE01B]/30 text-[#241C15]">
-                                  {form.category}
+                              >
+                                {form.status?.toUpperCase()}
+                              </span>
+                              {pendingTimeSlotSubs.length > 0 && (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#241C15] text-[#FFE01B] flex items-center gap-1">
+                                  <Clock3 className="w-3 h-3" />
+                                  {pendingTimeSlotSubs.length} need slots
                                 </span>
                               )}
                             </div>
-                          )}
-                        </div>
 
-                        <button
-                          onClick={() => setExpandedForm(expandedForm === form.id ? null : form.id)}
-                          className="p-2.5 rounded-xl border-2 border-[#241C15]/10 hover:bg-[#FFE01B]/10 hover:border-[#FFE01B]/40 transition-all"
-                        >
-                          {expandedForm === form.id ? (
-                            <ChevronUp className="w-5 h-5 text-[#241C15]" strokeWidth={2.5} />
-                          ) : (
-                            <ChevronDown className="w-5 h-5 text-[#241C15]" strokeWidth={2.5} />
-                          )}
-                        </button>
-                      </div>
+                            <div className="flex flex-wrap gap-3 text-sm text-[#241C15]/70 mb-3">
+                              <span className="flex items-center gap-1.5 bg-[#fbf5e5] px-2.5 py-1 rounded-md">
+                                <Briefcase className="w-3.5 h-3.5 text-[#FFE01B]" />
+                                {form.role_type}
+                              </span>
+                              <span className="flex items-center gap-1.5 bg-[#fbf5e5] px-2.5 py-1 rounded-md">
+                                <Users2 className="w-3.5 h-3.5 text-[#FFE01B]" />
+                                {formSubs.length} submissions
+                              </span>
+                              <span className="flex items-center gap-1.5 bg-[#fbf5e5] px-2.5 py-1 rounded-md">
+                                <Calendar className="w-3.5 h-3.5 text-[#FFE01B]" />
+                                {formatDate(form.created_at)}
+                              </span>
+                            </div>
 
-                      {/* Enhanced Expanded View */}
-                      {expandedForm === form.id && (
-                        <div className="mt-5 bg-[#241C15] rounded-xl p-5 border-2 border-[#241C15]/10 animate-slideInUp">
-                          <div className="flex items-center justify-between mb-5">
-                            <h4 className="text-base font-bold text-[#FBF5E5] flex items-center gap-2">
-                              <Users2 className="w-5 h-5 text-[#FFE01B]" strokeWidth={2} />
-                              Submissions ({formSubs.length})
-                            </h4>
+                            {form.category && (
+                              <div className="flex flex-wrap gap-1.5">
+                                {(Array.isArray(form.category) ? form.category : [form.category]).map(
+                                  (cat: string, i: number) => (
+                                    <span
+                                      key={i}
+                                      className="px-2.5 py-1 bg-[#FFE01B]/10 rounded-md text-xs font-medium text-[#241C15] border border-[#FFE01B]/20"
+                                    >
+                                      {cat}
+                                    </span>
+                                  ),
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2">
                             {formSubs.length > 0 && (
                               <button
-                                onClick={() => setViewAllModal({ form, submissions: formSubs })}
-                                className="text-sm text-[#FFE01B] font-bold hover:text-[#FCD34D] flex items-center gap-1 transition-all"
+                                onClick={() => handleViewAllSubmissions(form)}
+                                className="px-4 py-2 rounded-lg bg-[#241C15] text-white hover:bg-[#241C15]/90 transition-all text-sm font-medium flex items-center gap-2"
+                              >
+                                <Users2 className="w-4 h-4" />
+                                View All
+                              </button>
+                            )}
+                            <button
+                              onClick={() => toggleForm(form.id)}
+                              className="p-2 rounded-lg border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#FFE01B]/10 transition-all"
+                            >
+                              {expandedForm === form.id ? (
+                                <ChevronUp className="w-5 h-5 text-[#241C15]" />
+                              ) : (
+                                <ChevronDown className="w-5 h-5 text-[#241C15]" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Expanded Submissions View */}
+                      {expandedForm === form.id && (
+                        <div className="border-t border-[#241C15]/10 bg-[#241C15] p-5">
+                          <div className="flex items-center justify-between mb-4">
+                            <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+                              <Users2 className="w-4 h-4 text-[#FFE01B]" />
+                              Submissions ({formSubs.length})
+                            </h4>
+                            {formSubs.length > 3 && (
+                              <button
+                                onClick={() => handleViewAllSubmissions(form)}
+                                className="text-sm text-[#FFE01B] font-medium hover:underline flex items-center gap-1"
                               >
                                 View All
-                                <ArrowRight className="w-4 h-4" strokeWidth={2.5} />
+                                <ArrowRight className="w-3 h-3" />
                               </button>
                             )}
                           </div>
+
                           {formSubs.length > 0 ? (
                             <div className="space-y-3">
-                              {formSubs.slice(0, 3).map((sub: any) => (
-                                <div
-                                  key={sub.id}
-                                  className="border-2 border-[#241C15]/10 rounded-xl p-4 hover:border-[#FFE01B]/40 transition-all bg-[#fbf5e5] cursor-pointer hover:shadow-md"
-                                  onClick={() => setSelectedSubmission(sub)}
-                                >
-                                  <div className="flex justify-between items-start gap-3 mb-3">
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <div className="p-2 bg-[#FFE01B]/10 rounded-lg">
-                                          <User className="w-4 h-4 text-[#241C15]" strokeWidth={2} />
+                              {formSubs.slice(0, 3).map((sub: any) => {
+                                const statusBadge = getStatusBadge(sub)
+                                const needsTimeSlot = sub.is_selected && !sub.time_slot_selected_at
+
+                                return (
+                                  <div key={sub.id} className="rounded-lg p-4 bg-white border border-[#241C15]/10">
+                                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                      <div className="flex items-start gap-3 flex-1">
+                                        <div className="p-2 bg-[#FFE01B]/20 rounded-lg">
+                                          <User className="w-5 h-5 text-[#241C15]" />
                                         </div>
-                                        <p className="font-bold text-base text-[#241C15]">{sub.name}</p>
-                                        {isNewSubmission(sub.created_at) && (
-                                          <span className="badge px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-300">
-                                            New
-                                          </span>
-                                        )}
-                                        {sub.meeting_scheduled && (
-                                          <span className="badge px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border border-blue-300">
-                                            Meeting Set
-                                          </span>
-                                        )}
+                                        <div className="flex-1 min-w-0">
+                                          <div className="flex flex-wrap items-center gap-2 mb-1">
+                                            <p className="font-semibold text-[#241C15]">{sub.name}</p>
+                                            {isNewSubmission(sub.created_at) && (
+                                              <span className="px-2 py-0.5 bg-[#FFE01B] text-[#241C15] rounded text-xs font-semibold">
+                                                New
+                                              </span>
+                                            )}
+                                            {statusBadge && (
+                                              <span
+                                                className={`px-2 py-0.5 rounded text-xs font-semibold border flex items-center gap-1 ${statusBadge.className}`}
+                                              >
+                                                {statusBadge.icon}
+                                                {statusBadge.label}
+                                              </span>
+                                            )}
+                                          </div>
+                                          <div className="flex flex-wrap items-center gap-3 text-xs text-[#241C15]/60">
+                                            <span className="flex items-center gap-1">
+                                              <Mail className="w-3 h-3" />
+                                              {sub.email}
+                                            </span>
+                                            {sub.years_experience && (
+                                              <span className="flex items-center gap-1">
+                                                <Award className="w-3 h-3" />
+                                                {sub.years_experience} yrs
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
                                       </div>
-                                      <div className="flex flex-wrap gap-3 text-sm text-[#241C15]/60 font-medium">
-                                        {sub.years_experience && (
-                                          <span className="flex items-center gap-1.5">
-                                            <Award className="w-4 h-4" strokeWidth={2} />
-                                            {sub.years_experience} years
+
+                                      <div className="flex items-center gap-2">
+                                        <div className="flex items-center gap-1 px-2 py-1 bg-[#FFE01B]/10 rounded border border-[#FFE01B]/20">
+                                          <Star className="w-3 h-3 text-[#FFE01B] fill-current" />
+                                          <span className="text-sm font-bold text-[#241C15]">
+                                            {sub.profile_rating?.toFixed(1) || "N/A"}
                                           </span>
+                                        </div>
+
+                                        {sub.is_selected ? (
+                                          <div className="flex items-center gap-2">
+                                            {needsTimeSlot && (
+                                              <button
+                                                onClick={() => handleScheduleInterview(sub)}
+                                                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#241C15] text-[#FFE01B] hover:bg-[#241C15]/90 transition-all flex items-center gap-1"
+                                              >
+                                                <Clock3 className="w-3 h-3" />
+                                                Select Slot
+                                              </button>
+                                            )}
+                                            <button
+                                              onClick={(e) => handleDeselectCandidate(e, sub, form.id)}
+                                              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#241C15]/5 text-[#241C15]/70 hover:bg-[#241C15]/10 transition-all flex items-center gap-1"
+                                            >
+                                              <XCircle className="w-3 h-3" />
+                                              Deselect
+                                            </button>
+                                          </div>
+                                        ) : (
+                                          <button
+                                            onClick={(e) => handleSelectCandidate(e, sub, form.id)}
+                                            className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FFE01B] text-[#241C15] hover:bg-[#e6ca18] transition-all flex items-center gap-1"
+                                          >
+                                            <CheckCircle2 className="w-3 h-3" />
+                                            Select
+                                          </button>
                                         )}
-                                        <span className="flex items-center gap-1.5">
-                                          <Calendar className="w-4 h-4" strokeWidth={2} />
-                                          {formatDate(sub.created_at)}
-                                        </span>
                                       </div>
                                     </div>
-
-                                    <div className="flex flex-col items-end gap-2">
-                                      <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#FFE01B]/10 rounded-lg border border-[#FFE01B]/30">
-                                        <Star
-                                          className="w-4 h-4 text-[#FFE01B] fill-current"
-                                          strokeWidth={2}
-                                        />
-                                        <span className="text-sm font-black text-[#241C15]">
-                                          {sub.profile_rating?.toFixed(1) || "N/A"}
-                                        </span>
-                                      </div>
-
-                                      {sub.is_selected ? (
-                                        <div className="flex flex-col gap-2">
-                                          <button className="px-4 py-2 text-xs font-bold rounded-lg bg-red-50 text-red-700 border-2 border-red-200 hover:bg-red-100 transition-all flex items-center gap-1.5">
-                                            <XCircle className="w-4 h-4" strokeWidth={2} />
-                                            Deselect
-                                          </button>
-                                          <button className="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-50 text-emerald-700 border-2 border-emerald-200 hover:bg-emerald-100 transition-all flex items-center gap-1.5">
-                                            <Video className="w-4 h-4" strokeWidth={2} />
-                                            Schedule
-                                          </button>
-                                        </div>
-                                      ) : (
-                                        <button className="px-4 py-2 text-xs font-bold rounded-lg bg-[#FFE01B]/20 border-2 border-[#FFE01B]/40 hover:bg-[#FFE01B]/40 text-[#241C15] transition-all flex items-center gap-1.5">
-                                          <CheckCircle2 className="w-4 h-4" strokeWidth={2} />
-                                          Select
-                                        </button>
-                                      )}
-                                    </div>
                                   </div>
-
-                                  <div className="flex gap-2 flex-wrap">
-                                    {sub.portfolio_link && (
-                                      <span className="badge px-2.5 py-1.5 bg-white rounded-lg text-xs font-bold border border-[#241C15]/10 flex items-center gap-1.5">
-                                        <Globe className="w-3.5 h-3.5" strokeWidth={2} />
-                                        Portfolio
-                                      </span>
-                                    )}
-                                    {sub.github_link && (
-                                      <span className="badge px-2.5 py-1.5 bg-white rounded-lg text-xs font-bold border border-[#241C15]/10 flex items-center gap-1.5">
-                                        <Github className="w-3.5 h-3.5" strokeWidth={2} />
-                                        GitHub
-                                      </span>
-                                    )}
-                                    {sub.resume_link && (
-                                      <span className="badge px-2.5 py-1.5 bg-white rounded-lg text-xs font-bold border border-[#241C15]/10 flex items-center gap-1.5">
-                                        <FileCode className="w-3.5 h-3.5" strokeWidth={2} />
-                                        Resume
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              ))}
+                                )
+                              })}
                             </div>
                           ) : (
-                            <div className="text-center py-12 bg-[#fbf5e5]/30 rounded-xl">
-                              <AlertCircle className="w-12 h-12 text-[#241C15]/20 mx-auto mb-3" />
-                              <p className="text-sm font-semibold text-[#241C15]/40">
-                                No submissions yet
-                              </p>
-                              <p className="text-xs text-[#241C15]/30 mt-1">
-                                Candidates will appear here when they apply
-                              </p>
+                            <div className="text-center py-8">
+                              <AlertCircle className="w-10 h-10 text-white/20 mx-auto mb-2" />
+                              <p className="text-sm text-white/60">No submissions yet</p>
                             </div>
                           )}
                         </div>
@@ -831,194 +717,223 @@ export default function ClientDashboardPage() {
                   )
                 })}
               </div>
-            </div>
+            )}
           </div>
         </div>
+      </div>
 
-        {/* Enhanced View All Modal */}
-        {viewAllModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-            <div className="bg-white rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden border-2 border-[#241C15]/10 shadow-2xl">
-              <div className="flex items-center justify-between p-6 border-b-2 border-[#241C15]/10 bg-gradient-to-r from-[#fbf5e5] to-white">
-                <div>
-                  <h2 className="text-2xl font-black text-[#241C15]">
-                    All Submissions
-                  </h2>
-                  <p className="text-sm text-[#241C15]/60 font-medium mt-1">
-                    {viewAllModal.form.form_name} • {viewAllModal.submissions.length} candidates
-                  </p>
-                </div>
-                <button
-                  onClick={() => setViewAllModal(null)}
-                  className="p-2.5 rounded-xl hover:bg-[#241C15]/10 transition-all"
-                >
-                  <X className="w-6 h-6 text-[#241C15]" strokeWidth={2.5} />
-                </button>
+      {/* View All Modal */}
+      {viewAllModal && (
+        <div className="fixed inset-0 bg-[#241C15]/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden border border-[#241C15]/10 shadow-2xl">
+            <div className="flex items-center justify-between p-6 border-b border-[#241C15]/10 bg-[#fbf5e5]">
+              <div>
+                <h2 className="text-xl font-bold text-[#241C15]">All Submissions</h2>
+                <p className="text-sm text-[#241C15]/60 mt-1">
+                  {viewAllModal.form.form_name} • {viewAllModal.submissions.length} candidates
+                </p>
               </div>
+              <button
+                onClick={() => setViewAllModal(null)}
+                className="p-2 rounded-lg hover:bg-[#241C15]/10 transition-all"
+              >
+                <X className="w-5 h-5 text-[#241C15]" />
+              </button>
+            </div>
 
-              <div className="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
-                {viewAllModal.submissions.length > 0 ? (
-                  <div className="grid gap-5">
-                    {viewAllModal.submissions.map((sub: any) => (
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
+              {viewAllModal.submissions.length > 0 ? (
+                <div className="space-y-4">
+                  {viewAllModal.submissions.map((sub: any) => {
+                    const statusBadge = getStatusBadge(sub)
+                    const needsTimeSlot = sub.is_selected && !sub.time_slot_selected_at
+
+                    return (
                       <div
                         key={sub.id}
-                        className="border-2 border-[#241C15]/10 rounded-xl p-5 hover:border-[#FFE01B]/40 transition-all bg-gradient-to-br from-[#fbf5e5]/30 to-white hover:shadow-lg"
+                        className="rounded-xl p-5 border border-[#241C15]/10 bg-white hover:border-[#FFE01B]/50 transition-all"
                       >
-                        <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-4">
+                        <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-5">
                           <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-4">
-                              <div className="p-3 bg-gradient-to-br from-[#FFE01B]/20 to-[#FCD34D]/20 rounded-xl border border-[#FFE01B]/30">
-                                <User className="w-6 h-6 text-[#241C15]" strokeWidth={2} />
+                            <div className="flex items-start gap-4 mb-4">
+                              <div className="p-3 bg-[#FFE01B]/20 rounded-xl">
+                                <User className="w-6 h-6 text-[#241C15]" />
                               </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <h3 className="font-black text-xl text-[#241C15]">{sub.name}</h3>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                  <h3 className="font-bold text-lg text-[#241C15]">{sub.name}</h3>
                                   {isNewSubmission(sub.created_at) && (
-                                    <span className="badge px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold border border-green-300">
+                                    <span className="px-2 py-0.5 bg-[#FFE01B] text-[#241C15] rounded text-xs font-semibold">
                                       New
                                     </span>
                                   )}
-                                  {sub.meeting_scheduled && (
-                                    <span className="badge px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold border border-blue-300">
-                                      Meeting Scheduled
+                                  {statusBadge && (
+                                    <span
+                                      className={`px-2 py-0.5 rounded text-xs font-semibold border flex items-center gap-1 ${statusBadge.className}`}
+                                    >
+                                      {statusBadge.icon}
+                                      {statusBadge.label}
                                     </span>
                                   )}
                                 </div>
-                                {sub.profile_rating && (
-                                  <div className="flex items-center gap-2 mt-2">
-                                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FFE01B]/10 rounded-lg border border-[#FFE01B]/30">
-                                      <Star
-                                        className="w-4 h-4 text-[#FFE01B] fill-current"
-                                        strokeWidth={2}
-                                      />
-                                      <span className="text-sm font-black text-[#241C15]">
-                                        {sub.profile_rating.toFixed(1)}
-                                      </span>
-                                    </div>
-                                    <span className="text-sm font-semibold text-[#241C15]/60">
-                                      Profile Rating
-                                    </span>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                  <div className="flex items-center gap-2 p-2 bg-[#fbf5e5] rounded-lg">
+                                    <Mail className="w-4 h-4 text-[#FFE01B]" />
+                                    <span className="text-sm text-[#241C15] truncate">{sub.email}</span>
                                   </div>
-                                )}
+                                  {sub.phone && (
+                                    <div className="flex items-center gap-2 p-2 bg-[#fbf5e5] rounded-lg">
+                                      <Phone className="w-4 h-4 text-[#FFE01B]" />
+                                      <span className="text-sm text-[#241C15]">{sub.phone}</span>
+                                    </div>
+                                  )}
+                                  {sub.years_experience && (
+                                    <div className="flex items-center gap-2 p-2 bg-[#fbf5e5] rounded-lg">
+                                      <Award className="w-4 h-4 text-[#FFE01B]" />
+                                      <span className="text-sm text-[#241C15]">{sub.years_experience} years exp</span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                              {sub.years_experience && (
-                                <div className="flex items-center gap-2.5 p-3 bg-white rounded-lg border border-[#241C15]/10">
-                                  <Award className="w-5 h-5 text-[#FFE01B]" strokeWidth={2} />
-                                  <div>
-                                    <span className="font-black text-[#241C15]">
-                                      {sub.years_experience} years
-                                    </span>
-                                    <span className="text-[#241C15]/60 font-medium"> of experience</span>
-                                  </div>
-                                </div>
+                            <div className="flex flex-wrap gap-2">
+                              {sub.portfolio_link && (
+                                <a
+                                  href={sub.portfolio_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
+                                >
+                                  <Globe className="w-3.5 h-3.5" />
+                                  Portfolio
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
                               )}
-                              <div className="flex items-center gap-2.5 p-3 bg-white rounded-lg border border-[#241C15]/10">
-                                <Calendar className="w-5 h-5 text-[#FFE01B]" strokeWidth={2} />
-                                <div>
-                                  <span className="text-[#241C15]/60 font-medium">Applied on </span>
-                                  <span className="font-black text-[#241C15]">
-                                    {formatDate(sub.created_at)}
-                                  </span>
-                                </div>
-                              </div>
+                              {sub.github_link && (
+                                <a
+                                  href={sub.github_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
+                                >
+                                  <Github className="w-3.5 h-3.5" />
+                                  GitHub
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
+                              {sub.resume_link && (
+                                <a
+                                  href={sub.resume_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
+                                >
+                                  <FileCode className="w-3.5 h-3.5" />
+                                  Resume
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
+                              {sub.proposal_link && (
+                                <a
+                                  href={sub.proposal_link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
+                                >
+                                  <MessageSquare className="w-3.5 h-3.5" />
+                                  Proposal
+                                  <ExternalLink className="w-3 h-3" />
+                                </a>
+                              )}
                             </div>
                           </div>
 
-                          <div className="flex flex-col gap-2 flex-shrink-0 lg:min-w-[160px]">
+                          <div className="flex flex-col gap-2 xl:w-48">
+                            <div className="flex items-center gap-2 px-3 py-2 bg-[#FFE01B]/10 rounded-lg border border-[#FFE01B]/20 mb-2">
+                              <Star className="w-4 h-4 text-[#FFE01B] fill-current" />
+                              <span className="font-bold text-[#241C15]">
+                                {sub.profile_rating?.toFixed(1) || "N/A"}
+                              </span>
+                              <span className="text-xs text-[#241C15]/60">/5.0</span>
+                            </div>
+
                             {sub.is_selected ? (
-                              <>
-                                <div className="px-4 py-2.5 text-sm font-bold rounded-xl bg-green-100 text-green-700 border-2 border-green-300 text-center flex items-center justify-center gap-2">
-                                  <CheckCircle2 className="w-4 h-4" strokeWidth={2.5} />
+                              <div className="space-y-2">
+                                <div className="px-3 py-2 text-sm font-semibold rounded-lg bg-[#FFE01B]/20 text-[#241C15] border border-[#FFE01B]/40 text-center flex items-center justify-center gap-1.5">
+                                  <CheckCircle2 className="w-4 h-4" />
                                   Selected
                                 </div>
-                                <button className="px-4 py-2.5 text-sm font-bold rounded-xl bg-red-50 text-red-700 border-2 border-red-200 hover:bg-red-100 transition-all flex items-center justify-center gap-2">
-                                  <XCircle className="w-4 h-4" strokeWidth={2} />
+                                {needsTimeSlot && (
+                                  <button
+                                    onClick={() => {
+                                      handleScheduleInterview(sub)
+                                      setViewAllModal(null)
+                                    }}
+                                    className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#241C15] text-[#FFE01B] hover:bg-[#241C15]/90 transition-all flex items-center justify-center gap-1.5"
+                                  >
+                                    <Clock3 className="w-4 h-4" />
+                                    Select Time Slot
+                                  </button>
+                                )}
+                                <button
+                                  onClick={(e) => {
+                                    handleDeselectCandidate(e, sub, viewAllModal.form.id)
+                                    setViewAllModal(null)
+                                  }}
+                                  className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#241C15]/5 text-[#241C15]/70 hover:bg-[#241C15]/10 transition-all flex items-center justify-center gap-1.5"
+                                >
+                                  <XCircle className="w-4 h-4" />
                                   Deselect
                                 </button>
-                                <button className="px-4 py-2.5 text-sm font-bold rounded-xl bg-blue-50 text-blue-700 border-2 border-blue-200 hover:bg-blue-100 transition-all flex items-center justify-center gap-2">
-                                  <Video className="w-4 h-4" strokeWidth={2} />
-                                  Schedule
-                                </button>
-                              </>
+                              </div>
                             ) : (
-                              <button className="px-4 py-2.5 text-sm font-bold rounded-xl bg-[#FFE01B]/20 border-2 border-[#FFE01B]/40 hover:bg-[#FFE01B]/40 text-[#241C15] transition-all flex items-center justify-center gap-2">
-                                <CheckCircle2 className="w-4 h-4" strokeWidth={2} />
-                                Select
+                              <button
+                                onClick={(e) => {
+                                  handleSelectCandidate(e, sub, viewAllModal.form.id)
+                                  setViewAllModal(null)
+                                }}
+                                className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#FFE01B] text-[#241C15] hover:bg-[#e6ca18] transition-all flex items-center justify-center gap-1.5"
+                              >
+                                <CheckCircle2 className="w-4 h-4" />
+                                Select Candidate
                               </button>
                             )}
                           </div>
                         </div>
-
-                        <div className="flex flex-wrap gap-2.5 mt-4 pt-4 border-t border-[#241C15]/10">
-                          {sub.portfolio_link && (
-                            <a
-                              href={sub.portfolio_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="badge px-4 py-2.5 bg-white rounded-xl text-sm font-bold border-2 border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5]/50 transition-all flex items-center gap-2"
-                            >
-                              <Globe className="w-4 h-4" strokeWidth={2} />
-                              Portfolio
-                              <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} />
-                            </a>
-                          )}
-                          {sub.github_link && (
-                            <a
-                              href={sub.github_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="badge px-4 py-2.5 bg-white rounded-xl text-sm font-bold border-2 border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5]/50 transition-all flex items-center gap-2"
-                            >
-                              <Github className="w-4 h-4" strokeWidth={2} />
-                              GitHub
-                              <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} />
-                            </a>
-                          )}
-                          {sub.resume_link && (
-                            <a
-                              href={sub.resume_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="badge px-4 py-2.5 bg-white rounded-xl text-sm font-bold border-2 border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5]/50 transition-all flex items-center gap-2"
-                            >
-                              <FileCode className="w-4 h-4" strokeWidth={2} />
-                              Resume
-                              <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} />
-                            </a>
-                          )}
-                          {sub.proposal_link && (
-                            <a
-                              href={sub.proposal_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="badge px-4 py-2.5 bg-white rounded-xl text-sm font-bold border-2 border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5]/50 transition-all flex items-center gap-2"
-                            >
-                              <MessageSquare className="w-4 h-4" strokeWidth={2} />
-                              Proposal
-                              <ExternalLink className="w-3.5 h-3.5" strokeWidth={2} />
-                            </a>
-                          )}
-                        </div>
                       </div>
-                    ))}
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-16">
+                  <div className="w-20 h-20 mx-auto mb-4 bg-[#fbf5e5] rounded-full flex items-center justify-center">
+                    <Users2 className="w-10 h-10 text-[#241C15]/30" />
                   </div>
-                ) : (
-                  <div className="text-center py-16">
-                    <AlertCircle className="w-16 h-16 text-[#241C15]/20 mx-auto mb-4" />
-                    <p className="text-xl font-bold text-[#241C15]/50">No submissions found</p>
-                    <p className="text-sm text-[#241C15]/40 mt-2">
-                      This hiring form doesn't have any submissions yet.
-                    </p>
-                  </div>
-                )}
-              </div>
+                  <p className="text-lg font-semibold text-[#241C15]/50 mb-2">No submissions found</p>
+                  <p className="text-[#241C15]/40">Share the form link with candidates</p>
+                </div>
+              )}
             </div>
           </div>
-        )}
-      </main>
-    </>
+        </div>
+      )}
+
+      {/* TimeSlotSelectorModal */}
+      {showTimeSlotModal && selectedFreelancer && (
+        <TimeSlotSelectorModal
+          isOpen={showTimeSlotModal}
+          onClose={() => {
+            setShowTimeSlotModal(false)
+            setSelectedFreelancer(null)
+          }}
+          submissionId={selectedFreelancer.id}
+          freelancerName={selectedFreelancer.name}
+          freelancerEmail={selectedFreelancer.email}
+          onSuccess={handleTimeSlotSuccess}
+        />
+      )}
+    </main>
   )
 }

@@ -4,30 +4,47 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import useSWR from "swr"
-import { 
-  Loader2, Briefcase, Calendar, FileText, ExternalLink, TrendingUp, 
-  Clock, CheckCircle, XCircle, Eye, User, LogOut, Menu, X, 
+import {
+  Loader2, Briefcase, Calendar, FileText, ExternalLink, TrendingUp,
+  Clock, CheckCircle, XCircle, Eye, User, LogOut, Menu, X,
   ChevronRight, Building2, MapPin, DollarSign, Filter, Search,
-  Download
+  Download, Video, CalendarCheck, Link as LinkIcon, Users, CalendarDays
 } from "lucide-react"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import TimeSlotSelector from "../../../../components/freelancer/TimeSlotSelector"
 
 const fetcher = (url: string) => fetch(url, { credentials: "include" }).then(res => res.json())
 
 export default function FreelancerApplications() {
   const router = useRouter()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showTimeSlotFor, setShowTimeSlotFor] = useState<string | null>(null)
   const { data: meData, isLoading: meLoading } = useSWR("/api/freelancer/me", fetcher)
-  const { data: submissionsData, isLoading: submissionsLoading } = useSWR("/api/freelancer/submissions", fetcher)
+  const { data: submissionsData, isLoading: submissionsLoading, mutate } = useSWR("/api/freelancer/submissions", fetcher)
 
   const [applications, setApplications] = useState<any[]>([])
   const [filteredApplications, setFilteredApplications] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [sortBy, setSortBy] = useState("newest")
+
+  // Get freelancer details
+  const freelancer = meData?.freelancer
+
+  // Find the current submission for time slot modal
+  const currentSubmission = showTimeSlotFor 
+    ? applications.find(app => app.id === showTimeSlotFor)
+    : null
+
+  // Close time slot modal
+  const handleCloseTimeSlot = () => {
+    setShowTimeSlotFor(null)
+    // Refresh data
+    mutate()
+  }
 
   useEffect(() => {
     if (submissionsData?.submissions) {
@@ -43,7 +60,7 @@ export default function FreelancerApplications() {
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(app => 
+      filtered = filtered.filter(app =>
         app.forms?.form_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.forms?.form_description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         app.forms?.client_table?.company_name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -55,11 +72,18 @@ export default function FreelancerApplications() {
       filtered = filtered.filter(app => {
         const status = app.status?.toLowerCase()
         switch (statusFilter) {
-          case "accepted": return ['selected', 'accepted'].includes(status)
-          case "reviewed": return status === 'reviewed'
-          case "pending": return !status || status === 'submitted'
-          case "rejected": return status === 'rejected'
-          default: return true
+          case "accepted":
+            return ['selected', 'accepted', 'availability_set', 'time_slot_selected', 'meeting_scheduled'].includes(status)
+          case "reviewed":
+            return status === 'reviewed'
+          case "pending":
+            return !status || status === 'submitted' || status === 'pending'
+          case "rejected":
+            return status === 'rejected'
+          case "scheduled":
+            return status === 'meeting_scheduled'
+          default:
+            return true
         }
       })
     }
@@ -84,14 +108,37 @@ export default function FreelancerApplications() {
   }, [applications, searchTerm, statusFilter, sortBy])
 
   const getStatusConfig = (status: string) => {
-    switch (status?.toLowerCase()) {
+    const statusLower = status?.toLowerCase()
+    
+    switch (statusLower) {
       case "selected":
       case "accepted":
         return {
           bg: "#dcfce7",
           color: "#166534",
           icon: CheckCircle,
-          label: "Accepted"
+          label: "Selected"
+        }
+      case "availability_set":
+        return {
+          bg: "#dbeafe",
+          color: "#1e40af",
+          icon: CalendarDays,
+          label: "Availability Set"
+        }
+      case "time_slot_selected":
+        return {
+          bg: "#f0f9ff",
+          color: "#0c4a6e",
+          icon: Clock,
+          label: "Slot Selected"
+        }
+      case "meeting_scheduled":
+        return {
+          bg: "#f0f9ff",
+          color: "#0c4a6e",
+          icon: Video,
+          label: "Meeting Scheduled"
         }
       case "reviewed":
         return {
@@ -167,13 +214,13 @@ export default function FreelancerApplications() {
     )
   }
 
-  const freelancer = meData?.freelancer
-
   const stats = {
     total: applications.length,
-    accepted: applications.filter(a => ['selected', 'accepted'].includes(a.status?.toLowerCase())).length,
+    accepted: applications.filter(a => 
+      ['selected', 'accepted', 'availability_set', 'time_slot_selected', 'meeting_scheduled'].includes(a.status?.toLowerCase())
+    ).length,
     reviewed: applications.filter(a => a.status?.toLowerCase() === 'reviewed').length,
-    pending: applications.filter(a => !a.status || a.status?.toLowerCase() === 'submitted').length,
+    pending: applications.filter(a => !a.status || a.status?.toLowerCase() === 'submitted' || a.status?.toLowerCase() === 'pending').length,
     rejected: applications.filter(a => a.status?.toLowerCase() === 'rejected').length
   }
 
@@ -213,17 +260,6 @@ export default function FreelancerApplications() {
                   <span>Dashboard</span>
                 </Button>
               </Link>
-              {/* <Link href="/get-hired/freelancer/jobs">
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="flex items-center space-x-2 transition-colors hover:bg-transparent text-sm xl:text-base"
-                  style={{ color: '#241C15' }}
-                >
-                  <Briefcase className="h-4 w-4 xl:h-5 xl:w-5" />
-                  <span>Browse Jobs</span>
-                </Button>
-              </Link> */}
               <Link href="/get-hired/freelancer/profile">
                 <Button
                   variant="ghost"
@@ -245,25 +281,6 @@ export default function FreelancerApplications() {
                 <LogOut className="h-3 w-3 xl:h-4 xl:w-4" />
                 <span>Logout</span>
               </Button>
-            </div>
-
-            {/* Tablet Navigation */}
-            <div className="hidden md:flex lg:hidden items-center space-x-2">
-              <Link href="/get-hired/freelancer/dashboard">
-                <Button variant="ghost" size="sm" className="p-2">
-                  <Briefcase className="h-4 w-4" />
-                </Button>
-              </Link>
-              {/* <Link href="/get-hired/freelancer/jobs">
-                <Button variant="ghost" size="sm" className="p-2">
-                  <Briefcase className="h-4 w-4" />
-                </Button>
-              </Link> */}
-              <Link href="/get-hired/freelancer/profile">
-                <Button variant="ghost" size="sm" className="p-2">
-                  <User className="h-4 w-4" />
-                </Button>
-              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -294,16 +311,6 @@ export default function FreelancerApplications() {
                     <span>Dashboard</span>
                   </Button>
                 </Link>
-                {/* <Link href="/get-hired/freelancer/jobs">
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start space-x-3 text-base"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Briefcase className="h-4 w-4" />
-                    <span>Browse Jobs</span>
-                  </Button>
-                </Link> */}
                 <Link href="/get-hired/freelancer/profile">
                   <Button
                     variant="ghost"
@@ -349,7 +356,7 @@ export default function FreelancerApplications() {
               </div>
             </div>
             
-            {/* {filteredApplications.length > 0 && (
+            {filteredApplications.length > 0 && (
               <Button
                 onClick={exportApplications}
                 className="flex items-center space-x-2 font-semibold transition-all duration-200 hover:shadow-lg"
@@ -358,7 +365,7 @@ export default function FreelancerApplications() {
                 <Download className="h-4 w-4" />
                 <span className="hidden sm:inline">Export CSV</span>
               </Button>
-            )} */}
+            )}
           </div>
         </div>
 
@@ -390,6 +397,7 @@ export default function FreelancerApplications() {
                 <option value="reviewed">Under Review</option>
                 <option value="accepted">Accepted</option>
                 <option value="rejected">Rejected</option>
+                <option value="scheduled">Meeting Scheduled</option>
               </select>
 
               <select
@@ -409,7 +417,7 @@ export default function FreelancerApplications() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <Card 
+          <Card
             className="bg-white border shadow-sm hover:shadow-md transition-all duration-200 animate-slide-in-bottom cursor-pointer group"
             style={{ borderColor: '#FFE01B', animationDelay: '200ms' }}
             onClick={() => setStatusFilter("all")}
@@ -431,7 +439,7 @@ export default function FreelancerApplications() {
             </CardContent>
           </Card>
 
-          <Card 
+          <Card
             className="bg-white border shadow-sm hover:shadow-md transition-all duration-200 animate-slide-in-bottom cursor-pointer group"
             style={{ borderColor: '#10b981', animationDelay: '250ms' }}
             onClick={() => setStatusFilter("accepted")}
@@ -453,7 +461,7 @@ export default function FreelancerApplications() {
             </CardContent>
           </Card>
 
-          <Card 
+          <Card
             className="bg-white border shadow-sm hover:shadow-md transition-all duration-200 animate-slide-in-bottom cursor-pointer group"
             style={{ borderColor: '#f59e0b', animationDelay: '300ms' }}
             onClick={() => setStatusFilter("reviewed")}
@@ -475,7 +483,7 @@ export default function FreelancerApplications() {
             </CardContent>
           </Card>
 
-          <Card 
+          <Card
             className="bg-white border shadow-sm hover:shadow-md transition-all duration-200 animate-slide-in-bottom cursor-pointer group"
             style={{ borderColor: '#FFE01B', animationDelay: '350ms' }}
             onClick={() => setStatusFilter("pending")}
@@ -497,7 +505,7 @@ export default function FreelancerApplications() {
             </CardContent>
           </Card>
 
-          <Card 
+          <Card
             className="bg-white border shadow-sm hover:shadow-md transition-all duration-200 animate-slide-in-bottom cursor-pointer group"
             style={{ borderColor: '#ef4444', animationDelay: '400ms' }}
             onClick={() => setStatusFilter("rejected")}
@@ -531,8 +539,8 @@ export default function FreelancerApplications() {
                 {applications.length === 0 ? "No Applications Yet" : "No Applications Found"}
               </h2>
               <p className="text-sm sm:text-base max-w-md mx-auto animate-fade-in-delayed" style={{ color: '#241C15', opacity: 0.6 }}>
-                {applications.length === 0 
-                  ? "Start applying to jobs to see your submissions here." 
+                {applications.length === 0
+                  ? "Start applying to jobs to see your submissions here."
                   : "Try adjusting your search or filters to find what you're looking for."}
               </p>
             </div>
@@ -549,16 +557,15 @@ export default function FreelancerApplications() {
             {filteredApplications.map((app, index) => {
               const statusConfig = getStatusConfig(app.status)
               const StatusIcon = statusConfig.icon
-              
+
               return (
                 <Card
                   key={app.id}
-                  className="bg-white border-2 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group animate-fade-in-up cursor-pointer"
-                  style={{ 
+                  className="bg-white border-2 shadow-sm hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group animate-fade-in-up"
+                  style={{
                     borderColor: '#FFE01B',
                     animationDelay: `${index * 50}ms`
                   }}
-                  onClick={() => app.proposal_link && window.open(app.proposal_link, '_blank')}
                 >
                   <CardHeader className="border-b pb-3 sm:pb-4" style={{ borderBottomColor: '#fbf5e5' }}>
                     <CardTitle className="flex items-start justify-between gap-3">
@@ -577,7 +584,7 @@ export default function FreelancerApplications() {
                       </div>
                       <Badge
                         className="flex items-center space-x-1 px-2 py-1 whitespace-nowrap font-semibold text-xs transition-transform duration-200 group-hover:scale-105"
-                        style={{ 
+                        style={{
                           backgroundColor: statusConfig.bg,
                           color: statusConfig.color,
                           border: 'none'
@@ -598,10 +605,10 @@ export default function FreelancerApplications() {
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" style={{ color: '#FFE01B' }} />
                         <span style={{ color: '#241C15', opacity: 0.7 }}>
-                          Applied {new Date(app.created_at).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'short', 
-                            day: 'numeric' 
+                          Applied {new Date(app.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
                           })}
                         </span>
                       </div>
@@ -616,8 +623,146 @@ export default function FreelancerApplications() {
                       )}
                     </div>
 
+                    {/* ACTION BUTTONS BASED ON STATUS */}
+                    
+                    {/* For selected/accepted applications - Show time slot setup */}
+                    {(app.status?.toLowerCase() === 'selected' || app.status?.toLowerCase() === 'accepted') && (
+                      <div className="mt-4 pt-4 border-t" style={{ borderTopColor: '#fbf5e5' }}>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <CalendarDays className="h-4 w-4 text-blue-600" />
+                              <span className="font-medium text-sm" style={{ color: '#241C15' }}>
+                                Setup Meeting Availability
+                              </span>
+                            </div>
+                            <Badge variant="outline" className="bg-yellow-50 text-yellow-700 text-xs">
+                              Required
+                            </Badge>
+                          </div>
+                          
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setShowTimeSlotFor(app.id)
+                            }}
+                            className="w-full bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] hover:from-[#FCD34D] hover:to-[#FFE01B] text-black font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                          >
+                            <Calendar className="h-4 w-4 mr-2" />
+                            Select Time Slots
+                          </Button>
+                          
+                          <p className="text-xs text-gray-500 text-center">
+                            Provide 3 dates with your available time slots
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* For availability_set applications - Show waiting message */}
+                    {app.status?.toLowerCase() === 'availability_set' && (
+                      <div className="mt-4 pt-4 border-t" style={{ borderTopColor: '#fbf5e5' }}>
+                        <div className="bg-blue-50 p-3 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Clock className="h-4 w-4 text-blue-600" />
+                            <span className="font-medium text-sm">Availability Submitted</span>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3">
+                            Waiting for client to select a time slot
+                          </p>
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setShowTimeSlotFor(app.id)
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                          >
+                            <Calendar className="h-3 w-3 mr-1" />
+                            Edit Availability
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* For time_slot_selected applications - Show selected slot */}
+                    {app.status?.toLowerCase() === 'time_slot_selected' && (
+                      <div className="mt-4 pt-4 border-t" style={{ borderTopColor: '#fbf5e5' }}>
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <div className="flex items-center gap-2 mb-2">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <span className="font-medium text-sm">Time Slot Selected</span>
+                          </div>
+                          <p className="text-xs text-gray-600">
+                            Client has selected a time slot. Waiting for admin to schedule meeting.
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* For meeting_scheduled applications - Show meeting details */}
+                    {app.status?.toLowerCase() === 'meeting_scheduled' && app.meeting && (
+                      <div className="mt-4 pt-4 border-t" style={{ borderTopColor: '#fbf5e5' }}>
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 bg-green-100 rounded-lg">
+                              <Video className="h-5 w-5 text-green-600" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-green-800">Meeting Scheduled</h4>
+                              <p className="text-xs text-green-600">✓ Scheduled via Calendly</p>
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-green-600" />
+                              <span className="font-medium">Date:</span>
+                              <span>{new Date(app.meeting.start_time).toLocaleDateString('en-US', {
+                                weekday: 'short',
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                              })}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <Clock className="h-4 w-4 text-green-600" />
+                              <span className="font-medium">Time:</span>
+                              <span>{new Date(app.meeting.start_time).toLocaleTimeString('en-US', {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                timeZoneName: 'short'
+                              })}</span>
+                            </div>
+                            
+                            {app.meeting.meeting_url && (
+                              <div className="pt-2">
+                                <a
+                                  href={app.meeting.meeting_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <ExternalLink className="h-4 w-4" />
+                                  Join Meeting
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* VIEW PROPOSAL LINK */}
                     {app.proposal_link && (
-                      <div className="flex items-center justify-between pt-2 border-t" style={{ borderTopColor: '#fbf5e5' }}>
+                      <div
+                        className="flex items-center justify-between pt-2 border-t cursor-pointer hover:opacity-80 transition-opacity"
+                        style={{ borderTopColor: '#fbf5e5' }}
+                        onClick={() => window.open(app.proposal_link, '_blank')}
+                      >
                         <span className="text-xs sm:text-sm font-semibold" style={{ color: '#241C15' }}>
                           View Proposal
                         </span>
@@ -640,6 +785,31 @@ export default function FreelancerApplications() {
           </div>
         )}
       </div>
+
+      {/* TIME SLOT SELECTOR MODAL */}
+      {showTimeSlotFor && currentSubmission && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Select Time Slots</h3>
+                <Button
+                  variant="ghost"
+                  onClick={handleCloseTimeSlot}
+                >
+                  ✕
+                </Button>
+              </div>
+              <TimeSlotSelector
+                submissionId={currentSubmission.id}
+                projectName={currentSubmission.forms?.form_name || "Project"}
+                freelancerName={freelancer?.name || "Freelancer"}
+                onComplete={handleCloseTimeSlot}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         @keyframes slideInTop {
