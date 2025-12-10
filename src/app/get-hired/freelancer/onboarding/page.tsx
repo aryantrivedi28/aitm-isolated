@@ -109,9 +109,11 @@ export default function FreelancerOnboardingPage() {
 
       setProgress({ resume: 80, photo: 80 })
 
-      // Step 4: Merge all parsed data for DB
+      // Step 4: Merge all parsed data for DB (ensure required IDs and contact fields)
       const payload = {
         name: parsed.name || "",
+        email: parsed.email || "",
+        phone: parsed.phone || "",
         title: parsed.title || "",
         bio: parsed.bio || "",
         skills: safeArray(parsed.skills),
@@ -128,6 +130,19 @@ export default function FreelancerOnboardingPage() {
         projects: Array.isArray(parsed.projects) ? parsed.projects : [],
         certifications: safeArray(parsed.certifications),
         languages: safeArray(parsed.languages),
+        work_experience: Array.isArray(parsed.work_experience)
+          ? parsed.work_experience.map((w: any) => ({
+              id: crypto.randomUUID(),
+              role: w.role || "",
+              company: w.company || "",
+              location: w.location || "",
+              startDate: w.start_date || w.startDate || "",
+              endDate: w.end_date || w.endDate || "",
+              current: !w.end_date || /present/i.test(w.end_date || w.endDate || ""),
+              description: w.description || "",
+              achievements: Array.isArray(w.achievements) ? w.achievements : [],
+            }))
+          : [],
         resume_url: resumeUrl,
         photo_url: photoUrl,
         profile_completed: true,

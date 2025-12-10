@@ -1,11 +1,10 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, Lock, ArrowRight, ArrowLeft, Briefcase, CheckCircle2, AlertCircle, LogIn, UserPlus } from "lucide-react"
+import { Mail, Lock, ArrowRight, ArrowLeft, Briefcase, AlertCircle, LogIn, UserPlus } from "lucide-react"
 
 export default function FreelancerPage() {
   const [email, setEmail] = useState("")
@@ -45,74 +44,87 @@ export default function FreelancerPage() {
     }
   }
 
-const handleVerifyOTP = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setLoading(true)
-  setError("")
+  const handleVerifyOTP = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError("")
 
-  try {
-    const response = await fetch("/api/freelancer/auth/verify-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp }),
-      credentials: "include",
-    })
+    try {
+      const response = await fetch("/api/freelancer/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+        credentials: "include",
+      })
 
-    const data = await response.json()
+      const data = await response.json()
 
-    if (!response.ok || !data.success) {
-      setError(data.error || "Failed to verify OTP")
-      return
+      if (!response.ok || !data.success) {
+        setError(data.error || "Failed to verify OTP")
+        return
+      }
+
+      // ✅ Redirect user according to profile completion
+      if (data.redirectTo === "/get-hired/freelancer/onboarding") {
+        // User is new or incomplete profile
+        window.location.href = data.redirectTo
+      } else {
+        // User already completed profile
+        window.location.href = data.redirectTo
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.")
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
-
-    // ✅ Redirect user according to profile completion
-    if (data.redirectTo === "/get-hired/freelancer/onboarding") {
-      // User is new or incomplete profile
-      window.location.href = data.redirectTo
-    } else {
-      // User already completed profile
-      window.location.href = data.redirectTo
-    }
-  } catch (err) {
-    setError("An error occurred. Please try again.")
-    console.error(err)
-  } finally {
-    setLoading(false)
   }
-}
 
+  // Button hover handler
+  const handleButtonHover = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const target = e.currentTarget
+    target.style.transform = 'scale(1.03)'
+    target.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease'
+    target.style.boxShadow = '0 4px 12px rgba(36, 28, 21, 0.1)'
+  }
+
+  const handleButtonLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const target = e.currentTarget
+    target.style.transform = 'scale(1)'
+    target.style.boxShadow = '0 2px 6px rgba(36, 28, 21, 0.05)'
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#fbf5e5' }}>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#faf4e5' }}>
       <div className="w-full max-w-md">
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-4 rounded-full mb-4" style={{ backgroundColor: '#FFE01B' }}>
-            <Briefcase className="h-10 w-10" style={{ color: '#241C15' }} />
+          <div className="inline-flex items-center justify-center p-4 rounded-full mb-4" style={{ backgroundColor: '#f7af00' }}>
+            <Briefcase className="h-10 w-10" style={{ color: '#050504' }} />
           </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: '#241C15' }}>
+          <h1 className="text-3xl font-bold mb-2" style={{ color: '#050504' }}>
             Freelancer Portal
           </h1>
-          <p className="text-sm" style={{ color: '#241C15', opacity: 0.6 }}>
+          <p className="text-sm" style={{ color: '#31302f' }}>
             Access your freelance opportunities
           </p>
         </div>
 
-        <Card className="border-2 shadow-lg" style={{ borderColor: '#FFE01B', backgroundColor: 'white' }}>
-          <CardHeader className="space-y-3 border-b pb-6" style={{ borderBottomColor: '#FFE01B' }}>
+        <Card className="border shadow-sm rounded-xl" style={{ backgroundColor: '#faf4e5', borderColor: '#241C15' }}>
+          <CardHeader className="space-y-3 border-b pb-6" style={{ borderBottomColor: '#f7af00' }}>
             <div className="flex items-center justify-center space-x-2">
-              <div className="p-2 rounded-lg" style={{ backgroundColor: '#fbf5e5' }}>
+              <div className="p-2 rounded-lg" style={{ backgroundColor: '#f0eadd' }}>
                 {step === "email" ? (
-                  <Mail className="h-5 w-5" style={{ color: '#FFE01B' }} />
+                  <Mail className="h-5 w-5" style={{ color: '#f7af00' }} />
                 ) : (
-                  <Lock className="h-5 w-5" style={{ color: '#FFE01B' }} />
+                  <Lock className="h-5 w-5" style={{ color: '#f7af00' }} />
                 )}
               </div>
-              <CardTitle className="text-2xl font-bold" style={{ color: '#241C15' }}>
+              <CardTitle className="text-2xl font-bold" style={{ color: '#050504' }}>
                 {step === "email" ? "Sign In" : "Verify OTP"}
               </CardTitle>
             </div>
-            <CardDescription className="text-center text-base" style={{ color: '#241C15', opacity: 0.6 }}>
+            <CardDescription className="text-center text-base" style={{ color: '#31302f' }}>
               {step === "email" 
                 ? "Enter your email to receive a one-time password" 
                 : `We sent a 6-digit code to ${email}`}
@@ -121,11 +133,11 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
 
           <CardContent className="pt-6">
             {error && (
-              <div className="mb-6 p-4 rounded-lg border-2 flex items-start space-x-3" style={{ backgroundColor: '#fff5f5', borderColor: '#fecaca' }}>
-                <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#dc2626' }} />
+              <div className="mb-6 p-4 rounded-lg border flex items-start space-x-3" style={{ backgroundColor: '#f0eadd', borderColor: '#241C15' }}>
+                <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" style={{ color: '#241C15' }} />
                 <div>
-                  <p className="text-sm font-semibold" style={{ color: '#991b1b' }}>Error</p>
-                  <p className="text-sm" style={{ color: '#7f1d1d' }}>{error}</p>
+                  <p className="text-sm font-medium" style={{ color: '#31302f' }}>Error</p>
+                  <p className="text-sm" style={{ color: '#31302f' }}>{error}</p>
                 </div>
               </div>
             )}
@@ -133,12 +145,12 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
             {step === "email" ? (
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold" style={{ color: '#241C15' }}>
+                  <label className="block text-sm font-medium" style={{ color: '#31302f' }}>
                     Email Address
                   </label>
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                      <Mail className="h-5 w-5" style={{ color: '#241C15', opacity: 0.4 }} />
+                      <Mail className="h-5 w-5" style={{ color: '#31302f' }} />
                     </div>
                     <input
                       type="email"
@@ -147,11 +159,11 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
                       placeholder="your@email.com"
                       required
                       disabled={loading}
-                      className="w-full pl-11 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all disabled:opacity-50"
+                      className="w-full pl-11 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-offset-0 transition-all disabled:opacity-50"
                       style={{ 
-                        borderColor: '#FFE01B', 
-                        color: '#241C15',
-                        backgroundColor: 'white'
+                        borderColor: '#241C15', 
+                        color: '#31302f',
+                        backgroundColor: '#f0eadd'
                       }}
                     />
                   </div>
@@ -160,8 +172,14 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
                 <Button 
                   onClick={handleSendOTP}
                   disabled={loading || !email}
-                  className="w-full text-base font-semibold py-6 flex items-center justify-center space-x-2 transition-all duration-200 hover:shadow-lg disabled:opacity-50"
-                  style={{ backgroundColor: '#FFE01B', color: '#241C15' }}
+                  className="w-full text-base font-semibold py-3 flex items-center justify-center space-x-2 transition-all disabled:opacity-50 rounded-lg"
+                  style={{ 
+                    backgroundColor: '#f7af00', 
+                    color: '#050504',
+                    boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
+                  }}
+                  onMouseEnter={handleButtonHover}
+                  onMouseLeave={handleButtonLeave}
                 >
                   <span>{loading ? "Sending..." : "Send OTP"}</span>
                   {!loading && <ArrowRight className="h-5 w-5" />}
@@ -170,12 +188,12 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
             ) : (
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold" style={{ color: '#241C15' }}>
+                  <label className="block text-sm font-medium" style={{ color: '#31302f' }}>
                     One-Time Password
                   </label>
                   <div className="relative">
                     <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                      <Lock className="h-5 w-5" style={{ color: '#241C15', opacity: 0.4 }} />
+                      <Lock className="h-5 w-5" style={{ color: '#31302f' }} />
                     </div>
                     <input
                       type="text"
@@ -185,16 +203,16 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
                       maxLength={6}
                       required
                       disabled={loading}
-                      className="w-full pl-11 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all disabled:opacity-50 text-center text-2xl font-bold tracking-widest"
+                      className="w-full pl-11 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-1 focus:ring-offset-0 transition-all disabled:opacity-50 text-center text-2xl font-bold tracking-widest"
                       style={{ 
-                        borderColor: '#FFE01B', 
-                        color: '#241C15',
-                        backgroundColor: 'white',
+                        borderColor: '#241C15', 
+                        color: '#31302f',
+                        backgroundColor: '#f0eadd',
                         letterSpacing: '0.5em'
                       }}
                     />
                   </div>
-                  <p className="text-xs text-center" style={{ color: '#241C15', opacity: 0.6 }}>
+                  <p className="text-xs text-center" style={{ color: '#31302f' }}>
                     Enter the 6-digit code sent to your email
                   </p>
                 </div>
@@ -203,8 +221,14 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
                   <Button 
                     onClick={handleVerifyOTP}
                     disabled={loading || otp.length !== 6}
-                    className="w-full text-base font-semibold py-6 flex items-center justify-center space-x-2 transition-all duration-200 hover:shadow-lg disabled:opacity-50"
-                    style={{ backgroundColor: '#FFE01B', color: '#241C15' }}
+                    className="w-full text-base font-semibold py-3 flex items-center justify-center space-x-2 transition-all disabled:opacity-50 rounded-lg"
+                    style={{ 
+                      backgroundColor: '#f7af00', 
+                      color: '#050504',
+                      boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
+                    }}
+                    onMouseEnter={handleButtonHover}
+                    onMouseLeave={handleButtonLeave}
                   >
                     <LogIn className="h-5 w-5" />
                     <span>{loading ? "Verifying..." : "Verify & Continue"}</span>
@@ -217,8 +241,15 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
                       setError("")
                     }}
                     disabled={loading}
-                    className="w-full text-base font-semibold py-3 flex items-center justify-center space-x-2 transition-all duration-200 bg-transparent hover:bg-transparent border-2 disabled:opacity-50"
-                    style={{ borderColor: '#FFE01B', color: '#241C15' }}
+                    className="w-full text-base font-semibold py-3 flex items-center justify-center space-x-2 transition-all duration-200 rounded-lg disabled:opacity-50"
+                    style={{ 
+                      borderColor: '#241C15', 
+                      color: '#31302f',
+                      backgroundColor: 'transparent',
+                      border: '1px solid #241C15'
+                    }}
+                    onMouseEnter={handleButtonHover}
+                    onMouseLeave={handleButtonLeave}
                   >
                     <ArrowLeft className="h-4 w-4" />
                     <span>Back to Email</span>
@@ -244,11 +275,11 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
         {/* Already Registered Link */}
         {step === "email" && (
           <div className="mt-6 text-center">
-            <div className="inline-flex items-center space-x-2 p-4 rounded-lg" style={{ backgroundColor: 'white', border: '2px solid #FFE01B' }}>
-              <UserPlus className="h-5 w-5" style={{ color: '#FFE01B' }} />
-              <p className="text-sm" style={{ color: '#241C15' }}>
-                <span style={{ opacity: 0.7 }}>Already have an account? </span>
-                <span className="font-semibold">Just enter your email above to login</span>
+            <div className="inline-flex items-center space-x-2 p-4 rounded-lg border" style={{ backgroundColor: '#faf4e5', borderColor: '#f7af00' }}>
+              <UserPlus className="h-5 w-5" style={{ color: '#f7af00' }} />
+              <p className="text-sm" style={{ color: '#31302f' }}>
+                <span>Already have an account? </span>
+                <span className="font-medium">Just enter your email above to login</span>
               </p>
             </div>
           </div>
@@ -256,15 +287,15 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
 
         {/* Footer Links */}
         <div className="mt-8 text-center space-y-2">
-          <p className="text-xs" style={{ color: '#241C15', opacity: 0.5 }}>
+          <p className="text-xs" style={{ color: '#31302f' }}>
             By continuing, you agree to our Terms of Service and Privacy Policy
           </p>
           <div className="flex items-center justify-center space-x-4 text-xs">
-            <a href="#" className="hover:underline font-medium" style={{ color: '#241C15', opacity: 0.6 }}>
+            <a href="#" className="hover:underline font-medium" style={{ color: '#31302f' }}>
               Help Center
             </a>
-            <span style={{ color: '#241C15', opacity: 0.3 }}>•</span>
-            <a href="#" className="hover:underline font-medium" style={{ color: '#241C15', opacity: 0.6 }}>
+            <span style={{ color: '#31302f' }}>•</span>
+            <a href="#" className="hover:underline font-medium" style={{ color: '#31302f' }}>
               Contact Support
             </a>
           </div>

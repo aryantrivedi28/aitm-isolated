@@ -26,7 +26,6 @@ export interface EducationEntry {
 
 export interface FreelancerProfileData {
   name: string | null
-  email: string | null
   phone: string | null
   title: string | null
   bio: string | null
@@ -138,7 +137,6 @@ Return ONLY valid JSON with this EXACT structure:
 
 {
   "name": string | null,
-  "email": string | null,
   "phone": string | null,
   "title": string | null,
   "bio": string | null,
@@ -181,7 +179,6 @@ No markdown, no commentary.
 
     return {
       name: parsed.name ?? null,
-      email: parsed.email ?? null,
       phone: parsed.phone ?? null,
       title: parsed.title ?? null,
       bio: parsed.bio ?? null,
@@ -203,7 +200,6 @@ No markdown, no commentary.
     console.error("[parseResumeToProfile Error]:", error)
     return {
       name: null,
-      email: null,
       phone: null,
       title: null,
       bio: null,
