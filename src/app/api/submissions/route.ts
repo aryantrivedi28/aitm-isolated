@@ -32,19 +32,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
 
-    const freelancer = await findOrCreateFreelancer(submissionData, supabase)
+    // const freelancer = await findOrCreateFreelancer(submissionData, supabase)
 
-    if (submissionData.resume_link) {
-      // Fire and forget with 25 second timeout to avoid exceeding Vercel limit
-      processResumeBackground(submission.id, freelancer.id, submissionData.resume_link, submissionData, supabase).catch(
-        (err) => console.error("Background processing failed:", err),
-      )
-    }
+    // if (submissionData.resume_link) {
+    //   // Fire and forget with 25 second timeout to avoid exceeding Vercel limit
+    //   processResumeBackground(submission.id, freelancer.id, submissionData.resume_link, submissionData, supabase).catch(
+    //     (err) => console.error("Background processing failed:", err),
+    //   )
+    // }
 
     return NextResponse.json({
       success: true,
       submissionId: submission.id,
-      freelancerId: freelancer.id,
+      // freelancerId: freelancer.id,
       message: "Application submitted successfully",
     })
   } catch (error: any) {
@@ -131,7 +131,6 @@ async function processResumeBackground(
     )
 
     const processingPromise = (async () => {
-      console.log("🔄 Starting resume processing for submission:", submissionId)
 
       // Step 1: Extract text from resume using ScrapingService
       const parserService = new ScrapingService()
@@ -141,17 +140,12 @@ async function processResumeBackground(
         console.error("❌ Failed to extract resume text or text too short")
         return
       }
-
-      console.log("📝 Resume text extracted, length:", rawText.length)
-
       // Step 2: Convert resume text → structured profile
       const structuredProfile = await parseResumeToProfile(rawText)
-      console.log("🧩 Structured profile created")
 
       // Step 3: Rate structured profile
       const rater = new OpenAIProfileRater()
       const ratingResult = await rater.calculateAverageRating(structuredProfile)
-      console.log("⭐ Profile rated:", ratingResult.rating)
 
       // Step 4: Combine profile with rating
       const parseResult = {
@@ -174,7 +168,6 @@ async function processResumeBackground(
         })
         .eq("id", submissionId)
 
-      console.log("✅ Resume processed successfully for submission:", submissionId)
     })()
 
     await Promise.race([processingPromise, timeoutPromise])
@@ -196,7 +189,6 @@ async function processResumeBackground(
 
 async function updateFreelancerWithParsedData(freelancerId: string, parsedData: any, formData: any, supabase: any) {
   try {
-    console.log("🔄 Updating freelancer with parsed data")
 
     const publicId = generatePublicId()
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL

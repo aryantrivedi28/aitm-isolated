@@ -184,7 +184,6 @@ export async function POST(request: NextRequest) {
 
 // DELETE — Remove Case Study
 export async function DELETE(request: NextRequest) {
-  console.log("📌 [API HIT] DELETE /api/freelancer/case-studies")
 
   try {
     const freelancerId = await getFreelancerId()
@@ -253,8 +252,6 @@ export async function DELETE(request: NextRequest) {
       console.error("❌ Error deleting case study:", updateError)
       return NextResponse.json({ error: "Failed to delete case study" }, { status: 500 })
     }
-
-    console.log("✅ Case study deleted successfully")
 
     return NextResponse.json({
       success: true,

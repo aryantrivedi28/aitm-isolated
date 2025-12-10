@@ -32,25 +32,16 @@ interface WorkExperience {
 
 // GET — Fetch Profile
 export async function GET() {
-  console.log("📌 [API HIT] GET /api/freelancer/profile")
-
   try {
     const freelancerId = await getFreelancerId()
-    console.log("👤 Logged-in freelancer ID:", freelancerId)
-
     if (!freelancerId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-
-    console.log("📡 Fetching profile from Supabase...")
 
     let { data: profile, error } = await supabase
       .from("freelancers")
       .select("*")
       .eq("id", freelancerId)
       .single()
-
-    console.log("📥 Supabase response profile:", profile)
-    console.log("⚠️ Supabase error:", error)
 
     // Seed a default profile if none exists
     if ((error && error.code === "PGRST116") || !profile) {
@@ -95,8 +86,6 @@ export async function GET() {
       profile = inserted
       error = null
     }
-
-    console.log("✅ Sending profile response")
 
     return NextResponse.json({
       profile: {
