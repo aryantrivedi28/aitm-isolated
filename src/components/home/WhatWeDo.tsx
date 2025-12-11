@@ -15,24 +15,24 @@ const WhatWeDo = () => {
       title: "Fractional Specialists",
       description:
         "Top 1 percent talent that plugs into your workflows across growth, design, SEO, content and automation. One partner. All skills.",
-      gradient: "from-[#FFE01B] to-[#FCD34D]",
-      bgGradient: "bg-[#FFE01B]/10",
+      gradient: "from-[#f7af00] to-[#f7af00]",
+      bgGradient: "bg-[#f7af00]/10",
     },
     {
       icon: Search,
       title: "End-to-End Project Delivery",
       description:
         "We own the full execution. You get outcomes without managing freelancers or agencies. Perfect for campaigns, SEO, design systems, website revamps and content pipelines.",
-      gradient: "from-[#FFE01B] to-[#FCD34D]",
-      bgGradient: "bg-white/10",
+      gradient: "from-[#f7af00] to-[#f7af00]",
+      bgGradient: "bg-[f7af00]",
     },
     {
       icon: Building,
       title: "In-house GHL Automation",
       description:
         "Our internal unit handles CRM setup, funnels, lead workflows, booking systems, nurture journeys, SaaS deployments and automation for marketing and ops. Built in-house for quality and speed.",
-      gradient: "from-[#FFE01B] to-[#FCD34D]",
-      bgGradient: "bg-[#241C15]/20",
+      gradient: "from-[#f7af00] to-[#f7af00]",
+      bgGradient: "bg-[#f7af00]/10",
     },
   ];
 
@@ -66,29 +66,29 @@ const WhatWeDo = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative py-20 bg-[#241C15] overflow-hidden"
+      className="relative py-20 bg-[#faf4e5] overflow-hidden"
     >
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div
           className={`text-center mb-12 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
         >
-          <div className="inline-flex items-center gap-2 backdrop-blur-sm bg-[#FFE01B]/20 px-4 py-2 rounded-full mb-6 shadow-lg justify-center mx-auto">
-            <Sparkles className="w-4 h-4 text-[#FFE01B] animate-pulse" />
-            <span className="text-[#FFE01B] font-semibold text-sm sm:text-base">
+          <div className="inline-flex items-center gap-2 backdrop-blur-sm bg-[#f0eadd] px-4 py-2 rounded-full mb-6 shadow-lg justify-center mx-auto">
+            <Sparkles className="w-4 h-4 text-[#050504] animate-pulse" />
+            <span className="text-[#050504] font-semibold text-sm sm:text-base">
               Our Services
             </span>
           </div>
 
-          <h2 className="font-black text-4xl sm:text-5xl text-white mb-4">
+          <h2 className="font-black text-4xl sm:text-5xl text-[#050504] mb-4">
             What We{" "}
-            <span className="bg-gradient-to-r from-[#FFE01B] via-[#FCD34D] to-[#FFE01B] bg-clip-text text-transparent animate-gradient">
+            <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
               Do
             </span>
           </h2>
 
-          <p className="text-[#D1D5DB] text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
+          <p className="text-[#31302f] text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
             A complete marketing and creative team with zero hiring effort. Finzie gives you everything from growth strategy to content to design to automation under one flexible partner.
           </p>
 
@@ -109,10 +109,10 @@ const WhatWeDo = () => {
                   className={`absolute inset-0 ${service.bgGradient} rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 scale-105`}
                 />
 
-                <div className="relative backdrop-blur-xl bg-[#fbf5e5] rounded-3xl p-6 sm:p-8 h-full shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:scale-105 overflow-hidden">
+                <div className="relative backdrop-blur-xl bg-[#fbf5e5] rounded-3xl p-6 sm:p-8 h-full hover:shadow-xl transition-all duration-500 group-hover:scale-105 overflow-hidden">
                   {/* Icon */}
                   <div className="relative mb-6">
-                    <div className={`inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r ${service.gradient} rounded-2xl shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                    <div className={`inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r ${service.gradient} rounded-2xl shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
                       <service.icon className="w-8 h-8 sm:w-10 sm:h-10 text-[#241C15]" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#241C15] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">

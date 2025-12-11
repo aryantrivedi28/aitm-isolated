@@ -50,7 +50,7 @@ export default function Footer() {
   const colors = {
     bgGradient: isDark
       ? "from-[#241C15] via-[#2A1F17] to-[#1F1811]"
-      : "from-[#FFF9E5] via-[#FFF5D1] to-[#FFECC2]",
+      : "from-[#f0eadd] via-[#FFF5D1] to-[#FFECC2]",
     text: isDark ? "text-white" : "text-gray-900",
     secondaryText: isDark ? "text-gray-300" : "text-gray-700",
     accent: "#FFE01B",
@@ -75,7 +75,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className={`relative overflow-hidden bg-gradient-to-br ${colors.bgGradient}`}>
+    <footer className={`relative overflow-hidden bg-[#f0eadd]`}>
       {/* Background particles */}
       <div className="absolute inset-0 pointer-events-none">
         <div

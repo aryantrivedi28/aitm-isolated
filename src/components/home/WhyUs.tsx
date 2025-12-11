@@ -67,32 +67,28 @@ const WhyUs = () => {
   };
 
   return (
-    <section className="relative py-12 sm:py-16 lg:py-20 bg-[#241C15] overflow-hidden text-white">
-      {/* Floating background circles */}
-      <div className="absolute top-10 left-10 w-24 h-24 bg-[#FFE01B]/20 rounded-full blur-3xl animate-float"></div>
-      <div className="absolute top-2/3 right-1/4 w-32 h-32 bg-[#FFE01B]/10 rounded-full blur-3xl animate-float-delayed"></div>
-
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-12 sm:py-16 lg:py-20 bg-[#faf4e5] overflow-hidden text-white">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div
           className={`text-center md:text-left mb-12 transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
             }`}
         >
-          <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-xl px-4 py-2 rounded-full mb-6 shadow-lg">
+          {/* <div className="inline-flex items-center gap-3 bg-[#faf4e5] backdrop-blur-xl px-4 py-2 rounded-full mb-6 shadow-lg">
             <div className="w-2 h-2 bg-[#FFE01B] rounded-full animate-ping"></div>
-            <span className="text-sm font-bold text-white">
+            <span className="text-sm font-bold text-[#050504]">
               Why Choose Finzie
             </span>
-          </div>
-          <h2 className="font-black text-2xl sm:text-4xl md:text-5xl mb-4">
+          </div> */}
+          <h2 className="text-[#050504] font-semibold text-2xl sm:text-4xl md:text-5xl mb-4">
             Why{" "}
-            <span className="bg-gradient-to-r from-[#FFE01B] via-amber-400 to-[#FFE01B] bg-clip-text text-transparent animate-gradient">
+            <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
               Us?
             </span>
           </h2>
-          <p className="text-gray-300 max-w-2xl mx-auto md:mx-0 leading-relaxed font-medium text-sm sm:text-base">
+          <p className="text-[#31302f] max-w-2xl mx-auto md:mx-0 leading-relaxed font-medium text-sm sm:text-base">
             When it comes to quality and growth, we do not compromise.{" "}
-            <span className="font-bold text-[#FFE01B]">zero hassles</span>.
+            <span className="font-bold text-[#31302f]">zero hassles</span>.
           </p>
         </div>
 
@@ -105,8 +101,8 @@ const WhyUs = () => {
                 key={idx}
                 className="group relative h-full transform transition-all duration-500 hover:scale-105"
               >
-                <div className="relative bg-[#fbf5e5] rounded-3xl p-6 flex flex-col border-2 border-[#FFE01B]/70 shadow-lg hover:shadow-2xl transition-all duration-500 h-full">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-[#FFE01B] rounded-xl mb-6 flex-shrink-0">
+                <div className="relative bg-[#fbf5e5] rounded-3xl p-6 flex flex-col border-[#f0eadd] shadow-sm hover:shadow-xl transition-all duration-500 h-full">
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-[#f7af00] rounded-xl mb-6 flex-shrink-0">
                     <Icon className="w-6 h-6 text-black" />
                   </div>
                   <h3 className="text-lg sm:text-xl font-black mb-2 flex-shrink-0 text-black">

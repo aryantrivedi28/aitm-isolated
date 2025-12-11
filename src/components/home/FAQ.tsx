@@ -49,7 +49,7 @@ const FAQ = () => {
   };
 
   return (
-    <section className="relative w-full py-20 bg-[#241C15] overflow-hidden">
+    <section className="relative w-full py-20 bg-[#faf4e5] overflow-hidden">
 
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,19 +57,19 @@ const FAQ = () => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-[#FFE01B]/20 px-4 py-2 rounded-full mb-6 justify-center mx-auto">
             <HelpCircle className="w-5 h-5 text-[#FFE01B] animate-pulse" />
-            <span className="text-[#FFE01B] font-semibold text-sm sm:text-base">
+            <span className="text-[#050504] font-semibold text-sm sm:text-base">
               FAQ
             </span>
           </div>
 
-          <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">
+          <h2 className="text-4xl sm:text-5xl font-black text-[#050504] mb-4">
             Frequently Asked{" "}
-            <span className="bg-gradient-to-r from-[#FFE01B] via-[#FCD34D] to-[#FFE01B] bg-clip-text text-transparent animate-gradient">
+            <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
               Questions
             </span>
           </h2>
 
-          <p className="text-[#D1D5DB] text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
+          <p className="text-[#31302f] text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
             Got questions? We've got answers. Here are the most common questions about working with Finzie.
           </p>
         </div>
@@ -82,19 +82,19 @@ const FAQ = () => {
             return (
               <div
                 key={index}
-                className={`relative bg-[#1F1610] rounded-2xl border border-[#FFE01B]/30 overflow-hidden transition-all duration-300 cursor-pointer ${
-                  isOpen ? "shadow-2xl shadow-[#FFE01B]/40" : "hover:shadow-xl hover:shadow-[#FFE01B]/20 hover:-translate-y-1"
+                className={`relative bg-[#f0eadd] rounded-2xl border border-[#FFE01B]/30 overflow-hidden transition-all duration-300 cursor-pointer ${
+                  isOpen ? "shadow-2xl shadow-[#FFE01B]/40" : "hover:shadow-lg hover:shadow-[#FFE01B]/20 hover:-translate-y-1"
                 }`}
                 onClick={() => toggleItem(index)}
               >
                 {/* Question */}
                 <div className="flex items-center justify-between p-5">
-                  <h3 className="text-white font-semibold text-lg sm:text-xl md:text-2xl">
+                  <h3 className="text-[#050504] font-semibold text-lg sm:text-xl md:text-2xl">
                     {faq.question}
                   </h3>
                   <div
                     className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg transition-transform duration-300 ${
-                      isOpen ? "bg-[#FFE01B] text-[#241C15] rotate-180" : "bg-[#FFE01B]/20 text-[#241C15]"
+                      isOpen ? "bg-[#f7af00] text-[#241C15] rotate-180" : "text-[#241C15]"
                     }`}
                   >
                     {isOpen ? <Minus className="w-4 h-4 sm:w-5 sm:h-5" /> : <Plus className="w-4 h-4 sm:w-5 sm:h-5" />}
@@ -105,10 +105,10 @@ const FAQ = () => {
                 <div
                   className={`transition-all duration-500 ease-out overflow-hidden ${
                     isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  } bg-[#241C15]/50`}
+                  } bg-[#f0eadd]/50`}
                 >
                   <div className="p-5 pt-0">
-                    <p className="text-[#D1D5DB] text-base sm:text-lg leading-relaxed">{faq.answer}</p>
+                    <p className="text-[#31302f] text-base sm:text-lg leading-relaxed">{faq.answer}</p>
                   </div>
                 </div>
               </div>

@@ -2,7 +2,7 @@
 
 import { ArrowRight, Sparkles, Play } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation" 
+import { useRouter } from "next/navigation"
 
 const Hero = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -19,7 +19,7 @@ const Hero = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-    const handleNavigation = (path: string) => {
+  const handleNavigation = (path: string) => {
     router.push(path) // ✅ navigate to the given path
   }
 
@@ -55,25 +55,20 @@ const Hero = () => {
 
 
       <section className="hero-section relative overflow-hidden bg-[#fbf5e5] min-h-screen flex items-center pt-16">
-
         {/* Subtle gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#fbf5e5]/50 via-[#fbf5e5] to-[#fbf5e5]" />
-
         {/* Minimal accent element */}
         <div
           className="absolute top-[15%] right-[8%] w-[400px] h-[400px] bg-[#FFE01B]/6 rounded-full blur-[120px] pointer-events-none"
           style={{ transform: `translateY(${scrollY * 0.2}px)` }}
         />
-
         <div
           className="absolute bottom-[20%] left-[10%] w-[350px] h-[350px] bg-[#FCD34D]/5 rounded-full blur-[100px] pointer-events-none"
           style={{ transform: `translateY(${-scrollY * 0.15}px)` }}
         />
-
         {/* Main Content */}
         <div className="relative z-10 w-full">
-          <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1320px] py-16 sm:py-20 lg:py-24">
-
+          <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-16 sm:py-20 lg:py-24">
             {/* Small Badge */}
             <div
               className={`inline-flex items-center gap-2.5 bg-[#241C15] px-5 py-2.5 rounded-full mb-10 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
@@ -140,7 +135,7 @@ const Hero = () => {
               className={`flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-[400ms] ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
             >
               <button
-                className="group bg-[#FFE01B] hover:bg-[#FCD34D] text-[#241C15] font-semibold px-7 py-4 rounded-lg transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start shadow-md hover:shadow-lg"
+                className="group bg-[#f7af00] hover:bg-[#FCD34D] text-[#241C15] font-semibold px-7 py-4 rounded-lg transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start shadow-md hover:shadow-lg"
                 style={{ fontSize: '1.0625rem', fontWeight: '600' }}
                 onClick={() => handleNavigation("/find-talent")}
               >
@@ -152,15 +147,13 @@ const Hero = () => {
                 className="group bg-transparent hover:bg-[#241C15] text-[#241C15] hover:text-[#fbf5e5] font-semibold px-7 py-4 rounded-lg border-2 border-[#241C15] transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start"
                 style={{ fontSize: '1.0625rem', fontWeight: '600' }}
                 onClick={() => handleNavigation("/get-hired")}
-
               >
                 <Play className="mr-2.5 w-4 h-4 fill-current" />
                 Find Talent
               </button>
             </div>
-          </div>
+          </div>  
         </div>
-
       </section>
     </>
   );

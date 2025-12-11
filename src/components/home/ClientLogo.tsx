@@ -22,12 +22,12 @@ const ClientLogos = () => {
           {/* Subtitle Badge */}
           <div className="inline-flex items-center gap-3 backdrop-blur-sm bg-white/70 border border-gray-200/60 px-5 py-3 rounded-full mb-8 shadow-lg hover:shadow-xl transition-all duration-300 group">
             <Sparkles className="w-5 h-5 text-[#FFE01B] animate-pulse" />
-            <span className="text-sm font-semibold text-gray-700">Clients</span>
+            <span className="text-sm font-semibold text-[#31302f]">Clients</span>
             <div className="w-2 h-2 bg-[#FFE01B] rounded-full animate-ping" />
           </div>
 
           <h2
-            className="font-black leading-tight mb-6 text-gray-900"
+            className="font-black leading-tight mb-6 text-[#050504]"
             style={{
               fontSize: "clamp(2rem, 7vw, 3.5rem)",
               textShadow: "0 4px 20px rgba(0,0,0,0.1)",
@@ -35,10 +35,9 @@ const ClientLogos = () => {
           >
             Trusted by Leading{" "}
             <span className="relative inline-block">
-              <span className="bg-gradient-to-r from-[#FFE01B] via-amber-500 to-[#FFE01B] bg-clip-text text-transparent animate-gradient bg-300%">
+              <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient bg-300%">
                 Brands
               </span>
-              <div className="absolute -inset-2 bg-gradient-to-r from-[#FFE01B]/20 to-amber-500/20 blur-xl -z-10 animate-pulse" />
             </span>
           </h2>
         </div>
