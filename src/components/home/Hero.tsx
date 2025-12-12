@@ -98,7 +98,7 @@ const Hero = () => {
                 On{" "}
                 <span className="inline-block relative">
                   <span className="relative z-10">Demand</span>
-                  <span className="absolute bottom-[0.12em] left-0 w-full h-[0.1em] bg-[#FFE01B] -z-10 opacity-30"></span>
+                  <span className="absolute bottom-[0.12em] left-0 w-full h-[0.1em] bg-[#f7af00] -z-10 opacity-50"></span>
                 </span>
               </span>
             </h1>

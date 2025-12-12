@@ -148,7 +148,7 @@ const ServiceCategories = () => {
                   }
                   style={{ fontWeight: '600' }}
                 >
-                  <Icon className={`w-5 h-5 mr-2 ${isActive ? 'text-[#241C15]' : 'text-[#241C15]/70 group-hover:text-[#FFE01B]'} transition-all duration-300`} />
+                  <Icon className={`w-5 h-5 mr-2 ${isActive ? 'text-[#241C15]' : 'text-[#241C15]/70 group-hover:text-[#f7af00]'} transition-all duration-300`} />
                   {name}
                 </button>
               )
@@ -160,7 +160,7 @@ const ServiceCategories = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 md:mb-8 gap-4">
               <div className="flex items-center">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#FFE01B] rounded-xl flex items-center justify-center mr-4 shadow-lg animate-float">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#f7af00] rounded-xl flex items-center justify-center mr-4 shadow-lg animate-float">
                   {categories[activeCategory]?.icon &&
                     (() => {
                       const Icon = categories[activeCategory].icon
@@ -181,7 +181,7 @@ const ServiceCategories = () => {
               {/* Subcategories */}
               <div>
                 <h4 className="text-lg sm:text-xl font-black text-[#241C15] mb-5 flex items-center">
-                  <div className="w-1 h-6 sm:h-8 bg-[#FFE01B] rounded-full mr-3"></div>
+                  <div className="w-1 h-6 sm:h-8 bg-[#f7af00] rounded-full mr-3"></div>
                   Specializations
                 </h4>
 
