@@ -43,16 +43,28 @@ export default function Header() {
     setIsMobileMenuOpen(false);
   };
 
-  // ✅ Conditional rendering happens AFTER all hooks
-  if (
-    (pathname.startsWith("/h") && pathname !== "/how-we-work" && pathname !== "/hiring") ||
-    (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") ||
-    (pathname.startsWith("/form/") && pathname !== "/form") ||
-    (pathname.startsWith("/find-talent/") && pathname !== "/find-talent") ||
-    (pathname.startsWith("/get-hired/") && pathname !== "/get-hired") ||
-    (pathname.startsWith("/freelancer/") && pathname !== "/freelancer")
-  ) {
-    return null;
+  const hiddenRoutes = ["/h/", "/case-studies/", "/form/", "/find-talent/", "/get-hired/", "/freelancer/"]
+  const allowedExceptions = [
+    "/how-we-work",
+    "/hiring",
+    "/case-studies",
+    "/form",
+    "/find-talent",
+    "/get-hired",
+    "/freelancer",
+  ]
+
+  const shouldHideHeader = pathname
+    ? hiddenRoutes.some((route) => {
+        if (pathname.startsWith(route.slice(0, -1)) && !allowedExceptions.includes(pathname)) {
+          return true
+        }
+        return false
+      })
+    : false
+
+  if (shouldHideHeader) {
+    return null
   }
 
 
