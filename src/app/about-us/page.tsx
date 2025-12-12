@@ -3,6 +3,15 @@
 import { Users, Target, Lightbulb, TrendingUp, Heart, Rocket, ArrowRight } from "lucide-react"
 import { motion, Variants } from "framer-motion"
 
+// Color Palette (Light Theme)
+const COLORS = {
+  BACKGROUND: "#faf4e5",
+  TEXT_PRIMARY: "#050504",
+  ACCENT_PRIMARY: "#f7af00",
+  TEXT_SECONDARY: "#31302f",
+  BACKGROUND_SECONDARY: "#f0eadd",
+}
+
 // Animation variants
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 60 },
@@ -47,8 +56,6 @@ const scaleIn: Variants = {
     transition: { duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99] },
   },
 }
-
-
 
 export default function AboutPage() {
   const team = [
@@ -122,19 +129,11 @@ export default function AboutPage() {
         .animate-visionRotate { animation: visionRotate 8s ease-in-out infinite; }
       `}</style>
 
-      <div className="about-section flex flex-col bg-[#fbf5e5] text-[#241C15] overflow-hidden pt-[80px] sm:pt-[80px] lg:pt-[90px]">
-
-        {/* Animated Background */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE01B] opacity-5 rounded-full animate-rotate360" />
-          <div className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B] opacity-5 rounded-full animate-rotateReverse" />
-          <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FFE01B] opacity-5 rounded-full animate-rotateHalf" />
-        </div>
-
+      <div className="about-section flex flex-col overflow-hidden pt-20 sm:pt-28 md:pt-32" style={{ background: COLORS.BACKGROUND, color: COLORS.TEXT_PRIMARY }}>
         {/* Hero Section */}
         <section className="relative min-h-[80vh] flex items-center">
           {/* Background Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-[#fbf5e5] via-[#f5ead3]/30 to-[#fbf5e5]" />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom right, ${COLORS.BACKGROUND}, ${COLORS.BACKGROUND_SECONDARY}33, ${COLORS.BACKGROUND})` }} />
 
           <div className="relative w-full">
             <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1300px] py-16 sm:py-20 lg:py-24">
@@ -149,12 +148,16 @@ export default function AboutPage() {
                     {/* Badge */}
                     <motion.div className="flex items-center gap-3 mb-4" variants={fadeUp}>
                       <motion.div
-                        className="w-14 h-14 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                        className="w-14 h-14 rounded-xl flex items-center justify-center border"
+                        style={{
+                          background: `${COLORS.ACCENT_PRIMARY}20`,
+                          borderColor: `${COLORS.ACCENT_PRIMARY}30`
+                        }}
                         whileHover={{ scale: 1.1, rotate: 10 }}
                       >
-                        <Rocket className="w-7 h-7 text-[#241C15]" />
+                        <Rocket className="w-7 h-7" style={{ color: COLORS.TEXT_PRIMARY }} />
                       </motion.div>
-                      <span className="text-[#241C15] font-semibold text-lg sm:text-xl tracking-wide">
+                      <span className="font-semibold text-lg sm:text-xl tracking-wide" style={{ color: COLORS.TEXT_PRIMARY }}>
                         About Us
                       </span>
                     </motion.div>
@@ -162,15 +165,20 @@ export default function AboutPage() {
                     {/* Headline */}
                     <motion.h1
                       variants={fadeUp}
-                      className="tracking-in-expand font-bold leading-[1.1]"
+                      className="font-bold leading-[1.1]"
                       style={{
                         fontSize: "clamp(2.35rem, 5.5vw, 4.5rem)",
                         letterSpacing: "-0.025em",
                         maxWidth: "950px",
                       }}
                     >
-                      <span className="text-[#241C15]">About </span>
-                      <span className="bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent">
+                      <span style={{ color: COLORS.TEXT_PRIMARY }}>About </span>
+                      <span style={{
+                        background: `linear-gradient(to right, ${COLORS.ACCENT_PRIMARY}, #f7c34d)`,
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        color: "transparent"
+                      }}>
                         Finzie
                       </span>
                     </motion.h1>
@@ -178,11 +186,12 @@ export default function AboutPage() {
                     {/* Subheading */}
                     <motion.p
                       variants={fadeUp}
-                      className="text-[#241C15] leading-relaxed font-semibold"
+                      className="leading-relaxed font-semibold"
                       style={{
                         fontSize: "clamp(1.125rem, 1.75vw, 1.375rem)",
                         maxWidth: "720px",
                         opacity: "0.9",
+                        color: COLORS.TEXT_PRIMARY
                       }}
                     >
                       We connect startups with pre-vetted freelancers and AI-driven teams,
@@ -192,11 +201,12 @@ export default function AboutPage() {
                     {/* Secondary Description */}
                     <motion.p
                       variants={fadeUp}
-                      className="text-[#241C15]/70 leading-relaxed font-medium"
+                      className="leading-relaxed font-medium"
                       style={{
                         fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
                         maxWidth: "680px",
                         lineHeight: "1.7",
+                        color: `${COLORS.TEXT_PRIMARY}B3`
                       }}
                     >
                       Our mission is to empower fast-moving startups by providing instant
@@ -208,11 +218,15 @@ export default function AboutPage() {
                   {/* CTA Button */}
                   <motion.div variants={fadeUp} className="flex gap-4">
                     <motion.a
-                      className="group inline-flex items-center gap-3 bg-[#FFE01B] text-[#241C15] font-semibold px-8 py-4 rounded-xl hover:bg-[#FCD34D] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+                      className="group inline-flex items-center gap-3 font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       href="#"
-                      style={{ fontSize: "1.0625rem" }}
+                      style={{
+                        fontSize: "1.0625rem",
+                        background: COLORS.ACCENT_PRIMARY,
+                        color: COLORS.TEXT_PRIMARY
+                      }}
                     >
                       Start Your Project Today
                       <div className="animate-arrowMove">
@@ -226,10 +240,9 @@ export default function AboutPage() {
           </div>
         </section>
 
-
         {/* Team Members Section */}
         <section className="relative py-24 px-4">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#FFE01B]/5" />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent, ${COLORS.ACCENT_PRIMARY}08)` }} />
 
           <motion.div
             className="relative max-w-6xl mx-auto"
@@ -245,20 +258,24 @@ export default function AboutPage() {
                 variants={fadeUp}
               >
                 <motion.div
-                  className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                  className="w-12 h-12 rounded-xl flex items-center justify-center border"
+                  style={{
+                    background: `${COLORS.ACCENT_PRIMARY}20`,
+                    borderColor: `${COLORS.ACCENT_PRIMARY}30`
+                  }}
                   whileHover={{ scale: 1.1, rotate: -10 }}
                 >
-                  <Users className="w-6 h-6 text-[#241C15]" />
+                  <Users className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
                 </motion.div>
-                <span className="text-[#241C15] font-semibold text-lg">
+                <span className="font-semibold text-lg" style={{ color: COLORS.TEXT_PRIMARY }}>
                   Our Team
                 </span>
               </motion.div>
 
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-[#241C15]">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
                 Meet Our Team
               </h2>
-              <p className="text-xl text-[#241C15]/70 max-w-2xl mx-auto">
+              <p className="text-xl max-w-2xl mx-auto" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
                 The builders, designers, and dreamers behind Finzie
               </p>
             </motion.div>
@@ -272,10 +289,14 @@ export default function AboutPage() {
                 <motion.div
                   key={idx}
                   variants={scaleIn}
-                  className="group relative bg-[#fbf5e5] backdrop-blur-sm rounded-3xl p-8 hover:border-[#FFE01B]/50 transition-all duration-500"
+                  className="group relative backdrop-blur-sm rounded-3xl p-8 transition-all duration-500"
+                  style={{
+                    background: COLORS.BACKGROUND_SECONDARY,
+                    border: `1px solid ${COLORS.TEXT_SECONDARY}0A`
+                  }}
                   whileHover={{ y: -10, scale: 1.02 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to bottom right, ${COLORS.ACCENT_PRIMARY}10, transparent)` }} />
 
                   <div className="relative text-center">
                     <motion.div
@@ -283,21 +304,24 @@ export default function AboutPage() {
                       whileHover={{ scale: 1.1 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div className="absolute inset-0 bg-[#FFE01B] rounded-full blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+                      <div className="absolute inset-0 rounded-full blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
                       <img
                         src={member.img}
                         alt={member.name}
-                        className="relative w-32 h-32 rounded-full mx-auto object-cover border-4 border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-500"
+                        className="relative w-32 h-32 rounded-full mx-auto object-cover border-4 transition-colors duration-500"
+                        style={{
+                          borderColor: `${COLORS.ACCENT_PRIMARY}4D`
+                        }}
                       />
                     </motion.div>
 
-                    <h3 className="font-bold text-xl text-[#241C15] mb-2">
+                    <h3 className="font-bold text-xl mb-2" style={{ color: COLORS.TEXT_PRIMARY }}>
                       {member.name}
                     </h3>
-                    <p className="text-[#FFE01B] font-semibold mb-4">
+                    <p className="font-semibold mb-4" style={{ color: COLORS.ACCENT_PRIMARY }}>
                       {member.role}
                     </p>
-                    <p className="text-[#241C15]/70 leading-relaxed group-hover:text-[#241C15]/85 transition-colors duration-500">
+                    <p className="leading-relaxed group-hover:opacity-100 transition-colors duration-500" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
                       {member.desc}
                     </p>
                   </div>
@@ -307,10 +331,9 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
-        {/* finzie story */}
+        {/* Finzie Story */}
         <section className="relative py-24 px-4 sm:px-6 lg:px-8">
-          {/* Background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#FFE01B]/5 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(to right, ${COLORS.BACKGROUND_SECONDARY}, transparent)` }} />
 
           <motion.div
             className="relative max-w-6xl mx-auto"
@@ -320,51 +343,53 @@ export default function AboutPage() {
             variants={staggerContainer}
           >
             <div className="grid lg:grid-cols-2 gap-2 items-center">
-              {/* Left Content */}
               <motion.div variants={fadeInLeft} className="">
-                {/* Badge + Title */}
                 <motion.div className="flex items-center gap-3 mb-8" variants={fadeUp}>
                   <motion.div
-                    className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center border"
+                    style={{
+                      background: `${COLORS.ACCENT_PRIMARY}20`,
+                      borderColor: `${COLORS.ACCENT_PRIMARY}30`
+                    }}
                     whileHover={{ scale: 1.1, rotate: 15 }}
                   >
-                    <Lightbulb className="w-6 h-6 text-[#241C15]" />
+                    <Lightbulb className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
                   </motion.div>
-                  <span className="text-[#241C15] font-semibold text-xl">Our Story</span>
+                  <span className="font-semibold text-xl" style={{ color: COLORS.TEXT_PRIMARY }}>Our Story</span>
                 </motion.div>
 
-                {/* Headline */}
                 <h2
-                  className="font-bold mb-2 text-[#241C15]"
+                  className="font-bold mb-2"
                   style={{
                     fontSize: "clamp(2.25rem, 5vw, 4rem)",
                     lineHeight: "1.15",
-                    maxWidth: "100%", // allow full width in left col
+                    maxWidth: "100%",
                     letterSpacing: "-0.025em",
+                    color: COLORS.TEXT_PRIMARY
                   }}
                 >
                   Finzie&apos;s Journey
                 </h2>
 
-                {/* Subtitle */}
                 <p
-                  className="text-[#241C15]/80 mb-6 font-semibold"
+                  className="mb-6 font-semibold"
                   style={{
                     fontSize: "clamp(1.125rem, 1.75vw, 1.375rem)",
-                    maxWidth: "100%", // no restriction
+                    maxWidth: "100%",
                     lineHeight: "1.6",
+                    color: `${COLORS.TEXT_PRIMARY}CC`
                   }}
                 >
                   From a small startup to a global talent aggregator
                 </p>
 
-                {/* Description */}
-                <div className="space-y-8 max-w-3xl"> {/* widened column */}
+                <div className="space-y-8 max-w-3xl">
                   <motion.p
-                    className="text-[#241C15]/75 font-medium"
+                    className="font-medium"
                     style={{
                       fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
                       lineHeight: "1.75",
+                      color: `${COLORS.TEXT_PRIMARY}BF`
                     }}
                     variants={fadeUp}
                   >
@@ -380,36 +405,24 @@ export default function AboutPage() {
                   >
                     <motion.p
                       variants={fadeUp}
-                      className="text-[#241C15]/90"
-                      style={{ fontSize: "clamp(1rem, 1.25vw, 1.125rem)", lineHeight: "1.75" }}
+                      style={{
+                        fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
+                        lineHeight: "1.75",
+                        color: `${COLORS.TEXT_PRIMARY}E6`
+                      }}
                     >
                       Today, Finzie is proud to be the world's first AI talent aggregator, providing on-demand access to pre-vetted experts across various domains. Our mission is to empower startups with the resources they need to scale efficiently and effectively.
-
-
                     </motion.p>
                   </motion.div>
-
                 </div>
               </motion.div>
-
-              {/* Right Side Placeholder */}
-              {/* <motion.div
-                className="hidden lg:flex justify-center items-center"
-                variants={fadeInLeft}
-              >
-                <div className="w-full max-w-md h-72 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center">
-                  <span className="text-[#241C15]/50 text-lg">Illustration Here</span>
-                </div>
-              </motion.div> */}
             </div>
           </motion.div>
         </section>
 
-
-
         {/* Goals and Impact Section */}
         <section className="relative py-24 px-4">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#FFE01B]/5 to-transparent" />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent, ${COLORS.ACCENT_PRIMARY}05, transparent)` }} />
 
           <motion.div
             className="relative max-w-6xl mx-auto"
@@ -421,15 +434,19 @@ export default function AboutPage() {
             <motion.div className="text-center mb-16" variants={fadeUp}>
               <motion.div className="flex items-center justify-center gap-3 mb-6" variants={fadeUp}>
                 <motion.div
-                  className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                  className="w-12 h-12 rounded-xl flex items-center justify-center border"
+                  style={{
+                    background: `${COLORS.ACCENT_PRIMARY}20`,
+                    borderColor: `${COLORS.ACCENT_PRIMARY}30`
+                  }}
                   whileHover={{ scale: 1.1, rotate: -15 }}
                 >
-                  <Target className="w-6 h-6 text-[#241C15]" />
+                  <Target className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
                 </motion.div>
-                <span className="text-[#241C15] font-semibold text-lg">Impact</span>
+                <span className="font-semibold text-lg" style={{ color: COLORS.TEXT_PRIMARY }}>Impact</span>
               </motion.div>
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-[#241C15]">Our Goals & Impact</h2>
-              <p className="text-xl text-[#241C15]/70 max-w-2xl mx-auto">
+              <h2 className="text-4xl lg:text-5xl font-bold mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>Our Goals & Impact</h2>
+              <p className="text-xl max-w-2xl mx-auto" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
                 Committed to making a difference in the freelance ecosystem
               </p>
             </motion.div>
@@ -458,26 +475,33 @@ export default function AboutPage() {
                 <motion.div
                   key={idx}
                   variants={scaleIn}
-                  className="group relative bg-[#fbf5e5] backdrop-blur-sm rounded-3xl p-8 hover:border-[#FFE01B]/50 transition-all duration-500 text-center"
+                  className="group relative backdrop-blur-sm rounded-3xl p-8 transition-all duration-500 text-center"
+                  style={{
+                    background: COLORS.BACKGROUND,
+                    border: `1px solid ${COLORS.TEXT_SECONDARY}0A`
+                  }}
                   whileHover={{ y: -10, scale: 1.02 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to bottom right, ${COLORS.ACCENT_PRIMARY}10, transparent)` }} />
 
                   <motion.div
                     className="relative mb-6"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="absolute inset-0 bg-[#FFE01B] rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-                    <div className="relative w-20 h-20 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center mx-auto border border-[#FFE01B]/30 group-hover:border-[#FFE01B] transition-colors duration-500">
-                      <goal.icon className="w-10 h-10 text-[#241C15]" />
+                    <div className="absolute inset-0 rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
+                    <div className="relative w-20 h-20 rounded-2xl flex items-center justify-center mx-auto border transition-colors duration-500" style={{
+                      background: `${COLORS.ACCENT_PRIMARY}20`,
+                      borderColor: `${COLORS.ACCENT_PRIMARY}30`
+                    }}>
+                      <goal.icon className="w-10 h-10" style={{ color: COLORS.TEXT_PRIMARY }} />
                     </div>
                   </motion.div>
 
-                  <h3 className="text-2xl font-bold text-[#241C15] mb-4">
+                  <h3 className="text-2xl font-bold mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
                     {goal.title}
                   </h3>
-                  <p className="text-[#241C15]/70 leading-relaxed group-hover:text-[#241C15]/85 transition-colors duration-500">
+                  <p className="leading-relaxed group-hover:opacity-100 transition-colors duration-500" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
                     {goal.desc}
                   </p>
                 </motion.div>
@@ -488,7 +512,7 @@ export default function AboutPage() {
 
         {/* Mission and Vision Section */}
         <section className="relative py-24 px-4">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#FFE01B]/5 to-transparent" />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(to right, transparent, ${COLORS.ACCENT_PRIMARY}05, transparent)` }} />
 
           <motion.div
             className="relative max-w-6xl mx-auto space-y-24"
@@ -502,18 +526,27 @@ export default function AboutPage() {
               <motion.div variants={fadeInLeft}>
                 <motion.div className="flex items-center gap-3 mb-6" variants={fadeUp}>
                   <motion.div
-                    className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center border"
+                    style={{
+                      background: `${COLORS.ACCENT_PRIMARY}20`,
+                      borderColor: `${COLORS.ACCENT_PRIMARY}30`
+                    }}
                     whileHover={{ scale: 1.1, rotate: 10 }}
                   >
-                    <Target className="w-6 h-6 text-[#241C15]" />
+                    <Target className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
                   </motion.div>
-                  <span className="text-[#241C15] font-semibold text-lg">Mission</span>
+                  <span className="font-semibold text-lg" style={{ color: COLORS.TEXT_PRIMARY }}>Mission</span>
                 </motion.div>
 
-                <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent">
+                <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{
+                  background: `linear-gradient(to right, ${COLORS.ACCENT_PRIMARY}, #f7c34d)`,
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent"
+                }}>
                   Our Mission
                 </h2>
-                <p className="text-xl text-[#241C15]/75 leading-relaxed">
+                <p className="text-xl leading-relaxed" style={{ color: `${COLORS.TEXT_PRIMARY}BF` }}>
                   To empower communities through education, technology, and sustainable solutions, creating
                   opportunities for every individual to thrive and contribute to a better world.
                 </p>
@@ -521,7 +554,7 @@ export default function AboutPage() {
 
               <motion.div variants={fadeInRight} className="relative">
                 <div className="relative animate-missionRotate">
-                  <div className="absolute inset-0 bg-[#FFE01B] rounded-3xl blur-2xl opacity-20" />
+                  <div className="absolute inset-0 rounded-3xl blur-2xl opacity-20" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
                   <img
                     src="/mission2.png"
                     alt="Our Mission"
@@ -536,18 +569,27 @@ export default function AboutPage() {
               <motion.div variants={fadeInLeft} className="lg:order-2">
                 <motion.div className="flex items-center gap-3 mb-6" variants={fadeUp}>
                   <motion.div
-                    className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center border"
+                    style={{
+                      background: `${COLORS.ACCENT_PRIMARY}20`,
+                      borderColor: `${COLORS.ACCENT_PRIMARY}30`
+                    }}
                     whileHover={{ scale: 1.1, rotate: -10 }}
                   >
-                    <Lightbulb className="w-6 h-6 text-[#241C15]" />
+                    <Lightbulb className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
                   </motion.div>
-                  <span className="text-[#241C15] font-semibold text-lg">Vision</span>
+                  <span className="font-semibold text-lg" style={{ color: COLORS.TEXT_PRIMARY }}>Vision</span>
                 </motion.div>
 
-                <h2 className="text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] bg-clip-text text-transparent">
+                <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{
+                  background: `linear-gradient(to right, ${COLORS.ACCENT_PRIMARY}, #f7c34d)`,
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent"
+                }}>
                   Our Vision
                 </h2>
-                <p className="text-xl text-[#241C15]/75 leading-relaxed">
+                <p className="text-xl leading-relaxed" style={{ color: `${COLORS.TEXT_PRIMARY}BF` }}>
                   To build a future where innovation and inclusivity drive societal progress, ensuring that
                   technology and education are accessible to all, regardless of background.
                 </p>
@@ -555,7 +597,7 @@ export default function AboutPage() {
 
               <motion.div variants={fadeInRight} className="lg:order-1 relative">
                 <div className="relative animate-visionRotate">
-                  <div className="absolute inset-0 bg-[#FFE01B] rounded-3xl blur-2xl opacity-20" />
+                  <div className="absolute inset-0 rounded-3xl blur-2xl opacity-20" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
                   <img
                     src="/vision.png"
                     alt="Our Vision"
@@ -576,16 +618,16 @@ export default function AboutPage() {
             viewport={{ once: true, amount: 0.3 }}
             variants={staggerContainer}
           >
-            <div className="relative bg-gradient-to-r from-[#FFE01B] to-[#FCD34D] rounded-3xl p-16 text-[#241C15] overflow-hidden">
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full animate-rotateIcon" />
-              <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-[#241C15]/10 rounded-full animate-rotateIconReverse" />
-
+            <div className="relative rounded-3xl p-16 overflow-hidden" style={{
+              background: `linear-gradient(to right, ${COLORS.BACKGROUND_SECONDARY}, #f0eadd)`,
+              color: COLORS.TEXT_PRIMARY
+            }}>
               <div className="relative z-10">
                 <motion.h3 className="text-3xl lg:text-4xl font-bold mb-6" variants={fadeUp}>
                   Ready to Join the Finzie Community?
                 </motion.h3>
                 <motion.p
-                  className="text-xl opacity-80 mb-10 max-w-2xl mx-auto"
+                  className="text-xl opacity-90 mb-10 max-w-2xl mx-auto"
                   variants={fadeUp}
                 >
                   Whether you&apos;re a startup looking for talent or a freelancer seeking opportunities,
@@ -593,7 +635,11 @@ export default function AboutPage() {
                 </motion.p>
                 <motion.div className="flex flex-col sm:flex-row gap-4 justify-center" variants={fadeUp}>
                   <motion.button
-                    className="inline-flex items-center gap-2 bg-[#241C15] text-[#FFE01B] font-bold px-8 py-4 rounded-2xl hover:bg-[#241C15]/90 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
+                    className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
+                    style={{
+                      background: COLORS.TEXT_PRIMARY,
+                      color: COLORS.ACCENT_PRIMARY
+                    }}
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -601,7 +647,12 @@ export default function AboutPage() {
                     <ArrowRight className="w-5 h-5" />
                   </motion.button>
                   <motion.button
-                    className="inline-flex items-center gap-2 bg-white/20 text-[#241C15] font-bold px-8 py-4 rounded-2xl hover:bg-white/30 transition-all duration-300 border-2 border-[#241C15]/20 cursor-pointer"
+                    className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl transition-all duration-300 border-2 cursor-pointer"
+                    style={{
+                      background: `${COLORS.TEXT_PRIMARY}20`,
+                      color: COLORS.TEXT_PRIMARY,
+                      borderColor: `${COLORS.TEXT_PRIMARY}30`
+                    }}
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                   >

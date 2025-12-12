@@ -45,16 +45,16 @@ export default function Header() {
 
   // ✅ Conditional rendering happens AFTER all hooks
   if (
-    pathname.startsWith("/h") ||
+    (pathname.startsWith("/h") && pathname !== "/how-we-work" && pathname !== "/hiring") ||
     (pathname.startsWith("/case-studies/") && pathname !== "/case-studies") ||
     (pathname.startsWith("/form/") && pathname !== "/form") ||
     (pathname.startsWith("/find-talent/") && pathname !== "/find-talent") ||
     (pathname.startsWith("/get-hired/") && pathname !== "/get-hired") ||
     (pathname.startsWith("/freelancer/") && pathname !== "/freelancer")
-
   ) {
     return null;
   }
+
 
   return (
     <>

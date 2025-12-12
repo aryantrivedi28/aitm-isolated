@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-[#fbf5e5]">
+      <body className="min-h-screen flex flex-col bg-[#fbf5e5] font-sans">
         {/* ✅ Google Analytics should be loaded client-side */}
         <GoogleAnalytics />
 
