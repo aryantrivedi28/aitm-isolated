@@ -82,13 +82,7 @@ const Testimonials = () => {
       >
         {/* Header */}
         <div className="text-center mb-16 sm:mb-20 lg:mb-24">
-          <div className="inline-flex items-center gap-3 backdrop-blur-sm bg-white/10 border border-gray-300 px-5 py-3 rounded-full mb-8 shadow-sm">
-            <Sparkles className="w-5 h-5 text-[#FFE01B] animate-pulse" />
-            <span className="text-sm font-semibold text-white">Testimonials</span>
-            <div className="w-2 h-2 bg-[#FFE01B] rounded-full animate-ping" />
-          </div>
-
-          <h2 className="font-black leading-tight mb-6 text-white text-3xl sm:text-4xl md:text-5xl">
+          <h2 className="font-semibold leading-tight mb-6 text-white text-3xl sm:text-4xl md:text-5xl">
             What Our Clients{" "}
             <span className="bg-gradient-to-r from-[#FFE01B] via-[#FCD34D] to-[#FFE01B] bg-clip-text text-transparent animate-gradient bg-300%">
               Say

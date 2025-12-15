@@ -74,14 +74,7 @@ const WhatWeDo = () => {
         <div
           className={`text-center mb-12 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
         >
-          <div className="inline-flex items-center gap-2 backdrop-blur-sm bg-[#f0eadd] px-4 py-2 rounded-full mb-6 shadow-lg justify-center mx-auto">
-            <Sparkles className="w-4 h-4 text-[#050504] animate-pulse" />
-            <span className="text-[#050504] font-semibold text-sm sm:text-base">
-              Our Services
-            </span>
-          </div>
-
-          <h2 className="font-black text-4xl sm:text-5xl text-[#050504] mb-4">
+          <h2 className="font-medium text-4xl sm:text-5xl text-[#050504] mb-4">
             What We{" "}
             <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
               Do

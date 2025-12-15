@@ -32,12 +32,7 @@ const HowItWorks = () => {
       <div className="relative z-10 max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
         {/* Header */}
         <div className="text-center mb-10 sm:mb-14 lg:mb-18">
-          <div className="inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm px-5 py-3 rounded-full mb-8 shadow-lg">
-            <Sparkles className="w-5 h-5 text-[#FFE01B] animate-pulse" />
-            <span className="text-sm font-semibold text-[#050504]">Simple Process</span>
-          </div>
-
-          <h2 className="font-black text-3xl sm:text-4xl md:text-5xl mb-6">
+          <h2 className="font-medium text-3xl sm:text-4xl md:text-5xl mb-6">
             How Finzie{" "}
             <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
               Works

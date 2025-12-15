@@ -50,19 +50,10 @@ const FAQ = () => {
 
   return (
     <section className="relative w-full py-20 bg-[#faf4e5] overflow-hidden">
-
-
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-[#FFE01B]/20 px-4 py-2 rounded-full mb-6 justify-center mx-auto">
-            <HelpCircle className="w-5 h-5 text-[#FFE01B] animate-pulse" />
-            <span className="text-[#050504] font-semibold text-sm sm:text-base">
-              FAQ
-            </span>
-          </div>
-
-          <h2 className="text-4xl sm:text-5xl font-black text-[#050504] mb-4">
+          <h2 className="text-4xl sm:text-5xl font-medium text-[#050504] mb-4">
             Frequently Asked{" "}
             <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
               Questions

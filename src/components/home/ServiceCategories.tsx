@@ -123,7 +123,7 @@ const ServiceCategories = () => {
 
           {/* Header */}
           <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-            <h2 className="font-black leading-tight mb-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#241C15]">
+            <h2 className="font-medium leading-tight mb-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#241C15]">
               Expert <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">Categories</span>
             </h2>
             <p className="text-[#241C15]/70 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto font-medium">

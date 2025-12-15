@@ -16,7 +16,7 @@ const BottomCTA = () => {
     <section className="relative overflow-hidden bg-[#faf4e5] py-16 sm:py-20 flex items-center justify-center">
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
         {/* Main Headline */}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-[#050504] leading-snug sm:leading-tight mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-[#050504] leading-snug sm:leading-tight mb-6 sm:mb-8">
           Ready to{" "}
           <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
             Transform

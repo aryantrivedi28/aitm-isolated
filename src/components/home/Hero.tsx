@@ -70,24 +70,24 @@ const Hero = () => {
         <div className="relative z-10 w-full">
           <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-16 sm:py-20 lg:py-24">
             {/* Small Badge */}
-            <div
+            {/* <div
               className={`inline-flex items-center gap-2.5 bg-[#241C15] px-5 py-2.5 rounded-full mb-10 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
             >
               <Sparkles className="w-4 h-4 text-[#FFE01B]" />
               <span className="text-[#fbf5e5] text-sm font-medium tracking-wide" style={{ letterSpacing: '0.05em' }}>
                 INDIA'S PREMIER TALENT PLATFORM
               </span>
-            </div>
+            </div> */}
 
             {/* Headline */}
             <h1
-              className={`tracking-in-expand font-bold leading-[1.1] mb-4 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              className={`tracking-in-expand leading-[1.1] mb-4 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                 }`}
               style={{
-                fontSize: 'clamp(2.20rem, 5vw, 4rem)',
+                fontSize: 'clamp(2rem, 5vw, 4rem)',
                 letterSpacing: '-0.025em',
                 maxWidth: '950px',
-                fontWeight: '700'
+                fontWeight: '500'
               }}
             >
               <span className="block text-[#241C15] mb-1">
@@ -110,14 +110,14 @@ const Hero = () => {
               style={{
                 fontSize: 'clamp(1.125rem, 1.75vw, 1.375rem)',
                 maxWidth: '720px',
-                fontWeight: '600',
+                fontWeight: '500',
                 opacity: '0.9'
               }}
             >
               Top 1 percent Indian talent across marketing, design, UI or UX, video, SEO, GHL and Shopify.
             </p>
 
-            {/* Secondary Description */}
+            {/* Secondary Description
             <p
               className={`text-[#241C15]/65 leading-relaxed mb-12 transition-all duration-700 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
               style={{
@@ -128,7 +128,7 @@ const Hero = () => {
               }}
             >
               Trusted by global startups for marketing, design, SEO, Shopify and automation.
-            </p>
+            </p> */}
 
             {/* CTA Buttons */}
             <div

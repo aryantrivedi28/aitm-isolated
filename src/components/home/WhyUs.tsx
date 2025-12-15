@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState, useEffect } from "react";
 import {
   CheckCircle,
   Zap,
@@ -10,7 +11,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
 
 const WhyUs = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -71,26 +71,22 @@ const WhyUs = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div
-          className={`text-center md:text-left mb-12 transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+          className={`text-center mb-14 transition-all duration-1000 ${isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
             }`}
         >
-          {/* <div className="inline-flex items-center gap-3 bg-[#faf4e5] backdrop-blur-xl px-4 py-2 rounded-full mb-6 shadow-lg">
-            <div className="w-2 h-2 bg-[#FFE01B] rounded-full animate-ping"></div>
-            <span className="text-sm font-bold text-[#050504]">
-              Why Choose Finzie
-            </span>
-          </div> */}
-          <h2 className="text-[#050504] font-semibold text-2xl sm:text-4xl md:text-5xl mb-4">
+          <h2 className="text-[#050504] font-medium text-2xl sm:text-4xl md:text-5xl mb-4">
             Why{" "}
             <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
               Us?
             </span>
           </h2>
-          <p className="text-[#31302f] max-w-2xl mx-auto md:mx-0 leading-relaxed font-medium text-sm sm:text-base">
+
+          <p className="text-[#31302f] max-w-2xl mx-auto leading-relaxed font-medium text-sm sm:text-base">
             When it comes to quality and growth, we do not compromise.{" "}
             <span className="font-bold text-[#31302f]">zero hassles</span>.
           </p>
         </div>
+
 
         {/* Desktop Grid */}
         <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
