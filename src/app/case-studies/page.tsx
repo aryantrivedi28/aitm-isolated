@@ -61,39 +61,6 @@ const scaleIn: Variants = {
   },
 }
 
-const industryOptions = [
-  "All",
-  "Finance",
-  "Healthcare",
-  "E-commerce",
-  "Education",
-  "Travel",
-  "Technology",
-  "Real Estate",
-  "Retail",
-  "Logistics",
-  "Insurance",
-  "Entertainment",
-  "Automotive",
-  "Food & Beverage",
-  "Energy",
-  "Telecom",
-  "Legal",
-  "Media",
-]
-
-const serviceOptions = [
-  "All",
-  "Design",
-  "Development",
-  "AI",
-  "Marketing",
-  "Video",
-  "Branding",
-  "Consulting",
-  "SEO",
-  "Strategy",
-]
 
 interface CaseStudy {
   _id: string
@@ -108,71 +75,54 @@ interface CaseStudy {
 export default function CaseStudiesPage() {
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedIndustry, setSelectedIndustry] = useState<string | null>(null);
   const [selectedService, setSelectedService] = useState<string | null>(null);
 
-const industries = [
-  "Technology", 
-  "Healthcare", 
-  "Finance", 
-  "Gaming", 
-  "Education", 
-  "Arts & Entertainment",
-  // "FMCG", // could be used for future brand growth case studies
-  // "Sports, Outdoors & Fitness", // consider later for sports analytics
-  // "EdTech Media", // future use
-  // "FinTech", // already covered under Finance
-  // "Wellness", // could relate to healthcare services
-];
+  const industries = [
+    "Technology",
+    "Healthcare",
+    "Finance",
+    "Gaming",
+    "Education",
+    "Arts & Entertainment",
+  ];
 
-const services = [
-  "Web Development", 
-  "SEO", 
-  "CRO", 
-  "Social Media Management", 
-  // "Email Marketing", 
-  "Marketing Strategy", 
-  // "SMS Marketing", 
-  // "Content Marketing", 
-  "Copywriting", 
-  "Video Production", 
-  "Graphic Design", 
-  "UI/UX Design", 
-  "App Development",
-  // "Instagram Growth", // new
-  "Short-form Content", // new
-  // "Storytelling", // new
-  "Brand Growth", // new
-  "Pitch Deck Design", // new
-  "Investor Pitch Design", // new
-  // "Market Research", // new
-  "Business Communication", // new
-  // "Fundraising Support", // new
-  // "Structured Narrative", // new
-  "Real-time Chat", // new
-  "Mobile UX", // new
-  // "Performance Optimization", // new
-  // "Messaging Integration", // new
-  // "Content Strategy", // new
-  // "Cash Flow Management", // new
-  "Healthcare Services", // new
-  // "Wellness Services", // new
-  "Predictive Modeling", // new
-  "Artificial Intelligence", // new
-  "Machine Learning", // new
-  "Flutter Development", // new
-  "Firebase Integration", // new
-  // "State Management", // new
-  "UI/UX Overhaul", // new
-  // "Conversion Optimization", // new
-  // "Apple Optimization", // future
-  // "Public Relations", // future
-  // "Paid Ads", // future
-  // "Google Shopping", // future
-];
-
+  const services = [
+    "Web Development",
+    "SEO",
+    "CRO",
+    "Social Media Management",
+    // "Email Marketing", 
+    "Marketing Strategy",
+    // "SMS Marketing", 
+    // "Content Marketing", 
+    "Copywriting",
+    "Video Production",
+    "Graphic Design",
+    "UI/UX Design",
+    "App Development",
+    // "Instagram Growth", // new
+    "Short-form Content", // new
+    // "Storytelling", // new
+    "Brand Growth", // new
+    "Pitch Deck Design", // new
+    "Investor Pitch Design", // new
+    // "Market Research", // new
+    "Business Communication", // new
+    // "Fundraising Support", // new
+    // "Structured Narrative", // new
+    "Real-time Chat", // new
+    "Mobile UX", // new
+    "Healthcare Services", // new
+    // "Wellness Services", // new
+    "Predictive Modeling", // new
+    "Artificial Intelligence", // new
+    "Machine Learning", // new
+    "Flutter Development", // new
+    "Firebase Integration", // new
+    // "State Management", // new
+    "UI/UX Overhaul", // new
+  ];
 
 
   // Filtering logic
@@ -184,7 +134,6 @@ const services = [
         study.description?.toLowerCase().includes(selectedIndustry.toLowerCase())
       )
       : true;
-
     const matchesService = selectedService
       ? (
         study.tags?.some(tag => tag.toLowerCase().includes(selectedService.toLowerCase())) ||
@@ -192,15 +141,14 @@ const services = [
         study.description?.toLowerCase().includes(selectedService.toLowerCase())
       )
       : true;
-
     return matchesIndustry && matchesService;
   });
 
 
-useEffect(() => {
-  async function fetchCaseStudies() {
-    try {
-      const studies = await client.fetch(`
+  useEffect(() => {
+    async function fetchCaseStudies() {
+      try {
+        const studies = await client.fetch(`
         *[_type == "caseStudy" && isHidden != true] 
           | order(order asc, ranking asc, _createdAt desc) {
             _id,
@@ -219,16 +167,16 @@ useEffect(() => {
             }
           }
       `)
-      setCaseStudies(studies || [])
-    } catch (error) {
-      console.error("Error fetching case studies:", error)
-    } finally {
-      setLoading(false)
+        setCaseStudies(studies || [])
+      } catch (error) {
+        console.error("Error fetching case studies:", error)
+      } finally {
+        setLoading(false)
+      }
     }
-  }
 
-  fetchCaseStudies()
-}, [])
+    fetchCaseStudies()
+  }, [])
 
   if (loading) {
     return (
@@ -287,275 +235,203 @@ useEffect(() => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fbf5e5] text-white overflow-hidden pt-[60px] sm:pt-[100px] lg:pt-[120px]">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{
-            rotate: 360,
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            rotate: { duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
-            scale: { duration: 12, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-          }}
-          className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFE01B] opacity-10 rounded-full"
-        />
-        <motion.div
-          animate={{
-            rotate: -360,
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            rotate: { duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
-            scale: { duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-          }}
-          className="absolute top-1/2 -left-40 w-64 h-64 bg-[#FFE01B] opacity-5 rounded-full"
-        />
-        <motion.div
-          animate={{
-            rotate: 180,
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            rotate: { duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" },
-            scale: { duration: 10, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
-          }}
-          className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FFE01B] opacity-10 rounded-full"
-        />
-      </div>
+    <div className="min-h-screen bg-[#faf4e5] text-[#050504] pt-[140px]">
 
-      {/* Hero Section */}
-      <section className="relative py-12 px-4">
-        <motion.div
-          className="relative max-w-6xl mx-auto"
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-        >
-          <div className="text-center space-y-4">
-            <motion.div
-              className="flex items-center justify-center gap-3 mb-6"
-              variants={fadeUp}
-            >
-              <div className="w-12 h-12 bg-[#FFE01B]/20 rounded-xl flex items-center justify-center border border-[#FFE01B]/30">
-                <Sparkles className="w-6 h-6 text-[#FFE01B]" />
-              </div>
-              <span className="text-[#241C15] font-semibold text-lg">Portfolio</span>
-            </motion.div>
+      {/* HERO SECTION */}
+      <section className="relative bg-[#faf4e5] overflow-hidden">
+        <div className="relative max-w-full mx-auto px-6 py-28 grid grid-cols-1 items-center">
 
+          {/* CENTERED CONTENT */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={staggerContainer}
+            className="space-y-8 text-center flex flex-col items-center"
+          >
             <motion.h1
               variants={fadeUp}
-              className="text-5xl lg:text-7xl font-bold leading-tight"
+              className="text-4xl md:text-6xl font-medium leading-tight"
             >
-              <span className="bg-gradient-to-r from-yellow-400 to-[#FFE01B] bg-clip-text text-transparent">
-                Case Studies
+              Stories Behind
+              <br />
+              Products That
+              <span className="relative inline-block ml-3">
+                Scaled
+                <span className="absolute left-0 -bottom-2 w-full h-[6px] bg-[#f7af00]/30 rounded-full" />
               </span>
             </motion.h1>
 
             <motion.p
               variants={fadeUp}
-              className="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+              className="text-lg md:text-xl text-[#31302f] max-w-xl mx-auto"
             >
-              Discover how Finzie transforms startups through design, engineering, and real client stories.
+              Explore real-world case studies showcasing how thoughtful design,
+              technology, and strategy helped teams grow faster and smarter.
             </motion.p>
-          </div>
-        </motion.div>
-      </section>
+          </motion.div>
 
-      {/* Search and Filter Section */}
-      <section className="relative py-12 px-4">
-        <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-3xl p-8 border border-gray-200">
-          <div className="grid grid-cols-2 gap-6">
-            {/* Industry Dropdown */}
-            <select
-              value={selectedIndustry || ""}
-              onChange={(e) => setSelectedIndustry(e.target.value || null)}
-              className="px-4 py-2 rounded-xl bg-gray-50 text-gray-800 border border-gray-300 focus:outline-none focus:border-[#FFE01B]"
-            >
-              <option value="">Industries</option>
-              {industries.map(industry => (
-                <option key={industry} value={industry}>{industry}</option>
-              ))}
-            </select>
-
-            {/* Services Dropdown */}
-            <select
-              value={selectedService || ""}
-              onChange={(e) => setSelectedService(e.target.value || null)}
-              className="px-4 py-2 rounded-xl bg-gray-50 text-gray-800 border border-gray-300 focus:outline-none focus:border-[#FFE01B]"
-            >
-              <option value="">Services</option>
-              {services.map(service => (
-                <option key={service} value={service}>{service}</option>
-              ))}
-            </select>
-          </div>
         </div>
       </section>
 
 
 
-      {/* Case Studies Grid */}
-      <section className="relative py-12 px-4">
-        <motion.div
-          className="max-w-6xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          variants={staggerContainer}
-        >
-          {filteredCaseStudies.length === 0 ? (
-            <motion.div className="text-center py-20" initial="hidden" animate="visible" variants={fadeUp}>
-              <div className="w-20 h-20 bg-[#FFE01B]/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Search className="w-10 h-10 text-[#FFE01B]" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-4">No Results Found</h3>
-              <p className="text-gray-400 mb-8">Try adjusting your search or filter criteria</p>
-              <motion.button
-                onClick={() => {
-                  setSearchTerm("")
-                  setSelectedCategory("All")
-                }}
-                className="bg-[#FFE01B] text-[#241C15] font-bold px-6 py-3 rounded-xl hover:bg-yellow-300 transition-colors duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+
+      {/* SEARCH & FILTER (KEPT + IMPROVED) */}
+      <section className="max-w-6xl mx-auto px-4 mb-20">
+        <div className="bg-[#f0eadd] rounded-2xl p-6 border border-[#050504]/10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">
+                Industry
+              </label>
+              <select
+                value={selectedIndustry || ""}
+                onChange={(e) => setSelectedIndustry(e.target.value || null)}
+                className="
+                w-full
+                px-4 py-3
+                rounded-xl
+                bg-[#faf4e5]
+                border border-[#050504]/20
+                text-[#050504]
+                focus:outline-none
+                focus:border-[#f7af00]
+              "
               >
-                Clear Filters
-              </motion.button>
-            </motion.div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredCaseStudies.map((study, index) => (
-                <motion.div
-                  key={study._id}
-                  initial="hidden"
-                  animate="visible"
-                  variants={scaleIn}
-                  transition={{ delay: index * 0.1 }}
-                  className="group relative bg-white/30 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/10 hover:border-[#FFE01B]/50 transition-all duration-500"
-                  whileHover={{ y: -10, scale: 1.02 }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden">
-                    {study.mainImage?.asset?.url ? (
-                      <Image
-                        src={study.mainImage.asset.url || "/placeholder.svg"}
-                        alt={study.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full bg-gradient-to-br from-[#FFE01B]/20 to-yellow-400/20">
-                        <Eye className="w-12 h-12 text-[#FFE01B]" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-
-                    {/* Tags */}
-                    {study.tags && study.tags.length > 0 && (
-                      <div className="absolute top-4 left-4 flex gap-2">
-                        {study.tags.slice(0, 2).map((tag, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 bg-[#FFE01B]/90 text-[#241C15] text-xs font-semibold rounded-full"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="relative p-6 space-y-4">
-
-                    <h2 className="text-xl font-bold text-black group-hover:text-[#FFE01B] transition-colors duration-300 line-clamp-2">
-                      {study.title}
-                    </h2>
-
-                    <p className="text-gray-900 text-sm leading-relaxed line-clamp-3 group-hover:text-gray-300 transition-colors duration-300">
-                      {study.description}
-                    </p>
-
-                    <Link href={`/case-studies/${study.slug.current}`}>
-                      <motion.div
-                        className="inline-flex items-center gap-2 text-[#FFE01B] font-semibold hover:gap-3 transition-all duration-300 cursor-pointer"
-                        whileHover={{ x: 5 }}
-                      >
-                        View Case Study
-                        <ArrowRight className="w-4 h-4" />
-                      </motion.div>
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
+                <option value="">All Industries</option>
+                {industries.map(i => (
+                  <option key={i} value={i}>{i}</option>
+                ))}
+              </select>
             </div>
-          )}
-        </motion.div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="relative py-24 px-4">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={staggerContainer}
-        >
-          <div className="relative bg-gradient-to-r from-[#FFE01B] to-yellow-400 rounded-3xl p-16 text-[#241C15] overflow-hidden">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-              className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rounded-full"
-            />
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-              className="absolute -bottom-20 -left-20 w-32 h-32 bg-[#241C15]/10 rounded-full"
-            />
-
-            <div className="relative z-10">
-              <motion.h3
-                className="text-3xl lg:text-4xl font-bold mb-6"
-                initial="hidden"
-                animate="visible"
-                variants={fadeUp}
+            <div>
+              <label className="block text-sm font-semibold mb-2">
+                Service
+              </label>
+              <select
+                value={selectedService || ""}
+                onChange={(e) => setSelectedService(e.target.value || null)}
+                className="
+                w-full
+                px-4 py-3
+                rounded-xl
+                bg-[#faf4e5]
+                border border-[#050504]/20
+                text-[#050504]
+                focus:outline-none
+                focus:border-[#f7af00]
+              "
               >
-                Ready to Create Your Success Story?
-              </motion.h3>
-              <motion.p
-                className="text-xl opacity-80 mb-10 max-w-2xl mx-auto"
-                initial="hidden"
-                animate="visible"
-                variants={fadeUp}
-              >
-                Join the ranks of successful startups who've transformed their business with Finzie's expert talent.
-              </motion.p>
-              <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-                <Link href="/client-request">
-                  <motion.div
-                    className="inline-flex items-center gap-3 bg-[#241C15] text-[#FFE01B] font-bold px-10 py-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Start Your Project
-                    <motion.div
-                      animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                    >
-                      <ArrowRight className="w-6 h-6" />
-                    </motion.div>
-                  </motion.div>
-                </Link>
-              </motion.div>
+                <option value="">All Services</option>
+                {services.map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
             </div>
+
           </div>
-        </motion.div>
+        </div>
       </section>
+
+      {/* CASE STUDY GRID */}
+      <section className="max-w-7xl mx-auto px-4 pb-24">
+        {filteredCaseStudies.length === 0 ? (
+          <div className="text-center py-20">
+            <Search className="w-10 h-10 mx-auto mb-4 text-[#31302f]" />
+            <p className="text-[#31302f]">
+              No case studies match your filters.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredCaseStudies.map((study, i) => (
+              <motion.article
+                key={study._id}
+                variants={scaleIn}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="
+                bg-[#f0eadd]
+                rounded-2xl
+                overflow-hidden
+                border border-[#050504]/10
+                hover:border-[#f7af00]
+                transition-all
+                hover:-translate-y-1
+              "
+              >
+                {/* IMAGE */}
+                <div className="relative h-48">
+                  {study.mainImage?.asset?.url ? (
+                    <Image
+                      src={study.mainImage.asset.url}
+                      alt={study.title}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="h-full bg-[#faf4e5]" />
+                  )}
+                </div>
+
+                {/* CONTENT */}
+                <div className="p-6 space-y-4">
+                  <h3 className="text-xl font-bold leading-snug">
+                    {study.title}
+                  </h3>
+
+                  <p className="text-sm text-[#31302f] line-clamp-2">
+                    {study.description}
+                  </p>
+
+                  {/* TAGS */}
+                  {study.tags && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {study.tags.slice(0, 3).map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="
+                          text-xs
+                          px-3 py-1
+                          rounded-full
+                          bg-[#faf4e5]
+                          border border-[#050504]/10
+                          text-[#050504]
+                        "
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  <Link
+                    href={`/case-studies/${study.slug.current}`}
+                    className="
+                    inline-flex
+                    items-center
+                    gap-2
+                    pt-4
+                    font-semibold
+                    text-[#050504]
+                    hover:gap-3
+                    transition-all
+                  "
+                  >
+                    View Case Study
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        )}
+      </section>
+
     </div>
-  )
+  );
 }

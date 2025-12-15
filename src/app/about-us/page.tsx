@@ -133,10 +133,10 @@ export default function AboutPage() {
         {/* Hero Section */}
         <section className="relative min-h-[80vh] flex items-center">
           {/* Background Gradient */}
-          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom right, ${COLORS.BACKGROUND}, ${COLORS.BACKGROUND_SECONDARY}33, ${COLORS.BACKGROUND})` }} />
+          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom right, ${COLORS.BACKGROUND})` }} />
 
           <div className="relative w-full">
-            <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1300px] py-16 sm:py-20 lg:py-24">
+            <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-16 sm:py-20 lg:py-24">
               <motion.div
                 className="grid lg:grid-cols-2 gap-2 items-center"
                 initial="hidden"
@@ -146,7 +146,7 @@ export default function AboutPage() {
                 <motion.div className="space-y-10" variants={fadeInLeft}>
                   <motion.div className="space-y-6" variants={staggerContainer}>
                     {/* Badge */}
-                    <motion.div className="flex items-center gap-3 mb-4" variants={fadeUp}>
+                    {/* <motion.div className="flex items-center gap-3 mb-4" variants={fadeUp}>
                       <motion.div
                         className="w-14 h-14 rounded-xl flex items-center justify-center border"
                         style={{
@@ -160,36 +160,28 @@ export default function AboutPage() {
                       <span className="font-semibold text-lg sm:text-xl tracking-wide" style={{ color: COLORS.TEXT_PRIMARY }}>
                         About Us
                       </span>
-                    </motion.div>
+                    </motion.div> */}
 
                     {/* Headline */}
                     <motion.h1
                       variants={fadeUp}
-                      className="font-bold leading-[1.1]"
+                      className="font-medium leading-[1.1]"
                       style={{
                         fontSize: "clamp(2.35rem, 5.5vw, 4.5rem)",
                         letterSpacing: "-0.025em",
-                        maxWidth: "950px",
+                        maxWidth: "1300px",
                       }}
                     >
-                      <span style={{ color: COLORS.TEXT_PRIMARY }}>About </span>
-                      <span style={{
-                        background: `linear-gradient(to right, ${COLORS.ACCENT_PRIMARY}, #f7c34d)`,
-                        backgroundClip: "text",
-                        WebkitBackgroundClip: "text",
-                        color: "transparent"
-                      }}>
-                        Finzie
-                      </span>
+                      <span style={{ color: COLORS.TEXT_PRIMARY }}>About Finzie</span>
                     </motion.h1>
 
                     {/* Subheading */}
                     <motion.p
                       variants={fadeUp}
-                      className="leading-relaxed font-semibold"
+                      className="leading-relaxed font-normal"
                       style={{
                         fontSize: "clamp(1.125rem, 1.75vw, 1.375rem)",
-                        maxWidth: "720px",
+                        maxWidth: "1600px",
                         opacity: "0.9",
                         color: COLORS.TEXT_PRIMARY
                       }}
@@ -201,12 +193,12 @@ export default function AboutPage() {
                     {/* Secondary Description */}
                     <motion.p
                       variants={fadeUp}
-                      className="leading-relaxed font-medium"
+                      className="leading-relaxed font-normal"
                       style={{
                         fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
                         maxWidth: "680px",
                         lineHeight: "1.7",
-                        color: `${COLORS.TEXT_PRIMARY}B3`
+                        color: `${COLORS.TEXT_PRIMARY}83`
                       }}
                     >
                       Our mission is to empower fast-moving startups by providing instant
@@ -272,7 +264,7 @@ export default function AboutPage() {
                 </span>
               </motion.div>
 
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
+              <h2 className="text-4xl lg:text-5xl font-medium mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
                 Meet Our Team
               </h2>
               <p className="text-xl max-w-2xl mx-auto" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
@@ -344,22 +336,8 @@ export default function AboutPage() {
           >
             <div className="grid lg:grid-cols-2 gap-2 items-center">
               <motion.div variants={fadeInLeft} className="">
-                <motion.div className="flex items-center gap-3 mb-8" variants={fadeUp}>
-                  <motion.div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center border"
-                    style={{
-                      background: `${COLORS.ACCENT_PRIMARY}20`,
-                      borderColor: `${COLORS.ACCENT_PRIMARY}30`
-                    }}
-                    whileHover={{ scale: 1.1, rotate: 15 }}
-                  >
-                    <Lightbulb className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
-                  </motion.div>
-                  <span className="font-semibold text-xl" style={{ color: COLORS.TEXT_PRIMARY }}>Our Story</span>
-                </motion.div>
-
                 <h2
-                  className="font-bold mb-2"
+                  className="font-medium mb-2"
                   style={{
                     fontSize: "clamp(2.25rem, 5vw, 4rem)",
                     lineHeight: "1.15",
@@ -432,20 +410,7 @@ export default function AboutPage() {
             variants={staggerContainer}
           >
             <motion.div className="text-center mb-16" variants={fadeUp}>
-              <motion.div className="flex items-center justify-center gap-3 mb-6" variants={fadeUp}>
-                <motion.div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center border"
-                  style={{
-                    background: `${COLORS.ACCENT_PRIMARY}20`,
-                    borderColor: `${COLORS.ACCENT_PRIMARY}30`
-                  }}
-                  whileHover={{ scale: 1.1, rotate: -15 }}
-                >
-                  <Target className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
-                </motion.div>
-                <span className="font-semibold text-lg" style={{ color: COLORS.TEXT_PRIMARY }}>Impact</span>
-              </motion.div>
-              <h2 className="text-4xl lg:text-5xl font-bold mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>Our Goals & Impact</h2>
+              <h2 className="text-4xl lg:text-5xl font-medium mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>Our Goals & Impact</h2>
               <p className="text-xl max-w-2xl mx-auto" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
                 Committed to making a difference in the freelance ecosystem
               </p>
@@ -524,26 +489,7 @@ export default function AboutPage() {
             {/* Mission */}
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <motion.div variants={fadeInLeft}>
-                <motion.div className="flex items-center gap-3 mb-6" variants={fadeUp}>
-                  <motion.div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center border"
-                    style={{
-                      background: `${COLORS.ACCENT_PRIMARY}20`,
-                      borderColor: `${COLORS.ACCENT_PRIMARY}30`
-                    }}
-                    whileHover={{ scale: 1.1, rotate: 10 }}
-                  >
-                    <Target className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
-                  </motion.div>
-                  <span className="font-semibold text-lg" style={{ color: COLORS.TEXT_PRIMARY }}>Mission</span>
-                </motion.div>
-
-                <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{
-                  background: `linear-gradient(to right, ${COLORS.ACCENT_PRIMARY}, #f7c34d)`,
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent"
-                }}>
+                <h2 className="text-4xl lg:text-5xl font-normal mb-6 text-[#050504]">
                   Our Mission
                 </h2>
                 <p className="text-xl leading-relaxed" style={{ color: `${COLORS.TEXT_PRIMARY}BF` }}>
@@ -567,26 +513,7 @@ export default function AboutPage() {
             {/* Vision */}
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <motion.div variants={fadeInLeft} className="lg:order-2">
-                <motion.div className="flex items-center gap-3 mb-6" variants={fadeUp}>
-                  <motion.div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center border"
-                    style={{
-                      background: `${COLORS.ACCENT_PRIMARY}20`,
-                      borderColor: `${COLORS.ACCENT_PRIMARY}30`
-                    }}
-                    whileHover={{ scale: 1.1, rotate: -10 }}
-                  >
-                    <Lightbulb className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
-                  </motion.div>
-                  <span className="font-semibold text-lg" style={{ color: COLORS.TEXT_PRIMARY }}>Vision</span>
-                </motion.div>
-
-                <h2 className="text-4xl lg:text-5xl font-bold mb-6" style={{
-                  background: `linear-gradient(to right, ${COLORS.ACCENT_PRIMARY}, #f7c34d)`,
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent"
-                }}>
+                <h2 className="text-4xl lg:text-5xl font-normal mb-6 text-[#050504]">
                   Our Vision
                 </h2>
                 <p className="text-xl leading-relaxed" style={{ color: `${COLORS.TEXT_PRIMARY}BF` }}>

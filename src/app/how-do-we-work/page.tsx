@@ -53,7 +53,7 @@ export default function HowWeWorkPage() {
 
       {/* Hero Section */}
       <motion.section
-        className="relative z-10 px-5 sm:px-8 lg:px-12 pt-24 pb-16 sm:pt-32 sm:pb-20 max-w-7xl mx-auto"
+        className="relative z-10 px-2 sm:px-6 lg:px-8 pt-24 pb-16 sm:pt-32 sm:pb-20 max-w-7xl mx-auto"
         initial="initial"
         animate="animate"
         variants={staggerContainer}
@@ -73,7 +73,7 @@ export default function HowWeWorkPage() {
             </motion.div>
 
             <motion.h1
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+              className="text-4xl sm:text-7xl lg:text-6xl font-medium leading-tight mb-6"
               style={{ color: COLORS.TEXT_PRIMARY }}
               variants={fadeInUp}
             >
@@ -81,8 +81,8 @@ export default function HowWeWorkPage() {
               <span className="relative inline-block">
                 Hire Tier-One
                 <span
-                  className="absolute bottom-1 left-0 w-full h-3 -z-10 rounded"
-                  style={{ background: `${COLORS.ACCENT}40` }}
+                  className="absolute -bottom-[1px] left-0 w-full h-2 -z-10 rounded"
+                  style={{background: `${COLORS.ACCENT}70` }}
                 />
               </span>{" "}
               Indian Talent
@@ -154,7 +154,7 @@ export default function HowWeWorkPage() {
               <Layers className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
             </div>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
             Our Process
           </h2>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: COLORS.TEXT_SECONDARY }}>
@@ -345,7 +345,7 @@ export default function HowWeWorkPage() {
               <Target className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
             </div>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
             Why Our Process Works
           </h2>
           <p className="text-lg max-w-2xl mx-auto" style={{ color: COLORS.TEXT_SECONDARY }}>
