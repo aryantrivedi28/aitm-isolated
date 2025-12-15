@@ -32,8 +32,6 @@ const BottomCTA = () => {
           </span>
         </p>
 
-
-
         {/* Benefits Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-12 sm:mb-16 max-w-3xl">
           {benefits.map((benefit, index) => (
