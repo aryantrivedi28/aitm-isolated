@@ -14,7 +14,7 @@ interface HowItWorksProps {
 
 export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
   return (
-    <section className="relative bg-gray-50 py-12 md:py-24 overflow-hidden">
+    <section className="relative bg-[#fbf5e5] py-12 md:py-24 overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="flex justify-center py-4">
@@ -37,7 +37,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center bg-gradient-to-r from-[#241C15] to-[#4b3828] bg-clip-text text-transparent px-4"
+          className="text-2xl sm:text-3xl md:text-5xl font-medium text-center bg-black bg-clip-text text-transparent px-4"
         >
           {heading}
         </motion.h2>
@@ -54,7 +54,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                   <div className="flex gap-4">
                     {/* Timeline dot */}
                     <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#FFE01B] font-bold text-black shadow-md z-10">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-[#f7af00] font-bold text-black shadow-md z-10">
                         {i + 1}
                       </div>
                       {i !== steps.length - 1 && (
@@ -68,7 +68,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: 0.08 * i }}
-                      className="flex-1 bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all mb-4"
+                      className="flex-1 bg-[#fbf5e5] p-6 rounded-2xl hover:shadow-xl transition-all mb-4"
                     >
                       <h3 className="text-lg font-semibold text-gray-900 mb-3">
                         {s.title}
@@ -91,12 +91,12 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: 0.08 * i }}
-                      className="md:w-1/2 bg-white p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-lg hover:shadow-xl transition-all"
+                      className="md:w-1/2 bg-[#fbf5e5] p-6 md:p-8 rounded-2xl md:rounded-3xl hover:shadow-xl transition-all"
                     >
                       <div className="flex items-center gap-4">
                         <motion.div
                           whileHover={{ scale: 1.1, rotate: 6 }}
-                          className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center bg-[#FFE01B] font-bold text-black shadow-md"
+                          className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center bg-[#f7af00] font-bold text-black shadow-md"
                         >
                           {i + 1}
                         </motion.div>

@@ -48,7 +48,7 @@ const getIntegrationIcon = (title: string, index: number) => {
 
 export default function DevIntegration({ heading, subheading, items }: DevIntegrationProps) {
   return (
-    <section className="relative py-24 overflow-hidden bg-white">
+    <section className="relative py-24 overflow-hidden bg-[#fbf5e5]">
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="flex justify-center py-4">
           <motion.div
@@ -57,8 +57,8 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
             viewport={{ once: true }}
             className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
           >
-            <CodeXml className="w-4 h-4 text-[#241C15]/70" />
-            <span className="text-sm font-semibold text-[#241C15]/70">
+            <CodeXml className="w-4 h-4 text-[#050504]" />
+            <span className="text-sm font-semibold text-[#050504]">
               DEVELOPMENT & INTEGRATION
             </span>
           </motion.div>
@@ -69,7 +69,7 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+          className="text-2xl sm:text-3xl md:text-5xl font-medium text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
           style={{ color: '#241C15' }} // change this!
         >
           {heading}
@@ -79,11 +79,11 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
         {/* Decorative line */}
         <motion.div
           initial={{ width: 0 }}
-          whileInView={{ width: "180px" }}
+          whileInView={{ width: "250px" }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="h-1 mx-auto mb-8 rounded-full"
-          style={{ backgroundColor: '#FFE01B' }}
+          style={{ backgroundColor: '#f7af00' }}
         />
 
         {/* Subheading */}
@@ -101,7 +101,7 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
         )}
 
         {/* Integration Items Grid */}
-        <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-6 max-w-full mx-auto">
           {items?.map((item: any, index: number) => {
             const IconComponent = getIntegrationIcon(item.title, index)
 
@@ -117,10 +117,9 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
                   ease: "easeOut"
                 }}
                 whileHover={{ scale: 1.03, y: -8 }}
-                className="rounded-xl p-8 border-2 shadow-xl hover:shadow-2xl transition-all duration-300 group relative overflow-hidden"
+                className="rounded-xl p-8 shadow-xl transition-all duration-300 group relative overflow-hidden"
                 style={{
-                  backgroundColor: 'rgba(251, 245, 229, 0.05)',
-                  borderColor: '#FFE01B'
+                  backgroundColor: '#f0eadd',
                 }}
               >
 
@@ -131,15 +130,15 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
                     {/* Icon */}
                     <div
                       className="flex-shrink-0 p-3 rounded-xl mr-4 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
-                      style={{ backgroundColor: '#FFE01B' }}
+                      style={{ backgroundColor: '#f7af00' }}
                     >
-                      <IconComponent className="h-7 w-7" style={{ color: '#241C15' }} />
+                      <IconComponent className="h-5 w-5" style={{ color: '#241C15' }} />
                     </div>
 
                     {/* Title and number */}
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
-                        <h3 className="text-xl md:text-2xl font-bold leading-tight pr-2" style={{ color: '#241C15' }}>
+                        <h3 className="text-xl md:text-2xl font-bold leading-tight pr-2" style={{ color: '#050504' }}>
                           {item.title}
                         </h3>
                       </div>
@@ -149,7 +148,7 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
                   {/* Description */}
                   <p
                     className="text-base md:text-lg leading-relaxed"
-                    style={{ color: '#241C15', opacity: 0.85 }}
+                    style={{ color: '#31302f', opacity: 0.85 }}
                   >
                     {item.description}
                   </p>
@@ -162,19 +161,11 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
                     transition={{ duration: 0.5, delay: index * 0.15 + 0.4 }}
                     className="h-1 mt-6 rounded-full"
                     style={{
-                      backgroundColor: '#FFE01B',
+                      backgroundColor: '#f7af00',
                       transformOrigin: 'left'
                     }}
                   />
                 </div>
-
-                {/* Corner decoration */}
-                <div
-                  className="absolute top-0 right-0 w-20 h-20 opacity-10 group-hover:opacity-20 transition-opacity"
-                  style={{
-                    background: `radial-gradient(circle at top right, #FFE01B 0%, transparent 70%)`
-                  }}
-                />
               </motion.div>
             )
           })}

@@ -49,20 +49,6 @@ export default function GHLServices({ heading, subheading, services }: any) {
   return (
     <section className="py-20" style={{ backgroundColor: '#fbf5e5' }}>
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-
-        <div className="flex justify-center py-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
-          >
-            <GoalIcon className="w-4 h-4 text-[#241C15]/70" />
-            <span className="text-sm font-semibold text-[#241C15]/70">
-              GOHIGHLEVEL SERVICE
-            </span>
-          </motion.div>
-        </div>
         {/* Header with Animation */}
         <div className="text-center mb-16 space-y-4 animate-fade-in">
           <motion.h2
@@ -70,28 +56,27 @@ export default function GHLServices({ heading, subheading, services }: any) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
-            style={{ color: '#241C15' }} // change this!
+            className="text-2xl sm:text-3xl md:text-5xl lg:text-5xl font-medium text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+            style={{ color: '#050504' }} // change this!
           >
             {heading}
           </motion.h2>
           {subheading && (
-            <p className="text-lg md:text-xl max-w-3xl mx-auto animate-fade-in-delayed" style={{ color: '#241C15', opacity: 0.7 }}>
+            <p className="text-lg md:text-xl max-w-3xl mx-auto animate-fade-in-delayed" style={{ color: '#31302f', opacity: 0.7 }}>
               {subheading}
             </p>
           )}
         </div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-6">
           {services?.map((service: any, index: number) => {
             const IconComponent = getServiceIcon(service.title, index)
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl p-8 border-2 shadow-sm hover:shadow-xl transition-all duration-300 group hover:scale-105 animate-fade-in-up"
+                className="bg-[#f0eadd] rounded-xl p-8 hover:shadow-xl transition-all duration-300 group hover:scale-105 animate-fade-in-up"
                 style={{
-                  borderColor: '#FFE01B',
                   animationDelay: `${index * 100}ms`
                 }}
               >
@@ -99,7 +84,7 @@ export default function GHLServices({ heading, subheading, services }: any) {
                 <div className="mb-6">
                   <div
                     className="inline-flex p-4 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
-                    style={{ backgroundColor: '#FFE01B' }}
+                    style={{ backgroundColor: '#f7af00' }}
                   >
                     <IconComponent className="h-8 w-8" style={{ color: '#241C15' }} />
                   </div>

@@ -236,7 +236,7 @@ const Logos = () => {
           </div>
 
           <h2
-            className="font-black leading-tight mb-6 text-[#241C15]"
+            className="font-medium leading-tight mb-6 text-[#050504]"
             style={{
               fontSize: "clamp(2rem, 7vw, 3.5rem)",
               textShadow: "0 4px 20px rgba(0,0,0,0.1)",

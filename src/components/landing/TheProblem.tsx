@@ -10,30 +10,16 @@ interface TheProblemProps {
 
 export default function TheProblem({ heading, subheading, paragraph }: TheProblemProps) {
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden bg-white">
+    <section className="relative py-16 md:py-24 overflow-hidden bg-[#f0eadd]">
 
       <div className="relative z-10 max-w-3xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-center py-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
-          >
-            <AlertTriangle className="w-4 h-4 text-[#241C15]/70" />
-            <span className="text-sm font-semibold text-[#241C15]/70">
-              THE PROBLEM
-            </span>
-          </motion.div>
-        </div>
-
         {/* Main heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-medium text-center mb-2 md:mb-4 leading-tight w-[90%] justify-center mx-auto"
           style={{ color: '#241C15' }} // change this!
         >
           {heading}
@@ -42,11 +28,11 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
         {/* Decorative line */}
         <motion.div
           initial={{ width: 0 }}
-          whileInView={{ width: "80px" }}
+          whileInView={{ width: "180px" }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="h-1 mx-auto mb-6 md:mb-8 rounded-full"
-          style={{ backgroundColor: '#FFE01B' }}
+          style={{ backgroundColor: '#f7af00' }}
         />
 
         {/* Subheading */}
@@ -55,7 +41,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-lg sm:text-xl md:text-xl text-center font-medium mb-8 md:mb-12 px-4 text-[#241C15]/60"
+          className="text-lg sm:text-xl md:text-xl text-center font-medium mb-4 md:mb-6 px-4 text-[#31302f]"
         >
           {subheading}
         </motion.h3>
@@ -69,7 +55,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
           className="p-6 md:p-8 lg:p-12 mx-2"
         >
           <p
-            className="text-base sm:text-xl md:text-2xl/5 leading-relaxed text-center text-[#241C15]/60 font-semibold"
+            className="text-base sm:text-xl md:text-2xl/5 leading-relaxed text-center text-[#31302f]/60 font-medium"
           >
             {paragraph}
           </p>
@@ -83,7 +69,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
           transition={{ duration: 0.7, delay: 0.3 }}
           className="h-1 mx-auto rounded-full mt-0"
           style={{
-            backgroundColor: '#FFE01B',
+            backgroundColor: '#f7af00',
             maxWidth: '200px',
             transformOrigin: 'center'
           }}

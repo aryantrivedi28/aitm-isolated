@@ -34,29 +34,13 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
   return (
     <section className="relative py-20 overflow-hidden bg-[#fbf5e5]">
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Section Tag */}
-        <div className="flex justify-center py-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-white border shadow-sm border-[#FFE01B]"
-          >
-            <BarChart3 className="w-4 h-4 text-[#241C15]" />
-            <span className="text-sm font-semibold text-[#241C15]">
-              RESULTS & BENEFITS
-            </span>
-          </motion.div>
-        </div>
-
         {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-center mb-6 px-4 leading-tight text-[#241C15]"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center max-w-4xl mx-auto mb-6 px-4 text-[#241C15] "
         >
           {heading}
         </motion.h2>
@@ -67,7 +51,7 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
           whileInView={{ width: "160px" }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="h-1 mx-auto mb-12 rounded-full bg-[#FFE01B]"
+          className="h-1 mx-auto mb-12 rounded-full bg-[#f7af00]"
         />
 
         {/* Benefits Grid */}
@@ -87,13 +71,13 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
                   ease: "easeOut"
                 }}
                 whileHover={{ scale: 1.02, y: -4 }}
-                className="bg-white rounded-2xl p-4 sm:p-6 border-2 shadow-lg hover:shadow-xl transition-all duration-300 relative group border-[#FFE01B] flex flex-col" // Changed to flex-col
+                className="bg-[#f0eadd] rounded-2xl p-4 sm:p-6 hover:shadow-xl transition-all duration-300 relative group flex flex-col" // Changed to flex-col
               >
                 <div className="flex items-start space-x-3 sm:space-x-4 mb-3"> {/* Added margin bottom */}
 
                   {/* Icon */}
                   <div className="relative flex-shrink-0">
-                    <div className="p-2 sm:p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-[#FFE01B]">
+                    <div className="p-2 sm:p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-[#f7af00]">
                       <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-[#241C15]" />
                     </div>
 

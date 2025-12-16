@@ -27,11 +27,7 @@ export default function FAQ({
           transition={{ duration: 0.6 }}
           className="text-center mb-12 md:mb-16"
         >
-          <div className="inline-flex items-center gap-2 bg-[#241C15] text-[#fbf5e5] px-4 py-2 rounded-full text-sm font-semibold mb-4 md:mb-6 shadow-md">
-            <Zap size={16} className="w-5 h-5 text-[#FFE01B] animate-pulse"/>
-            <span>FAQs</span> {/* static */}
-          </div>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center max-w-3xl mx-auto leading-tight text-[#241C15]">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium text-center max-w-3xl mx-auto leading-tight text-[#241C15]">
             Frequently Asked Questions {/* static */}
           </h2>
           <p className="text-[#241C15]/65 mt-3 md:mt-4 max-w-2xl mx-auto text-sm md:text-base">
@@ -50,21 +46,21 @@ export default function FAQ({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ delay: i * 0.1 }}
-                className="border border-[#241C15]/10 rounded-lg md:rounded-xl bg-white shadow-md hover:shadow-lg transition-all overflow-hidden"
+                className="rounded-lg md:rounded-xl bg-[#f0eadd] hover:shadow-lg transition-all overflow-hidden"
               >
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
                   className="w-full px-4 py-4 md:px-6 md:py-5 flex items-center justify-between gap-4 bg-transparent transition-colors group"
                 >
                   <div className="text-left flex-1">
-                    <div className="font-semibold text-base md:text-lg text-[#241C15] group-hover:text-[#FFE01B] transition-colors">
+                    <div className="font-semibold text-base md:text-lg text-[#241C15] group-hover:text-[#f7af00] transition-colors">
                       {it.question}
                     </div>
                   </div>
                   <div className="flex-shrink-0">
                     <div
-                      className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-all group-hover:bg-[#FFE01B]/20 group-hover:text-[#FFE01B] ${open === i
-                          ? 'bg-[#FFE01B]/20 text-[#FFE01B]'
+                      className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center transition-all group-hover:bg-[#FFE01B]/20 group-hover:text-[#f7af00] ${open === i
+                          ? 'bg-[#f7af00]/20 text-[#f7af00]'
                           : 'bg-[#241C15]/5 text-[#241C15]/60'
                         }`}
                     >

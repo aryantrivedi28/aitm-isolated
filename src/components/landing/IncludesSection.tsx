@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion"
-import { Check, Package, Sparkles, Star, Gift, HandHeart } from "lucide-react"
+import { Check } from "lucide-react"
 
 interface IncludesSectionProps {
   heading: string
@@ -8,23 +8,14 @@ interface IncludesSectionProps {
   items: string[]
 }
 
-export default function IncludesSection({ heading, subheading, items }: IncludesSectionProps) {
+export default function IncludesSection({
+  heading,
+  subheading,
+  items,
+}: IncludesSectionProps) {
   return (
-    <section className="relative py-24 overflow-hidden bg-white">
-      <div className="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12">
-        <div className="flex justify-center py-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
-          >
-            <HandHeart className="w-4 h-4 text-[#241C15]/70" />
-            <span className="text-sm font-semibold text-[#241C15]/70">
-              INCLUDES
-            </span>
-          </motion.div>
-        </div>
+    <section className="relative overflow-hidden bg-[#f0eadd] py-16 sm:py-20 lg:py-24">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
 
         {/* Heading */}
         <motion.h2
@@ -32,21 +23,16 @@ export default function IncludesSection({ heading, subheading, items }: Includes
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
-          style={{ color: '#241C15' }} // change this!
+          className="
+            text-center font-medium leading-tight
+            text-2xl sm:text-3xl md:text-4xl lg:text-5xl
+            w-full sm:w-[85%] lg:w-[70%]
+            mx-auto mb-4 sm:mb-6
+          "
+          style={{ color: "#241C15" }}
         >
           {heading}
         </motion.h2>
-
-        {/* Decorative line */}
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: "200px" }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="h-1 mx-auto mb-8 rounded-full"
-          style={{ backgroundColor: '#FFE01B' }}
-        />
 
         {/* Subheading */}
         {subheading && (
@@ -54,46 +40,72 @@ export default function IncludesSection({ heading, subheading, items }: Includes
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-xl md:text-2xl text-center max-w-3xl mx-auto mb-16"
-            style={{ color: '#FFE01B', opacity: 0.9 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="
+              text-center mx-auto
+              text-base sm:text-lg md:text-xl
+              max-w-2xl
+              mb-10 sm:mb-14
+            "
+            style={{ color: "#241C15", opacity: 0.85 }}
           >
             {subheading}
           </motion.p>
         )}
 
         {/* Items Grid */}
-        <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto mb-12">
-          {items?.map((item: string, index: number) => (
+        <div
+          className="
+            grid grid-cols-1
+            sm:grid-cols-3
+            gap-4 sm:gap-5
+            max-w-full 
+            mx-auto
+          "
+        >
+          {items.map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{
-                duration: 0.6,
+                duration: 0.5,
                 delay: index * 0.05,
-                ease: "easeOut"
               }}
-              whileHover={{ scale: 1.03, x: 5 }}
-              className="flex items-center p-5 rounded-xl backdrop-blur-sm border-2 shadow-lg hover:shadow-2xl transition-all duration-300 group"
-              style={{
-                backgroundColor: 'rgba(255, 224, 27, 0.1)',
-                borderColor: '#FFE01B'
-              }}
+              whileHover={{ scale: 1.02 }}
+              className="
+                flex items-start sm:items-center
+                p-4 sm:p-5
+                rounded-xl
+                border
+                shadow-md
+                transition-all
+                bg-[#fbf5e5]
+              "
             >
-              {/* Checkmark icon */}
+              {/* Icon */}
               <div
-                className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center mr-4 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12"
-                style={{ backgroundColor: '#FFE01B' }}
+                className="
+                  flex-shrink-0
+                  w-9 h-9 sm:w-10 sm:h-10
+                  rounded-full
+                  flex items-center justify-center
+                  mr-3 sm:mr-4
+                "
+                style={{ backgroundColor: "#f7af00" }}
               >
-                <Check className="h-6 w-6" style={{ color: '#241C15' }} strokeWidth={3} />
+                <Check
+                  className="w-5 h-5 sm:w-6 sm:h-6"
+                  style={{ color: "#241C15" }}
+                  strokeWidth={3}
+                />
               </div>
 
-              {/* Item text */}
+              {/* Text */}
               <span
-                className="text-base md:text-lg font-semibold flex-1"
-                style={{ color: '#241C15' }}
+                className="text-sm sm:text-base md:text-lg font-semibold leading-snug"
+                style={{ color: "#241C15" }}
               >
                 {item}
               </span>

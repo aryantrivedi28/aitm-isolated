@@ -10,7 +10,7 @@ interface TheSolutionProps {
 
 export default function TheSolution({ heading, subheading, solutions }: TheSolutionProps) {
   return (
-    <section className="relative py-24 overflow-hidden" style={{ backgroundColor: 'white' }}>
+    <section className="relative py-24 overflow-hidden" style={{ backgroundColor: '#f0eadd' }}>
       {/* Background decorative elements */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -46,27 +46,13 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
       </motion.div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 lg:px-12">
-        <div className="flex justify-center py-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
-          >
-            <Lightbulb className="w-4 h-4 text-[#241C15]/70" />
-            <span className="text-sm font-semibold text-[#241C15]/70">
-              THE SOLUTION
-            </span>
-          </motion.div>
-        </div>
-
         {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-medium text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
           style={{ color: '#241C15' }} // change this!
         >
           {heading}
@@ -79,7 +65,7 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="h-1 mx-auto mb-8 rounded-full"
-          style={{ backgroundColor: '#FFE01B' }}
+          style={{ backgroundColor: '#f7af00' }}
         />
 
         {/* Subheading */}
@@ -88,13 +74,13 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="text-xl sm:text-xl md:text-[26px] text-center font-medium mb-16 text-[#241C15]/60"
+          className="text-xl sm:text-xl md:text-[26px] text-center font-medium mb-16 text-[#31302f]"
         >
           {subheading}
         </motion.h3>
 
         {/* Solutions Grid */}
-        <div className="grid md:grid-cols-1 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-1 gap-6 max-w-6xl mx-auto">
           {solutions?.map((solution: string, index: number) => (
             <motion.div
               key={index}
@@ -107,17 +93,16 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
                 ease: "easeOut"
               }}
               whileHover={{ scale: 1.03, y: -5 }}
-              className="rounded-xl p-6 border-2 shadow-md hover:shadow-xl transition-all duration-300 group"
+              className="rounded-xl p-6 hover:shadow-xl transition-all duration-300 group"
               style={{
-                backgroundColor: '#fbf5e5',
-                borderColor: '#FFE01B'
+                backgroundColor: '#f0eadd',
               }}
             >
               <div className="flex items-start space-x-4">
                 {/* Checkmark icon */}
                 <div
                   className="flex-shrink-0 p-2 rounded-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-12"
-                  style={{ backgroundColor: '#FFE01B' }}
+                  style={{ backgroundColor: '#f7af00' }}
                 >
                   <CheckCircle
                     className="h-6 w-6"

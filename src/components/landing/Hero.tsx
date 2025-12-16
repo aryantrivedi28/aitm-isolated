@@ -124,7 +124,7 @@ export default function Hero({
         .animate-blink { animation: blink 1s infinite; }
       `}</style>
 
-      <div className="hero-section relative bg-gradient-to-br from-white to-white overflow-hidden">
+      <div className="hero-section relative bg-[] overflow-hidden">
 
         {/* Main Content */}
         <div className="relative z-10 min-h-screen flex items-center">
@@ -133,25 +133,16 @@ export default function Hero({
 
               {/* Left Column - Enhanced Text Content */}
               <div className={`space-y-8 ${isVisible ? 'animate-slideInLeft' : ''}`}>
-
-                {/* Badge/Status */}
-                <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md border border-[#FFE01B]/20 rounded-full px-4 py-2 shadow-lg animate-fadeIn">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-sm font-semibold text-[#241C15]/80">Trusted by 500+ Businesses</span>
-                </div>
-
                 {/* Title with enhanced gradient and effects */}
                 <div className="space-y-4">
-                  <h1 className="font-black leading-[1.05] tracking-tight bg-gradient-to-br from-[#241C15] via-[#241C15] to-[#241C15]/70 bg-clip-text text-transparent relative"
+                  <h1 className="leading-[1.05] tracking-tight bg-[#241C15] bg-clip-text text-transparent relative"
                     style={{
                       fontSize: 'clamp(2rem, 5vw, 4rem)',
                       letterSpacing: '-0.03em',
-                      fontWeight: '900',
+                      fontWeight: '400',
                     }}
                   >
                     {title}
-                    {/* Animated underline */}
-                    <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-[#FFE01B] to-[#FFD700] rounded-full animate-pulseGlow"></div>
                   </h1>
                 </div>
 
@@ -172,7 +163,7 @@ export default function Hero({
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
                   {['No Setup Fees', '24/7 Support', '30-Day Guarantee', 'Easy Migration'].map((feature, index) => (
                     <div key={feature} className="flex items-center gap-2 text-[#241C15]/70 group animate-fadeIn" style={{animationDelay: `${index * 0.1}s`}}>
-                      <div className="w-5 h-5 bg-[#FFE01B] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <div className="w-5 h-5 bg-[#f7af00] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                         <div className="w-1.5 h-1.5 bg-[#241C15] rounded-full"></div>
                       </div>
                       <span className="text-sm font-medium">{feature}</span>
@@ -192,17 +183,13 @@ export default function Hero({
                           className={`group relative inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
                             isSecondary
                               ? "border-2 border-[#241C15]/20 text-[#241C15]/80 hover:text-[#241C15] hover:border-[#241C15]/40 hover:bg-[#241C15]/5 bg-white/60 backdrop-blur-sm shadow-lg hover:shadow-xl"
-                              : "bg-gradient-to-r from-[#FFE01B] to-[#FFD700] text-[#241C15] hover:from-[#FFD700] hover:to-[#FFC800] shadow-2xl shadow-[#FFE01B]/40 hover:shadow-3xl hover:scale-[1.02] animate-pulseGlow"
+                              : "bg-[#f7af00] shadow-2xl hover:shadow-3xl hover:scale-[1.02] animate-pulseGlow"
                           } animate-fadeIn`}
                           style={{ 
                             fontSize: "clamp(1rem, 1.5vw, 1.125rem)",
                             animationDelay: `${index * 0.2}s`
                           }}
                         >
-                          {/* Button glow effect */}
-                          {!isSecondary && (
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#FFE01B] to-[#FFD700] opacity-0 group-hover:opacity-100 blur-md transition-opacity duration-300 -z-10"></div>
-                          )}
                           
                           <span className="relative z-10">{cta.label}</span>
                           {!isSecondary ? (
@@ -222,9 +209,6 @@ export default function Hero({
                 
                 {/* Main screenshot container with floating effect */}
                 <div className="relative">
-                  {/* Background glow */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#FFE01B]/20 to-[#FFE01B]/10 rounded-3xl blur-xl transform scale-105 animate-float"></div>
-                  
                   {/* Screenshots Grid */}
                   {screenshots?.length > 0 && (
                     <div className="relative space-y-6">
@@ -235,18 +219,7 @@ export default function Hero({
                           style={{ animationDelay: `${index * 0.3}s` }}
                         >
                           {/* Card with enhanced styling */}
-                          <div className="relative bg-white/80 backdrop-blur-md rounded-2xl overflow-hidden border-2 border-white/60 shadow-2xl hover:shadow-3xl transition-all duration-300">
-                            {/* Card header */}
-                            <div className="flex items-center gap-2 p-4 border-b border-white/30 bg-white/50">
-                              <div className="flex gap-1.5">
-                                <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                              </div>
-                              <div className="flex-1 text-center">
-                                <span className="text-xs font-medium text-[#241C15]/60">{screenshot.caption || `Preview ${index + 1}`}</span>
-                              </div>
-                            </div>
+                          <div className="relative backdrop-blur-md rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
                             
                             {/* Image container */}
                             <div className="aspect-video relative overflow-hidden">
@@ -262,16 +235,6 @@ export default function Hero({
                               {/* <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" /> */}
                             </div>
                           </div>
-
-                          {/* Floating elements around cards */}
-                          {index === 0 && (
-                            <>
-                              <div className="absolute -top-3 -right-3 w-6 h-6 bg-[#FFE01B] rounded-full flex items-center justify-center shadow-lg animate-float">
-                                <Sparkles className="w-3 h-3 text-[#241C15]" />
-                              </div>
-                              <div className="absolute -bottom-2 -left-2 w-5 h-5 bg-green-400 rounded-full shadow-lg animate-float" style={{animationDelay: '1s'}}></div>
-                            </>
-                          )}
                         </div>
                       ))}
                     </div>

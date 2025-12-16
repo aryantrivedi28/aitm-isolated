@@ -94,49 +94,7 @@ export default function TestimonialSection({
 
 
       return (
-            <section className="relative bg-gradient-to-br from-[#241C15] via-[#2A1F17] to-[#1F1811] py-16 md:py-32 px-4 overflow-hidden">
-                  {/* Enhanced background elements */}
-                  <div className="absolute inset-0 pointer-events-none">
-                        {/* Multiple gradient overlays */}
-                        <div className="absolute inset-0 bg-gradient-radial from-[#FFE01B]/8 via-transparent to-transparent opacity-40 md:opacity-60" />
-                        <div className="absolute top-1/3 left-1/4 md:left-1/3 w-64 md:w-96 h-64 md:h-96 bg-gradient-radial from-[#FFE01B]/4 to-transparent opacity-60 md:opacity-80" />
-
-                        {/* Animated background pattern */}
-                        <div
-                              className="absolute inset-0 opacity-[0.02] md:opacity-[0.015]"
-                              style={{
-                                    backgroundImage: `
-              radial-gradient(circle at 20% 50%, rgba(255, 224, 27, 0.1) 2px, transparent 2px),
-              radial-gradient(circle at 80% 50%, rgba(255, 224, 27, 0.1) 1px, transparent 1px)
-            `,
-                                    backgroundSize: '60px 60px, 40px 40px'
-                              }}
-                        />
-
-                        {/* Floating elements */}
-                        {positions.map((pos, i) => (
-                              <motion.div
-                                    key={i}
-                                    className="absolute w-1 h-1 bg-[#FFE01B]/20 rounded-full"
-                                    style={pos}
-                                    animate={{ y: [-5, 5, -5], opacity: [0.2, 0.5, 0.2], scale: [1, 1.2, 1] }}
-                                    transition={{ duration: 3 + i, repeat: Infinity, delay: i * 0.5 }}
-                              />
-                        ))}
-
-                        {/* Large decorative circles */}
-                        <motion.div
-                              className="absolute -top-10 -left-10 md:-top-20 md:-left-20 w-24 h-24 md:w-40 md:h-40 border border-[#FFE01B]/8 rounded-full"
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                        />
-                        <motion.div
-                              className="absolute -bottom-10 -right-10 md:-bottom-20 md:-right-20 w-32 h-32 md:w-60 md:h-60 border border-[#FFE01B]/5 rounded-full"
-                              animate={{ rotate: -360 }}
-                              transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
-                        />
-                  </div>
-
+            <section className="relative bg-[#f0eadd] py-16 md:py-32 px-4 overflow-hidden">
                   <div className="relative z-10 max-w-full mx-auto">
                         {/* Enhanced heading section */}
                         {heading && (
@@ -155,9 +113,9 @@ export default function TestimonialSection({
                                           transition={{ delay: 0.1, duration: 0.5 }}
                                           className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-gray-300/30 rounded-full px-4 py-2 mb-6 md:mb-8"
                                     >
-                                          <Sparkles size={16} className="text-[#FFE01B] animate-pulse" />
-                                          <span className="text-xs md:text-sm text-white font-semibold">Client Love</span>
-                                          <div className="w-1.5 h-1.5 bg-[#FFE01B] rounded-full animate-ping" />
+                                          <Sparkles size={16} className="text-[#f7af00] animate-pulse" />
+                                          <span className="text-xs md:text-sm text-[#050504] font-semibold">Client Love</span>
+                                          <div className="w-1.5 h-1.5 bg-[#f7af00] rounded-full animate-ping" />
                                     </motion.div>
 
                                     {/* Main heading */}
@@ -166,41 +124,19 @@ export default function TestimonialSection({
                                           whileInView={{ opacity: 1, y: 0 }}
                                           viewport={{ once: true, margin: "-50px" }}
                                           transition={{ delay: 0.2, duration: 0.6 }}
-                                          className="text-3xl md:text-5xl lg:text-6xl font-black leading-tight text-white mb-4 md:mb-6"
+                                          className="text-3xl md:text-5xl lg:text-6xl font-normal leading-tight text-[#050504] mb-4 md:mb-6"
                                     >
                                           {heading.split(' ').slice(0, -1).join(' ')}{' '}
-                                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B] animate-gradient bg-300%">
+                                          <span className="text-transparent bg-clip-text bg-[#050504] animate-gradient bg-300%">
                                                 {heading.split(' ').slice(-1)}
                                           </span>
                                     </motion.h2>
-
-                                    {/* Star rating */}
-                                    <motion.div
-                                          initial={{ opacity: 0, y: 10 }}
-                                          whileInView={{ opacity: 1, y: 0 }}
-                                          viewport={{ once: true, margin: "-50px" }}
-                                          transition={{ delay: 0.3, duration: 0.5 }}
-                                          className="flex items-center justify-center gap-1 mb-3 md:mb-4"
-                                    >
-                                          {[...Array(5)].map((_, i) => (
-                                                <motion.div
-                                                      key={i}
-                                                      initial={{ scale: 0, rotate: -180 }}
-                                                      whileInView={{ scale: 1, rotate: 0 }}
-                                                      viewport={{ once: true, margin: "-50px" }}
-                                                      transition={{ delay: 0.4 + i * 0.1, duration: 0.5 }}
-                                                >
-                                                      <Star size={20} className="text-[#FFE01B] fill-[#FFE01B] md:w-6 md:h-6" />
-                                                </motion.div>
-                                          ))}
-                                    </motion.div>
-
                                     <motion.p
                                           initial={{ opacity: 0, y: 10 }}
                                           whileInView={{ opacity: 1, y: 0 }}
                                           viewport={{ once: true, margin: "-50px" }}
                                           transition={{ delay: 0.5, duration: 0.5 }}
-                                          className="text-gray-300 text-base md:text-lg max-w-3xl mx-auto leading-relaxed px-2"
+                                          className="text-[#31302f] text-base md:text-lg max-w-3xl mx-auto leading-relaxed px-2"
                                     >
                                           We'll make you fall in love with our offering—at least, that's what our existing clients say!
                                     </motion.p>
@@ -253,7 +189,7 @@ export default function TestimonialSection({
                                     <div className="flex justify-center items-center mt-6 space-x-4">
                                           <button
                                                 onClick={goToPrev}
-                                                className="p-2 rounded-full bg-[#FFE01B] text-[#241C15] hover:bg-[#FCD34D] transition-colors shadow-md"
+                                                className="p-2 rounded-full bg-[#FFE01B] text-[#050504] hover:bg-[#FCD34D] transition-colors shadow-md"
                                                 aria-label="Previous testimonial"
                                           >
                                                 <ChevronLeft size={20} />
@@ -331,7 +267,7 @@ export default function TestimonialSection({
                                                       whileHover={{ y: -8, scale: 1.02 }}
                                                       initial={{ opacity: 0, scale: 0.9 }}
                                                       animate={{ opacity: 1, scale: 1 }}
-                                                      transition={{ duration: 0.4, ease: "easeOut" }}
+                                                      transition={{ duration: 0.1, ease: "easeOut" }}
                                                 >
                                                       <TestimonialCard
                                                             testimonial={testimonial}
@@ -404,16 +340,16 @@ function TestimonialCard({
             <div className="group relative h-full">
                   {/* Glow effect - only on desktop */}
                   {!isMobile && (
-                        <div className="absolute -inset-1 bg-gradient-to-r from-[#FFE01B]/20 via-[#FFE01B]/10 to-transparent rounded-3xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
+                        <div className="absolute -inset-1 bg-gradient-to-r from-[#f7af00]/20 via-[#f7af00]/10 to-transparent rounded-3xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
                   )}
 
                   {/* Hover gradient overlay - only on desktop */}
                   {!isMobile && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#FFE01B]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#f7af00]/10 to-transparent rounded-3xl opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
                   )}
 
                   {/* Main card */}
-                  <div className={`relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg hover:shadow-xl p-5 md:p-6 lg:p-8 flex flex-col h-full transition-all duration-300 border border-white/20 ${!isMobile && 'group-hover:border-[#FFE01B]/30'}`}>
+                  <div className={`relative bg-[#faf4e5] backdrop-blur-sm rounded-2xl md:rounded-3xl shadow-lg hover:shadow-xl p-5 md:p-6 lg:p-8 flex flex-col h-full transition-all duration-300 border border-white/20 ${!isMobile && 'group-hover:border-[#FFE01B]/30'}`}>
 
                         {/* Star rating */}
                         <motion.div
@@ -424,7 +360,7 @@ function TestimonialCard({
                               className="flex gap-0.5 md:gap-1 mb-4 md:mb-6"
                         >
                               {[...Array(5)].map((_, i) => (
-                                    <Star key={i} className="w-4 h-4 md:w-5 md:h-5 fill-[#FFE01B] text-[#FFE01B]" />
+                                    <Star key={i} className="w-4 h-4 md:w-5 md:h-5 fill-[#f7af00] text-[#f7af00]" />
                               ))}
                         </motion.div>
 
@@ -436,14 +372,14 @@ function TestimonialCard({
                               transition={{ delay: 0.2 + index * 0.1 }}
                               className={`mb-4 md:mb-6 ${isExpanded ? "flex-none" : "flex-1"}`}
                         >
-                              <blockquote className="text-[#4B5563] text-base md:text-lg leading-relaxed italic relative font-medium">
-                                    <span className="text-[#FFE01B] text-2xl md:text-3xl font-bold absolute -top-1 -left-1 md:-top-2 md:-left-1">"</span>
+                              <blockquote className="text-[#31302f] text-base md:text-lg leading-relaxed italic relative font-medium">
+                                    <span className="text-[#f7af00] text-2xl md:text-3xl font-bold absolute -top-1 -left-1 md:-top-2 md:-left-1">"</span>
                                     <span className="ml-5 md:ml-6">
                                           {isExpanded
                                                 ? testimonial.quote
                                                 : truncateText(testimonial.quote, isMobile ? 120 : 180)}
                                     </span>
-                                    <span className="text-[#FFE01B] text-2xl md:text-3xl font-bold">"</span>
+                                    <span className="text-[#f7af00] text-2xl md:text-3xl font-bold">"</span>
                               </blockquote>
 
                               {testimonial.quote.length > (isMobile ? 120 : 180) && (
@@ -452,7 +388,7 @@ function TestimonialCard({
                                                 e.stopPropagation()
                                                 onToggleExpand()
                                           }}
-                                          className="text-[#FFE01B] hover:text-[#FCD34D] font-bold text-xs md:text-sm mt-2 transition-colors duration-300 ml-5 md:ml-6"
+                                          className="text-[#f7af00] hover:text-[#FCD34D] font-bold text-xs md:text-sm mt-2 transition-colors duration-300 ml-5 md:ml-6"
                                     >
                                           {isExpanded ? "Show less" : "Read more"}
                                     </button>
@@ -471,11 +407,11 @@ function TestimonialCard({
                                     {testimonial.authorImage?.asset?.url ? (
                                           <>
                                                 {!isMobile && (
-                                                      <div className="absolute -inset-1 bg-gradient-to-r from-[#FFE01B] to-[#FFF045] rounded-full blur opacity-75" />
+                                                      <div className="absolute -inset-1 bg-gradient-to-r from-[#f7af00] to-[#FFF045] rounded-full blur opacity-75" />
                                                 )}
                                                 <motion.div whileHover={{ scale: isMobile ? 1 : 1.05 }} className="relative">
                                                       {!isMobile && (
-                                                            <div className="absolute inset-0 bg-[#FFE01B]/20 rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
+                                                            <div className="absolute inset-0 bg-[#f7af00]/20 rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
                                                       )}
                                                       <Image
                                                             src={testimonial.authorImage.asset.url}
@@ -490,39 +426,29 @@ function TestimonialCard({
                                                       whileInView={{ scale: 1 }}
                                                       viewport={{ once: true, margin: "-50px" }}
                                                       transition={{ delay: 0.4 + index * 0.1, type: "spring" }}
-                                                      className="absolute -bottom-1 -right-1 bg-[#FFE01B] rounded-full p-1 md:p-1.5 shadow-lg"
+                                                      className="absolute -bottom-1 -right-1 bg-[#f7af00] rounded-full p-1 md:p-1.5 shadow-lg"
                                                 >
                                                       <CheckCircle className="w-3 h-3 md:w-4 md:h-4 text-[#241C15]" fill="currentColor" />
                                                 </motion.div>
                                           </>
                                     ) : (
-                                          <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-gray-200 to-gray-100 flex items-center justify-center text-gray-400 border-2 border-[#FFE01B] shadow-lg">
+                                          <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-br from-gray-200 to-gray-100 flex items-center justify-center text-gray-400 border-2 border-[#f7af00] shadow-lg">
                                                 <Users className="w-5 h-5 md:w-6 md:h-6" />
                                           </div>
                                     )}
                               </div>
 
                               <div className="flex-1 min-w-0">
-                                    <h4 className="font-bold text-[#241C15] text-base md:text-lg truncate group-hover:text-[#FFE01B] transition-colors duration-500">
+                                    <h4 className="font-bold text-[#050504] text-base md:text-lg truncate group-hover:text-[#f7af00] transition-colors duration-500">
                                           {testimonial.authorName}
                                     </h4>
                                     {testimonial.authorTitle && (
-                                          <p className="text-[#4B5563] font-medium text-sm md:text-base mt-0.5 truncate">
+                                          <p className="text-[#050504] font-medium text-sm md:text-base mt-0.5 truncate">
                                                 {testimonial.authorTitle}
                                           </p>
                                     )}
                               </div>
                         </motion.div>
-
-                        {/* Bottom accent line - only on desktop */}
-                        {!isMobile && (
-                              <motion.div
-                                    className="absolute bottom-0 left-6 right-6 h-1 bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B] rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-center"
-                                    initial={{ scaleX: 0 }}
-                                    whileInView={{ scaleX: 0 }}
-                                    viewport={{ once: true, margin: "-50px" }}
-                              />
-                        )}
                   </div>
             </div>
       )

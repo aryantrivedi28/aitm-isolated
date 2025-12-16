@@ -50,7 +50,7 @@ const getMigrationIcon = (title: string, index: number) => {
 
 export default function CRMMigration({ heading, subheading, items }: CRMMigrationProps) {
   return (
-    <section className="relative py-24 overflow-hidden" style={{ backgroundColor: 'white' }}>
+    <section className="relative py-24 overflow-hidden" style={{ backgroundColor: '#fbf5e5' }}>
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="flex justify-center py-4">
           <motion.div
@@ -71,8 +71,8 @@ export default function CRMMigration({ heading, subheading, items }: CRMMigratio
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
-          style={{ color: '#241C15' }} // change this!
+          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-normal text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+          style={{ color: '#050504' }} // change this!
         >
           {heading}
         </motion.h2>
@@ -84,7 +84,7 @@ export default function CRMMigration({ heading, subheading, items }: CRMMigratio
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="h-1 mx-auto mb-8 rounded-full"
-          style={{ backgroundColor: '#FFE01B' }}
+          style={{ backgroundColor: '#f7af00' }}
         />
 
         {/* Subheading */}
@@ -95,7 +95,7 @@ export default function CRMMigration({ heading, subheading, items }: CRMMigratio
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="text-xl md:text-2xl text-center max-w-4xl mx-auto mb-16"
-            style={{ color: '#241C15', opacity: 0.8 }}
+            style={{ color: '#31302f'}}
           >
             {subheading}
           </motion.p>
@@ -118,10 +118,9 @@ export default function CRMMigration({ heading, subheading, items }: CRMMigratio
                   ease: "easeOut"
                 }}
                 whileHover={{ scale: 1.05, y: -10 }}
-                className="rounded-xl p-8 border-2 shadow-lg hover:shadow-2xl transition-all duration-300 group relative overflow-hidden"
+                className="rounded-xl p-8 shadow-lg transition-all duration-300 group relative overflow-hidden"
                 style={{
-                  backgroundColor: '#fbf5e5',
-                  borderColor: '#FFE01B'
+                  backgroundColor: '#f0eadd',
                 }}
               >
                 {/* Content */}
@@ -130,21 +129,21 @@ export default function CRMMigration({ heading, subheading, items }: CRMMigratio
                   <div className="mb-6">
                     <div
                       className="inline-flex p-4 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
-                      style={{ backgroundColor: '#FFE01B' }}
+                      style={{ backgroundColor: '#f7af00' }}
                     >
-                      <IconComponent className="h-8 w-8" style={{ color: '#241C15' }} />
+                      <IconComponent className="h-8 w-8" style={{ color: '#050504' }} />
                     </div>
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl md:text-2xl font-bold mb-4 leading-tight" style={{ color: '#241C15' }}>
+                  <h3 className="text-xl md:text-2xl font-medium mb-4 leading-tight" style={{ color: '#050504' }}>
                     {item.title}
                   </h3>
 
                   {/* Description */}
                   <p
                     className="text-base leading-relaxed mb-4"
-                    style={{ color: '#241C15', opacity: 0.8 }}
+                    style={{ color: '#050504', opacity: 0.8 }}
                   >
                     {item.description}
                   </p>

@@ -80,52 +80,7 @@ export default function ShortCaseStudies({
   }
 
   return (
-    <section className="relative bg-gradient-to-br from-[#241C15] via-[#2A1F17] to-[#1F1811] py-20 md:py-28 px-4 overflow-hidden">
-      {/* Enhanced background elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Multiple gradient layers */}
-        <div className="absolute inset-0 bg-gradient-radial from-[#FFE01B]/6 via-transparent to-transparent opacity-70" />
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-radial from-[#FFE01B]/3 to-transparent opacity-60" />
-
-        {/* Subtle pattern overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `
-              linear-gradient(45deg, rgba(255, 224, 27, 0.1) 1px, transparent 1px),
-              linear-gradient(-45deg, rgba(255, 224, 27, 0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px'
-          }}
-        />
-
-        {/* Floating decorative elements */}
-        <motion.div
-          className="absolute top-16 left-20 w-3 h-3 bg-[#FFE01B]/20 rounded-full"
-          animate={{
-            y: [-20, 20, -20],
-            opacity: [0.2, 0.8, 0.2],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{ duration: 6, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-16 w-2 h-2 bg-[#FFE01B]/30 rounded-full"
-          animate={{
-            y: [-15, 15, -15],
-            opacity: [0.3, 0.7, 0.3],
-          }}
-          transition={{ duration: 4, repeat: Infinity, delay: 2 }}
-        />
-
-        {/* Large rotating decoration */}
-        <motion.div
-          className="absolute -top-32 -right-32 w-64 h-64 border border-[#FFE01B]/5 rounded-full"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
-
+    <section className="relative bg-[#f0eadd] py-20 md:py-28 px-4 overflow-hidden">
       <div className="relative z-10 max-w-full mx-auto">
         {/* Enhanced heading section */}
         {heading && (
@@ -142,10 +97,10 @@ export default function ShortCaseStudies({
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 bg-[#FFE01B]/10 backdrop-blur-sm border border-[#FFE01B]/20 rounded-full px-6 py-3 mb-8"
+              className="inline-flex items-center gap-2 bg-[#faf4e5] backdrop-blur-sm shadow-sm rounded-full px-6 py-3 mb-8"
             >
-              <TrendingUp size={18} className="text-[#FFE01B]" />
-              <span className="text-sm text-[#FFE01B] font-semibold tracking-wide">Success Stories</span>
+              <TrendingUp size={18} className="text-[#050504]" />
+              <span className="text-sm text-[#050504] font-semibold tracking-wide">Success Stories</span>
             </motion.div>
 
             {/* Main heading */}
@@ -154,10 +109,10 @@ export default function ShortCaseStudies({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight text-white mb-6"
+              className="text-4xl md:text-5xl lg:text-6xl font-medium leading-tight text-white mb-6"
             >
               {heading.split(' ').slice(0, -2).join(' ')}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B]">
+              <span className="text-transparent bg-clip-text bg-[#050504]">
                 {heading.split(' ').slice(-2).join(' ')}
               </span>
             </motion.h2>
@@ -168,7 +123,7 @@ export default function ShortCaseStudies({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-gray-300 text-lg max-w-3xl mx-auto"
+              className="text-[#31302f] text-lg max-w-3xl mx-auto"
             >
               Real results from real companies who trusted us to transform their business
             </motion.p>
@@ -214,7 +169,7 @@ export default function ShortCaseStudies({
               <div className="flex justify-center items-center mt-8 space-x-4">
                 <button
                   onClick={goToPrev}
-                  className="p-2 rounded-full bg-[#FFE01B] text-[#241C15] hover:bg-[#FCD34D] transition-colors shadow-md"
+                  className="p-2 rounded-full bg-[#FFE01B] text-[#050504] hover:bg-[#FCD34D] transition-colors shadow-md"
                   aria-label="Previous case study"
                 >
                   <ChevronLeft size={20} />
@@ -226,7 +181,7 @@ export default function ShortCaseStudies({
                     <button
                       key={index}
                       onClick={() => setCurrentIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${currentIndex === index ? 'bg-[#FFE01B] scale-125' : 'bg-gray-400'
+                      className={`w-2 h-2 rounded-full transition-all ${currentIndex === index ? 'bg-[#f7af00] scale-125' : 'bg-gray-400'
                         }`}
                       aria-label={`Go to case study ${index + 1}`}
                     />
@@ -235,7 +190,7 @@ export default function ShortCaseStudies({
 
                 <button
                   onClick={goToNext}
-                  className="p-2 rounded-full bg-[#FFE01B] text-[#241C15] hover:bg-[#FCD34D] transition-colors shadow-md"
+                  className="p-2 rounded-full bg-[#f7af00] text-[#050504] hover:bg-[#f7af00] transition-colors shadow-md"
                   aria-label="Next case study"
                 >
                   <ChevronRight size={20} />
@@ -338,22 +293,16 @@ function CaseStudyCard({ study, index }: { study: CaseStudy, index: number }) {
     <motion.div
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.8, delay: index * 0.15 }}
+      viewport={{ once: true, margin: "-120px" }}
+      transition={{ duration: 0.5, delay: index * 0.15 }}
       whileHover={{ y: -10 }}
       className="group relative"
     >
-      {/* Glow effect */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-[#FFE01B]/20 via-[#FFE01B]/10 to-transparent rounded-3xl blur opacity-0 group-hover:opacity-100 transition duration-700" />
-
       {/* Main card */}
-      <div className="relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700 border border-white/20 group-hover:border-[#FFE01B]/30">
+      <div className="relative bg-[#faf4e5] backdrop-blur-sm rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-700">
         <Link href={`/case-studies/${study.slug?.current || ''}`} className="flex flex-col h-full">
           {/* Enhanced image section */}
           <div className="relative w-full aspect-[16/10] overflow-hidden">
-            {/* Overlay gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-10" />
-
             {study.image?.asset ? (
               <Image
                 src={urlFor(study.image).url()}
@@ -377,7 +326,7 @@ function CaseStudyCard({ study, index }: { study: CaseStudy, index: number }) {
               whileInView={{ scale: 1, rotate: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.5 + index * 0.1, duration: 0.6, type: "spring" }}
-              className="absolute top-4 right-4 z-20 bg-[#FFE01B] text-black p-2 rounded-full shadow-lg"
+              className="absolute top-4 right-4 z-20 bg-[#f7af00] text-[#050504] p-2 rounded-full shadow-lg"
             >
               <Star size={16} fill="currentColor" />
             </motion.div>
@@ -392,7 +341,7 @@ function CaseStudyCard({ study, index }: { study: CaseStudy, index: number }) {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 + index * 0.1 }}
-                className="text-2xl font-black text-[#241C15] mb-3 group-hover:text-[#241C15] transition-colors line-clamp-2"
+                className="text-2xl font-medium text-[#050504] mb-3 group-hover:text-[#241C15] transition-colors line-clamp-2"
               >
                 {study.company || 'Untitled'}
               </motion.h3>
@@ -406,7 +355,7 @@ function CaseStudyCard({ study, index }: { study: CaseStudy, index: number }) {
                   transition={{ delay: 0.3 + index * 0.1 }}
                   className="inline-flex items-center gap-1 text-sm font-bold text-white bg-gradient-to-r from-[#241C15] to-[#2A1F17] rounded-full px-4 py-2 shadow-md"
                 >
-                  <div className="w-2 h-2 bg-[#FFE01B] rounded-full" />
+                  <div className="w-2 h-2 bg-[#f7af00] rounded-full" />
                   {study.tags[0]}
                 </motion.span>
               )}
@@ -438,7 +387,7 @@ function CaseStudyCard({ study, index }: { study: CaseStudy, index: number }) {
                   {study.tags.slice(1, 4).map((t, idx) => (
                     <span
                       key={idx}
-                      className="inline-flex items-center text-xs px-3 py-2 rounded-full bg-[#FFE01B]/90 text-[#241C15] font-bold hover:bg-[#FFE01B] transition-colors shadow-sm border border-[#FFE01B]/20"
+                      className="inline-flex items-center text-xs px-3 py-2 rounded-full bg-[#f7af00]/90 text-[#050504] font-bold hover:bg-[#f7af00] transition-colors shadow-sm border border-[#FFE01B]/20"
                     >
                       {t}
                     </span>
@@ -460,8 +409,8 @@ function CaseStudyCard({ study, index }: { study: CaseStudy, index: number }) {
               transition={{ delay: 0.6 + index * 0.1 }}
               className="border-t border-gray-200/80"
             >
-              <div className="flex items-center justify-between">
-                <span className="inline-flex items-center text-base font-bold text-[#241C15] group-hover:text-[#FFE01B] transition-colors">
+              <div className="flex items-center justify-between pt-4">
+                <span className="inline-flex items-center text-base font-normal text-[#050504] group-hover:text-[#f7af00] transition-colors">
                   View Case Study
                   <ArrowRight className="ml-2 w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-300" />
                 </span>
@@ -470,20 +419,12 @@ function CaseStudyCard({ study, index }: { study: CaseStudy, index: number }) {
                   className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   whileHover={{ rotate: 45 }}
                 >
-                  <ExternalLink size={18} className="text-[#FFE01B]" />
+                  <ExternalLink size={18} className="text-[#f7af00]" />
                 </motion.div>
               </div>
             </motion.div>
           </div>
         </Link>
-
-        {/* Bottom accent line */}
-        <motion.div
-          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#FFE01B] via-[#FFF045] to-[#FFE01B] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 0 }}
-          viewport={{ once: true }}
-        />
       </div>
     </motion.div>
   )
