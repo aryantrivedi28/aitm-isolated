@@ -123,7 +123,7 @@ const ServiceCategories = () => {
 
           {/* Header */}
           <div className="text-center mb-8 sm:mb-10 lg:mb-12">
-            <h2 className="font-medium leading-tight mb-4 text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#241C15]">
+            <h2 className="font-medium leading-tight mb-4 text-3xl sm:text-4xl md:text-5xl text-[#241C15]">
               Expert <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">Categories</span>
             </h2>
             <p className="text-[#241C15]/70 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto font-medium">
@@ -140,13 +140,13 @@ const ServiceCategories = () => {
                 <button
                   key={name}
                   onClick={() => setActiveCategory(name as CategoryKey)}
-                  className={`group inline-flex items-center px-4 sm:px-6 py-3 rounded-xl font-bold text-sm sm:text-base transition-all duration-500 transform hover:scale-105 hover:shadow-lg
+                  className={`group inline-flex items-center px-4 sm:px-6 py-3 rounded-xl font-medium text-sm sm:text-base transition-all duration-500 transform hover:scale-105 hover:shadow-lg
                     ${isActive
                       ? 'bg-[#f0eadd] text-[#241C15] border-[#f0eadd] shadow-lg'
                       : 'bg-[#faf4e5] text-[#241C15]/70 hover:text-[#241C15]'
                     }`
                   }
-                  style={{ fontWeight: '600' }}
+                  style={{ fontWeight: '500' }}
                 >
                   <Icon className={`w-5 h-5 mr-2 ${isActive ? 'text-[#241C15]' : 'text-[#241C15]/70 group-hover:text-[#f7af00]'} transition-all duration-300`} />
                   {name}
@@ -160,15 +160,15 @@ const ServiceCategories = () => {
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 md:mb-8 gap-4">
               <div className="flex items-center">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#f7af00] rounded-xl flex items-center justify-center mr-4 shadow-lg animate-float">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#f7af00] rounded-xl flex items-center justify-center mr-4 shadow-lg animate-float">
                   {categories[activeCategory]?.icon &&
                     (() => {
                       const Icon = categories[activeCategory].icon
-                      return <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-[#241C15]" />
+                      return <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#241C15]" />
                     })()
                   }
                 </div>
-                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#241C15]">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-medium text-[#241C15]">
                   {activeCategory}
                 </h3>
               </div>
@@ -180,7 +180,7 @@ const ServiceCategories = () => {
             <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 sm:gap-10 md:gap-12">
               {/* Subcategories */}
               <div>
-                <h4 className="text-lg sm:text-xl font-black text-[#241C15] mb-5 flex items-center">
+                <h4 className="text-lg sm:text-xl font-semibold text-[#241C15] mb-5 flex items-center">
                   <div className="w-1 h-6 sm:h-8 bg-[#f7af00] rounded-full mr-3"></div>
                   Specializations
                 </h4>
@@ -189,7 +189,7 @@ const ServiceCategories = () => {
                   {categories[activeCategory]?.subcategories.map((sub, idx) => (
                     <span
                       key={idx}
-                      className="relative text-[#241C15] font-semibold text-sm sm:text-base cursor-pointer bg-[#faf4e5] py-4 rounded-xl flex item-center justify-center"
+                      className="relative text-[#241C15] font-medium text-sm sm:text-base cursor-pointer bg-[#faf4e5] py-4 rounded-xl flex item-center justify-center"
                     >
                       {sub}
                     </span>

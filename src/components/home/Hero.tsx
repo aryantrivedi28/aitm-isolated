@@ -55,17 +55,6 @@ const Hero = () => {
 
 
       <section className="hero-section relative overflow-hidden bg-[#fbf5e5] min-h-screen flex items-center pt-16">
-        {/* Subtle gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#fbf5e5]/50 via-[#fbf5e5] to-[#fbf5e5]" />
-        {/* Minimal accent element */}
-        <div
-          className="absolute top-[15%] right-[8%] w-[400px] h-[400px] bg-[#FFE01B]/6 rounded-full blur-[120px] pointer-events-none"
-          style={{ transform: `translateY(${scrollY * 0.2}px)` }}
-        />
-        <div
-          className="absolute bottom-[20%] left-[10%] w-[350px] h-[350px] bg-[#FCD34D]/5 rounded-full blur-[100px] pointer-events-none"
-          style={{ transform: `translateY(${-scrollY * 0.15}px)` }}
-        />
         {/* Main Content */}
         <div className="relative z-10 w-full">
           <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-16 sm:py-20 lg:py-24">
@@ -81,27 +70,28 @@ const Hero = () => {
 
             {/* Headline */}
             <h1
-              className={`tracking-in-expand leading-[1.1] mb-4 transition-all duration-700 delay-100 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              className={`tracking-in-expand leading-[1.1] mb-4 transition-all duration-700 delay-100 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`}
               style={{
-                fontSize: 'clamp(2rem, 5vw, 4rem)',
-                letterSpacing: '-0.025em',
-                maxWidth: '950px',
-                fontWeight: '500'
+                fontSize: "clamp(2rem, 5vw, 4rem)",
+                letterSpacing: "-0.025em",
+                maxWidth: "950px",
+                fontWeight: "200",
               }}
             >
               <span className="block text-[#241C15] mb-1">
-                Your Agile Marketing Team
-
-              </span>
-              <span className="block text-[#241C15]">
-                On{" "}
-                <span className="inline-block relative">
-                  <span className="relative z-10">Demand</span>
-                  <span className="absolute bottom-[0.12em] left-0 w-full h-[0.1em] bg-[#f7af00] -z-10 opacity-50"></span>
+                Your{" "}
+                <span className="relative inline-block">
+                  <span className="relative z-10">Agile Marketing Team</span>
+                  <span className="absolute bottom-[0.1em] left-0 w-full h-[0.1em] bg-[#f7af00] -z-10 opacity-50"></span>
                 </span>
               </span>
+
+              <span className="block text-[#241C15]">
+                On Demand
+              </span>
             </h1>
+
 
 
             {/* Subheading */}
@@ -110,33 +100,20 @@ const Hero = () => {
               style={{
                 fontSize: 'clamp(1.125rem, 1.75vw, 1.375rem)',
                 maxWidth: '720px',
-                fontWeight: '500',
+                fontWeight: '400',
                 opacity: '0.9'
               }}
             >
               Top 1 percent Indian talent across marketing, design, UI or UX, video, SEO, GHL and Shopify.
             </p>
 
-            {/* Secondary Description
-            <p
-              className={`text-[#241C15]/65 leading-relaxed mb-12 transition-all duration-700 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-              style={{
-                fontSize: 'clamp(1rem, 1.25vw, 1.125rem)',
-                maxWidth: '680px',
-                fontWeight: '400',
-                lineHeight: '1.7'
-              }}
-            >
-              Trusted by global startups for marketing, design, SEO, Shopify and automation.
-            </p> */}
-
             {/* CTA Buttons */}
             <div
               className={`flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-[400ms] ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
             >
               <button
-                className="group bg-[#f7af00] hover:bg-[#FCD34D] text-[#241C15] font-semibold px-7 py-4 rounded-lg transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start shadow-md hover:shadow-lg"
-                style={{ fontSize: '1.0625rem', fontWeight: '600' }}
+                className="inline-flex items-center bg-[#f7af00] text-black text-xl font-medium px-6 py-4 rounded-2xl hover:scale-105 transition-all duration-500"
+                style={{ fontSize: '1.0625rem', fontWeight: '500' }}
                 onClick={() => handleNavigation("/find-talent")}
               >
                 Start a Project
@@ -144,15 +121,15 @@ const Hero = () => {
               </button>
 
               <button
-                className="group bg-transparent hover:bg-[#241C15] text-[#241C15] hover:text-[#fbf5e5] font-semibold px-7 py-4 rounded-lg border-2 border-[#241C15] transition-all duration-300 hover:scale-[1.02] flex items-center justify-center sm:justify-start"
-                style={{ fontSize: '1.0625rem', fontWeight: '600' }}
+                className="group text-[#241C15] font-semibold px-7 py-4 rounded-lg border-2 border-[#241C15] flex items-center justify-center sm:justify-start hover:scale-105 transition-all duration-500"
+                style={{ fontSize: '1.0625rem', fontWeight: '500' }}
                 onClick={() => handleNavigation("/get-hired")}
               >
                 <Play className="mr-2.5 w-4 h-4 fill-current" />
                 Find Talent
               </button>
             </div>
-          </div>  
+          </div>
         </div>
       </section>
     </>

@@ -80,7 +80,7 @@ const FAQ = () => {
               >
                 {/* Question */}
                 <div className="flex items-center justify-between p-5">
-                  <h3 className="text-[#050504] font-semibold text-lg sm:text-xl md:text-2xl">
+                  <h3 className="text-[#050504] font-medium text-lg sm:text-xl md:text-2xl">
                     {faq.question}
                   </h3>
                   <div

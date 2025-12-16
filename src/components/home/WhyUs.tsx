@@ -97,14 +97,14 @@ const WhyUs = () => {
                 key={idx}
                 className="group relative h-full transform transition-all duration-500 hover:scale-105"
               >
-                <div className="relative bg-[#f0eadd] rounded-3xl p-6 flex flex-col border-[#f0eadd] shadow-sm hover:shadow-xl transition-all duration-500 h-full">
+                <div className="relative bg-[#f0eadd] rounded-3xl p-6 flex flex-col border-[#f0eadd] shadow-xl hover:shadow-xl transition-all duration-500 h-full">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-[#f7af00] rounded-xl mb-6 flex-shrink-0">
                     <Icon className="w-6 h-6 text-black" />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-black mb-2 flex-shrink-0 text-black">
+                  <h3 className="text-lg sm:text-xl font-medium mb-2 flex-shrink-0 text-black">
                     {feature.title}
                   </h3>
-                  <p className="text-[#241C15] text-sm sm:text-base mt-auto">
+                  <p className="text-[#31302f] text-sm sm:text-base mt-auto">
                     {feature.description}
                   </p>
                 </div>

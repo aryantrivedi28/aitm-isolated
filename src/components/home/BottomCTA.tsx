@@ -16,7 +16,7 @@ const BottomCTA = () => {
     <section className="relative overflow-hidden bg-[#faf4e5] py-16 sm:py-20 flex items-center justify-center">
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
         {/* Main Headline */}
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold text-[#050504] leading-snug sm:leading-tight mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-[#050504] leading-snug sm:leading-tight mb-6 sm:mb-8">
           Ready to{" "}
           <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
             Transform
@@ -47,9 +47,9 @@ const BottomCTA = () => {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center">
-          <Link href="/client-request">
-            <Button className="bg-[#f7af00] hover:bg-[#FCD34D] text-black text-lg font-bold px-6 py-4 sm:px-8 sm:py-5 rounded-2xl flex items-center justify-center transition-transform duration-300">
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center transition-all duration-500 group-hover:scale-105">
+          <Link href="/find-talent">
+            <Button className="inline-flex items-center bg-[#f7af00] text-black text-xl font-medium px-4 py-6 rounded-2xl hover:scale-105 transition-all duration-500">
               Start a Project
               <ArrowRight className="ml-2 w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:translate-x-2" />
             </Button>
