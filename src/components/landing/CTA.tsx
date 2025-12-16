@@ -79,7 +79,7 @@ export default function CTA({
           className="mt-12 flex justify-center gap-12 text-[#31302f] text-sm"
         >
 
-          <div className='font-semibold text-[#31302f] text-xl'>Book your free consultation before spots fill up</div>
+          <div className='font-medium text-[#31302f] text-xl'>Book your free consultation before spots fill up</div>
           {/* <div className="flex flex-col items-center">
             <span className="opacity-80">Free consultation</span>
             {/* <span className="font-bold text-white">24/7</span> 

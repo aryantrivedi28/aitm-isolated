@@ -224,17 +224,10 @@ const Logos = () => {
   ];
 
   return (
-    <section className="bg-[#fbf5e5] py-12">
+    <section className="bg-[#fbf5e5] py-20">
       <div className="container mx-auto overflow-hidden">
         {/* Enhanced Header */}
         <div className={`text-center mb-12 sm:mb-18 lg:mb-20 transition-all duration-1000`}>
-          {/* Subtitle Badge */}
-          <div className="inline-flex items-center gap-3 backdrop-blur-sm bg-[#241C15] border border-gray-200/60 px-5 py-3 rounded-full mb-8 shadow-lg hover:shadow-xl transition-all duration-300 group">
-            <Sparkles className="w-5 h-5 text-[#FFE01B] animate-pulse" />
-            <span className="text-sm font-semibold text-[#fbf5e5]">Clients</span>
-            <div className="w-2 h-2 bg-[#FFE01B] rounded-full animate-ping" />
-          </div>
-
           <h2
             className="font-medium leading-tight mb-6 text-[#050504]"
             style={{

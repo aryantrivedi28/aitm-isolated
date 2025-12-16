@@ -105,18 +105,6 @@ export default function TestimonialSection({
                                     transition={{ duration: 0.6 }}
                                     className="text-center mb-12 md:mb-20 px-2"
                               >
-                                    {/* Badge */}
-                                    <motion.div
-                                          initial={{ opacity: 0, scale: 0.8 }}
-                                          whileInView={{ opacity: 1, scale: 1 }}
-                                          viewport={{ once: true, margin: "-50px" }}
-                                          transition={{ delay: 0.1, duration: 0.5 }}
-                                          className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-gray-300/30 rounded-full px-4 py-2 mb-6 md:mb-8"
-                                    >
-                                          <Sparkles size={16} className="text-[#f7af00] animate-pulse" />
-                                          <span className="text-xs md:text-sm text-[#050504] font-semibold">Client Love</span>
-                                          <div className="w-1.5 h-1.5 bg-[#f7af00] rounded-full animate-ping" />
-                                    </motion.div>
 
                                     {/* Main heading */}
                                     <motion.h2
@@ -124,7 +112,7 @@ export default function TestimonialSection({
                                           whileInView={{ opacity: 1, y: 0 }}
                                           viewport={{ once: true, margin: "-50px" }}
                                           transition={{ delay: 0.2, duration: 0.6 }}
-                                          className="text-3xl md:text-5xl lg:text-6xl font-normal leading-tight text-[#050504] mb-4 md:mb-6"
+                                          className="text-xl md:text-4xl lg:text-5xl font-normal leading-tight text-[#050504] mb-4 md:mb-6"
                                     >
                                           {heading.split(' ').slice(0, -1).join(' ')}{' '}
                                           <span className="text-transparent bg-clip-text bg-[#050504] animate-gradient bg-300%">

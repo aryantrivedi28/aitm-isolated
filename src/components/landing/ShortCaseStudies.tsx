@@ -91,17 +91,6 @@ export default function ShortCaseStudies({
             transition={{ duration: 0.8 }}
             className="text-center mb-16 md:mb-20"
           >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="inline-flex items-center gap-2 bg-[#faf4e5] backdrop-blur-sm shadow-sm rounded-full px-6 py-3 mb-8"
-            >
-              <TrendingUp size={18} className="text-[#050504]" />
-              <span className="text-sm text-[#050504] font-semibold tracking-wide">Success Stories</span>
-            </motion.div>
 
             {/* Main heading */}
             <motion.h2
@@ -109,7 +98,7 @@ export default function ShortCaseStudies({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-medium leading-tight text-white mb-6"
+              className="text-xl md:text-4xl lg:text-5xl font-medium leading-tight text-white mb-6"
             >
               {heading.split(' ').slice(0, -2).join(' ')}{' '}
               <span className="text-transparent bg-clip-text bg-[#050504]">

@@ -52,7 +52,7 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-medium text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
+          className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-center mb-4 md:mb-6 leading-tight w-[70%] justify-center mx-auto"
           style={{ color: '#241C15' }} // change this!
         >
           {heading}
@@ -93,7 +93,7 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
                 ease: "easeOut"
               }}
               whileHover={{ scale: 1.03, y: -5 }}
-              className="rounded-xl p-6 hover:shadow-xl transition-all duration-300 group"
+              className="rounded-xl p-6 shadow-xl hover:shadow-xl transition-all duration-500 group"
               style={{
                 backgroundColor: '#f0eadd',
               }}
@@ -113,7 +113,7 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
 
                 {/* Solution text */}
                 <p
-                  className="text-base md:text-lg leading-relaxed flex-1 pt-1 font-semibold"
+                  className="text-base md:text-lg leading-relaxed flex-1 pt-1 font-medium"
                   style={{ color: '#241C15', opacity: 0.9 }}
                 >
                   {solution}

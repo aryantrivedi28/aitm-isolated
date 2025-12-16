@@ -46,14 +46,14 @@ export default function FAQ({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ delay: i * 0.1 }}
-                className="rounded-lg md:rounded-xl bg-[#f0eadd] hover:shadow-lg transition-all overflow-hidden"
+                className="rounded-lg md:rounded-xl bg-[#f0eadd] shadow-lg transition-all overflow-hidden"
               >
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
                   className="w-full px-4 py-4 md:px-6 md:py-5 flex items-center justify-between gap-4 bg-transparent transition-colors group"
                 >
                   <div className="text-left flex-1">
-                    <div className="font-semibold text-base md:text-lg text-[#241C15] group-hover:text-[#f7af00] transition-colors">
+                    <div className="font-medium text-base md:text-lg text-[#050504] group-hover:text-[#f7af00] transition-colors">
                       {it.question}
                     </div>
                   </div>

@@ -19,7 +19,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-medium text-center mb-2 md:mb-4 leading-tight w-[90%] justify-center mx-auto"
+          className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-center mb-2 md:mb-4 leading-tight w-[90%] justify-center mx-auto"
           style={{ color: '#241C15' }} // change this!
         >
           {heading}

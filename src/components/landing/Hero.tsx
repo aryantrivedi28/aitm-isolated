@@ -137,7 +137,7 @@ export default function Hero({
                 <div className="space-y-4">
                   <h1 className="leading-[1.05] tracking-tight bg-[#241C15] bg-clip-text text-transparent relative"
                     style={{
-                      fontSize: 'clamp(2rem, 5vw, 4rem)',
+                      fontSize: 'clamp(2rem, 5vw, 3rem)',
                       letterSpacing: '-0.03em',
                       fontWeight: '400',
                     }}

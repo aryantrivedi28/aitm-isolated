@@ -16,21 +16,6 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
   return (
     <section className="relative bg-[#fbf5e5] py-12 md:py-24 overflow-hidden">
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="flex justify-center py-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
-          >
-            <Briefcase className="w-4 h-4 text-[#241C15]/70" />
-            <span className="text-sm font-semibold text-[#241C15]/70">
-              HOW IT WORKS
-            </span>
-          </motion.div>
-        </div>
-
         {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -70,7 +55,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                       transition={{ duration: 0.6, delay: 0.08 * i }}
                       className="flex-1 bg-[#fbf5e5] p-6 rounded-2xl hover:shadow-xl transition-all mb-4"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                      <h3 className="text-lg font-normal text-gray-900 mb-3">
                         {s.title}
                       </h3>
                       <p className="text-gray-600 leading-relaxed text-sm">
@@ -91,7 +76,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: 0.08 * i }}
-                      className="md:w-1/2 bg-[#fbf5e5] p-6 md:p-8 rounded-2xl md:rounded-3xl hover:shadow-xl transition-all"
+                      className="md:w-1/2 bg-[#fbf5e5] p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-lg transition-all"
                     >
                       <div className="flex items-center gap-4">
                         <motion.div
@@ -100,7 +85,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                         >
                           {i + 1}
                         </motion.div>
-                        <h3 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900">
+                        <h3 className="text-lg md:text-xl lg:text-2xl font-normal text-gray-900">
                           {s.title}
                         </h3>
                       </div>

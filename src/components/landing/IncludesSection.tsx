@@ -104,7 +104,7 @@ export default function IncludesSection({
 
               {/* Text */}
               <span
-                className="text-sm sm:text-base md:text-lg font-semibold leading-snug"
+                className="text-sm sm:text-base md:text-lg font-medium leading-snug"
                 style={{ color: "#241C15" }}
               >
                 {item}

@@ -50,20 +50,6 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
   return (
     <section className="relative py-24 overflow-hidden bg-[#fbf5e5]">
       <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-12">
-        <div className="flex justify-center py-4">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-[#fbf5e5] backdrop-blur border border-[#FFE01B]/20 shadow-lg"
-          >
-            <CodeXml className="w-4 h-4 text-[#050504]" />
-            <span className="text-sm font-semibold text-[#050504]">
-              DEVELOPMENT & INTEGRATION
-            </span>
-          </motion.div>
-        </div>
-
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -138,7 +124,7 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
                     {/* Title and number */}
                     <div className="flex-1">
                       <div className="flex items-start justify-between">
-                        <h3 className="text-xl md:text-2xl font-bold leading-tight pr-2" style={{ color: '#050504' }}>
+                        <h3 className="text-xl md:text-2xl font-medium leading-tight pr-2" style={{ color: '#050504' }}>
                           {item.title}
                         </h3>
                       </div>

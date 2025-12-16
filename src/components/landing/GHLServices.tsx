@@ -86,16 +86,16 @@ export default function GHLServices({ heading, subheading, services }: any) {
                     className="inline-flex p-4 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
                     style={{ backgroundColor: '#f7af00' }}
                   >
-                    <IconComponent className="h-8 w-8" style={{ color: '#241C15' }} />
+                    <IconComponent className="h-5 w-5" style={{ color: '#050504' }} />
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="space-y-3">
-                  <h3 className="text-xl font-bold transition-colors duration-200" style={{ color: '#241C15' }}>
+                  <h3 className="text-xl font-medium transition-colors duration-200" style={{ color: '#050504' }}>
                     {service.title}
                   </h3>
-                  <p className="text-base leading-relaxed" style={{ color: '#241C15', opacity: 0.7 }}>
+                  <p className="text-base leading-relaxed" style={{ color: '#31302f', opacity: 0.7 }}>
                     {service.description}
                   </p>
                 </div>

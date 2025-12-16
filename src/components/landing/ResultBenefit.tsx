@@ -40,7 +40,7 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-center max-w-4xl mx-auto mb-6 px-4 text-[#241C15] "
+          className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-center max-w-4xl mx-auto mb-6 px-4 text-[#241C15] "
         >
           {heading}
         </motion.h2>
@@ -89,7 +89,7 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
 
                   {/* Text - Takes remaining space */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm sm:text-base md:text-lg font-semibold leading-relaxed text-[#241C15] break-words">
+                    <p className="text-sm sm:text-base md:text-lg font-normal leading-relaxed text-[#241C15] break-words">
                       {benefit}
                     </p>
                   </div>
