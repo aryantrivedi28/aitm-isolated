@@ -66,14 +66,8 @@ export default function AboutPage() {
       img: "/aryan_t.jpg",
     },
     {
-      name: "Aryan Verma",
-      role: "OPS Manager",
-      desc: "Expert in workflow automation and operations, ensuring seamless delivery for every client.",
-      img: "/aryan_v.png",
-    },
-    {
       name: "Kunal Sharma",
-      role: "Product Manager",
+      role: "Tech Lead",
       desc: "Full-stack engineer with a focus on scalable architecture and rapid MVP delivery.",
       img: "/kunal.png",
     },
