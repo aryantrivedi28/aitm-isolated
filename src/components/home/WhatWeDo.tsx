@@ -102,13 +102,13 @@ const WhatWeDo = () => {
                   className={`absolute inset-0 ${service.bgGradient} rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 scale-105`}
                 />
 
-                <div className="relative backdrop-blur-xl bg-[#fbf5e5] rounded-3xl p-6 sm:p-8 h-full shadow-xl transition-all duration-500 group-hover:scale-105 overflow-hidden">
+                <div className="relative backdrop-blur-xl bg-[#fbf5e5] rounded-3xl p-6 sm:p-8 h-full shadow-xl transition-all duration-500 border-x-2 group-hover:border-[#f7af00] overflow-hidden">
                   {/* Icon */}
                   <div className="relative mb-6">
                     <div className={`inline-flex items-center justify-center w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r ${service.gradient} rounded-2xl shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
-                      <service.icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#241C15]" />
+                      <service.icon className="w-5 h-5 sm:w-6 sm:h-6 text-[#050504]" />
                     </div>
-                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#241C15] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-[#050504] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:scale-110">
                       <Pin className="w-4 h-4 text-gray-200" />
                     </div>
                   </div>

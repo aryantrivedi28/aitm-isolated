@@ -83,7 +83,7 @@ const Hero = () => {
                 Your{" "}
                 <span className="relative inline-block">
                   <span className="relative z-10">Agile Marketing Team</span>
-                  <span className="absolute bottom-[0.1em] left-0 w-full h-[0.1em] bg-[#f7af00] -z-10 opacity-50"></span>
+                  <span className="absolute bottom-[0.1em] left-0 w-full h-[0.1em] bg-[#f7af00] -z-10"></span>
                 </span>
               </span>
 

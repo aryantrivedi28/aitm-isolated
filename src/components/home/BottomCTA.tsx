@@ -49,7 +49,7 @@ const BottomCTA = () => {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center transition-all duration-500 group-hover:scale-105">
           <Link href="/find-talent">
-            <Button className="inline-flex items-center bg-[#f7af00] text-black text-xl font-medium px-4 py-6 rounded-2xl hover:scale-105 transition-all duration-500">
+            <Button className="inline-flex items-center bg-[#f7af00] text-black text-xl font-medium px-6 py-7 rounded-2xl hover:scale-105 transition-all duration-500">
               Start a Project
               <ArrowRight className="ml-2 w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:translate-x-2" />
             </Button>

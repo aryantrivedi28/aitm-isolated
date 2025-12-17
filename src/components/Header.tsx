@@ -93,12 +93,12 @@ export default function Header() {
                     alt="Finzie Logo"
                     width={60}
                     height={60}
-                    className="rounded-lg w-14 h-14 sm:w-13 sm:h-13 group-hover:scale-105 transition-transform duration-300"
+                    className="rounded-lg w-15 h-15 sm:w-13 sm:h-13 group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <span
-                  className="font-bold text-[#241C15]"
-                  style={{ fontSize: '1.25rem', letterSpacing: '-0.01em' }}
+                  className="font-medium text-[#050504]"
+                  style={{ fontSize: '1.375rem', letterSpacing: '-0.01em' }}
                 >
                   Finzie
                 </span>
@@ -117,11 +117,11 @@ export default function Header() {
                           : "/" + item.toLowerCase().replace(/\s+/g, "-")
                       )
                     }
-                    className="text-[#241C15]/80 hover:text-[#241C15] font-medium cursor-pointer transition-all duration-200 relative group px-4 py-2.5 rounded-sm hover:bg-[#FFE01B]/70"
+                    className="text-[#050504]/80 hover:text-[#050504] font-medium cursor-pointer transition-all duration-200 relative group px-4 py-2.5 rounded-sm"
                     style={{ fontSize: '1rem', fontWeight: '600' }}
                   >
                     {item}
-                    <span className="absolute bottom-1 left-4 w-0 h-[2px] bg-[#241C15]/50 transition-all duration-300 group-hover:w-[calc(100%-32px)]"></span>
+                    <span className="absolute bottom-1 left-4 w-0 h-[2px] bg-[#f7af00] transition-all duration-300 group-hover:w-[calc(100%-32px)]"></span>
                   </a>
                 ))}
               </nav>
@@ -151,7 +151,7 @@ export default function Header() {
 
             {/* Mobile Navigation Menu */}
             {isMobileMenuOpen && (
-              <div className="lg:hidden border-t border-[#241C15]/10 bg-white/95 backdrop-blur-xl rounded-b-2xl mb-2">
+              <div className="lg:hidden border-t border-[#241C15]/10 bg-[#fbf5e5] backdrop-blur-xl rounded-b-2xl mb-2">
                 <nav className="px-2 py-4 space-y-1">
                   {["Home", "About Us", "Case Studies", "Find Talent", "Get Hired"].map((item, idx) => (
                     <a

@@ -95,9 +95,9 @@ const WhyUs = () => {
             return (
               <div
                 key={idx}
-                className="group relative h-full transform transition-all duration-500 hover:scale-105"
+                className="group relative h-full rounded-md "
               >
-                <div className="relative bg-[#f0eadd] rounded-3xl p-6 flex flex-col border-[#f0eadd] shadow-xl hover:shadow-xl transition-all duration-500 h-full">
+                <div className="relative bg-[#f0eadd] rounded-3xl p-6 flex flex-col border-2 border-[#f0eadd] shadow-xl hover:border-[#f7af00] transition-all duration-500 h-full">
                   <div className="inline-flex items-center justify-center w-12 h-12 bg-[#f7af00] rounded-xl mb-6 flex-shrink-0">
                     <Icon className="w-6 h-6 text-black" />
                   </div>

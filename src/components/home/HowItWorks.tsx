@@ -47,12 +47,12 @@ const HowItWorks = () => {
         {/* Steps Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10 lg:gap-14">
           {steps.map((step, idx) => (
-            <div key={idx} className="relative group cursor-pointer transition-transform duration-500 hover:scale-105">
+            <div key={idx} className="relative">
               {/* Glow */}
               <div className="absolute inset-0 rounded-3xl bg-[#FFE01B]/10 blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
 
               {/* Card */}
-              <div className="relative bg-[#fbf5e5] rounded-3xl p-4 sm:p-6 flex flex-col shadow-xl hover:shadow-xl transition-all duration-500 backdrop-blur-md">
+              <div className="relative bg-[#fbf5e5] rounded-3xl p-4 sm:p-6 flex flex-col shadow-xl border-2 hover:border-[#f7af00] transition-all duration-500 backdrop-blur-md">
                 
                 {/* Step Number */}
                 <div className="absolute top-4 left-4 w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-[#f7af00] flex items-center justify-center font-normal text-black shadow-md z-10">

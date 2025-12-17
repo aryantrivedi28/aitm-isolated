@@ -53,7 +53,7 @@ export default function Footer() {
       : "from-[#f0eadd] via-[#FFF5D1] to-[#FFECC2]",
     text: isDark ? "text-white" : "text-gray-900",
     secondaryText: isDark ? "text-gray-300" : "text-gray-700",
-    accent: "#FFE01B",
+    accent: "#f7af00",
     inputBg: isDark ? "bg-white/10" : "bg-gray-100/70",
     inputText: isDark ? "text-white" : "text-gray-900",
     inputBorder: isDark ? "border-white/20" : "border-gray-300/50",
@@ -111,7 +111,7 @@ export default function Footer() {
       {/* Top Section */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
         <div className="flex justify-between items-start md:items-center mb-8">
-          <h2 className={`text-4xl font-black ${colors.text}`}>Finzie</h2>
+          <h2 className={`text-2xl lg:text-5xl font-medium ${colors.text}`}>Finzie</h2>
           {/* <button
             onClick={toggleTheme}
             className={`p-2 rounded-full border border-[${colors.accent}]/40 hover:bg-[${colors.accent}]/20 transition-colors`}
@@ -133,7 +133,7 @@ export default function Footer() {
                We provide top 1 percent Indian marketing and creative talent for global companies. Fully managed. Flexible. Outcome driven.
             </p>
             {/* Social Links */}
-            <div className="flex gap-4 mt-8">
+            <div className="flex gap-4 mt-8 ml-4">
               {socialLinks.map(({ Icon, label, link }, idx) => (
                 <motion.a
                   key={idx}
@@ -157,13 +157,13 @@ export default function Footer() {
 
           {/* Quick Links */}
           <motion.div custom={1} variants={fadeUp}>
-            <h3 className={`text-xl font-black mb-6 flex items-center gap-3 ${colors.text}`}>
+            <h3 className={`text-xl font-medium mb-6 flex items-center gap-3 ${colors.text}`}>
               <div className={`p-2 bg-[${colors.accent}]/20 rounded-xl`}>
                 <Users size={20} className={`text-[${colors.accent}]`} />
               </div>
               Quick Links
             </h3>
-            <ul className="space-y-4">
+            <ul className="space-y-4 ml-6">
               {quickLinks.map(({ label, href, icon: Icon }, idx) => (
                 <motion.li key={idx} whileHover={{ x: 5 }} transition={{ type: "spring", stiffness: 300 }}>
                   <a
@@ -185,7 +185,7 @@ export default function Footer() {
 
           {/* Newsletter */}
           <motion.div custom={2} variants={fadeUp} className="md:col-span-2">
-            <h3 className={`text-xl font-black mb-6 flex items-center gap-3 ${colors.text}`}>
+            <h3 className={`text-xl font-medium mb-6 flex items-center gap-3 ${colors.text}`}>
               <div className={`p-2 bg-[${colors.accent}]/20 rounded-xl`}>
                 <Sparkles size={20} className={`text-[${colors.accent}]`} />
               </div>
@@ -213,7 +213,7 @@ export default function Footer() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#FFF045] to-[#FFE01B] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-[#f7af00] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative flex items-center justify-center gap-2">
                   Subscribe Now
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
