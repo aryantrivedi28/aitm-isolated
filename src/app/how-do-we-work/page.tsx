@@ -82,7 +82,7 @@ export default function HowWeWorkPage() {
                 Hire Tier-One
                 <span
                   className="absolute -bottom-[1px] left-0 w-full h-2 -z-10 rounded"
-                  style={{background: `${COLORS.ACCENT}70` }}
+                  style={{background: `${COLORS.ACCENT}` }}
                 />
               </span>{" "}
               Indian Talent
@@ -113,7 +113,7 @@ export default function HowWeWorkPage() {
             </motion.button>
           </div>
 
-          <motion.div className="hidden lg:flex justify-center" variants={fadeInUp}>
+          {/* <motion.div className="hidden lg:flex justify-center" variants={fadeInUp}>
             <div className="relative w-full max-w-lg">
               <div
                 className="absolute inset-0 rounded-full blur-3xl opacity-20"
@@ -127,7 +127,7 @@ export default function HowWeWorkPage() {
                 className="relative z-10 w-full h-auto"
               />
             </div>
-          </motion.div>
+          </motion.div> */}
         </div>
       </motion.section>
 
@@ -185,21 +185,21 @@ export default function HowWeWorkPage() {
             }}
           >
             <div className="flex items-start gap-5">
-              <Image
+              {/* <Image
                 src="https://illustrations.popsy.co/amber/product-launch.svg"
                 alt="Share requirements"
                 width={80}
                 height={80}
                 className="w-20 h-20 flex-shrink-0"
-              />
+              /> */}
               <div>
                 <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-base mb-4"
+                  className="w-10 h-10 rounded-lg flex items-center justify-center font-semibold text-base mb-4"
                   style={{ background: COLORS.ACCENT, color: COLORS.TEXT_PRIMARY }}
                 >
                   1
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold mb-3" style={{ color: COLORS.TEXT_PRIMARY }}>
+                <h3 className="text-xl sm:text-2xl font-medium mb-3" style={{ color: COLORS.TEXT_PRIMARY }}>
                   Share Your Requirements
                 </h3>
                 <p style={{ color: COLORS.TEXT_SECONDARY }} className="leading-relaxed">
@@ -221,21 +221,21 @@ export default function HowWeWorkPage() {
             }}
           >
             <div className="flex items-start gap-5">
-              <Image
+              {/* <Image
                 src="https://illustrations.popsy.co/amber/man-with-a-laptop.svg"
                 alt="Pre-vetted talent"
                 width={80}
                 height={80}
                 className="w-20 h-20 flex-shrink-0"
-              />
+              /> */}
               <div>
                 <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-base mb-4"
+                  className="w-10 h-10 rounded-lg flex items-center justify-center font-semibold text-base mb-4"
                   style={{ background: COLORS.ACCENT, color: COLORS.TEXT_PRIMARY }}
                 >
                   2
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold mb-3" style={{ color: COLORS.TEXT_PRIMARY }}>
+                <h3 className="text-xl sm:text-2xl font-medium mb-3" style={{ color: COLORS.TEXT_PRIMARY }}>
                   Get Matched with Pre-Vetted Talent
                 </h3>
                 <p style={{ color: COLORS.TEXT_SECONDARY }} className="leading-relaxed">
@@ -260,12 +260,12 @@ export default function HowWeWorkPage() {
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">
               <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-base mb-4"
+                className="w-10 h-10 rounded-lg flex items-center justify-center font-semibold text-base mb-4"
                 style={{ background: COLORS.ACCENT, color: COLORS.TEXT_PRIMARY }}
               >
                 3
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold mb-5" style={{ color: COLORS.TEXT_PRIMARY }}>
+              <h3 className="text-xl sm:text-2xl font-medium mb-5" style={{ color: COLORS.TEXT_PRIMARY }}>
                 Deliver with Confidence
               </h3>
 
@@ -294,7 +294,7 @@ export default function HowWeWorkPage() {
                     >
                       <item.icon className="w-5 h-5" style={{ color: COLORS.TEXT_PRIMARY }} />
                     </div>
-                    <h4 className="font-semibold mb-1" style={{ color: COLORS.TEXT_PRIMARY }}>
+                    <h4 className="font-medium mb-1" style={{ color: COLORS.TEXT_PRIMARY }}>
                       {item.title}
                     </h4>
                     <p className="text-sm" style={{ color: COLORS.TEXT_SECONDARY }}>
@@ -310,13 +310,13 @@ export default function HowWeWorkPage() {
             </div>
 
             <div className="hidden lg:flex items-center justify-center">
-              <Image
+              {/* <Image
                 src="https://illustrations.popsy.co/amber/success.svg"
                 alt="Successful delivery"
                 width={200}
                 height={200}
                 className="w-48 h-48"
-              />
+              /> */}
             </div>
           </div>
         </motion.div>
@@ -385,16 +385,16 @@ export default function HowWeWorkPage() {
               }}
             >
               <motion.div
-                className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-5"
+                className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-5"
                 style={{
                   background: COLORS.BACKGROUND,
                   border: `1px solid ${COLORS.TEXT_SECONDARY}15`,
                 }}
                 whileHover={{ scale: 1.1, rotate: 5 }}
               >
-                <item.icon className="w-7 h-7" style={{ color: COLORS.TEXT_PRIMARY }} />
+                <item.icon className="w-5 h-5" style={{ color: COLORS.TEXT_PRIMARY }} />
               </motion.div>
-              <h3 className="text-xl font-bold mb-2" style={{ color: COLORS.TEXT_PRIMARY }}>
+              <h3 className="text-xl font-medium mb-2" style={{ color: COLORS.TEXT_PRIMARY }}>
                 {item.title}
               </h3>
               <p className="text-sm leading-relaxed" style={{ color: COLORS.TEXT_SECONDARY }}>
@@ -418,16 +418,6 @@ export default function HowWeWorkPage() {
           style={{ background: COLORS.BACKGROUND_SECONDARY }}
           variants={fadeInUp}
         >
-          {/* Background accent circles */}
-          <div
-            className="absolute top-0 right-0 w-40 h-40 rounded-full -translate-y-1/2 translate-x-1/2"
-            style={{ background: `${COLORS.ACCENT}15` }}
-          />
-          <div
-            className="absolute bottom-0 left-0 w-32 h-32 rounded-full translate-y-1/2 -translate-x-1/2"
-            style={{ background: `${COLORS.ACCENT}10` }}
-          />
-
           <div className="relative z-10">
             {/* <motion.div className="flex justify-center mb-8" variants={fadeInUp}>
               <Image
@@ -440,7 +430,7 @@ export default function HowWeWorkPage() {
             </motion.div> */}
 
             <motion.h2
-              className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5"
+              className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-5"
               style={{ color: COLORS.TEXT_PRIMARY }}
               variants={fadeInUp}
             >
