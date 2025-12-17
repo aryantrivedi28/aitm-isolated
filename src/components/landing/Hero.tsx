@@ -258,25 +258,6 @@ export default function Hero({
             </div>
           </div>
         </div>
-        
-        <div className="absolute right-20 top-32 text-[#FFE01B]/30 hidden lg:block animate-float" style={{ animationDelay: '1.5s' }}>
-          <Zap className="w-9 h-9" />
-        </div>
-
-        <div className="absolute right-16 bottom-20 text-[#FFE01B]/40 hidden lg:block animate-float" style={{ animationDelay: '2.5s' }}>
-          <Sparkles className="w-8 h-8" />
-        </div>
-        
-        <div className="absolute left-20 bottom-28 text-[#FFE01B]/25 hidden lg:block animate-float" style={{ animationDelay: '3s' }}>
-          <Rocket className="w-7 h-7" />
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden lg:block animate-bounce">
-          <div className="w-6 h-10 border-2 border-[#241C15]/20 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-[#241C15]/40 rounded-full mt-2 animate-pulse"></div>
-          </div>
-        </div>
       </div>
 
       {/* Additional global styles */}

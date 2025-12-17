@@ -81,7 +81,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                       <div className="flex items-center gap-4">
                         <motion.div
                           whileHover={{ scale: 1.1, rotate: 6 }}
-                          className="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center bg-[#f7af00] font-bold text-black shadow-md"
+                          className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center bg-[#f7af00] font-bold text-black shadow-md"
                         >
                           {i + 1}
                         </motion.div>

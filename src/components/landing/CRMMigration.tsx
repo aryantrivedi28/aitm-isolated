@@ -114,7 +114,7 @@ export default function CRMMigration({ heading, subheading, items }: CRMMigratio
                   {/* Icon */}
                   <div className="mb-6">
                     <div
-                      className="inline-flex p-4 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
+                      className="inline-flex p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
                       style={{ backgroundColor: '#f7af00' }}
                     >
                       <IconComponent className="h-5 w-5" style={{ color: '#050504' }} />

@@ -78,7 +78,7 @@ export default function ResultBenefit({ heading, subheading, benefits }: ResultB
                   {/* Icon */}
                   <div className="relative flex-shrink-0">
                     <div className="p-2 sm:p-3 rounded-xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 bg-[#f7af00]">
-                      <IconComponent className="h-5 w-5 sm:h-6 sm:w-6 text-[#241C15]" />
+                      <IconComponent className="h-4 w-4 sm:h-5 sm:w-5 text-[#241C15]" />
                     </div>
 
                     {/* Number Badge */}

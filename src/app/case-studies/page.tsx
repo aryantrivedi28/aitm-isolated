@@ -257,7 +257,7 @@ export default function CaseStudiesPage() {
               Products That
               <span className="relative inline-block ml-3">
                 Scaled
-                <span className="absolute left-0 -bottom-2 w-full h-[6px] bg-[#f7af00]/30 rounded-full" />
+                <span className="absolute left-0 -bottom-2 w-full h-[6px] bg-[#f7af00] rounded-full" />
               </span>
             </motion.h1>
 

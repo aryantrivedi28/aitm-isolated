@@ -118,7 +118,7 @@ export default function DevIntegration({ heading, subheading, items }: DevIntegr
                       className="flex-shrink-0 p-3 rounded-xl mr-4 transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
                       style={{ backgroundColor: '#f7af00' }}
                     >
-                      <IconComponent className="h-5 w-5" style={{ color: '#241C15' }} />
+                      <IconComponent className="h-4 w-4" style={{ color: '#241C15' }} />
                     </div>
 
                     {/* Title and number */}

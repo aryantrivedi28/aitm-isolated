@@ -95,7 +95,7 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
               whileHover={{ scale: 1.03, y: -5 }}
               className="rounded-xl p-6 shadow-xl hover:shadow-xl transition-all duration-500 group"
               style={{
-                backgroundColor: '#f0eadd',
+                backgroundColor: '#fbf5e5',
               }}
             >
               <div className="flex items-start space-x-4">
