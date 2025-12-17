@@ -331,7 +331,7 @@ export default function AboutPage() {
             <div className="grid lg:grid-cols-2 gap-2 items-center">
               <motion.div variants={fadeInLeft} className="">
                 <h2
-                  className="font-medium mb-2"
+                  className="font-normal mb-2"
                   style={{
                     fontSize: "clamp(2.25rem, 5vw, 4rem)",
                     lineHeight: "1.15",
@@ -344,7 +344,7 @@ export default function AboutPage() {
                 </h2>
 
                 <p
-                  className="mb-6 font-semibold"
+                  className="mb-6 font-medium"
                   style={{
                     fontSize: "clamp(1.125rem, 1.75vw, 1.375rem)",
                     maxWidth: "100%",
@@ -449,15 +449,15 @@ export default function AboutPage() {
                     transition={{ duration: 0.3 }}
                   >
                     <div className="absolute inset-0 rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
-                    <div className="relative w-20 h-20 rounded-2xl flex items-center justify-center mx-auto border transition-colors duration-500" style={{
+                    <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border transition-colors duration-500" style={{
                       background: `${COLORS.ACCENT_PRIMARY}20`,
                       borderColor: `${COLORS.ACCENT_PRIMARY}30`
                     }}>
-                      <goal.icon className="w-10 h-10" style={{ color: COLORS.TEXT_PRIMARY }} />
+                      <goal.icon className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
                     </div>
                   </motion.div>
 
-                  <h3 className="text-2xl font-bold mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
+                  <h3 className="text-2xl font-medium mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
                     {goal.title}
                   </h3>
                   <p className="leading-relaxed group-hover:opacity-100 transition-colors duration-500" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
@@ -544,7 +544,7 @@ export default function AboutPage() {
               color: COLORS.TEXT_PRIMARY
             }}>
               <div className="relative z-10">
-                <motion.h3 className="text-3xl lg:text-4xl font-bold mb-6" variants={fadeUp}>
+                <motion.h3 className="text-xl sm:text-3xl lg:text-5xl font-light mb-6" variants={fadeUp}>
                   Ready to Join the Finzie Community?
                 </motion.h3>
                 <motion.p
@@ -558,8 +558,8 @@ export default function AboutPage() {
                   <motion.button
                     className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
                     style={{
-                      background: COLORS.TEXT_PRIMARY,
-                      color: COLORS.ACCENT_PRIMARY
+                      background: COLORS.BACKGROUND,
+                      color: COLORS.TEXT_PRIMARY
                     }}
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
@@ -570,7 +570,7 @@ export default function AboutPage() {
                   <motion.button
                     className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl transition-all duration-300 border-2 cursor-pointer"
                     style={{
-                      background: `${COLORS.TEXT_PRIMARY}20`,
+                      background: `${COLORS.BACKGROUND}`,
                       color: COLORS.TEXT_PRIMARY,
                       borderColor: `${COLORS.TEXT_PRIMARY}30`
                     }}
