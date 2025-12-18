@@ -71,6 +71,12 @@ export default function AboutPage() {
       desc: "Full-stack engineer with a focus on scalable architecture and rapid MVP delivery.",
       img: "/kunal.png",
     },
+    {
+      name: "Gauri Dayal",
+      role: "Marketing Ops",
+      desc: "Handles client coordination and freelance hiring, from requirements to onboarding and delivery.",
+      img: "/pic.jpeg",
+    },
   ]
 
   return (
@@ -126,9 +132,6 @@ export default function AboutPage() {
       <div className="about-section flex flex-col overflow-hidden pt-20 sm:pt-28 md:pt-32" style={{ background: COLORS.BACKGROUND, color: COLORS.TEXT_PRIMARY }}>
         {/* Hero Section */}
         <section className="relative min-h-[80vh] flex items-center">
-          {/* Background Gradient */}
-          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom right, ${COLORS.BACKGROUND})` }} />
-
           <div className="relative w-full">
             <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-16 sm:py-20 lg:py-24">
               <motion.div
@@ -275,15 +278,11 @@ export default function AboutPage() {
                 <motion.div
                   key={idx}
                   variants={scaleIn}
-                  className="group relative backdrop-blur-sm rounded-3xl p-8 transition-all duration-500"
+                  className="group relative backdrop-blur-sm rounded-3xl p-8 transition-all duration-500 border-2 hover:border-[#f7af00]"
                   style={{
                     background: COLORS.BACKGROUND_SECONDARY,
-                    border: `1px solid ${COLORS.TEXT_SECONDARY}0A`
                   }}
-                  whileHover={{ y: -10, scale: 1.02 }}
                 >
-                  <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to bottom right, ${COLORS.ACCENT_PRIMARY}10, transparent)` }} />
-
                   <div className="relative text-center">
                     <motion.div
                       className="relative mb-6"
@@ -296,7 +295,7 @@ export default function AboutPage() {
                         alt={member.name}
                         className="relative w-32 h-32 rounded-full mx-auto object-cover border-4 transition-colors duration-500"
                         style={{
-                          borderColor: `${COLORS.ACCENT_PRIMARY}4D`
+                          borderColor: `${COLORS.ACCENT_PRIMARY}`
                         }}
                       />
                     </motion.div>
