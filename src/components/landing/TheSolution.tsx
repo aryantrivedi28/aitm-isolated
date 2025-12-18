@@ -87,12 +87,6 @@ export default function TheSolution({ heading, subheading, solutions }: TheSolut
               initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{
-                duration: 0.6,
-                delay: index * 0.1,
-                ease: "easeOut"
-              }}
-              whileHover={{ scale: 1.03, y: -5 }}
               className="rounded-xl p-6 shadow-xl hover:shadow-xl transition-all duration-500 group"
               style={{
                 backgroundColor: '#fbf5e5',

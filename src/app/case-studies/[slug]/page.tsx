@@ -159,7 +159,7 @@ export default function CaseStudyPage({
     <div className="min-h-screen bg-[#faf4e5] text-[#31302f] overflow-hidden">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center">
-        <div className="relative max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="relative max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div className="space-y-8" initial="initial" animate="animate" variants={staggerContainer}>
               <motion.div className="space-y-6" variants={fadeInLeft}>
@@ -217,17 +217,16 @@ export default function CaseStudyPage({
                 transition={{ duration: 0.8, ease: "easeOut" }}
               >
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-tr from-[#f0eadd] to-[#faf4e5] rounded-3xl transform rotate-6 opacity-80"
-                  animate={{ rotate: [6, 8, 6] }}
+                  className="absolute inset-0 rounded-3xl transform rotate-6 opacity-80"
                   transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                 />
-                <motion.div whileHover={{ scale: 1.02, rotate: 1 }} transition={{ duration: 0.3 }}>
+                <motion.div>
                   <Image
                     src={study.mainImage.asset.url || "/placeholder.svg"}
                     alt={study.title}
                     width={700}
                     height={500}
-                    className="relative rounded-3xl shadow-2xl object-cover w-full h-[500px] border-4 border-white"
+                    className="relative rounded-3xl object-cover w-full h-[650px]"
                   />
                 </motion.div>
               </motion.div>
@@ -300,13 +299,13 @@ export default function CaseStudyPage({
             <div className="relative bg-[#f0eadd] rounded-3xl p-8 lg:p-16 border border-[#f0eadd] shadow-lg">
               <motion.div className="flex items-center gap-4 mb-8" variants={fadeInLeft}>
                 <motion.div
-                  className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center border border-red-200"
+                  className="w-16 h-16 bg-[#faf4e5] rounded-2xl flex items-center justify-center border border-[#f0eadd]"
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ duration: 0.3 }}
                 >
                   <Target className="w-8 h-8 text-black" />
                 </motion.div>
-                <h3 className="text-3xl lg:text-4xl font-bold text-[#050504]">The Challenge</h3>
+                <h3 className="text-3xl lg:text-4xl font-medium text-[#050504]">The Challenge</h3>
               </motion.div>
               <motion.div className="prose prose-lg prose-gray max-w-none" variants={fadeInUp}>
                 <PortableText value={study.challenge} />
@@ -327,13 +326,13 @@ export default function CaseStudyPage({
             <div className="relative bg-[#f0eadd] rounded-3xl p-8 lg:p-16 border border-[#f7af00]/20">
               <motion.div className="flex items-center gap-4 mb-8" variants={fadeInLeft}>
                 <motion.div
-                  className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center border border-[#f7af00]/30"
+                  className="w-16 h-16 bg-[#faf4e5] rounded-2xl flex items-center justify-center border border-[#f7af00]/30"
                   whileHover={{ scale: 1.1, rotate: -5 }}
                   transition={{ duration: 0.3 }}
                 >
                   <Lightbulb className="w-8 h-8 text-[#f7af00]" />
                 </motion.div>
-                <h3 className="text-3xl lg:text-4xl font-bold text-[#050504]">The Finzie Advantage</h3>
+                <h3 className="text-3xl lg:text-4xl font-medium text-[#050504]">The Finzie Advantage</h3>
               </motion.div>
               <motion.div className="prose prose-lg prose-gray max-w-none" variants={fadeInUp}>
                 <PortableText value={study.finzieAdvantage} />
@@ -351,7 +350,7 @@ export default function CaseStudyPage({
             variants={staggerContainer}
             className="relative"
           >
-            <motion.h3 className="text-3xl lg:text-4xl font-bold text-[#050504] mb-12 text-center" variants={fadeInUp}>
+            <motion.h3 className="text-3xl lg:text-4xl font-medium text-[#050504] mb-12 text-center" variants={fadeInUp}>
               Key Results & Impact
             </motion.h3>
             <div className="grid gap-6 md:grid-cols-2">
@@ -394,7 +393,7 @@ export default function CaseStudyPage({
             >
               <div className="flex items-center gap-3 mb-8">
                 <motion.div
-                  className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center border border-purple-200"
+                  className="w-12 h-12 bg-[#f7af00] rounded-xl flex items-center justify-center border border-[#f7af00]/30"
                   whileHover={{ scale: 1.1 }}
                 >
                   <User className="w-6 h-6 text-black" />
@@ -441,7 +440,7 @@ export default function CaseStudyPage({
                 >
                   <Quote className="w-6 h-6 text-[#f7af00]" />
                 </motion.div>
-                <h3 className="text-2xl font-bold text-[#050504]">Client Testimonial</h3>
+                <h3 className="text-2xl font-medium text-[#050504]">Client Testimonial</h3>
               </div>
 
               <blockquote className="space-y-6">
@@ -460,7 +459,7 @@ export default function CaseStudyPage({
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="text-white font-bold text-lg">
+                      <span className="text-white font-medium text-lg">
                         {study?.testimonial?.authorName?.charAt(0) || ""}
                       </span>
                     )}
@@ -500,7 +499,7 @@ export default function CaseStudyPage({
                     <motion.div
                       whileHover={{ scale: 1.05, x: 5 }}
                       whileTap={{ scale: 0.95 }}
-                      className="font-medium px-10 py-5 bg-[#faf4e5] text-[#050504] rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-3"
+                      className="font-medium px-10 py-5 bg-[#f7af00] text-[#050504] rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center gap-3"
                     >
                       {study.callToActionButton?.text || "Get Started"}
                       <motion.div

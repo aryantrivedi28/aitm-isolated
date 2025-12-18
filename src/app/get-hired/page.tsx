@@ -113,7 +113,7 @@ export default function GetHiredPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#faf4e5" }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
         {/* Enhanced Hero Section */}
         <section className="text-center mb-12 relative overflow-hidden">
           <div className="relative z-10">
@@ -139,7 +139,7 @@ export default function GetHiredPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-4"
+              className="text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight mb-4"
               style={{ color: "#050504" }}
             >
               Available Opportunities

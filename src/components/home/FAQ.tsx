@@ -73,8 +73,8 @@ const FAQ = () => {
             return (
               <div
                 key={index}
-                className={`relative bg-[#f0eadd] rounded-2xl border border-[#FFE01B]/30 overflow-hidden transition-all duration-300 cursor-pointer ${
-                  isOpen ? "shadow-2xl shadow-[#FFE01B]/40" : "hover:shadow-lg hover:shadow-[#FFE01B]/20 hover:-translate-y-1"
+                className={`relative bg-[#f0eadd] rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer ${
+                  isOpen ? " shadow-[#f7af00]/40" : "border hover:border-[#f7af00] hover:-translate-y-1"
                 }`}
                 onClick={() => toggleItem(index)}
               >

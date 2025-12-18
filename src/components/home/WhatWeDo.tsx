@@ -102,7 +102,7 @@ const WhatWeDo = () => {
                   className={`absolute inset-0 ${service.bgGradient} rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 scale-105`}
                 />
 
-                <div className="relative backdrop-blur-xl bg-[#fbf5e5] rounded-3xl p-6 sm:p-8 h-full shadow-xl transition-all duration-500 border-x-2 group-hover:border-[#f7af00] overflow-hidden">
+                <div className="relative backdrop-blur-xl bg-[#f0eadd] rounded-3xl p-6 sm:p-8 h-full transition-all duration-500 border-2 group-hover:border-[#f7af00] overflow-hidden">
                   {/* Icon */}
                   <div className="relative mb-6">
                     <div className={`inline-flex items-center justify-center w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r ${service.gradient} rounded-2xl shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
