@@ -115,7 +115,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-medium mb-2 md:mb-4 leading-tight"
+              className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-medium mb-2 md:mb-4 leading-tight mt-20"
               style={{ color: '#241C15' }}
             >
               {heading}
@@ -176,10 +176,10 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-[#f0eadd] rounded-2xl shadow-2xl p-6 md:p-8 lg:p-10"
+            className="bg-[#f0eadd] rounded-2xl p-6 md:p-8 lg:p-10"
           >
             <div className="mb-8">
-              <h3 className="text-2xl md:text-3xl font-bold text-[#050504] mb-3">
+              <h3 className="text-2xl md:text-3xl font-medium text-[#050504] mb-3">
                 Get Your Free Consultation
               </h3>
               <p className="text-[#31302f]">
@@ -208,12 +208,9 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-4">
                 {/* Name */}
-                <div className="md:col-span-2">
-                  <label htmlFor="name" className="block text-sm font-semibold text-[#31302f] mb-2">
-                    Name <span className="text-red-500">*</span>
-                  </label>
+                <div className="">
                   <input
                     type="text"
                     id="name"
@@ -222,7 +219,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     className={`w-full px-4 py-3 rounded-lg border-2 ${
                       errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
                     } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                    placeholder="Enter your full name"
+                    placeholder="full name"
                   />
                   {errors.name && (
                     <p className="mt-2 text-sm text-red-600 flex items-center">
@@ -234,9 +231,6 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
 
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-[#31302f] mb-2">
-                    Email <span className="text-red-500">*</span>
-                  </label>
                   <input
                     type="email"
                     id="email"
@@ -245,7 +239,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     className={`w-full px-4 py-3 rounded-lg border-2 ${
                       errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
                     } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                    placeholder="Enter your email address"
+                    placeholder="email"
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-600 flex items-center">
@@ -257,9 +251,6 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
 
                 {/* Phone */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-semibold text-[#31302f] mb-2">
-                    Phone <span className="text-red-500">*</span>
-                  </label>
                   <input
                     type="tel"
                     id="phone"
@@ -268,7 +259,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     className={`w-full px-4 py-3 rounded-lg border-2 ${
                       errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
                     } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                    placeholder="Enter your phone number"
+                    placeholder="phone number"
                   />
                   {errors.phone && (
                     <p className="mt-2 text-sm text-red-600 flex items-center">
@@ -280,39 +271,30 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
 
                 {/* Business Name */}
                 <div>
-                  <label htmlFor="business" className="block text-sm font-semibold text-[#31302f] mb-2">
-                    Your Business Name
-                  </label>
                   <input
                     type="text"
                     id="business"
                     value={formData.business}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50"
-                    placeholder="Enter your business name"
+                    placeholder="your business name"
                   />
                 </div>
 
                 {/* Website */}
                 <div>
-                  <label htmlFor="website" className="block text-sm font-semibold text-[#31302f] mb-2">
-                    Web URL
-                  </label>
                   <input
                     type="url"
                     id="website"
                     value={formData.website}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50"
-                    placeholder="https://example.com"
+                    placeholder="Web URL"
                   />
                 </div>
 
                 {/* Interest */}
                 <div className="md:col-span-2">
-                  <label htmlFor="interest" className="block text-sm font-semibold text-[#31302f] mb-2">
-                    Interested in <span className="text-red-500">*</span>
-                  </label>
                   <select
                     id="interest"
                     value={formData.interest}
@@ -322,14 +304,9 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50 appearance-none`}
                   >
                     <option value="">Select an option</option>
-                    <option value="Web Development">Web Development</option>
-                    <option value="Mobile App">Mobile App</option>
-                    <option value="Digital Marketing">Digital Marketing</option>
-                    <option value="UI/UX Design">UI/UX Design</option>
-                    <option value="Consultation">Consultation</option>
-                    <option value="E-commerce">E-commerce Solution</option>
-                    <option value="SEO Services">SEO Services</option>
-                    <option value="Other">Other</option>
+                    <option value="Web Development">GHL VA</option>
+                    <option value="Mobile App">One Time Project</option>
+                    <option value="Digital Marketing">On Going Support</option>
                   </select>
                   {errors.interest && (
                     <p className="mt-2 text-sm text-red-600 flex items-center">
