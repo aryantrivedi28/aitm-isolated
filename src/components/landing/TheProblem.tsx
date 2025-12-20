@@ -216,10 +216,10 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     id="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border-2 ${
-                      errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                    placeholder="full name"
+                    className={`w-full px-4 py-3 rounded-sm border-2 ${
+                      errors.name ? 'border-red-300 bg-[#fbf5e5]' : 'border-gray-200'
+                    } transition-all duration-200 bg-[#fbf5e5]`}
+                    placeholder="Name*"
                   />
                   {errors.name && (
                     <p className="mt-2 text-sm text-red-600 flex items-center">
@@ -236,10 +236,10 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     id="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border-2 ${
-                      errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                    placeholder="email"
+                    className={`w-full px-4 py-3 rounded-sm border-2 ${
+                      errors.email ? 'border-red-300 bg-[#fbf5e5]' : 'border-gray-200'
+                    } transition-all duration-200 bg-[#fbf5e5]`}
+                    placeholder="Email*"
                   />
                   {errors.email && (
                     <p className="mt-2 text-sm text-red-600 flex items-center">
@@ -256,10 +256,10 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     id="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border-2 ${
-                      errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                    placeholder="phone number"
+                    className={`w-full px-4 py-3 rounded-sm border-2 ${
+                      errors.phone ? 'border-red-300 bg-[#fbf5e5]' : 'border-gray-200'
+                    } transition-all duration-200 bg-[#fbf5e5]`}
+                    placeholder="Phone*"
                   />
                   {errors.phone && (
                     <p className="mt-2 text-sm text-red-600 flex items-center">
@@ -276,8 +276,8 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     id="business"
                     value={formData.business}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50"
-                    placeholder="your business name"
+                    className="w-full px-4 py-3 rounded-sm border-2 border-gray-200 transition-all duration-200 bg-[#fbf5e5]"
+                    placeholder="Your Business Name"
                   />
                 </div>
 
@@ -288,7 +288,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     id="website"
                     value={formData.website}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50"
+                    className="w-full px-4 py-3 rounded-sm border-2 border-gray-200 focus:ring-2 transition-all duration-200 bg-[#fbf5e5]"
                     placeholder="Web URL"
                   />
                 </div>
@@ -299,11 +299,11 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
                     id="interest"
                     value={formData.interest}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border-2 ${
-                      errors.interest ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                    } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50 appearance-none`}
+                    className={`w-full px-4 py-3 rounded-sm border-2 ${
+                      errors.interest ? 'border-red-300 bg-[#fbf5e5]' : 'border-gray-200'
+                    } transition-all duration-200 bg-[#fbf5e5] appearance-none`}
                   >
-                    <option value="">Select an option</option>
+                    <option value="">Interested In</option>
                     <option value="Web Development">GHL VA</option>
                     <option value="Mobile App">One Time Project</option>
                     <option value="Digital Marketing">On Going Support</option>
