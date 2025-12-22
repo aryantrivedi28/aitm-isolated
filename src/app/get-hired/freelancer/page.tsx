@@ -96,21 +96,21 @@ export default function FreelancerPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#faf4e5' }}>
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-xl">
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center p-4 rounded-full mb-4" style={{ backgroundColor: '#f7af00' }}>
             <Briefcase className="h-10 w-10" style={{ color: '#050504' }} />
           </div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: '#050504' }}>
-            Freelancer Portal
+          <h1 className="text-4xl font-medium mb-2" style={{ color: '#050504' }}>
+            Freelancers
           </h1>
-          <p className="text-sm" style={{ color: '#31302f' }}>
-            Access your freelance opportunities
+          <p className="text-xl" style={{ color: '#31302f' }}>
+            Access your Dashboard
           </p>
         </div>
 
-        <Card className="border shadow-sm rounded-xl" style={{ backgroundColor: '#faf4e5', borderColor: '#241C15' }}>
+        <Card className="border shadow-sm rounded-lg" style={{ backgroundColor: '#f0eadd' }}>
           <CardHeader className="space-y-3 border-b pb-6" style={{ borderBottomColor: '#f7af00' }}>
             <div className="flex items-center justify-center space-x-2">
               <div className="p-2 rounded-lg" style={{ backgroundColor: '#f0eadd' }}>
@@ -120,8 +120,8 @@ export default function FreelancerPage() {
                   <Lock className="h-5 w-5" style={{ color: '#f7af00' }} />
                 )}
               </div>
-              <CardTitle className="text-2xl font-bold" style={{ color: '#050504' }}>
-                {step === "email" ? "Sign In" : "Verify OTP"}
+              <CardTitle className="text-2xl font-medium" style={{ color: '#050504' }}>
+                {step === "email" ? "Sign Up" : "Verify OTP"}
               </CardTitle>
             </div>
             <CardDescription className="text-center text-base" style={{ color: '#31302f' }}>
@@ -275,9 +275,9 @@ export default function FreelancerPage() {
         {/* Already Registered Link */}
         {step === "email" && (
           <div className="mt-6 text-center">
-            <div className="inline-flex items-center space-x-2 p-4 rounded-lg border" style={{ backgroundColor: '#faf4e5', borderColor: '#f7af00' }}>
+            <div className="inline-flex items-center space-x-2 p-4 rounded-lg border" style={{ backgroundColor: '#f0eadd', borderColor: '#f7af00' }}>
               <UserPlus className="h-5 w-5" style={{ color: '#f7af00' }} />
-              <p className="text-sm" style={{ color: '#31302f' }}>
+              <p className="text-lg" style={{ color: '#31302f' }}>
                 <span>Already have an account? </span>
                 <span className="font-medium">Just enter your email above to login</span>
               </p>
