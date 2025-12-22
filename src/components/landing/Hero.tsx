@@ -41,7 +41,7 @@ export default function Hero({
   const [isMobile, setIsMobile] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
   const [showForm, setShowForm] = useState(false)
-  
+
   // Form state
   const [formData, setFormData] = useState({
     name: '',
@@ -51,7 +51,7 @@ export default function Hero({
     website: '',
     interest: ''
   })
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<null | 'success' | 'error'>(null)
@@ -88,7 +88,7 @@ export default function Hero({
     } else {
       document.body.style.overflow = 'unset'
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset'
     }
@@ -98,7 +98,7 @@ export default function Hero({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target
     setFormData(prev => ({ ...prev, [id]: value }))
-    
+
     // Clear error when user starts typing
     if (errors[id as keyof typeof errors]) {
       setErrors(prev => ({ ...prev, [id]: '' }))
@@ -107,31 +107,31 @@ export default function Hero({
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.name.trim()) newErrors.name = 'Name is required'
     if (!formData.email.trim()) newErrors.email = 'Email is required'
     else if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = 'Email is invalid'
-    
+
     if (!formData.phone.trim()) newErrors.phone = 'Phone is required'
     if (!formData.interest) newErrors.interest = 'Please select an interest'
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) {
       setSubmitStatus('error')
       setSubmitMessage('Please fix the errors in the form')
       setTimeout(() => setSubmitStatus(null), 5000)
       return
     }
-    
+
     setIsSubmitting(true)
     setSubmitStatus(null)
-    
+
     try {
       const response = await fetch('/api/submit', {
         method: 'POST',
@@ -140,13 +140,13 @@ export default function Hero({
         },
         body: JSON.stringify(formData),
       })
-      
+
       const result = await response.json()
-      
+
       if (response.ok) {
         setSubmitStatus('success')
         setSubmitMessage('Form submitted successfully! We\'ll contact you within 24 hours.')
-        
+
         // Reset form after delay
         setTimeout(() => {
           setFormData({
@@ -174,12 +174,12 @@ export default function Hero({
   // Check if CTA label suggests it should open form
   const shouldOpenForm = (label: string) => {
     const formTriggers = [
-      'contact', 'contact us', 'get in touch', 'get started', 
+      'contact', 'contact us', 'get in touch', 'get started',
       'free consultation', 'book a call', 'schedule a demo',
       'request a quote', 'get free demo', 'start project'
     ];
-    
-    return formTriggers.some(trigger => 
+
+    return formTriggers.some(trigger =>
       label.toLowerCase().includes(trigger.toLowerCase())
     );
   }
@@ -282,7 +282,7 @@ export default function Hero({
                 {/* Feature Points */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
                   {['No Setup Fees', '24/7 Support', '30-Day Guarantee', 'Easy Migration'].map((feature, index) => (
-                    <div key={feature} className="flex items-center gap-2 text-[#241C15]/70 group animate-fadeIn" style={{animationDelay: `${index * 0.1}s`}}>
+                    <div key={feature} className="flex items-center gap-2 text-[#241C15]/70 group animate-fadeIn" style={{ animationDelay: `${index * 0.1}s` }}>
                       <div className="w-5 h-5 bg-[#f7af00] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                         <div className="w-1.5 h-1.5 bg-[#241C15] rounded-full"></div>
                       </div>
@@ -328,7 +328,7 @@ export default function Hero({
                         </button>
                       );
                     })} */}
-                    
+
                     {/* Add a simple button to always open the form (for testing) */}
                     <button
                       onClick={() => setShowForm(true)}
@@ -344,21 +344,21 @@ export default function Hero({
 
               {/* Right Column - Enhanced Screenshots */}
               <div className={`relative ${isVisible ? 'animate-slideInRight' : ''}`}>
-                
+
                 {/* Main screenshot container with floating effect */}
                 <div className="relative">
                   {/* Screenshots Grid */}
                   {screenshots?.length > 0 && (
                     <div className="relative space-y-6">
                       {screenshots.map((screenshot, index) => (
-                        <div 
-                          key={index} 
+                        <div
+                          key={index}
                           className="group relative w-full transform hover:scale-[1.02] transition-all duration-500"
                           style={{ animationDelay: `${index * 0.3}s` }}
                         >
                           {/* Card with enhanced styling */}
                           <div className="relative backdrop-blur-md rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
-                            
+
                             {/* Image container */}
                             <div className="aspect-video relative overflow-hidden">
                               {screenshot.image && (
@@ -394,13 +394,13 @@ export default function Hero({
               className="fixed inset-0 z-50 bg-black/40 backdrop-blur-md"
               onClick={() => setShowForm(false)}
             />
-            
+
             {/* Form Modal */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ 
+              transition={{
                 type: "spring",
                 damping: 25,
                 stiffness: 300,
@@ -408,7 +408,7 @@ export default function Hero({
               }}
               className="fixed inset-0 z-50 flex items-center justify-center p-4"
             >
-              <div 
+              <div
                 className="relative w-full max-w-7xl bg-[#f0eadd] rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -439,11 +439,10 @@ export default function Hero({
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className={`mb-6 p-4 rounded-lg flex items-start gap-3 ${
-                          submitStatus === 'success' 
-                            ? 'bg-green-50 border border-green-200 text-green-800' 
+                        className={`mb-6 p-4 rounded-lg flex items-start gap-3 ${submitStatus === 'success'
+                            ? 'bg-green-50 border border-green-200 text-green-800'
                             : 'bg-red-50 border border-red-200 text-red-800'
-                        }`}
+                          }`}
                       >
                         {submitStatus === 'success' ? (
                           <CheckCircle2 className="w-5 h-5 mt-0.5 flex-shrink-0" />
@@ -466,9 +465,8 @@ export default function Hero({
                             id="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border-2 ${
-                              errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                            } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
+                            className={`w-full px-4 py-3 rounded-lg border-2 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                              } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
                             placeholder="Enter your full name"
                           />
                           {errors.name && (
@@ -489,9 +487,8 @@ export default function Hero({
                             id="email"
                             value={formData.email}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border-2 ${
-                              errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                            } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
+                            className={`w-full px-4 py-3 rounded-lg border-2 ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                              } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
                             placeholder="Enter your email address"
                           />
                           {errors.email && (
@@ -512,9 +509,8 @@ export default function Hero({
                             id="phone"
                             value={formData.phone}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border-2 ${
-                              errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                            } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
+                            className={`w-full px-4 py-3 rounded-lg border-2 ${errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                              } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
                             placeholder="Enter your phone number"
                           />
                           {errors.phone && (
@@ -564,19 +560,13 @@ export default function Hero({
                             id="interest"
                             value={formData.interest}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border-2 ${
-                              errors.interest ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                            } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50 appearance-none`}
+                            className={`w-full px-4 py-3 rounded-lg border-2 ${errors.interest ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                              } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50 appearance-none`}
                           >
                             <option value="">Select an option</option>
-                            <option value="Web Development">Web Development</option>
-                            <option value="Mobile App">Mobile App</option>
-                            <option value="Digital Marketing">Digital Marketing</option>
-                            <option value="UI/UX Design">UI/UX Design</option>
-                            <option value="Consultation">Consultation</option>
-                            <option value="E-commerce">E-commerce Solution</option>
-                            <option value="SEO Services">SEO Services</option>
-                            <option value="Other">Other</option>
+                            <option value="Web Development">GHL VA</option>
+                            <option value="Mobile App">One Time Project</option>
+                            <option value="Digital Marketing">On Going Support</option>
                           </select>
                           {errors.interest && (
                             <p className="mt-2 text-sm text-red-600 flex items-center">

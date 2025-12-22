@@ -8,7 +8,13 @@ const nextConfig: NextConfig = {
         hostname: "cdn.sanity.io",
       },
     ],
-    unoptimized: true, // 👈 THIS FIXES THE ERROR
+    unoptimized: true,
+  },
+
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "50mb", // ✅ REQUIRED for PDF uploads
+    },
   },
 };
 
