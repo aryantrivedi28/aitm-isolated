@@ -293,7 +293,7 @@ export default function AboutPage() {
                       <img
                         src={member.img}
                         alt={member.name}
-                        className="relative w-32 h-32 rounded-full mx-auto object-cover border-4 transition-colors duration-500"
+                        className="relative w-32 h-32 rounded-full mx-auto object-cover border-2 transition-colors duration-500"
                         style={{
                           borderColor: `${COLORS.ACCENT_PRIMARY}`
                         }}
@@ -435,23 +435,17 @@ export default function AboutPage() {
                   variants={scaleIn}
                   className="group relative backdrop-blur-sm rounded-3xl p-8 transition-all duration-500 text-center"
                   style={{
-                    background: COLORS.BACKGROUND,
+                    background: COLORS.BACKGROUND_SECONDARY,
                     border: `1px solid ${COLORS.TEXT_SECONDARY}0A`
                   }}
                   whileHover={{ y: -10, scale: 1.02 }}
                 >
-                  <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `linear-gradient(to bottom right, ${COLORS.ACCENT_PRIMARY}10, transparent)` }} />
-
                   <motion.div
                     className="relative mb-6"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="absolute inset-0 rounded-2xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
-                    <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border transition-colors duration-500" style={{
-                      background: `${COLORS.ACCENT_PRIMARY}20`,
-                      borderColor: `${COLORS.ACCENT_PRIMARY}30`
-                    }}>
+                    <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border transition-colors duration-500">
                       <goal.icon className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
                     </div>
                   </motion.div>
