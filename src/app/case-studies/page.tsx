@@ -424,7 +424,7 @@ export default function CaseStudiesPage() {
       </section>
 
       {/* SEARCH & FILTER - UPDATED WITH 3 SECTIONS */}
-      <section className="max-w-6xl mx-auto px-4 mb-20">
+      <section className="max-w-7xl mx-auto px-4 mb-20">
         <div className="bg-[#f0eadd] rounded-2xl p-6 border border-[#050504]/10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* INDUSTRY FILTER */}
