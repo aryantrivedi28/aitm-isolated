@@ -226,18 +226,17 @@ export default function GetHiredPage() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-2xl p-6 border shadow-lg hover:shadow-xl transition-all duration-300"
             style={{ 
-              backgroundColor: "#faf4e5", 
-              borderColor: "#241C15",
+              backgroundColor: "#f0eadd", 
               boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
             }}
           >
             <div className="flex items-center">
-              <div className="p-3 rounded-xl" style={{ backgroundColor: "#f7af00" }}>
+              <div className="p-3 rounded-xl" style={{ backgroundColor: "#f0eadd" }}>
                 <Users className="h-6 w-6" style={{ color: "#050504" }} />
               </div>
               <div className="ml-4">
-                <h3 className="text-sm font-medium" style={{ color: "#31302f" }}>Active Opportunities</h3>
-                <p className="text-2xl font-bold" style={{ color: "#050504" }}>{statusCounts.active}</p>
+                <h3 className="text-lg font-medium" style={{ color: "#31302f" }}>Active Opportunities</h3>
+                <p className="text-xl font-bold" style={{ color: "#050504" }}>{statusCounts.active}</p>
               </div>
             </div>
           </motion.div>
@@ -248,18 +247,17 @@ export default function GetHiredPage() {
             transition={{ delay: 0.1 }}
             className="rounded-2xl p-6 border shadow-lg hover:shadow-xl transition-all duration-300"
             style={{ 
-              backgroundColor: "#faf4e5", 
-              borderColor: "#241C15",
+              backgroundColor: "#f0eadd", 
               boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
             }}
           >
             <div className="flex items-center">
-              <div className="p-3 rounded-xl" style={{ backgroundColor: "#f7af00" }}>
+              <div className="p-3 rounded-xl" style={{ backgroundColor: "#f0eadd" }}>
                 <ClipboardList className="h-6 w-6" style={{ color: "#050504" }} />
               </div>
               <div className="ml-4">
-                <h3 className="text-sm font-medium" style={{ color: "#31302f" }}>Total Forms</h3>
-                <p className="text-2xl font-bold" style={{ color: "#050504" }}>{statusCounts.total}</p>
+                <h3 className="text-lg font-medium" style={{ color: "#31302f" }}>Total Forms</h3>
+                <p className="text-xl font-bold" style={{ color: "#050504" }}>{statusCounts.total}</p>
               </div>
             </div>
           </motion.div>
@@ -270,8 +268,7 @@ export default function GetHiredPage() {
           <div 
             className="rounded-2xl p-6 border shadow-lg"
             style={{ 
-              backgroundColor: "#faf4e5", 
-              borderColor: "#241C15",
+              backgroundColor: "#f0eadd", 
               boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
             }}
           >
@@ -374,7 +371,7 @@ export default function GetHiredPage() {
                   transition={{ delay: index * 0.1 }}
                   className="rounded-2xl p-6 border shadow-lg"
                   style={{ 
-                    backgroundColor: "#faf4e5", 
+                    backgroundColor: "#f0eadd", 
                     borderColor: "#241C15"
                   }}
                 >
@@ -501,7 +498,7 @@ export default function GetHiredPage() {
             transition={{ duration: 0.4 }}
             className="hidden md:block overflow-hidden rounded-2xl border shadow-lg"
             style={{ 
-              backgroundColor: "#faf4e5", 
+              backgroundColor: "#f0eadd", 
               borderColor: "#241C15"
             }}
           >
