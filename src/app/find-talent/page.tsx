@@ -103,29 +103,16 @@ export default function FindTalentPage() {
         }}
       />
 
-      {/* Animated background */}
-      <div className="absolute inset-0 -z-10">
-        <motion.div
-          className="absolute w-72 h-72 bg-[#FFE01B] rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-          animate={{ x: [0, 100, -100, 0], y: [0, 50, -50, 0] }}
-          transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute top-40 left-20 w-96 h-96 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10"
-          animate={{ x: [0, -80, 80, 0], y: [0, -50, 50, 0] }}
-          transition={{ duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-        />
-      </div>
 
       {/* Hero */}
       <motion.div
-        className="max-w-3xl mx-auto text-center pt-20 pb-12"
+        className="max-w-4xl mx-auto text-center pt-20 pb-12"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
         <motion.h1
-          className="text-5xl font-bold mb-4 flex items-center justify-center gap-3"
+          className="text-5xl font-medium mb-4 flex items-center justify-center gap-3"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
@@ -145,13 +132,13 @@ export default function FindTalentPage() {
 
       {/* Form Card */}
       <motion.div
-        className="max-w-2xl mx-auto bg-gray-50 text-[#241C15] rounded-2xl shadow-2xl p-8"
+        className="max-w-3xl mx-auto bg-[#f0eadd] text-[#241C15] rounded-2xl p-8"
         initial={{ opacity: 0, y: 200 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.6 }}
       >
         <motion.h2
-          className="text-2xl font-semibold mb-6 flex items-center gap-2"
+          className="text-2xl font-medium mb-6 flex items-center gap-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
@@ -166,7 +153,7 @@ export default function FindTalentPage() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.2 }}
         >
-          <label className="block text-gray-700 mb-2">Work Email</label>
+          <label className="block text-gray-700 mb-2">Working Email</label>
           <div className="flex gap-2 items-center">
             <div className="relative flex-1">
               <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />

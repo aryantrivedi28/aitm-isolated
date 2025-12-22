@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import GoogleAnalytics from "../components/GoogleAnalytic";
-import PageTransition from "../components/PageTransition";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
@@ -29,9 +28,7 @@ export default function RootLayout({
         <Header />
 
         {/* ✅ Page transition wrapper */}
-        {/* <PageTransition> */}
           <main className="flex-grow">{children}</main>
-        {/* </PageTransition> */}
 
         {/* ✅ Toast notifications */}
         <Toaster />
