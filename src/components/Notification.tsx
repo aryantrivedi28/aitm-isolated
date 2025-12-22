@@ -1,9 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaTimes } from 'react-icons/fa'
+import {
+  CheckCircle,
+  AlertCircle,
+  Info,
+  X
+} from 'lucide-react'
 
-export default function Notification({ message, type = 'info', onClose, duration = 5000 }) {
+
+export default function Notification({ message, type = 'info', onClose, duration = 5000 }: { message: string; type?: 'success' | 'error' | 'info'; onClose?: () => void; duration?: number }) {
   const [isVisible, setIsVisible] = useState(true)
   
   useEffect(() => {
@@ -21,26 +27,26 @@ export default function Notification({ message, type = 'info', onClose, duration
   
   const config = {
     success: {
-      icon: FaCheckCircle,
+      icon: CheckCircle,
       bgColor: 'bg-green-500',
       textColor: 'text-white',
       borderColor: 'border-green-600'
     },
     error: {
-      icon: FaExclamationCircle,
+      icon: AlertCircle,
       bgColor: 'bg-red-500',
       textColor: 'text-white',
       borderColor: 'border-red-600'
     },
     info: {
-      icon: FaInfoCircle,
+      icon: Info,
       bgColor: 'bg-[#f7af00]',
       textColor: 'text-[#050504]',
       borderColor: 'border-[#e09e00]'
     }
   }
   
-  const { icon: Icon, bgColor, textColor, borderColor } = config[type] || config.info
+  const { icon: Icon, bgColor, textColor, borderColor } = config[type as keyof typeof config] || config.info
   
   return (
     <div className="fixed top-4 right-4 z-50 animate-fade-in">
@@ -62,7 +68,7 @@ export default function Notification({ message, type = 'info', onClose, duration
             className="flex-shrink-0 ml-2 opacity-70 hover:opacity-100 transition-opacity"
             aria-label="Close notification"
           >
-            <FaTimes className="w-5 h-5" />
+            <X className="w-5 h-5" />
           </button>
         </div>
       </div>
