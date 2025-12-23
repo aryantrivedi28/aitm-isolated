@@ -335,7 +335,7 @@ export default function Hero({
                       className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold transition-all duration-300 bg-[#f7af00] text-[#241C15] shadow-2xl hover:shadow-3xl hover:scale-[1.02] animate-fadeIn mt-4 sm:mt-0"
                       style={{ animationDelay: '0.4s' }}
                     >
-                      <span>Get Start Now</span>
+                      <span>Join Us</span>
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </button>
                   </div>

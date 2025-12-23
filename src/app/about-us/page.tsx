@@ -489,7 +489,7 @@ export default function AboutPage() {
                 <div className="relative animate-missionRotate">
                   <div className="absolute inset-0 rounded-3xl blur-2xl opacity-20" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
                   <img
-                    src="/mission2.png"
+                    src="/mission.png"
                     alt="Our Mission"
                     className="relative w-80 h-80 object-contain mx-auto"
                   />

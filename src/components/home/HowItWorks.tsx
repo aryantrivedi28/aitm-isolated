@@ -11,9 +11,9 @@ const HowItWorks = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
 
   const steps = [
-    { image: "/Share.png", title: "Tell us your goal", description: "SEO or content or Shopify or automation or design. We understand your scope in a short call.", step: "01" },
-    { image: "/match.png", title: "We assemble your agile team", description: "A mix of fractional specialists and in-house experts based on your exact needs.", step: "02" },
-    { image: "/manage.png", title: "Begin with a small starter project", description: "Low risk. Clear scope. Quick delivery. If you like the output, we scale into larger monthly work.", step: "03" },
+    { image: "/goal.png", title: "Tell us your goal", description: "SEO or content or Shopify or automation or design. We understand your scope in a short call.", step: "01" },
+    { image: "/agile_team.png", title: "We assemble your agile team", description: "A mix of fractional specialists and in-house experts based on your exact needs.", step: "02" },
+    { image: "/startup.png", title: "Begin with a small starter project", description: "Low risk. Clear scope. Quick delivery. If you like the output, we scale into larger monthly work.", step: "03" },
   ];
 
   useEffect(() => {
