@@ -651,7 +651,7 @@ export default function Hero({
                       </div>
                     </div>
 
-                    <div className="mt-10 bg-white rounded-xl p-6 shadow-lg">
+                    {/* <div className="mt-10 bg-white rounded-xl p-6 shadow-lg">
                       <h3 className="text-xl font-bold text-[#050504] mb-4">Contact Information</h3>
                       <div className="space-y-3">
                         <div className="flex items-center text-[#31302f]">
@@ -667,7 +667,7 @@ export default function Hero({
                           <span>Mon-Fri: 9:00 AM - 6:00 PM</span>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
