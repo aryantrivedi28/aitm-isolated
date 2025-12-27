@@ -143,7 +143,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
             {/* Text */}
             <div className="flex-1">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#050504] leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-medium text-[#050504] leading-tight">
                 Start Your Project
               </h1>
 
