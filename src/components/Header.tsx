@@ -81,7 +81,6 @@ export default function Header() {
           >
             {/* Main Header */}
             <div className="relative flex justify-between items-center px-1 sm:px-6 lg:px-8 py-4">
-
               {/* Logo */}
               <div
                 className="flex items-center cursor-pointer hover:opacity-80 transition-opacity duration-300 group"
