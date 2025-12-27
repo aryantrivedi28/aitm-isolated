@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { supabase } from '../../../lib/SupabaseAuthClient';
 import { syncToGoogleSheets } from '../../../lib/googleSheetSync';
-import { sendAdminEmail } from '@/src/lib/mailer';
+import { sendAdminEmail } from '../../../lib/mailer';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
