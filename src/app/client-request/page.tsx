@@ -161,7 +161,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
       <div className="max-w-3xl mx-auto px-4 py-8 pb-16">
         {/* Progress Bar */}
-        <motion.div
+        {/* <motion.div
           initial="hidden"
           animate="visible"
           variants={fadeInUp}
@@ -183,7 +183,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
               className="h-full bg-[#f7af00] rounded-full"
             />
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Form Container */}
         <motion.div
