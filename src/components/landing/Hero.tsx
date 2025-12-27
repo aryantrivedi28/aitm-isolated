@@ -426,7 +426,7 @@ export default function Hero({
                   {/* Left Column - Form */}
                   <div className="p-6 md:p-8 lg:p-10">
                     <div className="mb-8">
-                      <h3 className="text-2xl md:text-3xl font-bold text-[#050504] mb-3">
+                      <h3 className="text-2xl md:text-3xl font-medium text-[#050504] mb-3">
                         Get Your Free Consultation
                       </h3>
                       <p className="text-[#31302f]">
@@ -457,7 +457,7 @@ export default function Hero({
                       <div className="grid grid-cols-1 gap-4">
                         {/* Name */}
                         <div>
-                          <label htmlFor="name" className="block text-sm font-semibold text-[#31302f] mb-2">
+                          <label htmlFor="name" className="block text-sm font-medium text-[#31302f] mb-2">
                             Name <span className="text-red-500">*</span>
                           </label>
                           <input
@@ -479,7 +479,7 @@ export default function Hero({
 
                         {/* Email */}
                         <div>
-                          <label htmlFor="email" className="block text-sm font-semibold text-[#31302f] mb-2">
+                          <label htmlFor="email" className="block text-sm font-medium text-[#31302f] mb-2">
                             Email <span className="text-red-500">*</span>
                           </label>
                           <input
@@ -501,7 +501,7 @@ export default function Hero({
 
                         {/* Phone */}
                         <div>
-                          <label htmlFor="phone" className="block text-sm font-semibold text-[#31302f] mb-2">
+                          <label htmlFor="phone" className="block text-sm font-medium text-[#31302f] mb-2">
                             Phone <span className="text-red-500">*</span>
                           </label>
                           <input
@@ -523,7 +523,7 @@ export default function Hero({
 
                         {/* Business Name */}
                         <div>
-                          <label htmlFor="business" className="block text-sm font-semibold text-[#31302f] mb-2">
+                          <label htmlFor="business" className="block text-sm font-medium text-[#31302f] mb-2">
                             Your Business Name
                           </label>
                           <input
@@ -538,7 +538,7 @@ export default function Hero({
 
                         {/* Website */}
                         <div>
-                          <label htmlFor="website" className="block text-sm font-semibold text-[#31302f] mb-2">
+                          <label htmlFor="website" className="block text-sm font-medium text-[#31302f] mb-2">
                             Web URL
                           </label>
                           <input
@@ -553,7 +553,7 @@ export default function Hero({
 
                         {/* Interest */}
                         <div>
-                          <label htmlFor="interest" className="block text-sm font-semibold text-[#31302f] mb-2">
+                          <label htmlFor="interest" className="block text-sm font-medium text-[#31302f] mb-2">
                             Interested in <span className="text-red-500">*</span>
                           </label>
                           <select
@@ -608,18 +608,18 @@ export default function Hero({
                   {/* Right Column - Info */}
                   <div className="bg-[#f0eadd] p-6 md:p-8 lg:p-10">
                     <div className="mb-8">
-                      <h3 className="text-2xl md:text-3xl font-bold text-[#050504] mb-3">
+                      <h3 className="text-2xl md:text-3xl font-medium text-[#050504] mb-3">
                         Why Connect With Us?
                       </h3>
                     </div>
 
                     <div className="space-y-8">
                       <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
-                          <Zap className="w-6 h-6 text-[#050504]" />
+                        <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
+                          <Zap className="w-5 h-5 text-[#050504]" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-[#050504] mb-2">Fast Response</h3>
+                          <h3 className="text-xl font-medium text-[#050504] mb-2">Fast Response</h3>
                           <p className="text-[#31302f]">
                             Get a response from our experts within 24 hours of submitting your details.
                           </p>
@@ -627,11 +627,11 @@ export default function Hero({
                       </div>
 
                       <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
-                          <Shield className="w-6 h-6 text-[#050504]" />
+                        <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
+                          <Shield className="w-5 h-5 text-[#050504]" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-[#050504] mb-2">Secure & Confidential</h3>
+                          <h3 className="text-xl font-medium text-[#050504] mb-2">Secure & Confidential</h3>
                           <p className="text-[#31302f]">
                             Your information is protected with enterprise-grade security.
                           </p>
@@ -639,11 +639,11 @@ export default function Hero({
                       </div>
 
                       <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
-                          <TrendingUp className="w-6 h-6 text-[#050504]" />
+                        <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
+                          <TrendingUp className="w-5 h-5 text-[#050504]" />
                         </div>
                         <div>
-                          <h3 className="text-xl font-bold text-[#050504] mb-2">Expert Consultation</h3>
+                          <h3 className="text-xl font-medium text-[#050504] mb-2">Expert Consultation</h3>
                           <p className="text-[#31302f]">
                             Personalized advice from industry experts with 10+ years of experience.
                           </p>
@@ -651,23 +651,23 @@ export default function Hero({
                       </div>
                     </div>
 
-                    {/* <div className="mt-10 bg-white rounded-xl p-6 shadow-lg">
-                      <h3 className="text-xl font-bold text-[#050504] mb-4">Contact Information</h3>
+                    <div className="mt-10 bg-white rounded-xl p-6 shadow-lg">
+                      <h3 className="text-xl font-medium text-[#050504] mb-4">Contact Information</h3>
                       <div className="space-y-3">
                         <div className="flex items-center text-[#31302f]">
                           <Sparkles className="w-5 h-5 mr-3 text-[#f7af00]" />
-                          <span>contact@businessexample.com</span>
+                          <span>aryan@getfinzie.com</span>
                         </div>
                         <div className="flex items-center text-[#31302f]">
                           <Rocket className="w-5 h-5 mr-3 text-[#f7af00]" />
-                          <span>+1 (555) 123-4567</span>
+                          <span>9893270210</span>
                         </div>
                         <div className="flex items-center text-[#31302f]">
                           <Star className="w-5 h-5 mr-3 text-[#f7af00]" />
                           <span>Mon-Fri: 9:00 AM - 6:00 PM</span>
                         </div>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>
