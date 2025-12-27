@@ -1,17 +1,22 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '../../../lib/SupabaseAuthClient';
 import { syncToGoogleSheets } from '../../../lib/googleSheetSync';
 import { sendAdminEmail } from '../../../lib/mailer';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(request: NextRequest) {
   try {
-    const { fullName, email, phone, company, requirement } = req.body;
+    const body = await request.json();
+    const { fullName, email, phone, company, requirement } = body;
 
-    // 1. Save to Supabase (you definitely have access to this)
+    // Validate required fields
+    if (!fullName || !email || !phone || !requirement) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    // 1. Save to Supabase
     const { data: inserted, error: insertError } = await supabase
       .from('client_requests')
       .insert([{
@@ -26,7 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .select()
       .single();
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      console.error('Supabase error:', insertError);
+      throw insertError;
+    }
 
     // 2. Sync to Google Sheets (server-side)
     await syncToGoogleSheets({
@@ -49,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       timestamp: new Date().toISOString()
     });
 
-    return res.status(200).json({
+    return NextResponse.json({
       success: true,
       message: 'Request submitted and processed',
       data: inserted
@@ -57,6 +65,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   } catch (error) {
     console.error('API error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
+}
+
+// Optional: Add other methods if needed
+export async function GET() {
+  return NextResponse.json(
+    { error: 'Method not allowed' },
+    { status: 405 }
+  );
+}
+
+export async function PUT() {
+  return NextResponse.json(
+    { error: 'Method not allowed' },
+    { status: 405 }
+  );
 }
