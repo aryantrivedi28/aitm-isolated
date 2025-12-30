@@ -113,7 +113,7 @@ export default function GetHiredPage() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#faf4e5" }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-40">
         {/* Enhanced Hero Section */}
         <section className="text-center mb-12 relative overflow-hidden">
           <div className="relative z-10">

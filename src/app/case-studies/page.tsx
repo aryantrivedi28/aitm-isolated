@@ -318,7 +318,7 @@ export default function CaseStudiesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#241C15] flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf4e5] flex items-center justify-center">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{
