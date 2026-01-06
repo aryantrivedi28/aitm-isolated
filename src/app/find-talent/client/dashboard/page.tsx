@@ -352,7 +352,7 @@ export default function ClientDashboardPage() {
   return (
     <main className="min-h-screen bg-[#fbf5e5] text-[#241C15]">
       {/* Header */}
-      <header className="border-b border-[#241C15]/10 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-[#241C15]/10 bg-[#f0eadd] backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -375,7 +375,7 @@ export default function ClientDashboardPage() {
                 <Plus className="w-4 h-4" strokeWidth={2.5} />
                 New Hiring
               </button>
-              <button className="px-5 py-2.5 bg-white border border-[#241C15]/15 hover:border-[#FFE01B] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 transition-all">
+              <button className="px-5 py-2.5 bg-[#f0eadd] border border-[#241C15]/15 hover:border-[#FFE01B] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 transition-all">
                 <Sparkles className="w-4 h-4" />
                 Assisted Hiring
               </button>
@@ -404,10 +404,10 @@ export default function ClientDashboardPage() {
               key={idx}
               className={`rounded-xl p-4 border transition-all hover:shadow-md ${
                 stat.accent
-                  ? "bg-[#241C15] border-[#241C15] text-white"
+                  ? "bg-[#f0eadd] border-[#f0eadd] text-black"
                   : stat.highlight
                     ? "bg-[#FFE01B]/10 border-[#FFE01B]/30"
-                    : "bg-white border-[#241C15]/10"
+                    : "bg-[#f0eadd] border-[#241C15]/10"
               }`}
             >
               <div className="flex items-center justify-between mb-3">
@@ -418,10 +418,10 @@ export default function ClientDashboardPage() {
                   <TrendingUp className={`w-3 h-3 ${stat.accent ? "text-[#FFE01B]" : "text-[#241C15]/40"}`} />
                 </div>
               </div>
-              <div className={`text-2xl font-bold mb-0.5 ${stat.accent ? "text-white" : "text-[#241C15]"}`}>
+              <div className={`text-2xl font-bold mb-0.5 ${stat.accent ? "text-black" : "text-[#241C15]"}`}>
                 {stat.value}
               </div>
-              <div className={`text-xs font-medium ${stat.accent ? "text-white/70" : "text-[#241C15]/60"}`}>
+              <div className={`text-xs font-medium ${stat.accent ? "text-black" : "text-[#241C15]/60"}`}>
                 {stat.label}
               </div>
             </div>
@@ -429,7 +429,7 @@ export default function ClientDashboardPage() {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white rounded-xl p-4 mb-8 border border-[#241C15]/10 shadow-sm">
+        <div className="bg-[#f0eadd] rounded-xl p-4 mb-8 border border-[#241C15]/10 shadow-sm">
           <div className="flex flex-col lg:flex-row gap-4 items-center">
             <div className="relative flex-1 w-full">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#241C15]/40" />
@@ -464,7 +464,7 @@ export default function ClientDashboardPage() {
         </div>
 
         {/* Forms Section */}
-        <div className="bg-white rounded-xl border border-[#241C15]/10 shadow-sm overflow-hidden">
+        <div className="bg-[#f0eadd] rounded-xl border border-[#241C15]/10 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-[#241C15]/10 bg-[#fbf5e5]/30">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -520,7 +520,7 @@ export default function ClientDashboardPage() {
                   return (
                     <div
                       key={form.id}
-                      className="rounded-xl border border-[#241C15]/10 bg-white hover:border-[#FFE01B]/50 transition-all hover:shadow-md"
+                      className="rounded-xl border border-[#241C15]/10 bg-[#f0eadd] hover:border-[#FFE01B]/50 transition-all hover:shadow-md"
                     >
                       <div className="p-5">
                         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
@@ -601,16 +601,16 @@ export default function ClientDashboardPage() {
 
                       {/* Expanded Submissions View */}
                       {expandedForm === form.id && (
-                        <div className="border-t border-[#241C15]/10 bg-[#241C15] p-5">
+                        <div className="border-t border-[#241C15]/10 bg-[#f0eadd] p-5">
                           <div className="flex items-center justify-between mb-4">
-                            <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+                            <h4 className="text-sm font-semibold text-black flex items-center gap-2">
                               <Users2 className="w-4 h-4 text-[#FFE01B]" />
                               Submissions ({formSubs.length})
                             </h4>
                             {formSubs.length > 3 && (
                               <button
                                 onClick={() => handleViewAllSubmissions(form)}
-                                className="text-sm text-[#FFE01B] font-medium hover:underline flex items-center gap-1"
+                                className="text-sm text-[#241C15] font-medium hover:underline flex items-center gap-1"
                               >
                                 View All
                                 <ArrowRight className="w-3 h-3" />

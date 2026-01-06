@@ -496,7 +496,7 @@ export function ProfileContent({
               {/* Availability Status */}
               <div
                 className="mt-6 p-4 rounded-lg border shadow-sm w-full"
-                style={{backgroundColor: "#f0eadd" }}
+                style={{ backgroundColor: "#f0eadd" }}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium" style={{ color: "#31302f" }}>
@@ -656,20 +656,27 @@ export function ProfileContent({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {profile?.education?.length > 0 ? (
+              {formData.education.length > 0 ? (
                 <ul className="space-y-3">
-                  {profile.education.map((edu: string, index: number) => (
-                    <li key={index} className="flex items-start space-x-3 text-sm" style={{ color: "#31302f" }}>
+                  {formData.education.map((edu: string, index: number) => (
+                    <li
+                      key={index}
+                      className="flex items-start space-x-3 text-sm"
+                      style={{ color: "#31302f" }}
+                    >
                       <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: "#f7af00" }} />
-                      <span>{edu}</span>
+                      <span>{edu}</span> ✅
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm" style={{ color: "#31302f" }}>No education added yet</p>
+                <p className="text-sm" style={{ color: "#31302f" }}>
+                  No education added yet
+                </p>
               )}
             </CardContent>
           </Card>
+
 
           {/* Certifications */}
           <Card className="border-0 shadow-sm rounded-xl" style={{ backgroundColor: "#faf4e5" }}>

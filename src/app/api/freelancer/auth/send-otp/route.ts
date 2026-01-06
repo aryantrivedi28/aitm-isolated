@@ -72,7 +72,8 @@ export async function POST(request: NextRequest) {
       `,
     })
 
-    console.log(`📧 OTP sent to: ${email}`)
+    // console.log(`📧 OTP sent to: ${email}`)
+    // console.log(`🔢 OTP Code: ${otp}`)
 
     return NextResponse.json({
       success: true,

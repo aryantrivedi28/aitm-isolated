@@ -66,7 +66,6 @@ export default function Hero({
     window.addEventListener('resize', checkMobile)
     setIsVisible(true)
 
-    // Enhanced particles with different types
     setParticles(
       Array.from({ length: isMobile ? 15 : 25 }).map((_, i) => ({
         left: `${Math.random() * 100}%`,
@@ -81,7 +80,6 @@ export default function Hero({
     return () => window.removeEventListener('resize', checkMobile)
   }, [isMobile])
 
-  // Prevent body scroll when form is open
   useEffect(() => {
     if (showForm) {
       document.body.style.overflow = 'hidden'
@@ -94,12 +92,10 @@ export default function Hero({
     }
   }, [showForm])
 
-  // Form handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { id, value } = e.target
     setFormData(prev => ({ ...prev, [id]: value }))
 
-    // Clear error when user starts typing
     if (errors[id as keyof typeof errors]) {
       setErrors(prev => ({ ...prev, [id]: '' }))
     }
@@ -145,9 +141,9 @@ export default function Hero({
 
       if (response.ok) {
         setSubmitStatus('success')
-        setSubmitMessage('Form submitted successfully! We\'ll contact you within 24 hours.')
+        setSubmitMessage('Thank you for your submission! We will contact you within 24 hours.')
 
-        // Reset form after delay
+        // Reset form after showing success message
         setTimeout(() => {
           setFormData({
             name: '',
@@ -157,8 +153,8 @@ export default function Hero({
             website: '',
             interest: ''
           })
-          setShowForm(false)
-        }, 2000)
+          setSubmitStatus(null)
+        }, 3000)
       } else {
         throw new Error(result.error || 'Submission failed')
       }
@@ -171,7 +167,6 @@ export default function Hero({
     }
   }
 
-  // Check if CTA label suggests it should open form
   const shouldOpenForm = (label: string) => {
     const formTriggers = [
       'contact', 'contact us', 'get in touch', 'get started',
@@ -233,6 +228,17 @@ export default function Hero({
           50% { opacity: 0; }
         }
 
+        @keyframes confettiRain {
+          0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes checkmark {
+          0% { stroke-dashoffset: 100; opacity: 0; transform: scale(0.5); }
+          50% { opacity: 1; transform: scale(1.1); }
+          100% { stroke-dashoffset: 0; transform: scale(1); }
+        }
+
         .animate-float { animation: float 6s ease-in-out infinite; }
         .animate-floatParticle { animation: floatParticle 4s ease-in-out infinite; }
         .animate-pulseGlow { animation: pulseGlow 3s ease-in-out infinite; }
@@ -242,18 +248,15 @@ export default function Hero({
         .animate-fadeIn { animation: fadeIn 0.6s ease-out; }
         .animate-typewriter { animation: typewriter 3.5s steps(40, end); }
         .animate-blink { animation: blink 1s infinite; }
+        .animate-confettiRain { animation: confettiRain 2s ease-out forwards; }
+        .animate-checkmark { animation: checkmark 1s ease-out forwards; }
       `}</style>
 
       <div className="hero-section relative bg-[] overflow-hidden">
-
-        {/* Main Content */}
         <div className="relative z-10 min-h-screen flex items-center">
           <div className="w-full max-w-[1500px] mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-16 sm:py-20 md:py-24">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 lg:gap-20 xl:gap-24 items-center">
-
-              {/* Left Column - Enhanced Text Content */}
               <div className={`space-y-8 ${isVisible ? 'animate-slideInLeft' : ''}`}>
-                {/* Title with enhanced gradient and effects */}
                 <div className="space-y-4">
                   <h1 className="leading-[1.05] tracking-tight bg-[#241C15] bg-clip-text text-transparent relative"
                     style={{
@@ -266,7 +269,6 @@ export default function Hero({
                   </h1>
                 </div>
 
-                {/* Subtitle with enhanced styling */}
                 {subtitle && (
                   <div className="space-y-4">
                     <p className="text-[#241C15]/75 leading-relaxed font-medium text-lg md:text-xl max-w-2xl"
@@ -279,7 +281,6 @@ export default function Hero({
                   </div>
                 )}
 
-                {/* Feature Points */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
                   {['No Setup Fees', '24/7 Support', '30-Day Guarantee', 'Easy Migration'].map((feature, index) => (
                     <div key={feature} className="flex items-center gap-2 text-[#241C15]/70 group animate-fadeIn" style={{ animationDelay: `${index * 0.1}s` }}>
@@ -291,45 +292,8 @@ export default function Hero({
                   ))}
                 </div>
 
-                {/* Enhanced CTA Buttons */}
                 {ctas?.length > 0 && (
                   <div className="flex flex-col sm:flex-row items-start gap-4 pt-4">
-                    {/* {ctas.map((cta, index) => {
-                      const isSecondary = cta.variant === "secondary";
-                      const isFormTrigger = shouldOpenForm(cta.label);
-                      
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            if (isFormTrigger) {
-                              setShowForm(true);
-                            } else if (cta.href) {
-                              // If it's a regular link, navigate to it
-                              window.location.href = cta.href;
-                            }
-                          }}
-                          className={`group relative inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold transition-all duration-300 overflow-hidden ${
-                            isSecondary
-                              ? "border-2 border-[#241C15]/20 text-[#241C15]/80 hover:text-[#241C15] hover:border-[#241C15]/40 hover:bg-[#241C15]/5 bg-white/60 backdrop-blur-sm shadow-lg hover:shadow-xl"
-                              : "bg-[#f7af00] shadow-2xl hover:shadow-3xl hover:scale-[1.02] animate-pulseGlow"
-                          } animate-fadeIn`}
-                          style={{ 
-                            fontSize: "clamp(1rem, 1.5vw, 1.125rem)",
-                            animationDelay: `${index * 0.2}s`
-                          }}
-                        >
-                          <span className="relative z-10">{cta.label}</span>
-                          {!isSecondary ? (
-                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                          ) : (
-                            <Play className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                          )}
-                        </button>
-                      );
-                    })} */}
-
-                    {/* Add a simple button to always open the form (for testing) */}
                     <button
                       onClick={() => setShowForm(true)}
                       className="inline-flex items-center justify-center gap-3 w-full sm:w-auto px-8 py-4 rounded-2xl font-semibold transition-all duration-300 bg-[#f7af00] text-[#241C15] shadow-2xl hover:shadow-3xl hover:scale-[1.02] animate-fadeIn mt-4 sm:mt-0"
@@ -342,12 +306,8 @@ export default function Hero({
                 )}
               </div>
 
-              {/* Right Column - Enhanced Screenshots */}
               <div className={`relative ${isVisible ? 'animate-slideInRight' : ''}`}>
-
-                {/* Main screenshot container with floating effect */}
                 <div className="relative">
-                  {/* Screenshots Grid */}
                   {screenshots?.length > 0 && (
                     <div className="relative space-y-6">
                       {screenshots.map((screenshot, index) => (
@@ -356,10 +316,7 @@ export default function Hero({
                           className="group relative w-full transform hover:scale-[1.02] transition-all duration-500"
                           style={{ animationDelay: `${index * 0.3}s` }}
                         >
-                          {/* Card with enhanced styling */}
                           <div className="relative backdrop-blur-md rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300">
-
-                            {/* Image container */}
                             <div className="aspect-video relative overflow-hidden">
                               {screenshot.image && (
                                 <img
@@ -385,7 +342,6 @@ export default function Hero({
       <AnimatePresence>
         {showForm && (
           <>
-            {/* Backdrop with blur */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -395,7 +351,6 @@ export default function Hero({
               onClick={() => setShowForm(false)}
             />
 
-            {/* Form Modal */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -421,262 +376,478 @@ export default function Hero({
                   <X className="w-5 h-5 text-gray-700" />
                 </button>
 
-                {/* Form Content */}
-                <div className="grid md:grid-cols-2">
-                  {/* Left Column - Form */}
-                  <div className="p-6 md:p-8 lg:p-10">
-                    <div className="mb-8">
-                      <h3 className="text-2xl md:text-3xl font-medium text-[#050504] mb-3">
-                        Get Your Free Consultation
-                      </h3>
-                      <p className="text-[#31302f]">
-                        Fill out this form and our experts will contact you within 24 hours.
-                      </p>
-                    </div>
-
-                    {/* Status Message */}
-                    {submitStatus && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className={`mb-6 p-4 rounded-lg flex items-start gap-3 ${submitStatus === 'success'
-                            ? 'bg-green-50 border border-green-200 text-green-800'
-                            : 'bg-red-50 border border-red-200 text-red-800'
-                          }`}
-                      >
-                        {submitStatus === 'success' ? (
-                          <CheckCircle2 className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                        ) : (
-                          <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                        )}
-                        <p className="text-sm font-medium">{submitMessage}</p>
-                      </motion.div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 gap-4">
-                        {/* Name */}
-                        <div>
-                          <label htmlFor="name" className="block text-sm font-medium text-[#31302f] mb-2">
-                            Name <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="text"
-                            id="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border-2 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                              } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                            placeholder="Enter your full name"
-                          />
-                          {errors.name && (
-                            <p className="mt-2 text-sm text-red-600 flex items-center">
-                              <AlertTriangle className="w-4 h-4 mr-1" />
-                              {errors.name}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Email */}
-                        <div>
-                          <label htmlFor="email" className="block text-sm font-medium text-[#31302f] mb-2">
-                            Email <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="email"
-                            id="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border-2 ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                              } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                            placeholder="Enter your email address"
-                          />
-                          {errors.email && (
-                            <p className="mt-2 text-sm text-red-600 flex items-center">
-                              <AlertTriangle className="w-4 h-4 mr-1" />
-                              {errors.email}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Phone */}
-                        <div>
-                          <label htmlFor="phone" className="block text-sm font-medium text-[#31302f] mb-2">
-                            Phone <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="tel"
-                            id="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border-2 ${errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                              } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
-                            placeholder="Enter your phone number"
-                          />
-                          {errors.phone && (
-                            <p className="mt-2 text-sm text-red-600 flex items-center">
-                              <AlertTriangle className="w-4 h-4 mr-1" />
-                              {errors.phone}
-                            </p>
-                          )}
-                        </div>
-
-                        {/* Business Name */}
-                        <div>
-                          <label htmlFor="business" className="block text-sm font-medium text-[#31302f] mb-2">
-                            Your Business Name
-                          </label>
-                          <input
-                            type="text"
-                            id="business"
-                            value={formData.business}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50"
-                            placeholder="Enter your business name"
-                          />
-                        </div>
-
-                        {/* Website */}
-                        <div>
-                          <label htmlFor="website" className="block text-sm font-medium text-[#31302f] mb-2">
-                            Web URL
-                          </label>
-                          <input
-                            type="url"
-                            id="website"
-                            value={formData.website}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50"
-                            placeholder="https://example.com"
-                          />
-                        </div>
-
-                        {/* Interest */}
-                        <div>
-                          <label htmlFor="interest" className="block text-sm font-medium text-[#31302f] mb-2">
-                            Interested in <span className="text-red-500">*</span>
-                          </label>
-                          <select
-                            id="interest"
-                            value={formData.interest}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-lg border-2 ${errors.interest ? 'border-red-300 bg-red-50' : 'border-gray-200'
-                              } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50 appearance-none`}
+                {submitStatus === 'success' ? (
+                  // Success/Thank You Message
+                  <div className="p-8 md:p-12 lg:p-16">
+                    <div className="max-w-3xl mx-auto text-center">
+                      {/* Animated Checkmark */}
+                      <div className="relative mb-8">
+                        <div className="w-32 h-32 mx-auto mb-6 relative">
+                          {/* Outer circle */}
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#f7af00] to-[#ffd166] animate-pulse"></div>
+                          
+                          {/* Checkmark SVG */}
+                          <svg
+                            className="w-full h-full relative z-10"
+                            viewBox="0 0 100 100"
                           >
-                            <option value="">Select an option</option>
-                            <option value="Web Development">GHL VA</option>
-                            <option value="Mobile App">One Time Project</option>
-                            <option value="Digital Marketing">On Going Support</option>
-                          </select>
-                          {errors.interest && (
-                            <p className="mt-2 text-sm text-red-600 flex items-center">
-                              <AlertTriangle className="w-4 h-4 mr-1" />
-                              {errors.interest}
-                            </p>
-                          )}
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="45"
+                              fill="none"
+                              stroke="#fff"
+                              strokeWidth="4"
+                              strokeDasharray="283"
+                              strokeDashoffset="283"
+                              style={{
+                                animation: 'checkmark 1s ease-out forwards',
+                                animationDelay: '0.2s'
+                              }}
+                            />
+                            <path
+                              d="M30 50 L45 65 L70 35"
+                              fill="none"
+                              stroke="#fff"
+                              strokeWidth="5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeDasharray="50"
+                              strokeDashoffset="50"
+                              style={{
+                                animation: 'checkmark 1s ease-out forwards',
+                                animationDelay: '0.5s'
+                              }}
+                            />
+                          </svg>
+
+                          {/* Confetti effect */}
+                          {Array.from({ length: 20 }).map((_, i) => (
+                            <div
+                              key={i}
+                              className="absolute w-2 h-2 rounded-full animate-confettiRain"
+                              style={{
+                                background: i % 3 === 0 ? '#f7af00' : i % 3 === 1 ? '#ff6b6b' : '#4ecdc4',
+                                left: `${Math.random() * 100}%`,
+                                animationDelay: `${i * 0.1}s`,
+                                animationDuration: `${1 + Math.random()}s`
+                              }}
+                            />
+                          ))}
+                        </div>
+
+                        {/* Sparkles */}
+                        <div className="absolute top-0 left-1/4">
+                          <Sparkles className="w-8 h-8 text-[#f7af00] animate-pulse" />
+                        </div>
+                        <div className="absolute top-4 right-1/4">
+                          <Star className="w-6 h-6 text-[#f7af00] animate-pulse" style={{ animationDelay: '0.5s' }} />
                         </div>
                       </div>
 
-                      {/* Submit Button */}
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full py-4 bg-[#f7af00] text-[#050504] font-bold rounded-lg hover:bg-[#e09e00] transform hover:-translate-y-1 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                      {/* Thank You Message */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="mb-8"
                       >
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <ArrowRight className="w-5 h-5" />
-                            Submit Now
-                          </>
-                        )}
-                      </button>
+                        <h2 className="text-4xl md:text-5xl font-medium text-[#050504] mb-4">
+                          Thank You, <span className="text-[#f7af00]">{formData.name || 'Valued Client'}!</span>
+                        </h2>
+                        <p className="text-2xl text-[#31302f] mb-6">
+                          Your submission has been received successfully.
+                        </p>
+                      </motion.div>
 
-                      {/* Privacy Note */}
-                      <div className="pt-4 border-t border-gray-100">
-                        <p className="text-xs text-[#31302f] text-center">
-                          We respect your privacy. Your information will not be shared with third parties.
+                      {/* Success Details */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="max-w-2xl mx-auto mb-10"
+                      >
+                        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-lg border border-[#f7af00]/20">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div className="text-left">
+                              <p className="text-sm text-[#31302f]/70 mb-1">Submission ID</p>
+                              <p className="text-lg font-mono font-semibold text-[#050504]">
+                                #{Date.now().toString().slice(-8)}
+                              </p>
+                            </div>
+                            <div className="text-left">
+                              <p className="text-sm text-[#31302f]/70 mb-1">Submitted At</p>
+                              <p className="text-lg font-semibold text-[#050504]">
+                                {new Date().toLocaleDateString('en-US', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div className="flex items-center space-x-3 text-[#31302f]">
+                              <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                              <span>Confirmation email sent to <strong>{formData.email}</strong></span>
+                            </div>
+                            <div className="flex items-center space-x-3 text-[#31302f]">
+                              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                              <span>Our expert will contact you at <strong>{formData.phone}</strong> within 24 hours</span>
+                            </div>
+                            <div className="flex items-center space-x-3 text-[#31302f]">
+                              <div className="w-2 h-2 rounded-full bg-[#f7af00]"></div>
+                              <span>Preparing your personalized consultation for <strong>{formData.interest}</strong></span>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Next Steps */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.7 }}
+                        className="mb-10"
+                      >
+                        <h3 className="text-2xl font-medium text-[#050504] mb-6">What Happens Next?</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
+                            <div className="w-12 h-12 bg-[#f7af00]/20 rounded-full flex items-center justify-center mb-4">
+                              <span className="text-2xl font-bold text-[#f7af00]">1</span>
+                            </div>
+                            <h4 className="text-lg font-medium text-[#050504] mb-2">Review & Assignment</h4>
+                            <p className="text-[#31302f] text-sm">
+                              Our team reviews your submission and assigns the most suitable expert.
+                            </p>
+                          </div>
+                          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
+                            <div className="w-12 h-12 bg-[#f7af00]/20 rounded-full flex items-center justify-center mb-4">
+                              <span className="text-2xl font-bold text-[#f7af00]">2</span>
+                            </div>
+                            <h4 className="text-lg font-medium text-[#050504] mb-2">Initial Contact</h4>
+                            <p className="text-[#31302f] text-sm">
+                              You'll receive a call or email within 24 hours to schedule your consultation.
+                            </p>
+                          </div>
+                          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
+                            <div className="w-12 h-12 bg-[#f7af00]/20 rounded-full flex items-center justify-center mb-4">
+                              <span className="text-2xl font-bold text-[#f7af00]">3</span>
+                            </div>
+                            <h4 className="text-lg font-medium text-[#050504] mb-2">Personalized Consultation</h4>
+                            <p className="text-[#31302f] text-sm">
+                              A detailed, personalized consultation tailored to your specific needs.
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+
+                      {/* Action Buttons */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.9 }}
+                        className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+                      >
+                        <button
+                          onClick={() => setShowForm(false)}
+                          className="px-8 py-4 bg-[#f7af00] text-[#050504] font-bold rounded-lg hover:bg-[#e09e00] transform hover:-translate-y-1 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 min-w-[200px]"
+                        >
+                          <CheckCircle2 className="w-5 h-5" />
+                          Done
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSubmitStatus(null)
+                            setFormData({
+                              name: '',
+                              email: '',
+                              phone: '',
+                              business: '',
+                              website: '',
+                              interest: ''
+                            })
+                          }}
+                          className="px-8 py-4 bg-white text-[#050504] font-bold rounded-lg border-2 border-[#f7af00] hover:bg-[#f7af00]/10 transform hover:-translate-y-1 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 min-w-[200px]"
+                        >
+                          <Sparkles className="w-5 h-5 text-[#f7af00]" />
+                          Submit Another
+                        </button>
+                      </motion.div>
+
+                      {/* Contact Info */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 1.1 }}
+                        className="mt-10 pt-8 border-t border-gray-200"
+                      >
+                        <p className="text-[#31302f] mb-4">
+                          Need immediate assistance?
+                        </p>
+                        <div className="flex flex-wrap justify-center gap-6">
+                          <a
+                            href="mailto:aryan@getfinzie.com"
+                            className="inline-flex items-center gap-2 text-[#31302f] hover:text-[#f7af00] transition-colors"
+                          >
+                            <Zap className="w-4 h-4" />
+                            aryan@getfinzie.com
+                          </a>
+                          <a
+                            href="tel:9893270210"
+                            className="inline-flex items-center gap-2 text-[#31302f] hover:text-[#f7af00] transition-colors"
+                          >
+                            <Rocket className="w-4 h-4" />
+                            9893270210
+                          </a>
+                        </div>
+                      </motion.div>
+                    </div>
+                  </div>
+                ) : (
+                  // Original Form (when not in success state)
+                  <div className="grid md:grid-cols-2">
+                    <div className="p-6 md:p-8 lg:p-10">
+                      <div className="mb-8">
+                        <h3 className="text-2xl md:text-3xl font-medium text-[#050504] mb-3">
+                          Get Your Free Consultation
+                        </h3>
+                        <p className="text-[#31302f]">
+                          Fill out this form and our experts will contact you within 24 hours.
                         </p>
                       </div>
-                    </form>
+
+                      {submitStatus === 'error' && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg flex items-start gap-3"
+                        >
+                          <AlertTriangle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm font-medium">{submitMessage}</p>
+                        </motion.div>
+                      )}
+
+                      <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 gap-4">
+                          {/* Form fields remain the same */}
+                          <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-[#31302f] mb-2">
+                              Name <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              id="name"
+                              value={formData.name}
+                              onChange={handleChange}
+                              className={`w-full px-4 py-3 rounded-lg border-2 ${errors.name ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
+                              placeholder="Enter your full name"
+                            />
+                            {errors.name && (
+                              <p className="mt-2 text-sm text-red-600 flex items-center">
+                                <AlertTriangle className="w-4 h-4 mr-1" />
+                                {errors.name}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* ... other form fields ... */}
+                          <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-[#31302f] mb-2">
+                              Email <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="email"
+                              id="email"
+                              value={formData.email}
+                              onChange={handleChange}
+                              className={`w-full px-4 py-3 rounded-lg border-2 ${errors.email ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
+                              placeholder="Enter your email address"
+                            />
+                            {errors.email && (
+                              <p className="mt-2 text-sm text-red-600 flex items-center">
+                                <AlertTriangle className="w-4 h-4 mr-1" />
+                                {errors.email}
+                              </p>
+                            )}
+                          </div>
+
+                          <div>
+                            <label htmlFor="phone" className="block text-sm font-medium text-[#31302f] mb-2">
+                              Phone <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="tel"
+                              id="phone"
+                              value={formData.phone}
+                              onChange={handleChange}
+                              className={`w-full px-4 py-3 rounded-lg border-2 ${errors.phone ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50`}
+                              placeholder="Enter your phone number"
+                            />
+                            {errors.phone && (
+                              <p className="mt-2 text-sm text-red-600 flex items-center">
+                                <AlertTriangle className="w-4 h-4 mr-1" />
+                                {errors.phone}
+                              </p>
+                            )}
+                          </div>
+
+                          <div>
+                            <label htmlFor="business" className="block text-sm font-medium text-[#31302f] mb-2">
+                              Your Business Name
+                            </label>
+                            <input
+                              type="text"
+                              id="business"
+                              value={formData.business}
+                              onChange={handleChange}
+                              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50"
+                              placeholder="Enter your business name"
+                            />
+                          </div>
+
+                          <div>
+                            <label htmlFor="website" className="block text-sm font-medium text-[#31302f] mb-2">
+                              Web URL
+                            </label>
+                            <input
+                              type="url"
+                              id="website"
+                              value={formData.website}
+                              onChange={handleChange}
+                              className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50"
+                              placeholder="https://example.com"
+                            />
+                          </div>
+
+                          <div>
+                            <label htmlFor="interest" className="block text-sm font-medium text-[#31302f] mb-2">
+                              Interested in <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                              id="interest"
+                              value={formData.interest}
+                              onChange={handleChange}
+                              className={`w-full px-4 py-3 rounded-lg border-2 ${errors.interest ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                                } focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00] focus:ring-opacity-20 transition-all duration-200 bg-gray-50 appearance-none`}
+                            >
+                              <option value="">Select an option</option>
+                              <option value="GHL VA">GHL VA</option>
+                              <option value="One Time Project">One Time Project</option>
+                              <option value="On Going Support">On Going Support</option>
+                            </select>
+                            {errors.interest && (
+                              <p className="mt-2 text-sm text-red-600 flex items-center">
+                                <AlertTriangle className="w-4 h-4 mr-1" />
+                                {errors.interest}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={isSubmitting}
+                          className="w-full py-4 bg-[#f7af00] text-[#050504] font-bold rounded-lg hover:bg-[#e09e00] transform hover:-translate-y-1 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              <ArrowRight className="w-5 h-5" />
+                              Submit Now
+                            </>
+                          )}
+                        </button>
+
+                        <div className="pt-4 border-t border-gray-100">
+                          <p className="text-xs text-[#31302f] text-center">
+                            We respect your privacy. Your information will not be shared with third parties.
+                          </p>
+                        </div>
+                      </form>
+                    </div>
+
+                    <div className="bg-[#f0eadd] p-6 md:p-8 lg:p-10">
+                      <div className="mb-8">
+                        <h3 className="text-2xl md:text-3xl font-medium text-[#050504] mb-3">
+                          Why Connect With Us?
+                        </h3>
+                      </div>
+
+                      <div className="space-y-8">
+                        <div className="flex items-start space-x-4">
+                          <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
+                            <Zap className="w-5 h-5 text-[#050504]" />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-medium text-[#050504] mb-2">Fast Response</h3>
+                            <p className="text-[#31302f]">
+                              Get a response from our experts within 24 hours of submitting your details.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start space-x-4">
+                          <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
+                            <Shield className="w-5 h-5 text-[#050504]" />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-medium text-[#050504] mb-2">Secure & Confidential</h3>
+                            <p className="text-[#31302f]">
+                              Your information is protected with enterprise-grade security.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start space-x-4">
+                          <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
+                            <TrendingUp className="w-5 h-5 text-[#050504]" />
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-medium text-[#050504] mb-2">Expert Consultation</h3>
+                            <p className="text-[#31302f]">
+                              Personalized advice from industry experts with 10+ years of experience.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-10 bg-[#f0eadd] rounded-xl p-6">
+                        <h3 className="text-xl font-medium text-[#050504] mb-4">Contact Information</h3>
+                        <div className="space-y-3">
+                          <div className="flex items-center text-[#31302f]">
+                            <Sparkles className="w-5 h-5 mr-3 text-[#f7af00]" />
+                            <span>aryan@getfinzie.com</span>
+                          </div>
+                          <div className="flex items-center text-[#31302f]">
+                            <Rocket className="w-5 h-5 mr-3 text-[#f7af00]" />
+                            <span>9893270210</span>
+                          </div>
+                          <div className="flex items-center text-[#31302f]">
+                            <Star className="w-5 h-5 mr-3 text-[#f7af00]" />
+                            <span>Mon-Fri: 9:00 AM - 6:00 PM</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
-                  {/* Right Column - Info */}
-                  <div className="bg-[#f0eadd] p-6 md:p-8 lg:p-10">
-                    <div className="mb-8">
-                      <h3 className="text-2xl md:text-3xl font-medium text-[#050504] mb-3">
-                        Why Connect With Us?
-                      </h3>
-                    </div>
-
-                    <div className="space-y-8">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
-                          <Zap className="w-5 h-5 text-[#050504]" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-medium text-[#050504] mb-2">Fast Response</h3>
-                          <p className="text-[#31302f]">
-                            Get a response from our experts within 24 hours of submitting your details.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
-                          <Shield className="w-5 h-5 text-[#050504]" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-medium text-[#050504] mb-2">Secure & Confidential</h3>
-                          <p className="text-[#31302f]">
-                            Your information is protected with enterprise-grade security.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-start space-x-4">
-                        <div className="w-10 h-10 bg-[#f7af00] rounded-full flex items-center justify-center flex-shrink-0">
-                          <TrendingUp className="w-5 h-5 text-[#050504]" />
-                        </div>
-                        <div>
-                          <h3 className="text-xl font-medium text-[#050504] mb-2">Expert Consultation</h3>
-                          <p className="text-[#31302f]">
-                            Personalized advice from industry experts with 10+ years of experience.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-10 bg-white rounded-xl p-6 shadow-lg">
-                      <h3 className="text-xl font-medium text-[#050504] mb-4">Contact Information</h3>
-                      <div className="space-y-3">
-                        <div className="flex items-center text-[#31302f]">
-                          <Sparkles className="w-5 h-5 mr-3 text-[#f7af00]" />
-                          <span>aryan@getfinzie.com</span>
-                        </div>
-                        <div className="flex items-center text-[#31302f]">
-                          <Rocket className="w-5 h-5 mr-3 text-[#f7af00]" />
-                          <span>9893270210</span>
-                        </div>
-                        <div className="flex items-center text-[#31302f]">
-                          <Star className="w-5 h-5 mr-3 text-[#f7af00]" />
-                          <span>Mon-Fri: 9:00 AM - 6:00 PM</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                )}
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      {/* Additional global styles */}
       <style jsx global>{`
         @keyframes gradientShift {
           0% { background-position: 0% 50%; }

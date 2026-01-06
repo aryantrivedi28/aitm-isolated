@@ -1,6 +1,6 @@
 // app/landing/layout.tsx
 export const metadata = {
-  title: 'Landing Pages',
+  title: 'H1',
   description: 'Landing page layout without header/footer',
 }
 
