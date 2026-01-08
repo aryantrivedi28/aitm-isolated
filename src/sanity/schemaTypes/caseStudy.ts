@@ -79,7 +79,7 @@ export default defineType({
     }),
     defineField({
       name: 'snapshot',
-      title: 'Snapshot Highlights',
+      title: 'Result & Impacts',
       type: 'array',
       of: [{ type: 'string' }],
     }),
