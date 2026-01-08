@@ -252,36 +252,36 @@ export default function CaseStudiesPage() {
   }
 
   // Filtering logic
-  const filteredCaseStudies = caseStudies.filter((study) => {
-    // Industry filter
-    const matchesIndustry = selectedIndustry
-      ? study.tags?.some((tag) =>
-          tag.toLowerCase().includes(selectedIndustry.toLowerCase())
-        ) ||
-        study.title?.toLowerCase().includes(selectedIndustry.toLowerCase()) ||
-        study.description?.toLowerCase().includes(selectedIndustry.toLowerCase())
-      : true
+  // const filteredCaseStudies = caseStudies.filter((study) => {
+  //   // Industry filter
+  //   const matchesIndustry = selectedIndustry
+  //     ? study.tags?.some((tag) =>
+  //       tag.toLowerCase().includes(selectedIndustry.toLowerCase())
+  //     ) ||
+  //     study.title?.toLowerCase().includes(selectedIndustry.toLowerCase()) ||
+  //     study.description?.toLowerCase().includes(selectedIndustry.toLowerCase())
+  //     : true
 
-    // Category filter
-    const matchesCategory = selectedCategory
-      ? study.tags?.some((tag) =>
-          tag.toLowerCase().includes(selectedCategory.toLowerCase())
-        ) ||
-        study.title?.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-        study.description?.toLowerCase().includes(selectedCategory.toLowerCase())
-      : true
+  //   // Category filter
+  //   const matchesCategory = selectedCategory
+  //     ? study.tags?.some((tag) =>
+  //       tag.toLowerCase().includes(selectedCategory.toLowerCase())
+  //     ) ||
+  //     study.title?.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+  //     study.description?.toLowerCase().includes(selectedCategory.toLowerCase())
+  //     : true
 
-    // Subcategory filter
-    const matchesSubcategory = selectedSubcategory
-      ? study.tags?.some((tag) =>
-          tag.toLowerCase().includes(selectedSubcategory.toLowerCase())
-        ) ||
-        study.title?.toLowerCase().includes(selectedSubcategory.toLowerCase()) ||
-        study.description?.toLowerCase().includes(selectedSubcategory.toLowerCase())
-      : true
+  //   // Subcategory filter
+  //   const matchesSubcategory = selectedSubcategory
+  //     ? study.tags?.some((tag) =>
+  //       tag.toLowerCase().includes(selectedSubcategory.toLowerCase())
+  //     ) ||
+  //     study.title?.toLowerCase().includes(selectedSubcategory.toLowerCase()) ||
+  //     study.description?.toLowerCase().includes(selectedSubcategory.toLowerCase())
+  //     : true
 
-    return matchesIndustry && matchesCategory && matchesSubcategory
-  })
+  //   return matchesIndustry && matchesCategory && matchesSubcategory
+  // })
 
   useEffect(() => {
     async function fetchCaseStudies() {
@@ -315,6 +315,21 @@ export default function CaseStudiesPage() {
 
     fetchCaseStudies()
   }, [])
+
+  // Simplified filtering logic
+  const filteredCaseStudies = caseStudies.filter((study) => {
+    // If no service is selected, show all
+    if (!selectedCategory) return true;
+
+    // Check if the selected service appears in tags, title, or description
+    return (
+      study.tags?.some((tag) =>
+        tag.toLowerCase().includes(selectedCategory.toLowerCase())
+      ) ||
+      study.title?.toLowerCase().includes(selectedCategory.toLowerCase()) ||
+      study.description?.toLowerCase().includes(selectedCategory.toLowerCase())
+    );
+  });
 
   if (loading) {
     return (
@@ -426,122 +441,58 @@ export default function CaseStudiesPage() {
       {/* SEARCH & FILTER - UPDATED WITH 3 SECTIONS */}
       <section className="max-w-7xl mx-auto px-4 mb-20">
         <div className="bg-[#f0eadd] rounded-2xl p-6 border border-[#050504]/10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* INDUSTRY FILTER */}
-            <div>
-              <label className="block text-sm font-semibold mb-2">Industry</label>
-              <select
-                value={selectedIndustry || ""}
-                onChange={(e) => setSelectedIndustry(e.target.value || null)}
-                className="
-                  w-full
-                  px-4 py-3
-                  rounded-xl
-                  bg-[#faf4e5]
-                  border border-[#050504]/20
-                  text-[#050504]
-                  focus:outline-none
-                  focus:border-[#f7af00]
-                "
-              >
-                <option value="">Industries</option>
-                {industries.map((i) => (
-                  <option key={i} value={i}>
-                    {i}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* CATEGORY FILTER */}
-            <div>
-              <label className="block text-sm font-semibold mb-2">Category</label>
-              <select
-                value={selectedCategory || ""}
-                onChange={(e) => handleCategoryChange(e.target.value || null)}
-                className="
-                  w-full
-                  px-4 py-3
-                  rounded-xl
-                  bg-[#faf4e5]
-                  border border-[#050504]/20
-                  text-[#050504]
-                  focus:outline-none
-                  focus:border-[#f7af00]
-                "
-              >
-                <option value="">Categories</option>
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* SUBCATEGORY FILTER */}
-            <div>
-              <label className="block text-sm font-semibold mb-2">Subcategory</label>
-              <select
-                value={selectedSubcategory || ""}
-                onChange={(e) => setSelectedSubcategory(e.target.value || null)}
-                disabled={!selectedCategory}
-                className={`
-                  w-full
-                  px-4 py-3
-                  rounded-xl
-                  bg-[#faf4e5]
-                  border border-[#050504]/20
-                  text-[#050504]
-                  focus:outline-none
-                  focus:border-[#f7af00]
-                  ${!selectedCategory ? 'opacity-50 cursor-not-allowed' : ''}
-                `}
-              >
-                <option value="">
-                  {selectedCategory ? `${selectedCategory} Subcategories` : 'Select a category first'}
-                </option>
-                {getFilteredSubcategories().map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-              {!selectedCategory && (
-                <p className="text-xs text-[#31302f] mt-1">
-                  Please select a category first
-                </p>
-              )}
-            </div>
+          {/* Filter Title */}
+          <div className="text-center mb-6">
+            <h3 className="text-3xl font-medium text-[#050504]">Filter by Service</h3>
+            <p className="text-sm text-[#31302f] mt-1">
+              Select a service to view relevant case studies
+            </p>
           </div>
 
-          {/* RESET FILTERS BUTTON */}
-          {(selectedIndustry || selectedCategory || selectedSubcategory) && (
-            <div className="mt-6 text-center">
+          {/* Service Filter Buttons */}
+          <div className="flex flex-wrap justify-center gap-3">
+            {[
+              { value: null, label: 'All Services', icon: '🌟' },
+              { value: 'GoHighLevel', label: 'GoHighLevel', icon: '🚀' },
+              { value: 'Shopify', label: 'Shopify', icon: '🛒' },
+              { value: 'SEO', label: 'SEO', icon: '🔍' },
+              { value: 'Video Editing', label: 'Video Editing', icon: '🎬' },
+            ].map((service) => (
               <button
-                onClick={() => {
-                  setSelectedIndustry(null)
-                  setSelectedCategory(null)
-                  setSelectedSubcategory(null)
-                }}
-                className="
-                  inline-flex
-                  items-center
-                  gap-2
-                  px-4 py-2
-                  text-sm
-                  font-medium
-                  text-[#050504]
-                  bg-[#faf4e5]
-                  border border-[#050504]/20
-                  rounded-lg
-                  hover:bg-[#f7af00]/20
-                  transition-colors
-                "
+                key={service.value || 'all'}
+                onClick={() => setSelectedCategory(service.value)}
+                className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all duration-200border
+            ${selectedCategory === service.value
+                    ? 'bg-[#f7af00] text-[#050504] border-[#f7af00] shadow-sm'
+                    : 'bg-[#faf4e5] text-[#050504] border-[#050504]/20 hover:bg-[#faf4e5]/80 hover:border-[#f7af00]'
+                  }
+          `}
               >
-                Clear All Filters
-                <Search className="w-4 h-4" />
+                <span className="text-lg">{service.icon}</span>
+                {service.label}
+                {selectedCategory === service.value && (
+                  <span className="ml-1 text-sm">✓</span>
+                )}
               </button>
+            ))}
+          </div>
+
+          {/* Active Filter Display */}
+          {selectedCategory && (
+            <div className="mt-6 pt-6 border-t border-[#050504]/10 flex items-center justify-center">
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-[#31302f]">Active filter:</span>
+                <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#f7af00] text-[#050504] rounded-full">
+                  {selectedCategory}
+                  <button
+                    onClick={() => setSelectedCategory(null)}
+                    className="ml-1 hover:text-red-600 transition-colors"
+                    aria-label="Clear filter"
+                  >
+                    ×
+                  </button>
+                </span>
+              </div>
             </div>
           )}
         </div>
@@ -576,13 +527,12 @@ export default function CaseStudiesPage() {
         ) : (
           <>
             {/* Results count */}
+            {/* Results count */}
             <div className="mb-8">
               <p className="text-[#31302f]">
                 Showing {filteredCaseStudies.length} case study
                 {filteredCaseStudies.length !== 1 ? 'ies' : ''}
-                {selectedIndustry && ` in ${selectedIndustry}`}
-                {selectedCategory && ` • Category: ${selectedCategory}`}
-                {selectedSubcategory && ` • Subcategory: ${selectedSubcategory}`}
+                {selectedCategory && ` • Service: ${selectedCategory}`}
               </p>
             </div>
 
