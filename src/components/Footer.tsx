@@ -28,6 +28,17 @@ export default function Footer() {
 
 
 
+    /* ----------------------------------
+     NEW: Landing page detection
+  -----------------------------------*/
+  const LANDING_SLUGS = ["gohighlevel-crm", "shopify", "seo", "webflow", "ai"];
+
+  const isLandingPage =
+    pathname.split("/").length === 2 &&
+    LANDING_SLUGS.includes(pathname.replace("/", ""));
+
+  if (isLandingPage) return null;
+
 
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const isDark = theme === "dark";

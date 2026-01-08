@@ -7,16 +7,20 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+
   const router = useRouter();
   const pathname = usePathname() || "";
 
-  // ✅ All hooks called first
+  /* ----------------------------------
+     Scroll hide / show logic (UNCHANGED)
+  -----------------------------------*/
   useEffect(() => {
     let lastScrollY = window.scrollY;
     let lastHideY = 0;
 
     const handleScroll = () => {
       const y = window.scrollY;
+
       if (y > lastScrollY) {
         if (y > 100 && isVisible) {
           setIsVisible(false);
@@ -28,6 +32,7 @@ export default function Header() {
           setIsVisible(true);
         }
       }
+
       setIsScrolled(y > 50);
       lastScrollY = y;
     };
@@ -43,7 +48,18 @@ export default function Header() {
     setIsMobileMenuOpen(false);
   };
 
-  const hiddenRoutes = ["/h/", "/case-studies/", "/form/", "/find-talent/", "/get-hired/", "/freelancer/"]
+  /* ----------------------------------
+     EXISTING hidden route logic
+  -----------------------------------*/
+  const hiddenRoutes = [
+    "/h/",
+    "/case-studies/",
+    "/form/",
+    "/find-talent/",
+    "/get-hired/",
+    "/freelancer/",
+  ];
+
   const allowedExceptions = [
     "/how-we-work",
     "/hiring",
@@ -52,33 +68,49 @@ export default function Header() {
     "/find-talent",
     "/get-hired",
     "/freelancer",
-  ]
+  ];
 
-  const shouldHideHeader = pathname
-    ? hiddenRoutes.some((route) => {
-        if (pathname.startsWith(route.slice(0, -1)) && !allowedExceptions.includes(pathname)) {
-          return true
-        }
-        return false
-      })
-    : false
+  /* ----------------------------------
+     NEW: Landing page detection
+  -----------------------------------*/
+  const LANDING_SLUGS = ["gohighlevel-crm", "shopify", "seo", "webflow", "ai"];
+
+  const isLandingPage =
+    pathname.split("/").length === 2 &&
+    LANDING_SLUGS.includes(pathname.replace("/", ""));
+
+  /* ----------------------------------
+     FINAL hide condition (MERGED)
+  -----------------------------------*/
+  const shouldHideHeader =
+    pathname
+      ? hiddenRoutes.some((route) => {
+          if (
+            pathname.startsWith(route.slice(0, -1)) &&
+            !allowedExceptions.includes(pathname)
+          ) {
+            return true;
+          }
+          return false;
+        }) || isLandingPage
+      : false;
 
   if (shouldHideHeader) {
-    return null
+    return null;
   }
 
-
+  /* ----------------------------------
+     RENDER
+  -----------------------------------*/
   return (
     <>
       <div
-        className={`header-section fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${isVisible ? "translate-y-0" : "-translate-y-32"
-          }`}
+        className={`header-section fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
+          isVisible ? "translate-y-0" : "-translate-y-32"
+        }`}
       >
-
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-[1400px]">
-          <div
-            className={`mt-4 sm:mt-6 rounded-2xl transition-all duration-300`}
-          >
+          <div className="mt-4 sm:mt-6 rounded-2xl transition-all duration-300">
             {/* Main Header */}
             <div className="relative flex justify-between items-center px-1 sm:px-6 lg:px-8 py-4">
               {/* Logo */}
@@ -86,27 +118,30 @@ export default function Header() {
                 className="flex items-center cursor-pointer hover:opacity-80 transition-opacity duration-300 group"
                 onClick={() => handleNavigation("/")}
               >
-                <div className="relative">
-                  <img
-                    src="/finzie-logo2.png"
-                    alt="Finzie Logo"
-                    width={60}
-                    height={60}
-                    className="rounded-lg w-15 h-15 sm:w-13 sm:h-13 group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
+                <img
+                  src="/finzie-logo2.png"
+                  alt="Finzie Logo"
+                  width={60}
+                  height={60}
+                  className="rounded-lg group-hover:scale-105 transition-transform duration-300"
+                />
                 <span
                   className="font-medium text-[#050504]"
-                  style={{ fontSize: '1.375rem', letterSpacing: '-0.01em' }}
+                  style={{ fontSize: "1.375rem", letterSpacing: "-0.01em" }}
                 >
                   Finzie
                 </span>
-
               </div>
 
               {/* Desktop Navigation */}
-              <nav className="hidden lg:flex items-center space-x-1 text-end">
-                {["Home", "About Us", "Case Studies", "Find Talent", "Get Hired"].map((item, idx) => (
+              <nav className="hidden lg:flex items-center space-x-1">
+                {[
+                  "Home",
+                  "About Us",
+                  "Case Studies",
+                  "Find Talent",
+                  "Get Hired",
+                ].map((item, idx) => (
                   <a
                     key={idx}
                     onClick={() =>
@@ -116,8 +151,7 @@ export default function Header() {
                           : "/" + item.toLowerCase().replace(/\s+/g, "-")
                       )
                     }
-                    className="text-[#050504]/80 hover:text-[#050504] font-medium cursor-pointer transition-all duration-200 relative group px-4 py-2.5 rounded-sm"
-                    style={{ fontSize: '1rem', fontWeight: '600' }}
+                    className="text-[#050504]/80 hover:text-[#050504] font-semibold cursor-pointer px-4 py-2.5 relative group"
                   >
                     {item}
                     <span className="absolute bottom-1 left-4 w-0 h-[2px] bg-[#f7af00] transition-all duration-300 group-hover:w-[calc(100%-32px)]"></span>
@@ -125,19 +159,10 @@ export default function Header() {
                 ))}
               </nav>
 
-              {/* CTA Button - Desktop */}
-              {/* <button
-                onClick={() => handleNavigation("/contact")}
-                className="hidden lg:flex items-center bg-[#FFE01B] hover:bg-[#FCD34D] text-[#241C15] font-semibold px-6 py-2.5 rounded-full transition-all duration-300 hover:scale-[1.02] shadow-sm hover:shadow-md"
-                style={{ fontSize: '0.9375rem', fontWeight: '600' }}
-              >
-                Get Started
-              </button> */}
-
               {/* Mobile Menu Button */}
               <button
                 onClick={toggleMobileMenu}
-                className="lg:hidden p-2.5 rounded-xl hover:bg-[#fbf5e5]/10 transition-all duration-300 border border-[#241C15]/10"
+                className="lg:hidden p-2.5 rounded-xl border border-[#241C15]/10"
                 aria-label="Toggle mobile menu"
               >
                 {isMobileMenuOpen ? (
@@ -148,11 +173,17 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Mobile Navigation Menu */}
+            {/* Mobile Menu */}
             {isMobileMenuOpen && (
-              <div className="lg:hidden border-t border-[#241C15]/10 bg-[#fbf5e5] backdrop-blur-xl rounded-b-2xl mb-2">
+              <div className="lg:hidden border-t bg-[#fbf5e5] rounded-b-2xl">
                 <nav className="px-2 py-4 space-y-1">
-                  {["Home", "About Us", "Case Studies", "Find Talent", "Get Hired"].map((item, idx) => (
+                  {[
+                    "Home",
+                    "About Us",
+                    "Case Studies",
+                    "Find Talent",
+                    "Get Hired",
+                  ].map((item, idx) => (
                     <a
                       key={idx}
                       onClick={() =>
@@ -162,35 +193,25 @@ export default function Header() {
                             : "/" + item.toLowerCase().replace(/\s+/g, "-")
                         )
                       }
-                      className="block text-[#241C15]/80 hover:text-[#241C15] hover:bg-[#fbf5e5] font-medium py-3 px-2 cursor-pointer transition-all duration-200 rounded-lg"
-                      style={{ fontSize: '0.9375rem', fontWeight: '500' }}
+                      className="block py-3 px-2 rounded-lg font-medium"
                     >
                       {item}
                     </a>
                   ))}
-
-                  {/* CTA Button - Mobile */}
-                  {/* <button
-                    onClick={() => handleNavigation("/contact")}
-                    className="w-full mt-3 bg-[#FFE01B] hover:bg-[#FCD34D] text-[#241C15] font-semibold py-3 px-4 rounded-lg transition-all duration-300"
-                    style={{ fontSize: '0.9375rem', fontWeight: '600' }}
-                  >
-                    Get Started
-                  </button> */}
                 </nav>
               </div>
             )}
           </div>
         </div>
 
-        {/* Mobile Menu Overlay */}
+        {/* Mobile Overlay */}
         {isMobileMenuOpen && (
           <div
-            className="lg:hidden fixed inset-0 bg-[#fbf5e5] backdrop-blur-sm -z-10"
+            className="lg:hidden fixed inset-0 -z-10"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}
       </div>
     </>
-  )
+  );
 }

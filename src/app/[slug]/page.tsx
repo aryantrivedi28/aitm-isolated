@@ -1,37 +1,39 @@
 // app/landing/[slug]/page.tsx
 import { client } from '@/src/sanity/lib/client'
-import Hero from '../../../components/landing/Hero'
-import ShortCaseStudies from '../../../components/landing/ShortCaseStudies'
-import Logos from '../../../components/landing/Logos'
-import HowItWorks from '../../../components/landing/HowItWorks'
-import FAQ from '../../../components/landing/FAQ'
-import CTA from '../../../components/landing/CTA'
-import TestimonialSection from '../../../components/landing/Testimonial'
+import Hero from '../../components/landing/Hero'
+import ShortCaseStudies from '../../components/landing/ShortCaseStudies'
+import Logos from '../../components/landing/Logos'
+import HowItWorks from '../../components/landing/HowItWorks'
+import FAQ from '../../components/landing/FAQ'
+import CTA from '../../components/landing/CTA'
+import TestimonialSection from '../../components/landing/Testimonial'
 import Footer from '@/src/components/landing/Footer'
 // Import your new components
-import TheProblem from '../../../components/landing/TheProblem'
-import TheSolution from '../../../components/landing/TheSolution'
-import GHLServices from '../../../components/landing/GHLServices'
-import ResultBenefit from '../../../components/landing/ResultBenefit'
-import CRMMigration from '../../../components/landing/CRMMigration'
-import DevIntegration from '../../../components/landing/DevIntegration'
-import IncludesSection from '../../../components/landing/IncludesSection'
+import TheProblem from '../../components/landing/TheProblem'
+import TheSolution from '../../components/landing/TheSolution'
+import GHLServices from '../../components/landing/GHLServices'
+import ResultBenefit from '../../components/landing/ResultBenefit'
+import CRMMigration from '../../components/landing/CRMMigration'
+import DevIntegration from '../../components/landing/DevIntegration'
+import IncludesSection from '../../components/landing/IncludesSection'
+import { notFound } from 'next/navigation'
+
 
 type Section =
-  | { _type: 'shortCaseStudiesSection'; [key: string]: any }
-  | { _type: 'logosSection'; [key: string]: any }
-  | { _type: 'howItWorksSection'; [key: string]: any }
-  | { _type: 'faqSection'; [key: string]: any }
-  | { _type: 'ctaSection'; [key: string]: any }
-  | { _type: 'testimonialSection'; [key: string]: any }
-  | { _type: 'footerSection'; [key: string]: any }
-  | { _type: 'theProblemSection'; [key: string]: any }
-  | { _type: 'theSolutionSection'; [key: string]: any }
-  | { _type: 'ghlServicesSection'; [key: string]: any }
-  | { _type: 'resultBenefitSection'; [key: string]: any }
-  | { _type: 'crmMigrationSection'; [key: string]: any }
-  | { _type: 'devIntegrationSection'; [key: string]: any }
-  | { _type: 'includesSection'; [key: string]: any }
+  | { _type: 'shortCaseStudiesSection';[key: string]: any }
+  | { _type: 'logosSection';[key: string]: any }
+  | { _type: 'howItWorksSection';[key: string]: any }
+  | { _type: 'faqSection';[key: string]: any }
+  | { _type: 'ctaSection';[key: string]: any }
+  | { _type: 'testimonialSection';[key: string]: any }
+  | { _type: 'footerSection';[key: string]: any }
+  | { _type: 'theProblemSection';[key: string]: any }
+  | { _type: 'theSolutionSection';[key: string]: any }
+  | { _type: 'ghlServicesSection';[key: string]: any }
+  | { _type: 'resultBenefitSection';[key: string]: any }
+  | { _type: 'crmMigrationSection';[key: string]: any }
+  | { _type: 'devIntegrationSection';[key: string]: any }
+  | { _type: 'includesSection';[key: string]: any }
 
 interface LandingPageData {
   title: string
@@ -56,12 +58,26 @@ const componentMap: Record<Section['_type'], React.ComponentType<any>> = {
   includesSection: IncludesSection,
 }
 
+
+const ALLOWED_SLUGS = [
+  'gohighlevel-crm',
+  'shopify',
+  'seo',
+  'webflow',
+  'ai',
+]
+
+
 export default async function LandingPage({
   params,
 }: {
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await params
+
+  if (!ALLOWED_SLUGS.includes(slug)) {
+    notFound()
+  }
 
   const page: LandingPageData = await client.fetch(
     `*[_type == "landingPage" && slug.current == $slug][0]{
