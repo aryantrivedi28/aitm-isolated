@@ -254,7 +254,7 @@ export default function Hero({
 
       <div className="hero-section relative bg-[] overflow-hidden">
         <div className="relative z-10 min-h-screen flex items-center">
-          <div className="w-full max-w-[1500px] mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-16 sm:py-20 md:py-24">
+          <div className="w-full max-w-[1450px] mx-auto px-6 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-16 sm:py-20 md:py-24">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 lg:gap-20 xl:gap-24 items-center">
               <div className={`space-y-8 ${isVisible ? 'animate-slideInLeft' : ''}`}>
                 <div className="space-y-4">

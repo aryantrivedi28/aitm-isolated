@@ -150,7 +150,7 @@ export default function TheProblem({ heading, subheading, paragraph }: TheProble
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mb-8"
             >
-              <p className="text-base sm:text-xl md:text-2xl/5 leading-relaxed text-[#31302f]/60 font-medium">
+              <p className="text-base sm:text-xl md:text-xl text-[#31302f]/60 font-medium">
                 {paragraph}
               </p>
             </motion.div>
