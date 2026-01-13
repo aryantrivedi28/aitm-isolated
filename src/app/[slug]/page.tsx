@@ -83,19 +83,21 @@ export default async function LandingPage({
     `*[_type == "landingPage" && slug.current == $slug][0]{
       title,
       hero {
-        title,
-        subtitle,
-        backgroundImage { asset->{ url } },
-        ctas[] { label, href, variant },
-        screenshots[] {
-          image { asset->{ url } },
-          caption
-        },
-        blogButton {
-          label,
-          href
-        }
-      },
+  title,
+  subtitle,
+  ctas,
+  screenshots,
+  blogButton,
+  "formConfig": form->{
+    _id,
+    name,
+    title,
+    description,
+    type,
+    additionalFields
+  }
+},
+
       sections[] {
         _type,
         _key,

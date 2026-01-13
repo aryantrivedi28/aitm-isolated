@@ -1,14 +1,14 @@
 import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: parseInt(process.env.EMAIL_PORT || '587', 10),
+  host: process.env.SMTP_HOST,
+  port: parseInt(process.env.SMTP_PORT || '587', 10),
   secure: false, // true for 465, false for other ports
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
-} as any)
+})
 
 interface FormData {
       name: string
@@ -23,8 +23,8 @@ interface FormData {
 
 export async function sendAdminEmail(formData: FormData) {
       const mailOptions = {
-            from: `"Contact Form" <${process.env.EMAIL_USER}>`,
-            to: process.env.ADMIN_EMAIL,
+            from: `"Contact Form" <${process.env.SMTP_USER}>`,
+            to: process.env.ADMIN_EMAILS,
             subject: 'New Contact Form Submission',
             html: `
                   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -92,7 +92,7 @@ interface MailOptions {
 
 export async function sendConfirmationEmail(formData: FormData): Promise<any> {
       const mailOptions: MailOptions = {
-            from: `"Your Company" <${process.env.EMAIL_USER}>`,
+            from: `"Your Company" <${process.env.SMTP_USER}>`,
             to: formData.email,
             subject: 'We Received Your Request',
             html: `

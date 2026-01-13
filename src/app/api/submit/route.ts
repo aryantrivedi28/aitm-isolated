@@ -3,75 +3,96 @@ import { sendAdminEmail, sendConfirmationEmail } from '../../../lib/email'
 import { headers } from 'next/headers'
 
 export async function POST(request: Request) {
-
   try {
-    // 1️⃣ Parse request body
-    const formData = await request.json()
+    // 1️⃣ Parse body
+    const body = await request.json()
 
-    // 2️⃣ Read headers
-    const headersList = await headers()
-    const ip = headersList.get('x-forwarded-for') || 'Unknown'
-    const userAgent = headersList.get('user-agent') || 'Unknown'
+    const {
+      formId,
+      formName,
+      formType,
+      pageSlug,
+      data,
+    } = body
 
-
-    // 3️⃣ Build submission payload
-    const submissionData = {
-      ...formData,
-      ip_address: ip,
-      user_agent: userAgent,
-      submitted_at: new Date().toISOString(),
-      status: 'new'
-    }
-
-    // 4️⃣ Validate required fields
-    if (
-      !submissionData.name ||
-      !submissionData.email ||
-      !submissionData.phone ||
-      !submissionData.interest
-    ) {
+    // 2️⃣ Basic validation (ONLY common identity fields)
+    if (!data?.name || !data?.email || !data?.phone) {
       return Response.json(
-        { error: 'Missing required fields' },
+        { error: 'Missing required fields (name, email, phone)' },
         { status: 400 }
       )
     }
-    const { data, error } = await supabaseAdmin
-      .from('contact_submissions')
-      .insert([submissionData])
+
+    // 3️⃣ Read headers (metadata)
+    const headersList = await headers()
+    const ip =
+      headersList.get('x-forwarded-for')?.split(',')[0] || 'Unknown'
+    const userAgent = headersList.get('user-agent') || 'Unknown'
+
+    // 4️⃣ Build DB payload
+    const submission = {
+      form_id: formId,
+      form_name: formName,
+      form_type: formType,
+      page_slug: pageSlug,
+
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+
+      payload: data, // 🔥 ALL dynamic fields here
+      ip_address: ip,
+      user_agent: userAgent,
+      status: 'new',
+    }
+
+    // 5️⃣ Insert into Supabase
+    const { data: saved, error } = await supabaseAdmin
+      .from('form_submissions')
+      .insert([submission])
       .select()
+      .single()
 
     if (error) {
-      console.error('[CONTACT API] Supabase error:', error)
-      throw error
+      console.error('[FORM API] Supabase error:', error)
+      return Response.json(
+        { error: 'Database error' },
+        { status: 500 }
+      )
     }
 
-    // 6️⃣ Send emails (non-blocking failures)
+    // 6️⃣ Emails (non-blocking)
     try {
       await sendAdminEmail({
-        ...formData,
+        formName,
+        formType,
+        pageSlug,
+        ...data,
         ip,
-        userAgent
+        userAgent,
       })
-      await sendConfirmationEmail(formData)
 
+      await sendConfirmationEmail({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        interest: data.interest,
+      })
     } catch (emailError) {
-      console.error('[CONTACT API] Email error:', emailError)
-      // Do not fail request on email error
+      console.error('[FORM API] Email error:', emailError)
     }
 
-
+    // 7️⃣ Success response
     return Response.json({
       success: true,
       message: 'Form submitted successfully',
-      data: data[0]
+      id: saved.id,
     })
-
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error'
+    console.error('[FORM API] Fatal error:', error)
 
     return Response.json(
-      { error: 'Internal server error', details: errorMessage },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

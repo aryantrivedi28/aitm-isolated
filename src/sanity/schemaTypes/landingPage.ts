@@ -62,7 +62,6 @@ export default defineType({
           title: 'Subtitle',
         }),
 
-        // CTAs on the left
         defineField({
           name: 'ctas',
           title: 'CTA Buttons',
@@ -99,7 +98,14 @@ export default defineType({
           ],
         }),
 
-        // Screenshots on the right
+        // 👇 NEW (this is the only addition)
+        defineField({
+          name: 'form',
+          title: 'Hero Form',
+          type: 'reference',
+          to: [{ type: 'formConfig' }],
+        }),
+
         defineField({
           name: 'screenshots',
           title: 'Screenshots Section',
@@ -124,7 +130,6 @@ export default defineType({
           ],
         }),
 
-        // Blog button at the bottom
         defineField({
           name: 'blogButton',
           title: 'Blog Button',
@@ -145,14 +150,13 @@ export default defineType({
           ],
         }),
 
-        // Optional background image for entire hero section
         defineField({
           name: 'backgroundImage',
           type: 'richImage',
           title: 'Background Image',
         }),
       ],
-    }), // ← ✅ this comma is important
+    }),
 
     // Flexible content builder
     defineField({

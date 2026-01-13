@@ -27,6 +27,7 @@ import { includesSection } from './sections/includesSection'
 import { devIntegrationSection } from './sections/devIntegrationSection'
 import { crmMigrationSection } from './sections/crmMigrationSection'
 // import { bottomSection } from './sections/bottomSection'
+import formConfig from './formConfig'
 
 // export schema definition for Sanity Studio
 export const schema: { types: SchemaTypeDefinition[] } = {
@@ -34,6 +35,7 @@ export const schema: { types: SchemaTypeDefinition[] } = {
     // documents
     caseStudy,
     landingPage,
+    formConfig,
 
     // shared objects
     richImage,
