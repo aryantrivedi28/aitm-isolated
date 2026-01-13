@@ -219,8 +219,11 @@ const Logos = () => {
     { src: "/logos/logos4.png", width: 130, height: 60 },
     { src: "/logos/logos5.png", width: 110, height: 55 },
     { src: "/logos/logos6.webp", width: 140, height: 70 },
-    { src: "/logos/logos7.png", width: 100, height: 50 },
     { src: "/logos/logos8.jpeg", width: 150, height: 75 },
+    { src: "/logos/logos9.png", width: 120, height: 60 },
+    { src: "/logos/logos10.png", width: 130, height: 65 },
+    { src: "/logos/logos11.png", width: 160, height: 80 },
+    { src: "/logos/logos12.png", width: 140, height: 70 },
   ];
 
   return (
