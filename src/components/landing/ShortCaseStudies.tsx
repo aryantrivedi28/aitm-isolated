@@ -214,14 +214,6 @@ export default function CaseStudiesGrid({
                         ? 'bg-[#050504] scale-125'
                         : 'bg-gray-300'
                       }`} />
-
-                    {/* Slide Number */}
-                    <span className={`text-xs font-medium transition-colors ${currentSlide === index
-                        ? 'text-[#050504]'
-                        : 'text-gray-500'
-                      }`}>
-                      {index + 1}
-                    </span>
                   </button>
                 ))}
               </div>

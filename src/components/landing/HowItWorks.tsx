@@ -53,7 +53,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: 0.08 * i }}
-                      className="flex-1 bg-[#fbf5e5] p-6 rounded-2xl hover:shadow-xl transition-all mb-4"
+                      className="flex-1 bg-[#f0eadd] p-6 rounded-2xl hover:shadow-xl transition-all mb-4"
                     >
                       <h3 className="text-lg font-normal text-gray-900 mb-3">
                         {s.title}
@@ -76,7 +76,7 @@ export default function HowItWorks({ heading, steps = [] }: HowItWorksProps) {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: 0.08 * i }}
-                      className="md:w-1/2 bg-[#fbf5e5] p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-lg transition-all"
+                      className="md:w-1/2 bg-[#f0eadd] p-6 md:p-8 rounded-2xl md:rounded-3xl transition-all"
                     >
                       <div className="flex items-center gap-4">
                         <motion.div
