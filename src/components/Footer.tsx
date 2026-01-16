@@ -121,7 +121,7 @@ export default function Footer() {
 
       {/* Top Section */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12">
-        <div className="flex justify-between items-start md:items-center mb-8">
+        <div className="flex justify-between items-start md:items-center mb-4">
           <h2 className={`text-2xl lg:text-5xl font-medium ${colors.text}`}>Finzie</h2>
           {/* <button
             onClick={toggleTheme}
@@ -141,7 +141,7 @@ export default function Footer() {
           {/* Logo + description */}
           <motion.div custom={0} variants={fadeUp} className="md:col-span-1">
             <p className={`${colors.secondaryText} text-base leading-relaxed mb-6`}>
-               We provide top 1 percent Indian marketing and creative talent for global companies. Fully managed. Flexible. Outcome driven.
+               Finzie is a specialised execution partner for Shopify, GoHighLevel and whitelabel agency delivery
             </p>
             {/* Social Links */}
             <div className="flex gap-4 mt-8 ml-4">
