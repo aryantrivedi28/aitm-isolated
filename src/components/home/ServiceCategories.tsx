@@ -4,49 +4,49 @@ import React, { useState } from "react";
 import { Code, Megaphone, Palette, Video, Brain, Database, Shield, Headphones, TestTube, FileText, Briefcase, Sparkles, Settings } from "lucide-react";
 
 type CategoryKey =
-  | "Design & UX/UI"
-  | "Marketing & Growth"
-  | "Shopify"
-  | "Video & Content"
+  // | "Design & UX/UI"
+  // | "Marketing & Growth"
+   "Shopify"
+  // | "Video & Content"
   | "GHL Automation";
 
 const ServiceCategories = () => {
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>("Marketing & Growth");
+  const [activeCategory, setActiveCategory] = useState<CategoryKey>("Shopify");
 
   const categories: Record<CategoryKey, {
     icon: React.ComponentType<{ className?: string }>;
     subcategories: string[];
     techStacks?: string[];
   }> = {
-    "Marketing & Growth": {
-      icon: Megaphone,
-      subcategories: [
-        "Performance marketing",
-        "SEO",
-        "Email and lifecycle",
-        "Funnel design",
-        "Copywriting",
-        "Growth strategy",
-        "Quarter plans",
-        "Fractional CMO"
-      ]
-    },
+    // "Marketing & Growth": {
+    //   icon: Megaphone,
+    //   subcategories: [
+    //     "Performance marketing",
+    //     "SEO",
+    //     "Email and lifecycle",
+    //     "Funnel design",
+    //     "Copywriting",
+    //     "Growth strategy",
+    //     "Quarter plans",
+    //     "Fractional CMO"
+    //   ]
+    // },
 
-    "Design & UX/UI": {
-      icon: Palette,
-      subcategories: [
-        "UI design",
-        "UX flows",
-        "Wireframes",
-        "Brand identity",
-        "Pitch decks",
-        "Ad creatives",
-        "Web design",
-        "Marketing collateral"
-      ]
-    },
+    // "Design & UX/UI": {
+    //   icon: Palette,
+    //   subcategories: [
+    //     "UI design",
+    //     "UX flows",
+    //     "Wireframes",
+    //     "Brand identity",
+    //     "Pitch decks",
+    //     "Ad creatives",
+    //     "Web design",
+    //     "Marketing collateral"
+    //   ]
+    // },
 
-    Shopify: {
+    "Shopify": {
       icon: Settings,
       subcategories: [
         "Theme customisation",
@@ -59,18 +59,18 @@ const ServiceCategories = () => {
       ]
     },
 
-    "Video & Content": {
-      icon: Video,
-      subcategories: [
-        "Short form edits",
-        "Ads and reels",
-        "Long form videos",
-        "Brand storytelling",
-        "YouTube edits",
-        "Social content",
-        "Creative direction"
-      ]
-    },
+    // "Video & Content": {
+    //   icon: Video,
+    //   subcategories: [
+    //     "Short form edits",
+    //     "Ads and reels",
+    //     "Long form videos",
+    //     "Brand storytelling",
+    //     "YouTube edits",
+    //     "Social content",
+    //     "Creative direction"
+    //   ]
+    // },
 
     "GHL Automation": {
       icon: Settings,

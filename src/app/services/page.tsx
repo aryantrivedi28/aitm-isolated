@@ -116,7 +116,7 @@ export default function ServicesPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/contact"
+                href="/client-request"
                 className="bg-[#f7af00] text-[#050504] hover:bg-[#e69f00] px-6 md:px-8 py-3 md:py-4 rounded-xl font-semibold text-base md:text-lg transition-all hover:scale-105 inline-flex items-center justify-center gap-2"
               >
                 <Calendar className="w-4 h-4 md:w-5 md:h-5" />
