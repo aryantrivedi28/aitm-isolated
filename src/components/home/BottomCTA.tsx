@@ -17,16 +17,16 @@ const BottomCTA = () => {
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
         {/* Main Headline */}
         <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-[#050504] leading-snug sm:leading-tight mb-6 sm:mb-8">
-          Ready to{" "}
+          Need a reliable {" "}
           <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
-            Transform
+            execution partner
           </span>
           <br className="hidden sm:block" />
           Your Business?
         </h2>
         {/* Description */}
         <p className="text-[#050504] text-base sm:text-lg md:text-xl leading-relaxed mb-8 sm:mb-12 max-w-3xl font-medium relative w-fit underline-wavy">
-          Work with India’s top 1 percent marketing and creative talent. Get an agile team that moves with speed and clarity.{" "}
+          If Shopify or GoHighLevel is critical to your business, we can help you deliver without chaos{" "}
           <span className="font-bold underline-wavy">
             Finzie's expert talent.
           </span>
@@ -50,7 +50,7 @@ const BottomCTA = () => {
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center items-center transition-all duration-500 group-hover:scale-105">
           <Link href="/find-talent">
             <Button className="inline-flex items-center bg-[#f7af00] text-black text-xl font-medium px-6 py-7 rounded-2xl hover:scale-105 transition-all duration-500">
-              Start a Project
+              Start a conversation
               <ArrowRight className="ml-2 w-6 h-6 sm:w-7 sm:h-7 transition-transform duration-300 group-hover:translate-x-2" />
             </Button>
           </Link>

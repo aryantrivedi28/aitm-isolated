@@ -1,4 +1,6 @@
+import CaseStudies from "../components/home/CaseStudies";
 import Hero from "../components/home/Hero";
+import WhoThisIsFor from "../components/home/WhoThisFor";
 import {
   WhatWeDo,
   HowItWorks,
@@ -17,7 +19,9 @@ export default function Index() {
       <WhatWeDo />
       <HowItWorks />
       <ClientLogos />
+      <WhoThisIsFor />
       {/* <Testimonials /> */}
+      <CaseStudies />
       <WhyUs />
       <ServiceCategories />
       <FAQ />

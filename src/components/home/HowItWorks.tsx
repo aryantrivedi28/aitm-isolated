@@ -11,9 +11,9 @@ const HowItWorks = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
 
   const steps = [
-    { image: "/goal.png", title: "Tell us your goal", description: "SEO or content or Shopify or automation or design. We understand your scope in a short call.", step: "01" },
-    { image: "/agile_team.png", title: "We assemble your agile team", description: "A mix of fractional specialists and in-house experts based on your exact needs.", step: "02" },
-    { image: "/startup.png", title: "Begin with a small starter project", description: "Low risk. Clear scope. Quick delivery. If you like the output, we scale into larger monthly work.", step: "03" },
+    { image: "/goal.png", title: "Tell us your goal", description: "We understand your setup and define exactly what needs to be built or optimised.", step: "01" },
+    { image: "/agile_team.png", title: "We assemble your agile team", description: "You start with a low-risk pilot or onboarding phase to validate quality and fit.", step: "02" },
+    { image: "/startup.png", title: "Begin with a small starter project", description: "Once trust is established, we expand into ongoing delivery with predictable execution.", step: "03" },
   ];
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const HowItWorks = () => {
           </h2>
 
           <p className="text-[#31302f] text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
-            Three simple steps to connect with India's top talent and transform your business
+            A clear, low-risk process designed for teams that value predictability and clean execution.
           </p>
         </div>
 
@@ -53,7 +53,7 @@ const HowItWorks = () => {
 
               {/* Card */}
               <div className="relative bg-[#fbf5e5] rounded-3xl p-4 sm:p-6 flex flex-col border-2 hover:border-[#f7af00] transition-all duration-500 backdrop-blur-md">
-                
+
                 {/* Step Number */}
                 <div className="absolute top-4 left-4 w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-[#f7af00] flex items-center justify-center font-normal text-black shadow-md z-10">
                   {step.step}
@@ -82,8 +82,15 @@ const HowItWorks = () => {
                 <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
+
           </div>
+          <p className="mt-6 text-sm sm:text-base text-[#31302f] font-semibold">
+            No hourly billing. No micromanagement. No surprises.
+          </p>
         </div>
+
+
+
       </div>
 
       {/* Custom Styles */}

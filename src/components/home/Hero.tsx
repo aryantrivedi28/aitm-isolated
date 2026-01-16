@@ -58,37 +58,31 @@ const Hero = () => {
         {/* Main Content */}
         <div className="relative z-10 w-full">
           <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-16 sm:py-20 lg:py-24">
-            {/* Small Badge */}
-            {/* <div
-              className={`inline-flex items-center gap-2.5 bg-[#241C15] px-5 py-2.5 rounded-full mb-10 transition-all duration-700 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-            >
-              <Sparkles className="w-4 h-4 text-[#FFE01B]" />
-              <span className="text-[#fbf5e5] text-sm font-medium tracking-wide" style={{ letterSpacing: '0.05em' }}>
-                INDIA'S PREMIER TALENT PLATFORM
-              </span>
-            </div> */}
 
             {/* Headline */}
             <h1
               className={`tracking-in-expand leading-[1.1] mb-4 transition-all duration-700 delay-100 ${isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                 }`}
               style={{
-                fontSize: "clamp(2rem, 5vw, 4rem)",
+                fontSize: "clamp(2rem, 4vw, 3.5rem)",
                 letterSpacing: "-0.025em",
                 maxWidth: "950px",
                 fontWeight: "200",
               }}
             >
               <span className="block text-[#241C15] mb-1">
-                Your{" "}
+                Reliable {" "}
+
                 <span className="relative inline-block">
-                  <span className="relative z-10">Agile Marketing Team</span>
+                  <span className="relative z-10">Shopify and GoHighLevel</span>
                   <span className="absolute bottom-[0.1em] left-0 w-full h-[0.1em] bg-[#f7af00] -z-10"></span>
+
                 </span>
               </span>
+              <span className="relative z-10">execution for agencies and</span>
 
               <span className="block text-[#241C15]">
-                On Demand
+                growing businesses
               </span>
             </h1>
 
@@ -104,7 +98,8 @@ const Hero = () => {
                 opacity: '0.9'
               }}
             >
-              Top 1 percent Indian talent across marketing, design, UI or UX, video, SEO, GHL and Shopify.
+              We deliver fixed-scope Shopify builds, GoHighLevel systems and whitelabel execution without hourly billing or freelancer risk
+              Dedicated experts. Predictable outcomes. Zero chaos.
             </p>
 
             {/* CTA Buttons */}
@@ -116,7 +111,7 @@ const Hero = () => {
                 style={{ fontSize: '1.0625rem', fontWeight: '500' }}
                 onClick={() => handleNavigation("/find-talent")}
               >
-                Start a Project
+                See how it works
                 <ArrowRight className="ml-2.5 w-5 h-5 transition-transform group-hover:translate-x-1" />
               </button>
 
@@ -126,7 +121,7 @@ const Hero = () => {
                 onClick={() => handleNavigation("/get-hired")}
               >
                 <Play className="mr-2.5 w-4 h-4 fill-current" />
-                Find Talent
+                View use cases
               </button>
             </div>
           </div>

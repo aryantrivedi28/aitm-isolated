@@ -12,29 +12,45 @@ const WhatWeDo = () => {
   const services = [
     {
       icon: Users,
-      title: "Fractional Specialists",
+      title: "Shopify execution that works at scale",
       description:
-        "Top 1 percent talent that plugs into your workflows across growth, design, SEO, content and automation. One partner. All skills.",
+        "We build, fix and optimise Shopify stores for brands and agencies where performance, tracking and stability matter.",
+      bullets: [
+        "Conversion-focused Shopify builds",
+        "Clean GA4 and event tracking",
+        "Safe Liquid and performance changes on live stores",
+      ],
       gradient: "from-[#f7af00] to-[#f7af00]",
       bgGradient: "bg-[#f7af00]/10",
     },
     {
       icon: Search,
-      title: "End-to-End Project Delivery",
+      title: "GoHighLevel systems agencies can resell confidently",
       description:
-        "We own the full execution. You get outcomes without managing freelancers or agencies. Perfect for campaigns, SEO, design systems, website revamps and content pipelines.",
+        "We build and manage GoHighLevel sub-accounts, automations and pipelines so agencies can focus on selling and growth.",
+      bullets: [
+        "Fully set up client sub-accounts",
+        "Stable workflows and automations",
+        "Clear documentation and handover",
+      ],
       gradient: "from-[#f7af00] to-[#f7af00]",
-      bgGradient: "bg-[f7af00]",
+      bgGradient: "bg-[#f7af00]/10",
     },
     {
       icon: Building,
-      title: "In-house GHL Automation",
+      title: "Your backend delivery team under your brand",
       description:
-        "Our internal unit handles CRM setup, funnels, lead workflows, booking systems, nurture journeys, SaaS deployments and automation for marketing and ops. Built in-house for quality and speed.",
+        "We operate behind the scenes while you stay client-facing. Your brand owns the client. We own execution.",
+      bullets: [
+        "Dedicated monthly delivery",
+        "Fixed scope and pricing",
+        "No Finzie visibility to clients",
+      ],
       gradient: "from-[#f7af00] to-[#f7af00]",
       bgGradient: "bg-[#f7af00]/10",
     },
   ];
+
 
 
   useEffect(() => {
@@ -115,10 +131,24 @@ const WhatWeDo = () => {
 
                   {/* Content */}
                   <div>
-                    <h3 className="text-xl sm:text-2xl font-medium text-[#050504] mb-3">{service.title}</h3>
-                    <p className="text-[#31302f] text-sm sm:text-base leading-relaxed">{service.description}</p>
+                    <h3 className="text-xl sm:text-2xl font-medium text-[#050504] mb-3">
+                      {service.title}
+                    </h3>
 
+                    <p className="text-[#31302f] text-sm sm:text-base leading-relaxed mb-4">
+                      {service.description}
+                    </p>
+
+                    <ul className="space-y-2">
+                      {service.bullets.map((bullet, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-[#31302f]">
+                          <span className="mt-1 w-1.5 h-1.5 rounded-full bg-[#f7af00]" />
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
+
                 </div>
               </div>
             </div>

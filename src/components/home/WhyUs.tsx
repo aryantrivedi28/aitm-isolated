@@ -75,16 +75,17 @@ const WhyUs = () => {
             }`}
         >
           <h2 className="text-[#050504] font-medium text-2xl sm:text-4xl md:text-5xl mb-4">
-            Why{" "}
+            Built for teams tired of{" "}
             <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
-              Us?
+              unreliable execution
             </span>
           </h2>
 
           <p className="text-[#31302f] max-w-2xl mx-auto leading-relaxed font-medium text-sm sm:text-base">
-            When it comes to quality and growth, we do not compromise.{" "}
-            <span className="font-bold text-[#31302f]">zero hassles</span>.
+            We focus on clean execution, predictable delivery and systems that hold up
+            long after launch.
           </p>
+
         </div>
 
 
