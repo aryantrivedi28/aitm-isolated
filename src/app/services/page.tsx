@@ -149,7 +149,7 @@ export default function ServicesPage() {
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
             {services.map((service) => (
               <div key={service.id} className="bg-[#f0eadd] rounded-2xl p-6 md:p-8 shadow-lg border border-[#f0eadd] hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                <h3 className="text-xl md:text-2xl font-bold text-[#050504] mb-4">{service.title}</h3>
+                <h3 className="text-xl md:text-2xl font-medium text-[#050504] mb-4">{service.title}</h3>
                 <p className="text-[#31302f] mb-6">{service.description}</p>
 
                 <div className="space-y-3 mb-6 md:mb-8">
@@ -226,11 +226,11 @@ export default function ServicesPage() {
             <div className="grid md:grid-cols-3 gap-4">
               {processSteps.map((step) => (
                 <div key={step.step} className="relative">
-                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-[#f0eadd] h-full">
+                  <div className="bg-[#f0eadd] p-6 rounded-2xl shadow-sm border border-[#f0eadd] h-full">
                     <div className="inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-[#f7af00] text-[#050504] rounded-full text-lg md:text-xl font-bold mb-4">
                       {step.step}
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-[#050504] mb-3">
+                    <h3 className="text-lg md:text-xl font-medium text-[#050504] mb-3">
                       {step.title}
                     </h3>
                     <p className="text-[#31302f] text-sm md:text-base">
@@ -255,12 +255,12 @@ export default function ServicesPage() {
             {businessTypes.map((business, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-[#faf4e5] to-white p-6 md:p-8 rounded-2xl border border-[#f0eadd] hover:border-[#f7af00] transition-all hover:shadow-lg"
+                className="bg-[#faf4e5] p-6 md:p-8 rounded-2xl border border-[#f0eadd] hover:border-[#f7af00] transition-all hover:shadow-lg"
               >
                 <div className="w-12 h-12 md:w-14 md:h-14 bg-[#faf4e5] rounded-xl flex items-center justify-center mb-4 md:mb-6">
                   <Users className="w-6 h-6 md:w-7 md:h-7 text-[#31302f]" />
                 </div>
-                <h3 className="text-lg md:text-xl font-bold text-[#050504] mb-3">
+                <h3 className="text-lg md:text-xl font-medium text-[#050504] mb-2">
                   {business.name}
                 </h3>
                 <p className="text-[#31302f]">
@@ -285,8 +285,8 @@ export default function ServicesPage() {
                 key={index}
                 className="bg-[#f0eadd] p-6 md:p-8 rounded-2xl shadow-lg border border-[#f0eadd]"
               >
-                <div className="flex items-center gap-4 mb-4 md:mb-6">
-                  <h3 className="text-lg md:text-xl font-bold text-[#050504]">
+                <div className="flex items-center gap-4 mb-2 md:mb-3">
+                  <h3 className="text-lg md:text-xl font-medium text-[#050504]">
                     {value.title}
                   </h3>
                 </div>
@@ -331,9 +331,9 @@ export default function ServicesPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-12 md:py-20 bg-[#f0eadd]">
+      <section className="py-12 md:py-20 bg-[#faf4e5]">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-gradient-to-br from-[#faf4e5] to-[#f0eadd] rounded-3xl p-8 md:p-12 text-center border border-[#f0eadd]">
+          <div className="max-w-4xl mx-auto bg-[#f0eadd] rounded-3xl p-8 md:p-12 text-center border border-[#f0eadd]">
             <h2 className="text-3xl md:text-4xl font-medium text-[#31302f] mb-4 md:mb-6">
               Not Sure Which Service You Need?
             </h2>
@@ -341,7 +341,7 @@ export default function ServicesPage() {
               Let's discuss your goals and find the perfect solution for your business growth.
             </p>
             <Link
-              href="/contact"
+              href="/client-request"
               className="inline-flex items-center gap-3 bg-[#f7af00] hover:bg-[#e69f00] text-[#050504] px-8 md:px-10 py-3 md:py-5 rounded-xl font-semibold text-base md:text-lg transition-all hover:scale-105 hover:shadow-xl"
             >
               <Calendar className="w-5 h-5 md:w-6 md:h-6" />
