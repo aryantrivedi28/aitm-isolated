@@ -14,32 +14,41 @@ export default function Header() {
   /* ----------------------------------
      Scroll hide / show logic (UNCHANGED)
   -----------------------------------*/
+  // useEffect(() => {
+  //   let lastScrollY = window.scrollY;
+  //   let lastHideY = 0;
+
+  //   const handleScroll = () => {
+  //     const y = window.scrollY;
+
+  //     if (y > lastScrollY) {
+  //       if (y > 100 && isVisible) {
+  //         setIsVisible(false);
+  //         lastHideY = y;
+  //       }
+  //     } else {
+  //       const reversed = lastHideY - y;
+  //       if ((y < 50 || reversed > 250) && !isVisible) {
+  //         setIsVisible(true);
+  //       }
+  //     }
+
+  //     setIsScrolled(y > 50);
+  //     lastScrollY = y;
+  //   };
+
+  //   window.addEventListener("scroll", handleScroll, { passive: true });
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, [isVisible]);
+
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let lastHideY = 0;
-
     const handleScroll = () => {
-      const y = window.scrollY;
-
-      if (y > lastScrollY) {
-        if (y > 100 && isVisible) {
-          setIsVisible(false);
-          lastHideY = y;
-        }
-      } else {
-        const reversed = lastHideY - y;
-        if ((y < 50 || reversed > 250) && !isVisible) {
-          setIsVisible(true);
-        }
-      }
-
-      setIsScrolled(y > 50);
-      lastScrollY = y;
+      setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isVisible]);
+  }, []);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
@@ -85,14 +94,14 @@ export default function Header() {
   const shouldHideHeader =
     pathname
       ? hiddenRoutes.some((route) => {
-          if (
-            pathname.startsWith(route.slice(0, -1)) &&
-            !allowedExceptions.includes(pathname)
-          ) {
-            return true;
-          }
-          return false;
-        }) || isLandingPage
+        if (
+          pathname.startsWith(route.slice(0, -1)) &&
+          !allowedExceptions.includes(pathname)
+        ) {
+          return true;
+        }
+        return false;
+      }) || isLandingPage
       : false;
 
   if (shouldHideHeader) {
@@ -104,11 +113,9 @@ export default function Header() {
   -----------------------------------*/
   return (
     <>
-      <div
-        className={`header-section fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-32"
-        }`}
-      >
+      <div className="header-section relative w-full z-10">
+
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-[1400px]">
           <div className="mt-4 sm:mt-6 rounded-2xl transition-all duration-300">
             {/* Main Header */}
@@ -138,6 +145,7 @@ export default function Header() {
                 {[
                   "Home",
                   "About Us",
+                  "Services",
                   "Case Studies",
                   "Find Talent",
                   "Get Hired",
