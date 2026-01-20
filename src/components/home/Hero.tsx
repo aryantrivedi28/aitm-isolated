@@ -54,10 +54,10 @@ const Hero = () => {
 `}</style>
 
 
-      <section className="hero-section relative overflow-hidden bg-[#fbf5e5] min-h-screen flex items-center pt-16">
+      <section className="hero-section relative overflow-hidden bg-[#fbf5e5] min-h-screen flex items-center">
         {/* Main Content */}
         <div className="relative z-10 w-full">
-          <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-16 sm:py-20 lg:py-24">
+          <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-12 sm:py-16 lg:py-18">
 
             {/* Headline */}
             <h1

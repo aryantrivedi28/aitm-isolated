@@ -103,15 +103,15 @@ export default function ServicesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#faf4e5] pt-48">
+    <div className="min-h-screen bg-[#faf4e5] pt-28 sm:pt-32 lg:pt-36">
       {/* Hero Section */}
       <section className="relative py-16 md:py-20 text-[#050504]">
-        <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl">
               Our Services
             </h1>
-            <p className="text-lg md:text-xl lg:text-2xl text-[#050504] mb-8 md:mb-10 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg lg:text-xl text-[#050504] mb-8 md:mb-10 max-w-3xl mx-auto">
               End-to-end Shopify and GoHighLevel solutions designed to scale sales, automate operations, and drive growth.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -136,7 +136,7 @@ export default function ServicesPage() {
 
       {/* Services Overview */}
       <section id="services-overview" className="py-12 md:py-20 bg-[#faf4e5]">
-        <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl font-medium text-[#31302f] mb-4 md:mb-6">
               Complete Growth Solutions
@@ -146,7 +146,7 @@ export default function ServicesPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
             {services.map((service) => (
               <div key={service.id} className="bg-[#f0eadd] rounded-2xl p-6 md:p-8 shadow-lg border border-[#f0eadd] hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                 <h3 className="text-xl md:text-2xl font-medium text-[#050504] mb-4">{service.title}</h3>
@@ -176,7 +176,7 @@ export default function ServicesPage() {
 
       {/* Comparison Section */}
       <section className="py-12 md:py-20 bg-[#f0eadd]">
-        <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="bg-[#f0eadd] rounded-2xl p-6 md:p-8 border border-[#f0eadd]">
               <h3 className="text-2xl md:text-3xl font-medium text-[#31302f] mb-6 md:mb-8 text-center">
@@ -217,13 +217,13 @@ export default function ServicesPage() {
 
       {/* How We Deliver */}
       <section className="py-12 md:py-20 bg-[#faf4e5]">
-        <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-medium text-center text-[#31302f] mb-12 md:mb-16">
             Our Working Process
           </h2>
 
           <div className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {processSteps.map((step) => (
                 <div key={step.step} className="relative">
                   <div className="bg-[#f0eadd] p-6 rounded-2xl shadow-sm border border-[#f0eadd] h-full">
@@ -246,12 +246,12 @@ export default function ServicesPage() {
 
       {/* Who We Work With */}
       <section className="py-12 md:py-20 bg-[#f0eadd]">
-        <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-medium text-center text-[#31302f] mb-12 md:mb-16">
             Businesses We Help
           </h2>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {businessTypes.map((business, index) => (
               <div
                 key={index}
@@ -274,7 +274,7 @@ export default function ServicesPage() {
 
       {/* Why Choose Us */}
       <section className="py-12 md:py-20 bg-[#faf4e5]">
-        <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-medium text-center text-[#31302f] mb-12 md:mb-16">
             Why Clients Choose Us
           </h2>
@@ -283,7 +283,7 @@ export default function ServicesPage() {
             {valuePropositions.map((value, index) => (
               <div
                 key={index}
-                className="bg-[#f0eadd] p-6 md:p-8 rounded-2xl shadow-lg border border-[#f0eadd]"
+                className="bg-[#f0eadd] p-6 sm:p-8 lg:p-12 rounded-2xl shadow-lg border border-[#f0eadd]"
               >
                 <div className="flex items-center gap-4 mb-2 md:mb-3">
                   <h3 className="text-lg md:text-xl font-medium text-[#050504]">
@@ -301,7 +301,7 @@ export default function ServicesPage() {
 
       {/* Complete Growth System */}
       <section className="py-12 md:py-20 bg-[#f0eadd] text-[#050504]">
-        <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-2xl md:text-5xl font-medium mb-6">
               Shopify + GoHighLevel = Complete Growth System
@@ -332,7 +332,7 @@ export default function ServicesPage() {
 
       {/* Final CTA */}
       <section className="py-12 md:py-20 bg-[#faf4e5]">
-        <div className="container mx-auto px-4">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto bg-[#f0eadd] rounded-3xl p-8 md:p-12 text-center border border-[#f0eadd]">
             <h2 className="text-3xl md:text-4xl font-medium text-[#31302f] mb-4 md:mb-6">
               Not Sure Which Service You Need?

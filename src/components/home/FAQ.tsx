@@ -42,6 +42,35 @@ const FAQ = () => {
       answer:
         "Finzie stands out with AI-driven matching, pre-vetted talent, and end-to-end project management for an unparalleled hiring experience.",
     },
+    {
+      question: "What Shopify services does Finzie offer?",
+      answer:
+        "Finzie provides end-to-end Shopify services including custom store design, theme development, app integration, performance optimization, conversion rate improvement, and ongoing store maintenance. We help brands launch, scale, and optimize high-converting Shopify stores.",
+    },
+    {
+      question: "What is GoHighLevel and how can it help my business?",
+      answer: "GoHighLevel is an all-in-one CRM and marketing automation platform that helps businesses manage leads, automate follow-ups, run campaigns, and close more sales. Finzie customizes GoHighLevel to streamline your sales funnel, automate workflows, and improve customer engagement.",
+    },
+    {
+      question: "Can Finzie integrate Shopify with GoHighLevel?",
+      answer: "Yes. We specialize in integrating Shopify with GoHighLevel to sync leads, customers, orders, and marketing automations. This allows you to track customer behavior, run personalized campaigns, and automate post-purchase follow-ups seamlessly.",
+    },
+    {
+      question: "Is GoHighLevel suitable for small businesses and agencies?",
+      answer: "Absolutely. GoHighLevel is ideal for small businesses, agencies, and growing teams. It replaces multiple tools like CRMs, email marketing platforms, SMS tools, and funnel builders—helping reduce costs while increasing efficiency.",
+    },
+    {
+      question: "Do you provide custom automation and workflows in GoHighLevel?",
+      answer: "Yes. Finzie builds custom GoHighLevel automations including lead nurturing sequences, appointment booking workflows, pipeline automation, SMS/email follow-ups, and CRM dashboards tailored to your business goals.",
+    },
+    {
+      question: "How long does it take to build a Shopify store or set up GoHighLevel?", 
+      answer: "A standard Shopify store usually takes 2–4 weeks, depending on design and features. GoHighLevel setup and automation typically takes 1–2 weeks, based on workflow complexity. We always share clear timelines before starting.",
+    },
+    {
+      question: "Do you offer ongoing support and maintenance after setup?",
+      answer: "Yes. Finzie offers ongoing support, optimization, and maintenance for both Shopify and GoHighLevel. We help with updates, performance improvements, automation tweaks, and scaling strategies as your business grows.",
+    }
   ];
 
   const toggleItem = (index: number) => {
