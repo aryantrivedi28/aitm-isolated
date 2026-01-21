@@ -175,7 +175,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Final CTA Section */}
         <div className="mb-16 text-center">
-          <div className="bg-[#f7af00] rounded-2xl p-8 md:p-10">
+          <div className="bg-[#f0eadd] rounded-2xl p-8 md:p-10">
             <h3 className="text-2xl md:text-3xl font-bold text-[#050504] mb-4">
               Enjoyed this article?
             </h3>

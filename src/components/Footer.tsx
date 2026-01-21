@@ -14,8 +14,11 @@ import {
   Sun,
   Moon,
   FileText,
+  Instagram,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { FaThreads } from "react-icons/fa6";
+
 
 export default function Footer() {
   const pathname = usePathname() || "";
@@ -83,6 +86,8 @@ export default function Footer() {
   const socialLinks = [
     { Icon: Twitter, label: "Twitter", link: "https://x.com/getfinzie" },
     { Icon: Linkedin, label: "LinkedIn", link: "https://www.linkedin.com/company/finzieai" },
+    { Icon: Instagram, label: "Instagram", link: "https://www.instagram.com/finzie.co" },
+    { Icon: FaThreads, label: "Threads", link: "https://www.threads.com/@finzie.co?hl=en"}
   ];
 
   return (
