@@ -241,6 +241,7 @@ export async function PUT(request: NextRequest) {
       // Transform filteredUpdates to match FreelancerProfileData interface
       const ratingData: FreelancerProfileData = {
         name: (filteredUpdates.name as string) || null,
+        email: null,
         phone: (filteredUpdates.phone as string) || null,
         title: (filteredUpdates.title as string) || null,
         bio: (filteredUpdates.bio as string) || null,
@@ -248,42 +249,44 @@ export async function PUT(request: NextRequest) {
         experience_years: typeof filteredUpdates.experience_years === "number" ? filteredUpdates.experience_years : null,
         portfolio_url: (filteredUpdates.portfolio_url as string) || null,
         github_url: (filteredUpdates.github_url as string) || null,
+        twitter_url: null,
         linkedin_url: (filteredUpdates.linkedin_url as string) || null,
         education: Array.isArray(filteredUpdates.education)
           ? (filteredUpdates.education as any[]).map((e) => {
-              if (typeof e === "string") {
-                try {
-                  const parsed = JSON.parse(e)
-                  return {
-                    degree: parsed.degree || null,
-                    institution: parsed.institution || null,
-                    year: parsed.year || null,
-                  }
-                } catch {
-                  return { degree: e, institution: null, year: null }
+            if (typeof e === "string") {
+              try {
+                const parsed = JSON.parse(e)
+                return {
+                  degree: parsed.degree || null,
+                  institution: parsed.institution || null,
+                  year: parsed.year || null,
                 }
+              } catch {
+                return { degree: e, institution: null, year: null }
               }
-              return {
-                degree: e?.degree || null,
-                institution: e?.institution || null,
-                year: e?.year || null,
-              }
-            })
+            }
+            return {
+              degree: e?.degree || null,
+              institution: e?.institution || null,
+              year: e?.year || null,
+            }
+          })
           : [],
         certifications: Array.isArray(filteredUpdates.certifications) ? (filteredUpdates.certifications as string[]) : [],
         work_experience: Array.isArray(filteredUpdates.work_experience)
           ? (filteredUpdates.work_experience as any[]).map((exp) => ({
-              company: exp?.company || null,
-              role: exp?.role || null,
-              start_date: exp?.startDate || exp?.start_date || null,
-              end_date: exp?.endDate || exp?.end_date || null,
-              description: exp?.description || null,
-            }))
+            company: exp?.company || null,
+            role: exp?.role || null,
+            start_date: exp?.startDate || exp?.start_date || null,
+            end_date: exp?.endDate || exp?.end_date || null,
+            description: exp?.description || null,
+          }))
           : [],
         projects: Array.isArray(filteredUpdates.projects) ? (filteredUpdates.projects as any[]).map((p) => ({
           name: p?.name || null,
           description: p?.description || null,
         })) : [],
+        graduation_year: null,
       }
 
       const rater = new OpenAIProfileRater()

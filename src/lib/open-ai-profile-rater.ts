@@ -34,18 +34,37 @@ export interface FreelancerProfileData {
   phone: string | null
   title: string | null
   bio: string | null
+
   skills: string[]
   experience_years: number | null
+
   portfolio_url: string | null
   github_url: string | null
-  graduation_year: string | null
-  
   linkedin_url: string | null
   twitter_url: string | null
-  education: EducationEntry[]
+
+  graduation_year: string | null
+
+  education: {
+    degree: string | null
+    institution: string | null
+    year: string | null
+  }[]
+
   certifications: string[]
-  work_experience: WorkExperience[]
-  projects: FreelancerProject[]
+
+  work_experience: {
+    company: string | null
+    role: string | null
+    start_date: string | null
+    end_date: string | null
+    description: string | null
+  }[]
+
+  projects: {
+    name: string | null
+    description: string | null
+  }[]
 }
 
 // -------------------------------
@@ -90,7 +109,7 @@ export class OpenAIProfileRater {
 
   private calculateFallbackRating(profile: FreelancerProfileData): number {
     let score = 3.0 // Base score
-    
+
     // Add points for completeness
     if (profile.name) score += 0.5
     if (profile.email) score += 0.5
@@ -99,7 +118,7 @@ export class OpenAIProfileRater {
     if (profile.work_experience.length >= 2) score += 1.0
     if (profile.education.length >= 1) score += 0.5
     if (profile.portfolio_url || profile.github_url) score += 0.5
-    
+
     // Cap at 10
     return Math.min(10, Math.max(1, score))
   }
@@ -156,9 +175,9 @@ Be constructive and specific in feedback.`
       let rating = parseFloat(json.rating)
       if (isNaN(rating)) rating = 5.0
       rating = Math.max(1, Math.min(10, rating))
-      
+
       // Ensure feedback is an array
-      const feedback = Array.isArray(json.feedback) 
+      const feedback = Array.isArray(json.feedback)
         ? json.feedback.slice(0, 3) // Limit to 3 suggestions
         : [json.feedback || "Keep improving your profile"]
 
@@ -189,7 +208,7 @@ export async function parseResumeToProfile(
     // Clean and truncate text appropriately
     const cleanedText = resumeText.replace(/\s+/g, ' ').trim()
     const maxLength = 12000
-    const truncatedText = cleanedText.length > maxLength 
+    const truncatedText = cleanedText.length > maxLength
       ? cleanedText.substring(0, maxLength) + "... [truncated]"
       : cleanedText
 
@@ -270,7 +289,7 @@ Do not include any markdown formatting, only pure JSON.`
     // Extract JSON from response
     const jsonMatch = clean.match(/\{[\s\S]*\}/)
     const jsonText = jsonMatch ? jsonMatch[0] : clean
-    
+
     let parsed
     try {
       parsed = JSON.parse(jsonText)
@@ -282,7 +301,7 @@ Do not include any markdown formatting, only pure JSON.`
         .replace(/'/g, '"') // Replace single quotes
         .replace(/,\s*}/g, '}') // Remove trailing commas
         .replace(/,\s*]/g, ']') // Remove trailing commas in arrays
-      
+
       try {
         parsed = JSON.parse(fixedJson)
       } catch (secondError) {
