@@ -404,7 +404,7 @@ export default function CaseStudiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf4e5] text-[#050504] pt-[140px]">
+    <div className="min-h-screen bg-[#faf4e5] text-[#050504] pt-8 sm:pt-12 md:pt-20">
       {/* HERO SECTION */}
       <section className="relative bg-[#faf4e5] overflow-hidden">
         <div className="relative max-w-full mx-auto px-6 py-28 grid grid-cols-1 items-center">
@@ -439,54 +439,84 @@ export default function CaseStudiesPage() {
       </section>
 
       {/* SEARCH & FILTER - UPDATED WITH 3 SECTIONS */}
-      <section className="max-w-7xl mx-auto px-4 mb-20">
-        <div className="bg-[#f0eadd] rounded-2xl p-6 border border-[#050504]/10">
-          {/* Filter Title */}
-          <div className="text-center mb-6">
-            <h3 className="text-3xl font-medium text-[#050504]">Filter by Service</h3>
+      {/* Filter Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 mb-16 sm:mb-20">
+        <div className="bg-[#f0eadd] rounded-2xl p-5 sm:p-6 border border-[#050504]/10">
+          {/* Title */}
+          <div className="text-center mb-5 sm:mb-6">
+            <h3 className="text-2xl sm:text-3xl font-medium text-[#050504]">
+              Filter by Service
+            </h3>
             <p className="text-sm text-[#31302f] mt-1">
               Select a service to view relevant case studies
             </p>
           </div>
 
-          {/* Service Filter Buttons */}
-          <div className="flex flex-wrap justify-center gap-3">
-            {[
-              { value: null, label: 'All Services', icon: '🌟' },
-              { value: 'GoHighLevel', label: 'GoHighLevel', icon: '🚀' },
-              { value: 'Shopify', label: 'Shopify', icon: '🛒' },
-              { value: 'SEO', label: 'SEO', icon: '🔍' },
-              { value: 'Video Editing', label: 'Video Editing', icon: '🎬' },
-            ].map((service) => (
-              <button
-                key={service.value || 'all'}
-                onClick={() => setSelectedCategory(service.value)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all duration-200border
-            ${selectedCategory === service.value
-                    ? 'bg-[#f7af00] text-[#050504] border-[#f7af00] shadow-sm'
-                    : 'bg-[#faf4e5] text-[#050504] border-[#050504]/20 hover:bg-[#faf4e5]/80 hover:border-[#f7af00]'
-                  }
-          `}
-              >
-                <span className="text-lg">{service.icon}</span>
-                {service.label}
-                {selectedCategory === service.value && (
-                  <span className="ml-1 text-sm">✓</span>
-                )}
-              </button>
-            ))}
+          {/* Filters */}
+          <div className="relative">
+            {/* Mobile horizontal scroll */}
+            <div className="flex sm:hidden gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+              {[
+                { value: null, label: "All", icon: "🌟" },
+                { value: "GoHighLevel", label: "GHL", icon: "🚀" },
+                { value: "Shopify", label: "Shopify", icon: "🛒" },
+                { value: "SEO", label: "SEO", icon: "🔍" },
+                { value: "Video Editing", label: "Video", icon: "🎬" },
+              ].map((service) => (
+                <button
+                  key={service.value || "all"}
+                  onClick={() => setSelectedCategory(service.value)}
+                  className={`flex shrink-0 items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium border transition-all
+              ${selectedCategory === service.value
+                      ? "bg-[#f7af00] text-[#050504] border-[#f7af00]"
+                      : "bg-[#faf4e5] text-[#050504] border-[#050504]/20"
+                    }
+            `}
+                >
+                  <span>{service.icon}</span>
+                  {service.label}
+                  {selectedCategory === service.value && <span>✓</span>}
+                </button>
+              ))}
+            </div>
+
+            {/* Desktop / Tablet grid */}
+            <div className="hidden sm:flex flex-wrap justify-center gap-3">
+              {[
+                { value: null, label: "All Services", icon: "🌟" },
+                { value: "GoHighLevel", label: "GoHighLevel", icon: "🚀" },
+                { value: "Shopify", label: "Shopify", icon: "🛒" },
+                { value: "SEO", label: "SEO", icon: "🔍" },
+                { value: "Video Editing", label: "Video Editing", icon: "🎬" },
+              ].map((service) => (
+                <button
+                  key={service.value || "all"}
+                  onClick={() => setSelectedCategory(service.value)}
+                  className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium border transition-all
+              ${selectedCategory === service.value
+                      ? "bg-[#f7af00] text-[#050504] border-[#f7af00] shadow-sm"
+                      : "bg-[#faf4e5] text-[#050504] border-[#050504]/20 hover:border-[#f7af00]"
+                    }
+            `}
+                >
+                  <span className="text-lg">{service.icon}</span>
+                  {service.label}
+                  {selectedCategory === service.value && <span className="ml-1">✓</span>}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Active Filter Display */}
+          {/* Active Filter */}
           {selectedCategory && (
-            <div className="mt-6 pt-6 border-t border-[#050504]/10 flex items-center justify-center">
-              <div className="flex items-center gap-3">
+            <div className="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-[#050504]/10 flex justify-center">
+              <div className="flex items-center gap-2 flex-wrap justify-center">
                 <span className="text-sm text-[#31302f]">Active filter:</span>
                 <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-[#f7af00] text-[#050504] rounded-full">
                   {selectedCategory}
                   <button
                     onClick={() => setSelectedCategory(null)}
-                    className="ml-1 hover:text-red-600 transition-colors"
+                    className="hover:text-red-600 transition-colors"
                     aria-label="Clear filter"
                   >
                     ×
@@ -497,6 +527,7 @@ export default function CaseStudiesPage() {
           )}
         </div>
       </section>
+
 
       {/* CASE STUDY GRID */}
       <section className="max-w-7xl mx-auto px-4 pb-24">
@@ -526,7 +557,6 @@ export default function CaseStudiesPage() {
           </div>
         ) : (
           <>
-            {/* Results count */}
             {/* Results count */}
             <div className="mb-8">
               <p className="text-[#31302f]">
