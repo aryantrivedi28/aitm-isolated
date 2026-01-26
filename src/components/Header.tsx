@@ -147,8 +147,7 @@ export default function Header() {
                   "About Us",
                   "Services",
                   "Case Studies",
-                  "Find Talent",
-                  "Get Hired",
+                  "Resources",
                 ].map((item, idx) => (
                   <a
                     key={idx}
@@ -189,8 +188,8 @@ export default function Header() {
                     "Home",
                     "About Us",
                     "Case Studies",
-                    "Find Talent",
-                    "Get Hired",
+                    "Services",
+                    "Resources",
                   ].map((item, idx) => (
                     <a
                       key={idx}

@@ -129,101 +129,97 @@ export default function AboutPage() {
         .animate-visionRotate { animation: visionRotate 8s ease-in-out infinite; }
       `}</style>
 
-      <div className="about-section flex flex-col overflow-hidden pt-20 sm:pt-28 md:pt-32" style={{ background: COLORS.BACKGROUND, color: COLORS.TEXT_PRIMARY }}>
+      <div className="about-section flex flex-col overflow-hidden pt-16 sm:pt-20 md:pt-32" style={{ background: COLORS.BACKGROUND, color: COLORS.TEXT_PRIMARY }}>
         {/* Hero Section */}
-        <section className="relative min-h-[80vh] flex items-center">
-          <div className="relative w-full">
-            <div className="container mx-auto px-6 sm:px-8 lg:px-12 xl:px-20 max-w-[1400px] py-16 sm:py-20 lg:py-24">
+        {/* About Us – Hero Section */}
+        <section
+          className="relative bg-transparent flex items-center"
+        >
+          <div className="w-full">
+            <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12 xl:px-20">
               <motion.div
-                className="grid lg:grid-cols-2 gap-2 items-center"
+                className="grid gap-12 lg:grid-cols-2 items-center"
                 initial="hidden"
                 animate="visible"
                 variants={staggerContainer}
               >
-                <motion.div className="space-y-10" variants={fadeInLeft}>
-                  <motion.div className="space-y-6" variants={staggerContainer}>
-                    {/* Badge */}
-                    {/* <motion.div className="flex items-center gap-3 mb-4" variants={fadeUp}>
-                      <motion.div
-                        className="w-14 h-14 rounded-xl flex items-center justify-center border"
-                        style={{
-                          background: `${COLORS.ACCENT_PRIMARY}20`,
-                          borderColor: `${COLORS.ACCENT_PRIMARY}30`
-                        }}
-                        whileHover={{ scale: 1.1, rotate: 10 }}
-                      >
-                        <Rocket className="w-7 h-7" style={{ color: COLORS.TEXT_PRIMARY }} />
-                      </motion.div>
-                      <span className="font-semibold text-lg sm:text-xl tracking-wide" style={{ color: COLORS.TEXT_PRIMARY }}>
-                        About Us
-                      </span>
-                    </motion.div> */}
-
+                {/* Left Content */}
+                <motion.div
+                  className="space-y-8 sm:space-y-10"
+                  variants={fadeInLeft}
+                >
+                  <motion.div
+                    className="space-y-5 sm:space-y-6"
+                    variants={staggerContainer}
+                  >
                     {/* Headline */}
                     <motion.h1
                       variants={fadeUp}
-                      className="font-medium leading-[1.1]"
+                      className="font-medium leading-tight"
                       style={{
-                        fontSize: "clamp(2.35rem, 5.5vw, 4.5rem)",
+                        fontSize: "clamp(2rem, 6vw, 4rem)",
                         letterSpacing: "-0.025em",
-                        maxWidth: "1300px",
+                        color: COLORS.TEXT_PRIMARY,
+                        maxWidth: "720px",
                       }}
                     >
-                      <span style={{ color: COLORS.TEXT_PRIMARY }}>About Finzie</span>
+                      About Finzie
                     </motion.h1>
 
                     {/* Subheading */}
                     <motion.p
                       variants={fadeUp}
-                      className="leading-relaxed font-normal"
+                      className="leading-relaxed"
                       style={{
-                        fontSize: "clamp(1.125rem, 1.75vw, 1.375rem)",
-                        maxWidth: "1600px",
-                        opacity: "0.9",
-                        color: COLORS.TEXT_PRIMARY
+                        fontSize: "clamp(1.05rem, 2.2vw, 1.35rem)",
+                        color: COLORS.TEXT_PRIMARY,
+                        opacity: 0.9,
+                        maxWidth: "640px",
                       }}
                     >
-                      We connect startups with pre-vetted freelancers and AI-driven teams,
-                      making it easy to build, design, and scale your projects rapidly.
+                      We connect startups with pre-vetted freelancers and AI-driven
+                      teams, making it easy to build, design, and scale your projects
+                      rapidly.
                     </motion.p>
 
                     {/* Secondary Description */}
                     <motion.p
                       variants={fadeUp}
-                      className="leading-relaxed font-normal"
+                      className="leading-relaxed"
                       style={{
-                        fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
-                        maxWidth: "680px",
-                        lineHeight: "1.7",
-                        color: `${COLORS.TEXT_PRIMARY}83`
+                        fontSize: "clamp(0.95rem, 1.8vw, 1.1rem)",
+                        lineHeight: 1.7,
+                        color: `${COLORS.TEXT_PRIMARY}80`,
+                        maxWidth: "620px",
                       }}
                     >
-                      Our mission is to empower fast-moving startups by providing instant
-                      access to top-tier talent while fostering a thriving, inclusive
-                      freelancer community worldwide.
+                      Our mission is to empower fast-moving startups by providing
+                      instant access to top-tier talent while fostering a thriving,
+                      inclusive freelancer community worldwide.
                     </motion.p>
                   </motion.div>
 
-                  {/* CTA Button */}
-                  <motion.div variants={fadeUp} className="flex gap-4">
+                  {/* CTA */}
+                  <motion.div variants={fadeUp} className="flex">
                     <motion.a
-                      className="group inline-flex items-center gap-3 font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      whileTap={{ scale: 0.95 }}
                       href="#"
+                      className="inline-flex items-center gap-3 px-7 py-4 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all"
+                      whileHover={{ scale: 1.04, y: -2 }}
+                      whileTap={{ scale: 0.96 }}
                       style={{
-                        fontSize: "1.0625rem",
                         background: COLORS.ACCENT_PRIMARY,
-                        color: COLORS.TEXT_PRIMARY
+                        color: COLORS.TEXT_PRIMARY,
+                        fontSize: "1.05rem",
                       }}
                     >
                       Start Your Project Today
-                      <div className="animate-arrowMove">
-                        <ArrowRight className="w-5 h-5" />
-                      </div>
+                      <ArrowRight className="w-5 h-5" />
                     </motion.a>
                   </motion.div>
                 </motion.div>
+
+                {/* Right Column (optional future image / illustration) */}
+                <div className="hidden lg:block" />
               </motion.div>
             </div>
           </div>

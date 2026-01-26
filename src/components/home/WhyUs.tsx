@@ -118,17 +118,17 @@ const WhyUs = () => {
         {/* Mobile Carousel */}
         <div className="md:hidden flex flex-col items-center">
           <div className="w-full max-w-xs sm:max-w-sm relative">
-            <div className="relative bg-[#241C15]/80 rounded-3xl p-6 flex flex-col border border-[#FFE01B]/20 shadow-lg transition-all duration-500">
-              <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-[#FFE01B] rounded-xl mb-6">
+            <div className="relative bg-[#f0eadd] rounded-3xl p-6 flex flex-col border border-[#f7af00]/20 shadow-lg transition-all duration-500">
+              <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-[#f7af00] rounded-xl mb-6">
                 {features[currentIndex].icon &&
                   React.createElement(features[currentIndex].icon, {
                     className: "w-7 h-7 sm:w-8 sm:h-8 text-black",
                   })}
               </div>
-              <h3 className="text-lg sm:text-xl font-black mb-2">
+              <h3 className="text-lg sm:text-xl font-medium mb-2 text-[#050504]">
                 {features[currentIndex].title}
               </h3>
-              <p className="text-gray-300 text-sm sm:text-base">
+              <p className="text-[#31302f] text-sm sm:text-base">
                 {features[currentIndex].description}
               </p>
             </div>
@@ -136,7 +136,7 @@ const WhyUs = () => {
             <div className="flex justify-center mt-6 gap-4">
               <button
                 onClick={() => navigateCard("left")}
-                className="p-2 rounded-full bg-[#FFE01B]/20 text-black shadow-lg hover:bg-[#FFE01B]/40 transition-all duration-300"
+                className="p-2 rounded-full bg-[#f7af00]/20 text-black shadow-lg hover:bg-[#f7af00]/40 transition-all duration-300"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
