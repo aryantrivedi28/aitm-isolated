@@ -33,7 +33,7 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
                     <span className="text-xs font-bold text-[#050504]">{sectionIndex + 1}</span>
                   </div>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-[#050504] flex-1 leading-tight">
+                <h2 className="text-2xl md:text-3xl font-medium text-[#050504] flex-1 leading-tight">
                   {section.heading}
                 </h2>
               </div>
@@ -53,12 +53,12 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
           {section.subsections?.map((subsection) => (
             <div
               key={subsection._key}
-              className="ml-12 mt-8 p-6 bg-[#f0eadd] rounded-lg border border-[#f7af00]/20 shadow-sm hover:shadow-md transition-all"
+              className="ml-12 mt-8 p-6 bg-[#f0eadd] rounded-lg border border-[#f7af00] shadow-sm hover:shadow-md transition-all"
             >
               {/* Sub-heading */}
               {subsection.subheading && (
                 <div className="mb-5">
-                  <h3 className="text-xl font-bold text-[#050504] flex items-center gap-2 mb-2">
+                  <h3 className="text-xl font-medium text-[#050504] flex items-center gap-2 mb-2">
                     <span className="w-1 h-6 bg-[#f7af00] rounded-full" />
                     {subsection.subheading}
                   </h3>
@@ -81,9 +81,9 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
                 <ul className="space-y-3">
                   {subsection.listItems.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-3 text-[#31302f]">
-                      <span className="w-5 h-5 rounded-full bg-[#f7af00]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="w-5 h-5 rounded-full bg-[#f7af00] flex items-center justify-center flex-shrink-0 mt-0.5">
                         <svg
-                          className="w-3 h-3 text-[#f7af00]"
+                          className="w-3 h-3 text-[#31302f]"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -109,7 +109,7 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
         <div className="mt-14 pt-10 border-t-2 border-[#f7af00]">
           <div className="bg-[#faf4e5] rounded-lg p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-full bg-[#f7af00] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-[#f7af00] flex items-center justify-center">
                 <svg
                   className="w-5 h-5 text-[#050504]"
                   fill="currentColor"
@@ -122,7 +122,7 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-[#050504]">Key Takeaways</h3>
+              <h3 className="text-2xl font-medium text-[#050504]">Key Takeaways</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

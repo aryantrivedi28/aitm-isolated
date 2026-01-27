@@ -136,13 +136,13 @@ const WhyUs = () => {
             <div className="flex justify-center mt-6 gap-4">
               <button
                 onClick={() => navigateCard("left")}
-                className="p-2 rounded-full bg-[#f7af00]/20 text-black shadow-lg hover:bg-[#f7af00]/40 transition-all duration-300"
+                className="p-2 rounded-full bg-[#f7af00] text-black shadow-lg hover:bg-[#f7af00]/40 transition-all duration-300"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={() => navigateCard("right")}
-                className="p-2 rounded-full bg-[#FFE01B]/20 text-black shadow-lg hover:bg-[#FFE01B]/40 transition-all duration-300"
+                className="p-2 rounded-full bg-[#f7af00] text-black shadow-lg hover:bg-[#FFE01B]/40 transition-all duration-300"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>

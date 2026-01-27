@@ -4,14 +4,14 @@ import { motion, Variants } from "framer-motion";
 import {
   Twitter,
   Linkedin,
-  Users,
   Info,
-  Sparkles,
   ArrowRight,
   Send,
   ExternalLink,
   FileText,
   Instagram,
+  Layers,
+  BookOpen,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { FaThreads } from "react-icons/fa6";
@@ -59,8 +59,11 @@ export default function Footer() {
   const quickLinks = [
     { label: "About Us", href: "/about-us", icon: Info },
     { label: "Case Studies", href: "/case-studies", icon: FileText },
-    { label: "Find Talent", href: "/find-talent", icon: Users },
-    { label: "Get Hired", href: "/get-hired", icon: Sparkles },
+    // { label: "Find Talent", href: "/find-talent", icon: Users },
+    // { label: "Get Hired", href: "/get-hired", icon: Sparkles },
+    { label: "Services", href: "/services", icon: Layers },
+    { label: "Resources", href: "/resources", icon: BookOpen }
+
   ];
 
   const socialLinks = [
@@ -175,10 +178,7 @@ export default function Footer() {
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl font-semibold text-gray-900"
-                style={{
-                  background: `linear-gradient(90deg, #FFCC47, #FFD966)`,
-                }}
+                className="w-full py-3 rounded-xl font-semibold text-gray-900 bg-[#f7af00]"
               >
                 <span className="flex justify-center items-center gap-2">
                   Subscribe Now <ArrowRight size={18} />

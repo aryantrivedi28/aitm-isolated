@@ -16,7 +16,7 @@ export default function BlogCard({ post }: BlogCardProps) {
 
   return (
     <Link href={`/resources/${post.slug.current}`}>
-      <article className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden h-full flex flex-col">
+      <article className="bg-[#f0eadd] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden h-full flex flex-col">
         {/* Featured Image */}
         {post.featuredImage && (
           <div className="relative w-full h-48 bg-gray-200 overflow-hidden">
@@ -35,7 +35,6 @@ export default function BlogCard({ post }: BlogCardProps) {
             <span className="text-xs font-semibold text-[#f7af00] uppercase tracking-wide">
               {post.category}
             </span>
-            <span className="text-xs text-[#31302f]">{post.readTime || 5} min</span>
           </div>
           <h3 className="text-lg font-bold text-[#050504] line-clamp-2">{post.title}</h3>
         </div>
@@ -50,7 +49,6 @@ export default function BlogCard({ post }: BlogCardProps) {
         {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-100">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-[#31302f]">{formattedDate}</span>
             <span className="text-[#f7af00] font-semibold text-sm">Read →</span>
           </div>
         </div>

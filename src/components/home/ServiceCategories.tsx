@@ -5,10 +5,11 @@ import { Code, Megaphone, Palette, Video, Brain, Database, Shield, Headphones, T
 
 type CategoryKey =
   // | "Design & UX/UI"
-  // | "Marketing & Growth"
-   "Shopify"
+
+  "Shopify"
   // | "Video & Content"
-  | "GHL Automation";
+  | "GHL Automation"
+  | "Marketing & Growth";
 
 const ServiceCategories = () => {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>("Shopify");
@@ -18,19 +19,7 @@ const ServiceCategories = () => {
     subcategories: string[];
     techStacks?: string[];
   }> = {
-    // "Marketing & Growth": {
-    //   icon: Megaphone,
-    //   subcategories: [
-    //     "Performance marketing",
-    //     "SEO",
-    //     "Email and lifecycle",
-    //     "Funnel design",
-    //     "Copywriting",
-    //     "Growth strategy",
-    //     "Quarter plans",
-    //     "Fractional CMO"
-    //   ]
-    // },
+
 
     // "Design & UX/UI": {
     //   icon: Palette,
@@ -71,6 +60,20 @@ const ServiceCategories = () => {
     //     "Creative direction"
     //   ]
     // },
+
+    "Marketing & Growth": {
+      icon: Megaphone,
+      subcategories: [
+        "Performance marketing",
+        "SEO",
+        "Email and lifecycle",
+        "Funnel design",
+        "Copywriting",
+        "Growth strategy",
+        "Quarter plans",
+        "Fractional CMO"
+      ]
+    },
 
     "GHL Automation": {
       icon: Settings,
@@ -171,9 +174,6 @@ const ServiceCategories = () => {
                 <h3 className="text-2xl sm:text-3xl md:text-4xl font-medium text-[#241C15]">
                   {activeCategory}
                 </h3>
-              </div>
-              <div className="text-[#241C15]/60 text-xs sm:text-sm md:text-base font-medium">
-                {(categories[activeCategory]?.subcategories?.length ?? 0)} specializations • {(categories[activeCategory]?.techStacks?.length ?? 0)} technologies
               </div>
             </div>
 

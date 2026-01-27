@@ -245,7 +245,7 @@ export default function AboutPage() {
                 <motion.div
                   className="w-12 h-12 rounded-xl flex items-center justify-center border"
                   style={{
-                    background: `${COLORS.ACCENT_PRIMARY}20`,
+                    background: `${COLORS.ACCENT_PRIMARY}`,
                     borderColor: `${COLORS.ACCENT_PRIMARY}30`
                   }}
                   whileHover={{ scale: 1.1, rotate: -10 }}

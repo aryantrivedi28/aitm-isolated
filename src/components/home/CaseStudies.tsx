@@ -43,7 +43,7 @@ const CaseStudies = () => {
           <div className="relative bg-[#f0eadd] rounded-3xl p-6 sm:p-8 border-2 border-[#f0eadd] hover:border-[#f7af00] transition-all duration-500">
             
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-[#f7af00]/20 text-[#050504] text-sm font-medium">
+            <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full bg-[#f7af00] text-[#050504] text-sm font-medium">
               <ShieldCheck className="w-4 h-4" />
               Live Shopify Store
             </div>

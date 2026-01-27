@@ -82,7 +82,7 @@ const WhatWeDo = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative py-20 bg-[#faf4e5] overflow-hidden"
+      className="relative sm:py-0 lg:py-16  bg-[#faf4e5] overflow-hidden"
     >
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

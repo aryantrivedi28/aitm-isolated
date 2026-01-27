@@ -62,7 +62,7 @@ export default function Header() {
   -----------------------------------*/
   const hiddenRoutes = [
     "/h/",
-    "/case-studies/",
+    // "/case-studies/",
     "/form/",
     "/find-talent/",
     "/get-hired/",
@@ -116,7 +116,7 @@ export default function Header() {
       <div className="header-section relative w-full z-10">
 
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 max-w-[1400px]">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-6 xl:px-12 max-w-[1400px]">
           <div className="mt-4 sm:mt-6 rounded-2xl transition-all duration-300">
             {/* Main Header */}
             <div className="relative flex justify-between items-center px-1 sm:px-6 lg:px-8 py-4">
@@ -169,13 +169,13 @@ export default function Header() {
               {/* Mobile Menu Button */}
               <button
                 onClick={toggleMobileMenu}
-                className="lg:hidden p-2.5 rounded-xl border border-[#241C15]/10"
+                className="lg:hidden p-2 rounded-xl border border-[#241C15]/10"
                 aria-label="Toggle mobile menu"
               >
                 {isMobileMenuOpen ? (
-                  <X className="w-5 h-5 text-[#241C15]" />
+                  <X className="w-4 h-4 text-[#241C15]" />
                 ) : (
-                  <Menu className="w-5 h-5 text-[#241C15]" />
+                  <Menu className="w-4 h-4 text-[#241C15]" />
                 )}
               </button>
             </div>

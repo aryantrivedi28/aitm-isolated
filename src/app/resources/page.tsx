@@ -38,7 +38,7 @@ export default async function BlogPage() {
       <section className="bg-[#faf4e5] py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-[#050504] mb-4">
+            <h1 className="text-4xl md:text-5xl font-medium text-[#050504] mb-4">
               Blog & Resources
             </h1>
             <p className="text-lg text-[#31302f] max-w-2xl mx-auto">

@@ -43,23 +43,18 @@ const Hero = () => {
 
       {/* ---------- HERO SECTION ---------- */}
       <section
-        className="relative bg-[#fbf5e5] min-h-[100svh] flex items-center"
-        style={{
-          paddingTop: `calc(${HEADER_HEIGHT}px + 1.5rem)`,
-          paddingBottom: "10rem",
-        }}
+        className="relative bg-[#fbf5e5] min-h-[80svh] flex items-center overflow-hidden"
       >
         <div className="w-full">
           <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12 xl:px-20">
             {/* ---------- HEADLINE ---------- */}
             <h1
-              className={`tracking-in-expand leading-tight mb-5 transition-all duration-700 ${
-                isLoaded
+              className={`tracking-in-expand leading-tight mb-5 transition-all duration-700 ${isLoaded
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-4"
-              }`}
+                }`}
               style={{
-                fontSize: "clamp(1.7rem, 5vw, 3.5rem)",
+                fontSize: "clamp(1.5rem, 5vw, 3.5rem)",
                 maxWidth: "980px",
                 fontWeight: 300,
               }}
@@ -85,31 +80,29 @@ const Hero = () => {
 
             {/* ---------- SUBTEXT ---------- */}
             <p
-              className={`text-[#241C15] mb-8 transition-all duration-700 delay-150 ${
-                isLoaded
+              className={`text-[#241C15] mb-8 transition-all duration-700 delay-150 ${isLoaded
                   ? "opacity-90 translate-y-0"
                   : "opacity-0 translate-y-4"
-              }`}
+                }`}
               style={{
-                fontSize: "clamp(1rem, 2.2vw, 1.3rem)",
-                maxWidth: "760px",
+                fontSize: "clamp(1rem, 2.2vw, 1.2rem)",
+                maxWidth: "748px",
                 lineHeight: "1.65",
-                fontWeight: 400,
+                fontWeight: 300,
               }}
             >
-              We deliver fixed-scope Shopify builds, GoHighLevel systems and
-              whitelabel execution — without hourly billing or freelancer risk.
+              We build fixed-scope Shopify stores and GoHighLevel systems —
+              no hourly billing, no freelancer risk.
               <br className="hidden sm:block" />
               Dedicated experts. Predictable outcomes. Zero chaos.
             </p>
 
             {/* ---------- CTA BUTTONS ---------- */}
             <div
-              className={`flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-300 ${
-                isLoaded
+              className={`flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-300 ${isLoaded
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-4"
-              }`}
+                }`}
             >
               <button
                 onClick={() => handleNavigation("/find-talent")}
@@ -120,7 +113,7 @@ const Hero = () => {
               </button>
 
               <button
-                onClick={() => handleNavigation("/get-hired")}
+                onClick={() => handleNavigation("/case-studies")}
                 className="inline-flex items-center justify-center gap-2 border-2 border-[#241C15] text-[#241C15] rounded-xl px-6 py-4 font-medium hover:scale-[1.04] transition-transform"
               >
                 <Play className="w-4 h-4" />
