@@ -129,8 +129,7 @@ export default function AboutPage() {
         .animate-visionRotate { animation: visionRotate 8s ease-in-out infinite; }
       `}</style>
 
-      <div className="about-section flex flex-col overflow-hidden pt-16 sm:pt-20 md:pt-32" style={{ background: COLORS.BACKGROUND, color: COLORS.TEXT_PRIMARY }}>
-        {/* Hero Section */}
+      <div className="about-section flex flex-col overflow-hidden pt-12 sm:pt-20 md:pt-32" style={{ background: COLORS.BACKGROUND, color: COLORS.TEXT_PRIMARY }}>
         {/* About Us – Hero Section */}
         <section
           className="relative bg-transparent flex items-center"
@@ -225,9 +224,16 @@ export default function AboutPage() {
           </div>
         </section>
 
+
         {/* Team Members Section */}
-        <section className="relative py-24 px-4">
-          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent, ${COLORS.ACCENT_PRIMARY}08)` }} />
+        <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6">
+          {/* Background Gradient */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to bottom, transparent, ${COLORS.ACCENT_PRIMARY}08)`
+            }}
+          />
 
           <motion.div
             className="relative max-w-6xl mx-auto"
@@ -236,73 +242,108 @@ export default function AboutPage() {
             viewport={{ once: true, amount: 0.2 }}
             variants={staggerContainer}
           >
-            {/* Section Heading */}
-            <motion.div className="text-center mb-16" variants={fadeUp}>
+            {/* ---------- Section Heading ---------- */}
+            <motion.div
+              className="text-center mb-12 sm:mb-14 lg:mb-16"
+              variants={fadeUp}
+            >
               <motion.div
-                className="flex items-center justify-center gap-3 mb-6"
+                className="flex items-center justify-center gap-3 mb-4 sm:mb-6"
                 variants={fadeUp}
               >
                 <motion.div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center border"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center border"
                   style={{
-                    background: `${COLORS.ACCENT_PRIMARY}`,
-                    borderColor: `${COLORS.ACCENT_PRIMARY}30`
+                    background: COLORS.ACCENT_PRIMARY,
+                    borderColor: `${COLORS.ACCENT_PRIMARY}30`,
                   }}
                   whileHover={{ scale: 1.1, rotate: -10 }}
                 >
-                  <Users className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
+                  <Users
+                    className="w-5 h-5 sm:w-6 sm:h-6"
+                    style={{ color: COLORS.TEXT_PRIMARY }}
+                  />
                 </motion.div>
-                <span className="font-semibold text-lg" style={{ color: COLORS.TEXT_PRIMARY }}>
+                <span
+                  className="font-semibold text-base sm:text-lg"
+                  style={{ color: COLORS.TEXT_PRIMARY }}
+                >
                   Our Team
                 </span>
               </motion.div>
 
-              <h2 className="text-4xl lg:text-5xl font-medium mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
+              <h2
+                className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-3 sm:mb-4"
+                style={{ color: COLORS.TEXT_PRIMARY }}
+              >
                 Meet Our Team
               </h2>
-              <p className="text-xl max-w-2xl mx-auto" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
+
+              <p
+                className="text-base sm:text-lg lg:text-xl max-w-xl sm:max-w-2xl mx-auto"
+                style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}
+              >
                 The builders, designers, and dreamers behind Finzie
               </p>
             </motion.div>
 
-            {/* Team Cards */}
+            {/* ---------- Team Cards ---------- */}
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
               variants={staggerContainer}
             >
               {team.map((member, idx) => (
                 <motion.div
                   key={idx}
                   variants={scaleIn}
-                  className="group relative backdrop-blur-sm rounded-3xl p-8 transition-all duration-500 border-2 hover:border-[#f7af00]"
+                  className="group relative backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-500 border-2 hover:border-[#f7af00]"
                   style={{
                     background: COLORS.BACKGROUND_SECONDARY,
                   }}
                 >
                   <div className="relative text-center">
+                    {/* Avatar */}
                     <motion.div
-                      className="relative mb-6"
-                      whileHover={{ scale: 1.1 }}
+                      className="relative mb-5 sm:mb-6"
+                      whileHover={{ scale: 1.08 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div className="absolute inset-0 rounded-full blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
+                      <div
+                        className="absolute inset-0 rounded-full blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-500"
+                        style={{ background: COLORS.BACKGROUND_SECONDARY }}
+                      />
+
                       <img
                         src={member.img}
                         alt={member.name}
-                        className="relative w-32 h-32 rounded-full mx-auto object-cover border-2 transition-colors duration-500"
+                        className="relative mx-auto object-cover rounded-full w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 border-2 transition-colors duration-500"
                         style={{
-                          borderColor: `${COLORS.ACCENT_PRIMARY}`
+                          borderColor: COLORS.ACCENT_PRIMARY,
                         }}
                       />
                     </motion.div>
 
-                    <h3 className="font-bold text-xl mb-2" style={{ color: COLORS.TEXT_PRIMARY }}>
+                    {/* Name */}
+                    <h3
+                      className="font-bold text-lg sm:text-xl mb-1 sm:mb-2"
+                      style={{ color: COLORS.TEXT_PRIMARY }}
+                    >
                       {member.name}
                     </h3>
-                    <p className="font-semibold mb-4" style={{ color: COLORS.ACCENT_PRIMARY }}>
+
+                    {/* Role */}
+                    <p
+                      className="font-semibold text-sm sm:text-base mb-3 sm:mb-4"
+                      style={{ color: COLORS.ACCENT_PRIMARY }}
+                    >
                       {member.role}
                     </p>
-                    <p className="leading-relaxed group-hover:opacity-100 transition-colors duration-500" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
+
+                    {/* Description */}
+                    <p
+                      className="text-sm sm:text-base leading-relaxed transition-colors duration-500"
+                      style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}
+                    >
                       {member.desc}
                     </p>
                   </div>
@@ -313,8 +354,14 @@ export default function AboutPage() {
         </section>
 
         {/* Finzie Story */}
-        <section className="relative py-24 px-4 sm:px-6 lg:px-8">
-          <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(to right, ${COLORS.BACKGROUND_SECONDARY}, transparent)` }} />
+        <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+          {/* Background Gradient */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `linear-gradient(to right, ${COLORS.BACKGROUND_SECONDARY}, transparent)`
+            }}
+          />
 
           <motion.div
             className="relative max-w-6xl mx-auto"
@@ -323,14 +370,15 @@ export default function AboutPage() {
             viewport={{ once: true, amount: 0.2 }}
             variants={staggerContainer}
           >
-            <div className="grid lg:grid-cols-2 gap-2 items-center">
-              <motion.div variants={fadeInLeft} className="">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              {/* Left Content */}
+              <motion.div variants={fadeInLeft}>
+                {/* Heading */}
                 <h2
-                  className="font-normal mb-2"
+                  className="font-normal mb-2 sm:mb-3"
                   style={{
-                    fontSize: "clamp(2.25rem, 5vw, 4rem)",
+                    fontSize: "clamp(1.75rem, 6vw, 4rem)",
                     lineHeight: "1.15",
-                    maxWidth: "100%",
                     letterSpacing: "-0.025em",
                     color: COLORS.TEXT_PRIMARY
                   }}
@@ -338,11 +386,11 @@ export default function AboutPage() {
                   Finzie&apos;s Journey
                 </h2>
 
+                {/* Subheading */}
                 <p
-                  className="mb-6 font-medium"
+                  className="mb-5 sm:mb-6 font-medium"
                   style={{
-                    fontSize: "clamp(1.125rem, 1.75vw, 1.375rem)",
-                    maxWidth: "100%",
+                    fontSize: "clamp(1rem, 2.5vw, 1.375rem)",
                     lineHeight: "1.6",
                     color: `${COLORS.TEXT_PRIMARY}CC`
                   }}
@@ -350,35 +398,40 @@ export default function AboutPage() {
                   From a small startup to a global talent aggregator
                 </p>
 
-                <div className="space-y-8 max-w-3xl">
+                {/* Body Content */}
+                <div className="space-y-6 sm:space-y-8 max-w-3xl">
                   <motion.p
                     className="font-medium"
+                    variants={fadeUp}
                     style={{
-                      fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
+                      fontSize: "clamp(0.95rem, 2.2vw, 1.125rem)",
                       lineHeight: "1.75",
                       color: `${COLORS.TEXT_PRIMARY}BF`
                     }}
-                    variants={fadeUp}
                   >
-                    Finzie was born out of the need for fast-moving startups to access top-tier talent quickly. Our founders, frustrated with the traditional hiring process, set out to create a platform that would streamline the way businesses connect with freelancers and AI specialists.
+                    Finzie was born out of the need for fast-moving startups to access
+                    top-tier talent quickly. Our founders, frustrated with the
+                    traditional hiring process, set out to create a platform that would
+                    streamline the way businesses connect with freelancers and AI
+                    specialists.
                   </motion.p>
 
                   <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.2 }}
                     variants={staggerContainer}
                     className="relative z-10 max-w-3xl"
                   >
                     <motion.p
                       variants={fadeUp}
                       style={{
-                        fontSize: "clamp(1rem, 1.25vw, 1.125rem)",
+                        fontSize: "clamp(0.95rem, 2.2vw, 1.125rem)",
                         lineHeight: "1.75",
                         color: `${COLORS.TEXT_PRIMARY}E6`
                       }}
                     >
-                      Today, Finzie is proud to be the world's first AI talent aggregator, providing on-demand access to pre-vetted experts across various domains. Our mission is to empower startups with the resources they need to scale efficiently and effectively.
+                      Today, Finzie is proud to be the world's first AI talent
+                      aggregator, providing on-demand access to pre-vetted experts
+                      across various domains. Our mission is to empower startups with
+                      the resources they need to scale efficiently and effectively.
                     </motion.p>
                   </motion.div>
                 </div>
@@ -387,9 +440,16 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
+
         {/* Goals and Impact Section */}
-        <section className="relative py-24 px-4">
-          <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, transparent, ${COLORS.ACCENT_PRIMARY}05, transparent)` }} />
+        <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6">
+          {/* Background Gradient */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to bottom, transparent, ${COLORS.ACCENT_PRIMARY}05, transparent)`
+            }}
+          />
 
           <motion.div
             className="relative max-w-6xl mx-auto"
@@ -398,15 +458,29 @@ export default function AboutPage() {
             viewport={{ once: true, amount: 0.2 }}
             variants={staggerContainer}
           >
-            <motion.div className="text-center mb-16" variants={fadeUp}>
-              <h2 className="text-4xl lg:text-5xl font-medium mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>Our Goals & Impact</h2>
-              <p className="text-xl max-w-2xl mx-auto" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
+            {/* ---------- Heading ---------- */}
+            <motion.div
+              className="text-center mb-10 sm:mb-14 lg:mb-16"
+              variants={fadeUp}
+            >
+              <h2
+                className="text-3xl sm:text-4xl lg:text-5xl font-medium mb-3 sm:mb-4"
+                style={{ color: COLORS.TEXT_PRIMARY }}
+              >
+                Our Goals & Impact
+              </h2>
+
+              <p
+                className="text-base sm:text-lg lg:text-xl max-w-xl sm:max-w-2xl mx-auto"
+                style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}
+              >
                 Committed to making a difference in the freelance ecosystem
               </p>
             </motion.div>
 
+            {/* ---------- Cards Grid ---------- */}
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
               variants={staggerContainer}
             >
               {[
@@ -429,27 +503,42 @@ export default function AboutPage() {
                 <motion.div
                   key={idx}
                   variants={scaleIn}
-                  className="group relative backdrop-blur-sm rounded-3xl p-8 transition-all duration-500 text-center"
+                  className="group relative backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 transition-all duration-500 text-center"
                   style={{
                     background: COLORS.BACKGROUND_SECONDARY,
                     border: `1px solid ${COLORS.TEXT_SECONDARY}0A`
                   }}
                   whileHover={{ y: -10, scale: 1.02 }}
                 >
+                  {/* Icon */}
                   <motion.div
-                    className="relative mb-6"
+                    className="relative mb-4 sm:mb-6"
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="relative w-14 h-14 rounded-2xl flex items-center justify-center mx-auto border transition-colors duration-500">
-                      <goal.icon className="w-6 h-6" style={{ color: COLORS.TEXT_PRIMARY }} />
+                    <div
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto border transition-colors duration-500"
+                    >
+                      <goal.icon
+                        className="w-5 h-5 sm:w-6 sm:h-6"
+                        style={{ color: COLORS.TEXT_PRIMARY }}
+                      />
                     </div>
                   </motion.div>
 
-                  <h3 className="text-2xl font-medium mb-4" style={{ color: COLORS.TEXT_PRIMARY }}>
+                  {/* Title */}
+                  <h3
+                    className="text-lg sm:text-xl lg:text-2xl font-medium mb-3 sm:mb-4"
+                    style={{ color: COLORS.TEXT_PRIMARY }}
+                  >
                     {goal.title}
                   </h3>
-                  <p className="leading-relaxed group-hover:opacity-100 transition-colors duration-500" style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}>
+
+                  {/* Description */}
+                  <p
+                    className="text-sm sm:text-base leading-relaxed transition-colors duration-500"
+                    style={{ color: `${COLORS.TEXT_PRIMARY}B3` }}
+                  >
                     {goal.desc}
                   </p>
                 </motion.div>
@@ -458,60 +547,83 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
+
         {/* Mission and Vision Section */}
-        <section className="relative py-24 px-4">
-          <div className="absolute inset-0" style={{ background: `linear-gradient(to right, transparent, ${COLORS.ACCENT_PRIMARY}05, transparent)` }} />
+        <section className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6">
+          {/* Background Gradient */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to right, transparent, ${COLORS.ACCENT_PRIMARY}05, transparent)`
+            }}
+          />
 
           <motion.div
-            className="relative max-w-6xl mx-auto space-y-24"
+            className="relative max-w-6xl mx-auto space-y-16 sm:space-y-20 lg:space-y-24"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={staggerContainer}
           >
-            {/* Mission */}
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* ---------- Mission ---------- */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
               <motion.div variants={fadeInLeft}>
-                <h2 className="text-4xl lg:text-5xl font-normal mb-6 text-[#050504]">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal mb-4 sm:mb-6 text-[#050504]">
                   Our Mission
                 </h2>
-                <p className="text-xl leading-relaxed" style={{ color: `${COLORS.TEXT_PRIMARY}BF` }}>
-                  To empower communities through education, technology, and sustainable solutions, creating
-                  opportunities for every individual to thrive and contribute to a better world.
+
+                <p
+                  className="text-base sm:text-lg lg:text-xl leading-relaxed"
+                  style={{ color: `${COLORS.TEXT_PRIMARY}BF` }}
+                >
+                  To empower communities through education, technology, and sustainable
+                  solutions, creating opportunities for every individual to thrive and
+                  contribute to a better world.
                 </p>
               </motion.div>
 
               <motion.div variants={fadeInRight} className="relative">
-                <div className="relative animate-missionRotate">
-                  <div className="absolute inset-0 rounded-3xl blur-2xl opacity-20" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
+                <div className="relative">
+                  <div
+                    className="absolute inset-0 rounded-3xl blur-2xl opacity-20"
+                    style={{ background: COLORS.BACKGROUND_SECONDARY }}
+                  />
                   <img
                     src="/mission.png"
                     alt="Our Mission"
-                    className="relative w-80 h-80 object-contain mx-auto"
+                    className="relative mx-auto object-contain w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80"
                   />
                 </div>
               </motion.div>
             </div>
 
-            {/* Vision */}
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* ---------- Vision ---------- */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
               <motion.div variants={fadeInLeft} className="lg:order-2">
-                <h2 className="text-4xl lg:text-5xl font-normal mb-6 text-[#050504]">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal mb-4 sm:mb-6 text-[#050504]">
                   Our Vision
                 </h2>
-                <p className="text-xl leading-relaxed" style={{ color: `${COLORS.TEXT_PRIMARY}BF` }}>
-                  To build a future where innovation and inclusivity drive societal progress, ensuring that
-                  technology and education are accessible to all, regardless of background.
+
+                <p
+                  className="text-base sm:text-lg lg:text-xl leading-relaxed"
+                  style={{ color: `${COLORS.TEXT_PRIMARY}BF` }}
+                >
+                  To build a future where innovation and inclusivity drive societal
+                  progress, ensuring that technology and education are accessible to
+                  all, regardless of background.
                 </p>
               </motion.div>
 
               <motion.div variants={fadeInRight} className="lg:order-1 relative">
-                <div className="relative animate-visionRotate">
-                  <div className="absolute inset-0 rounded-3xl blur-2xl opacity-20" style={{ background: COLORS.BACKGROUND_SECONDARY }} />
+                <div className="relative">
+                  <div
+                    className="absolute inset-0 rounded-3xl blur-2xl opacity-20"
+                    style={{ background: COLORS.BACKGROUND_SECONDARY }}
+                  />
                   <img
                     src="/vision.png"
                     alt="Our Vision"
-                    className="relative w-80 h-80 object-contain mx-auto"
+                    className="relative mx-auto object-contain w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80"
                   />
                 </div>
               </motion.div>
@@ -519,8 +631,9 @@ export default function AboutPage() {
           </motion.div>
         </section>
 
+
         {/* CTA Section */}
-        <section className="relative py-24 px-4">
+        <section className="relative py-16 sm:py-20 lg:py-24 px-4">
           <motion.div
             className="max-w-6xl mx-auto text-center"
             initial="hidden"
@@ -528,27 +641,38 @@ export default function AboutPage() {
             viewport={{ once: true, amount: 0.3 }}
             variants={staggerContainer}
           >
-            <div className="relative rounded-3xl p-16 overflow-hidden" style={{
-              background: `linear-gradient(to right, ${COLORS.BACKGROUND_SECONDARY}, #f0eadd)`,
-              color: COLORS.TEXT_PRIMARY
-            }}>
+            <div
+              className="relative rounded-3xl p-8 sm:p-12 lg:p-16 overflow-hidden"
+              style={{
+                background: `linear-gradient(to right, ${COLORS.BACKGROUND_SECONDARY}, #f0eadd)`,
+                color: COLORS.TEXT_PRIMARY,
+              }}
+            >
               <div className="relative z-10">
-                <motion.h3 className="text-xl sm:text-3xl lg:text-5xl font-light mb-6" variants={fadeUp}>
-                  Ready to Join the Finzie Community?
-                </motion.h3>
-                <motion.p
-                  className="text-xl opacity-90 mb-10 max-w-2xl mx-auto"
+                <motion.h3
+                  className="text-2xl sm:text-3xl lg:text-5xl font-light mb-5"
                   variants={fadeUp}
                 >
-                  Whether you&apos;re a startup looking for talent or a freelancer seeking opportunities,
-                  we&apos;re here to help you succeed.
+                  Ready to Join the Finzie Community?
+                </motion.h3>
+
+                <motion.p
+                  className="text-base sm:text-lg lg:text-xl opacity-90 mb-8 max-w-2xl mx-auto"
+                  variants={fadeUp}
+                >
+                  Whether you&apos;re a startup looking for talent or a freelancer
+                  seeking opportunities, we&apos;re here to help you succeed.
                 </motion.p>
-                <motion.div className="flex flex-col sm:flex-row gap-4 justify-center" variants={fadeUp}>
+
+                <motion.div
+                  className="flex flex-col sm:flex-row gap-4 justify-center"
+                  variants={fadeUp}
+                >
                   <motion.button
-                    className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
+                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 font-semibold px-8 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl"
                     style={{
                       background: COLORS.BACKGROUND,
-                      color: COLORS.TEXT_PRIMARY
+                      color: COLORS.TEXT_PRIMARY,
                     }}
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
@@ -556,12 +680,13 @@ export default function AboutPage() {
                     Start a Project
                     <ArrowRight className="w-5 h-5" />
                   </motion.button>
+
                   <motion.button
-                    className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl transition-all duration-300 border-2 cursor-pointer"
+                    className="inline-flex w-full sm:w-auto items-center justify-center gap-2 font-semibold px-8 py-4 rounded-2xl transition-all duration-300 border-2"
                     style={{
-                      background: `${COLORS.BACKGROUND}`,
+                      background: COLORS.BACKGROUND,
                       color: COLORS.TEXT_PRIMARY,
-                      borderColor: `${COLORS.TEXT_PRIMARY}30`
+                      borderColor: `${COLORS.TEXT_PRIMARY}30`,
                     }}
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
@@ -574,6 +699,7 @@ export default function AboutPage() {
             </div>
           </motion.div>
         </section>
+
       </div>
     </>
   )

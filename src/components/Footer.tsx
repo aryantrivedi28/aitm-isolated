@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { FaThreads } from "react-icons/fa6";
+import Image from "next/image";
 
 export default function Footer() {
   const pathname = usePathname() || "";
@@ -92,11 +93,21 @@ export default function Footer() {
       {/* ---------------- MAIN CONTENT ---------------- */}
       <div className="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-12">
         {/* Brand */}
-        <div className="mb-10 text-center sm:text-left">
+
+        <div className="mb-10 flex items-center justify-center gap-3 sm:justify-start">
+          <Image
+            src="/finzie-logo.png"
+            alt="Finzie Logo"
+            width={40}
+            height={40}
+            className="object-contain"
+            priority
+          />
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-gray-900">
             Finzie
           </h2>
         </div>
+
 
         <motion.div
           variants={containerVariants}

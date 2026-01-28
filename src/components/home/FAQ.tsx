@@ -64,7 +64,7 @@ const FAQ = () => {
       answer: "Yes. Finzie builds custom GoHighLevel automations including lead nurturing sequences, appointment booking workflows, pipeline automation, SMS/email follow-ups, and CRM dashboards tailored to your business goals.",
     },
     {
-      question: "How long does it take to build a Shopify store or set up GoHighLevel?", 
+      question: "How long does it take to build a Shopify store or set up GoHighLevel?",
       answer: "A standard Shopify store usually takes 2–4 weeks, depending on design and features. GoHighLevel setup and automation typically takes 1–2 weeks, based on workflow complexity. We always share clear timelines before starting.",
     },
     {
@@ -76,21 +76,20 @@ const FAQ = () => {
   const toggleItem = (index: number) => {
     setOpenItem(openItem === index ? null : index);
   };
-
   return (
-    <section className="relative w-full py-20 bg-[#faf4e5] overflow-hidden">
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="w-full py-16 sm:py-20 bg-[#faf4e5]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl sm:text-5xl font-medium text-[#050504] mb-4">
+        <div className="text-center mb-10 sm:mb-14">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#050504] mb-3">
             Frequently Asked{" "}
             <span className="bg-[#050504] bg-clip-text text-transparent animate-gradient">
               Questions
             </span>
           </h2>
 
-          <p className="text-[#31302f] text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed">
-            Got questions? We've got answers. Here are the most common questions about working with Finzie.
+          <p className="text-[#31302f] text-base sm:text-lg max-w-3xl mx-auto">
+            Got questions? We've got answers.
           </p>
         </div>
 
@@ -102,33 +101,43 @@ const FAQ = () => {
             return (
               <div
                 key={index}
-                className={`relative bg-[#f0eadd] rounded-2xl overflow-hidden transition-all duration-300 cursor-pointer ${
-                  isOpen ? " shadow-[#f7af00]/40" : "border hover:border-[#f7af00] hover:-translate-y-1"
-                }`}
                 onClick={() => toggleItem(index)}
+                className={`rounded-2xl bg-[#f0eadd] transition-all duration-300 cursor-pointer ${isOpen
+                    ? "shadow-lg shadow-[#f7af00]/30"
+                    : "border hover:border-[#f7af00]"
+                  }`}
               >
-                {/* Question */}
-                <div className="flex items-center justify-between p-5">
-                  <h3 className="text-[#050504] font-medium text-lg sm:text-xl md:text-2xl">
+                {/* Question Row */}
+                <div className="flex items-start gap-4 p-4 sm:p-5">
+                  {/* Question text */}
+                  <h3 className="flex-1 text-[#050504] font-medium text-base sm:text-lg md:text-xl leading-snug sm:leading-normal">
                     {faq.question}
                   </h3>
+
+                  {/* Icon */}
                   <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg transition-transform duration-300 ${
-                      isOpen ? "bg-[#f7af00] text-[#241C15] rotate-180" : "text-[#241C15]"
-                    }`}
+                    className={`shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg transition-all duration-300 ${isOpen
+                        ? "bg-[#f7af00] rotate-180"
+                        : "bg-[#e6dfd2]"
+                      }`}
                   >
-                    {isOpen ? <Minus className="w-4 h-4 sm:w-5 sm:h-5" /> : <Plus className="w-4 h-4 sm:w-5 sm:h-5" />}
+                    {isOpen ? (
+                      <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
+                    ) : (
+                      <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                    )}
                   </div>
                 </div>
 
                 {/* Answer */}
                 <div
-                  className={`transition-all duration-500 ease-out overflow-hidden ${
-                    isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  } bg-[#f0eadd]/50`}
+                  className={`overflow-hidden transition-all duration-500 ease-out ${isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                    }`}
                 >
-                  <div className="p-5 pt-0">
-                    <p className="text-[#31302f] text-base sm:text-lg leading-relaxed">{faq.answer}</p>
+                  <div className="px-4 sm:px-5 pb-5">
+                    <p className="text-[#31302f] text-sm sm:text-base leading-relaxed">
+                      {faq.answer}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -147,16 +156,8 @@ const FAQ = () => {
           background-size: 200% 200%;
           animation: gradient 4s ease infinite;
         }
-        @keyframes pulse {
-          0%, 100% { opacity: 0.6; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.05); }
-        }
-        .animate-pulse {
-          animation: pulse 2s ease-in-out infinite;
-        }
       `}</style>
     </section>
   );
 };
-
 export default FAQ;

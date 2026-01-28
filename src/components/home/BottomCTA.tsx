@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const BottomCTA = () => {
   const benefits = [
-    "Pre-vetted talent ready in 24 hours",
+    "Pre-vetted projects ready in 24 hours",
     "Zero hidden fees or surprises",
     "End-to-end project management",
     "100% satisfaction guarantee"
@@ -28,7 +28,7 @@ const BottomCTA = () => {
         <p className="text-[#050504] text-base sm:text-lg md:text-xl leading-relaxed mb-8 sm:mb-12 max-w-3xl font-medium relative w-fit underline-wavy">
           If Shopify or GoHighLevel is critical to your business, we can help you deliver without chaos{" "}
           <span className="font-bold underline-wavy">
-            Finzie's expert talent.
+            Finzie's Project.
           </span>
         </p>
 

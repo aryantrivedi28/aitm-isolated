@@ -19,7 +19,7 @@ const WhyUs = () => {
   const features = [
     {
       icon: CheckCircle,
-      title: "Top 1 percent talent only",
+      title: "Top 1 percent project only",
       description:
         "We screen thousands of applicants and select the top performers using a multi-stage process powered by AI and human evaluation. You always get specialists who deliver world-class work.",
     },

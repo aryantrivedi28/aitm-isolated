@@ -103,17 +103,20 @@ export default function ServicesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#faf4e5] pt-28 sm:pt-32 lg:pt-36">
+    <div className="min-h-screen bg-[#faf4e5]">
       {/* Hero Section */}
-      <section className="relative py-16 md:py-20 text-[#050504]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="relative text-[#050504]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-12 sm:pb-16">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl">
               Our Services
             </h1>
-            <p className="text-base sm:text-lg lg:text-xl text-[#050504] mb-8 md:mb-10 max-w-3xl mx-auto">
-              End-to-end Shopify and GoHighLevel solutions designed to scale sales, automate operations, and drive growth.
+
+            <p className="text-base sm:text-lg lg:text-xl text-[#050504] mt-4 mb-8 sm:mb-10 max-w-3xl mx-auto">
+              End-to-end Shopify and GoHighLevel solutions designed to scale sales,
+              automate operations, and drive growth.
             </p>
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/client-request"
@@ -122,6 +125,7 @@ export default function ServicesPage() {
                 <Calendar className="w-4 h-4 md:w-5 md:h-5" />
                 Book a Free Consultation
               </Link>
+
               <a
                 href="#services-overview"
                 className="bg-transparent border-2 border-[#f7af00] text-[#f7af00] hover:bg-[#f7af00]/10 px-6 md:px-8 py-3 md:py-4 rounded-xl font-semibold text-base md:text-lg transition-all inline-flex items-center justify-center gap-2"
@@ -175,15 +179,16 @@ export default function ServicesPage() {
       </section>
 
       {/* Comparison Section */}
-      <section className="py-12 md:py-20 bg-[#f0eadd]">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="bg-[#f0eadd]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-[#f0eadd] rounded-2xl p-6 md:p-8 border border-[#f0eadd]">
+            <div className="rounded-2xl p-4 sm:p-6 md:p-8 bg-[#f0eadd]">
               <h3 className="text-2xl md:text-3xl font-medium text-[#31302f] mb-6 md:mb-8 text-center">
                 Which Service Is Right for You?
               </h3>
 
-              <div className="overflow-hidden rounded-xl border border-[#f0eadd] bg-white">
+              {/* Desktop Table */}
+              <div className="hidden md:block overflow-hidden rounded-xl border border-[#f0eadd] bg-white">
                 <div className="grid grid-cols-3 bg-[#faf4e5] border-b border-[#f0eadd]">
                   <div className="p-4 font-semibold text-[#050504]">Your Goal</div>
                   <div className="p-4 font-semibold text-[#050504] text-center">Best Fit</div>
@@ -193,19 +198,49 @@ export default function ServicesPage() {
                 {comparisonData.map((item, index) => (
                   <div
                     key={index}
-                    className={`grid grid-cols-3 ${index % 2 === 0 ? 'bg-white' : 'bg-[#faf4e5]'}`}
+                    className={`grid grid-cols-3 ${index % 2 === 0 ? "bg-white" : "bg-[#faf4e5]"
+                      }`}
                   >
-                    <div className="p-4 text-[#31302f] border-r border-[#f0eadd]">
-                      <div className="flex items-center gap-3">
-                        <Check className="w-4 h-4 md:w-5 md:h-5 text-[#f7af00]" />
+                    <div className="p-4 border-r border-[#f0eadd]">
+                      <div className="flex items-center gap-3 text-[#31302f]">
+                        <Check className="w-5 h-5 text-[#f7af00]" />
                         {item.goal}
                       </div>
                     </div>
-                    <div className="p-4 text-[#31302f] border-r border-[#f0eadd] text-center">
-                      <span className="font-medium">{item.fit}</span>
+                    <div className="p-4 border-r border-[#f0eadd] text-center font-medium text-[#31302f]">
+                      {item.fit}
                     </div>
                     <div className="p-4 text-center text-2xl">
-                      {item.fit === 'Shopify' ? '🛒' : '🚀'}
+                      {item.fit === "Shopify" ? "🛒" : "🚀"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Mobile Cards */}
+              <div className="md:hidden space-y-4">
+                {comparisonData.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-xl border border-[#f0eadd] p-4 space-y-3"
+                  >
+                    <div className="flex items-center gap-2 font-medium text-[#050504]">
+                      <Check className="w-4 h-4 text-[#f7af00]" />
+                      {item.goal}
+                    </div>
+
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-[#31302f]">Best Fit</span>
+                      <span className="font-semibold text-[#050504]">
+                        {item.fit}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-[#31302f]">Platform</span>
+                      <span className="text-xl">
+                        {item.fit === "Shopify" ? "🛒" : "🚀"}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -214,6 +249,7 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+
 
       {/* How We Deliver */}
       <section className="py-12 md:py-20 bg-[#faf4e5]">

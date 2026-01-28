@@ -43,18 +43,19 @@ const Hero = () => {
 
       {/* ---------- HERO SECTION ---------- */}
       <section
-        className="relative bg-[#fbf5e5] min-h-[80svh] flex items-center overflow-hidden"
+        className="relative bg-[#fbf5e5] min-h-[70svh] sm:min-h-[90svh] flex items-start sm:items-center pt-8 sm:pt-0 overflow-hidden"
       >
+
         <div className="w-full">
           <div className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-12 xl:px-20">
             {/* ---------- HEADLINE ---------- */}
             <h1
               className={`tracking-in-expand leading-tight mb-5 transition-all duration-700 ${isLoaded
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4"
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-4"
                 }`}
               style={{
-                fontSize: "clamp(1.5rem, 5vw, 3.5rem)",
+                fontSize: "clamp(1.5rem, 5vw, 3rem)",
                 maxWidth: "980px",
                 fontWeight: 300,
               }}
@@ -81,8 +82,8 @@ const Hero = () => {
             {/* ---------- SUBTEXT ---------- */}
             <p
               className={`text-[#241C15] mb-8 transition-all duration-700 delay-150 ${isLoaded
-                  ? "opacity-90 translate-y-0"
-                  : "opacity-0 translate-y-4"
+                ? "opacity-90 translate-y-0"
+                : "opacity-0 translate-y-4"
                 }`}
               style={{
                 fontSize: "clamp(1rem, 2.2vw, 1.2rem)",
@@ -92,16 +93,14 @@ const Hero = () => {
               }}
             >
               We build fixed-scope Shopify stores and GoHighLevel systems —
-              no hourly billing, no freelancer risk.
-              <br className="hidden sm:block" />
-              Dedicated experts. Predictable outcomes. Zero chaos.
+              no hourly billing, no freelancer risk. Dedicated experts. Predictable outcomes. Zero chaos.
             </p>
 
             {/* ---------- CTA BUTTONS ---------- */}
             <div
               className={`flex flex-col sm:flex-row gap-4 transition-all duration-700 delay-300 ${isLoaded
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4"
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-4"
                 }`}
             >
               <button

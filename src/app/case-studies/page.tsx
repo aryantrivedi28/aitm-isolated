@@ -239,49 +239,6 @@ export default function CaseStudiesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
 
-  // Get subcategories based on selected category
-  const getFilteredSubcategories = () => {
-    if (!selectedCategory) return allSubcategories
-    return categoryData[selectedCategory as keyof typeof categoryData] || []
-  }
-
-  // When category changes, reset subcategory
-  const handleCategoryChange = (category: string | null) => {
-    setSelectedCategory(category)
-    setSelectedSubcategory(null) // Reset subcategory when category changes
-  }
-
-  // Filtering logic
-  // const filteredCaseStudies = caseStudies.filter((study) => {
-  //   // Industry filter
-  //   const matchesIndustry = selectedIndustry
-  //     ? study.tags?.some((tag) =>
-  //       tag.toLowerCase().includes(selectedIndustry.toLowerCase())
-  //     ) ||
-  //     study.title?.toLowerCase().includes(selectedIndustry.toLowerCase()) ||
-  //     study.description?.toLowerCase().includes(selectedIndustry.toLowerCase())
-  //     : true
-
-  //   // Category filter
-  //   const matchesCategory = selectedCategory
-  //     ? study.tags?.some((tag) =>
-  //       tag.toLowerCase().includes(selectedCategory.toLowerCase())
-  //     ) ||
-  //     study.title?.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-  //     study.description?.toLowerCase().includes(selectedCategory.toLowerCase())
-  //     : true
-
-  //   // Subcategory filter
-  //   const matchesSubcategory = selectedSubcategory
-  //     ? study.tags?.some((tag) =>
-  //       tag.toLowerCase().includes(selectedSubcategory.toLowerCase())
-  //     ) ||
-  //     study.title?.toLowerCase().includes(selectedSubcategory.toLowerCase()) ||
-  //     study.description?.toLowerCase().includes(selectedSubcategory.toLowerCase())
-  //     : true
-
-  //   return matchesIndustry && matchesCategory && matchesSubcategory
-  // })
 
   useEffect(() => {
     async function fetchCaseStudies() {
@@ -404,32 +361,32 @@ export default function CaseStudiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf4e5] text-[#050504] pt-8 sm:pt-12 md:pt-20">
+    <div className="min-h-screen bg-[#faf4e5] text-[#050504]">
       {/* HERO SECTION */}
       <section className="relative bg-[#faf4e5] overflow-hidden">
-        <div className="relative max-w-full mx-auto px-6 py-28 grid grid-cols-1 items-center">
+        <div className="relative max-w-full mx-auto px-4 sm:px-6 pt-20 sm:pt-24 lg:pt-28 pb-16 sm:pb-20 grid grid-cols-1 items-center">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
-            className="space-y-8 text-center flex flex-col items-center"
+            className="space-y-6 sm:space-y-8 text-center flex flex-col items-center"
           >
             <motion.h1
               variants={fadeUp}
-              className="text-4xl md:text-6xl font-medium leading-tight"
+              className="text-3xl sm:text-4xl md:text-6xl font-medium leading-tight"
             >
               Stories Behind
               <br />
               Products That
-              <span className="relative inline-block ml-3">
+              <span className="relative inline-block ml-2 sm:ml-3">
                 Scaled
-                <span className="absolute left-0 -bottom-2 w-full h-[6px] bg-[#f7af00] rounded-full" />
+                <span className="absolute left-0 -bottom-2 w-full h-[5px] sm:h-[6px] bg-[#f7af00] rounded-full" />
               </span>
             </motion.h1>
 
             <motion.p
               variants={fadeUp}
-              className="text-lg md:text-xl text-[#31302f] max-w-xl mx-auto"
+              className="text-base sm:text-lg md:text-xl text-[#31302f] max-w-xl mx-auto"
             >
               Explore real-world case studies showcasing how thoughtful design,
               technology, and strategy helped teams grow faster and smarter.
@@ -437,6 +394,7 @@ export default function CaseStudiesPage() {
           </motion.div>
         </div>
       </section>
+
 
       {/* SEARCH & FILTER - UPDATED WITH 3 SECTIONS */}
       {/* Filter Section */}
