@@ -1,5 +1,4 @@
 // types/form.ts
-
 export interface FormData {
   name: string;
   email: string;
@@ -14,33 +13,38 @@ export interface ServiceSelection {
 }
 
 export const SERVICE_CATEGORIES = {
+  Shopify: {
+    label: "Shopify",
+    subcategories: []
+  },
+  GoHighLevel: {
+    label: "GoHigh Level",
+    subcategories: []
+  },
   marketing: {
     label: "Marketing",
     subcategories: [
       "SEO Optimization",
       "Content Marketing",
       "Influencer Marketing",
-      "Market Research"
+      "Market Research",
+      "Social Media Management",
+      "FB Ads",
+      "Google Ads",
+      "Email Marketing",
+      "Landing Page Creation"
     ]
   },
-  socialMedia: {
-    label: "Social Media Management",
-    subcategories: []
-  },
-  fbAds: {
-    label: "FB Ads",
-    subcategories: []
-  },
-  googleAds: {
-    label: "Google Ads",
-    subcategories: []
-  },
-  emailMarketing: {
-    label: "Email Marketing",
-    subcategories: []
-  },
-  landingPage: {
-    label: "Landing Page Creation",
-    subcategories: []
-  }
+  // googleAds: {
+  //   label: "Google Ads",
+  //   subcategories: []
+  // },
+  // emailMarketing: {
+  //   label: "Email Marketing",
+  //   subcategories: []
+  // },
+  // landingPage: {
+  //   label: "Landing Page Creation",
+  //   subcategories: []
+  // }
 } as const;

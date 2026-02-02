@@ -111,17 +111,17 @@ const Hero = () => {
                 onClick={handleSeeHowItWorks}
                 className="inline-flex items-center justify-center gap-2 bg-[#f7af00] text-black rounded-xl px-6 py-4 font-medium hover:scale-[1.04] transition-transform hover:bg-[#e69f00]"
               >
-                See how it works
+                Get started now 
                 <ArrowRight className="w-5 h-5" />
               </button>
 
-              <button
+              {/* <button
                 onClick={() => handleNavigation("/case-studies")}
                 className="inline-flex items-center justify-center gap-2 border-2 border-[#241C15] text-[#241C15] rounded-xl px-6 py-4 font-medium hover:scale-[1.04] transition-transform hover:bg-[#241C15]/5"
               >
                 <Play className="w-4 h-4" />
                 View use cases
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
