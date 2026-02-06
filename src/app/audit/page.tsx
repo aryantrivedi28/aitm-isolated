@@ -13,31 +13,60 @@ export default function Home() {
   })
   const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setLoading(true)
+  setError('')
 
+  try {
+    const response = await fetch('/api/audit-tools/audit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    })
+
+    const data = await response.json()
+
+    if (!data.success) {
+      throw new Error(data.error || 'Failed to start audit')
+    }
+
+    const auditId = data.auditId
+
+    // 🔥 Start polling until completed
+    pollAuditStatus(auditId)
+
+  } catch (err: any) {
+    setError(err.message || 'Network error')
+    setLoading(false)
+  }
+}
+
+
+const pollAuditStatus = (auditId: string) => {
+  const interval = setInterval(async () => {
     try {
-      const response = await fetch('/api/audit-tools/audit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
+      const res = await fetch(`/api/audit-tools/audit/${auditId}`)
+      const result = await res.json()
 
-      const data = await response.json()
-
-      if (data.success) {
-        router.push(`/audit/${data.auditId}`)
-      } else {
-        setError(data.error || 'Failed to start audit')
+      if (result.status === 'completed') {
+        clearInterval(interval)
+        router.push(`/audit/${auditId}`)
       }
-    } catch (err) {
-      setError('Network error. Please try again.')
-    } finally {
+
+      if (result.status === 'failed') {
+        clearInterval(interval)
+        setError('Audit failed. Please try again.')
+        setLoading(false)
+      }
+    } catch {
+      clearInterval(interval)
+      setError('Something went wrong')
       setLoading(false)
     }
-  }
+  }, 2500)
+}
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -49,7 +78,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-4xl mx-auto text-center mb-12"
@@ -58,7 +87,7 @@ export default function Home() {
             Advanced Shopify Store Audit
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Get a comprehensive, AI-powered analysis of your Shopify store's performance, 
+            Get a comprehensive, AI-powered analysis of your Shopify store's performance,
             UX, SEO, and conversion opportunities.
           </p>
         </motion.div>
@@ -102,7 +131,7 @@ export default function Home() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Your Name
-                  
+
                 </label>
                 <input
                   type="text"
@@ -155,17 +184,17 @@ export default function Home() {
                 disabled={loading}
                 className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02]"
               >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Starting Deep Audit...
-                  </span>
-                ) : (
-                  '🚀 Run Complete Shopify Audit'
+                Submit
+                {loading && (
+                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white p-8 rounded-xl text-center shadow-xl">
+                      <div className="animate-spin h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4" />
+                      <p className="font-semibold">Analyzing your store...</p>
+                      <p className="text-sm text-gray-500">This may take 2-3 minutes</p>
+                    </div>
+                  </div>
                 )}
+
               </button>
             </form>
 
