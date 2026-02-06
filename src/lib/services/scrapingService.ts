@@ -249,11 +249,28 @@ Current file ID: ${fileId}`
           reject(new Error("PDF parsing timeout - file may be corrupted"))
         }, 15000)
 
-        pdfParser.on("pdfParser_dataError", (errData) => {
+        pdfParser.on("pdfParser_dataError", (errData: unknown) => {
           clearTimeout(parseTimeout)
-          console.error("PDF parsing error:", errData.parserError)
-          reject(new Error(`PDF parsing failed: ${errData.parserError}`))
+
+          let error: Error
+
+          if (
+            typeof errData === "object" &&
+            errData !== null &&
+            "parserError" in errData &&
+            errData.parserError instanceof Error
+          ) {
+            error = errData.parserError
+          } else if (errData instanceof Error) {
+            error = errData
+          } else {
+            error = new Error("Unknown PDF parsing error")
+          }
+
+          console.error("PDF parsing error:", error)
+          reject(new Error(`PDF parsing failed: ${error.message}`))
         })
+
 
         pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
           clearTimeout(parseTimeout)
