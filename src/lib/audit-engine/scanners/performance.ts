@@ -2,9 +2,6 @@
 
 type PageSpeedStrategy = 'mobile' | 'desktop'
 
-/**
- * MUST match the PerformanceMetrics expected by ScoreCalculator
- */
 interface PerformanceMetrics {
   mobileScore: number
   desktopScore: number
@@ -32,7 +29,7 @@ interface PerformanceMetrics {
 
 export class PerformanceScanner {
   // --------------------------------------------
-  // PageSpeed runner
+  // PageSpeed runner (SAFE for Vercel)
   // --------------------------------------------
   private static async runPageSpeed(
     url: string,
@@ -42,57 +39,71 @@ export class PerformanceScanner {
 
     const apiKey = process.env.PAGESPEED_API_KEY
     if (!apiKey) {
-      console.error('❌ [Performance] PAGESPEED_API_KEY is missing')
       throw new Error('PAGESPEED_API_KEY is missing')
     }
-
-    console.log('🔑 [Performance] API key loaded')
 
     const endpoint = `https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(
       url
     )}&strategy=${strategy}&category=performance&key=${apiKey}`
 
-    console.log('🌐 [Performance] PageSpeed endpoint:', endpoint)
+    console.log('🌐 [Performance] Endpoint:', endpoint)
 
-    const res = await fetch(endpoint)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => {
+      controller.abort()
+    }, 12_000) // 12s hard timeout (Vercel-safe)
 
-    if (!res.ok) {
-      const text = await res.text()
-      console.error(
-        `❌ [Performance] PageSpeed API failed (${strategy})`,
-        res.status,
-        text
+    try {
+      const res = await fetch(endpoint, {
+        signal: controller.signal
+      })
+
+      if (!res.ok) {
+        const text = await res.text()
+        throw new Error(
+          `PageSpeed API failed (${strategy}) ${res.status}: ${text}`
+        )
+      }
+
+      const data = await res.json()
+
+      console.log(
+        `✅ [Performance] PageSpeed (${strategy}) completed`
       )
-      throw new Error(`PageSpeed API failed: ${res.statusText}`)
+
+      return data.lighthouseResult
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        console.error(
+          `⏱️ [Performance] PageSpeed (${strategy}) timed out`
+        )
+      } else {
+        console.error(
+          `❌ [Performance] PageSpeed (${strategy}) error`,
+          error
+        )
+      }
+      throw error
+    } finally {
+      clearTimeout(timeout)
     }
-
-    const data = await res.json()
-
-    console.log(
-      `✅ [Performance] PageSpeed (${strategy}) completed`
-    )
-
-    return data.lighthouseResult
   }
 
   // --------------------------------------------
-  // MAIN SCAN
+  // MAIN SCAN (SEQUENTIAL – no Promise.all)
   // --------------------------------------------
   static async scan(url: string) {
     console.log('🚀 [Performance] Starting performance scan for:', url)
 
     try {
-      const [mobile, desktop] = await Promise.all([
-        this.runPageSpeed(url, 'mobile'),
-        this.runPageSpeed(url, 'desktop')
-      ])
+      // 🔴 IMPORTANT: sequential execution
+      const mobile = await this.runPageSpeed(url, 'mobile')
+      const desktop = await this.runPageSpeed(url, 'desktop')
 
       console.log('📱 [Performance] Mobile data received')
       console.log('🖥️ [Performance] Desktop data received')
 
       const mobileAudits = mobile.audits
-
-      console.log('📊 [Performance] Extracting metrics...')
 
       const metrics: PerformanceMetrics = {
         mobileScore: Math.round(
@@ -145,16 +156,17 @@ export class PerformanceScanner {
         TBT: metrics.totalBlockingTime
       })
 
-      const issues = this.generateIssues(mobileAudits, metrics, url)
+      const issues = this.generateIssues(
+        mobileAudits,
+        metrics,
+        url
+      )
 
       console.log(
         `🚨 [Performance] Issues detected: ${issues.length}`
       )
 
-      return {
-        metrics,
-        issues
-      }
+      return { metrics, issues }
     } catch (error) {
       console.error('❌ [Performance] Scan failed:', error)
 
@@ -173,17 +185,15 @@ export class PerformanceScanner {
     metrics: PerformanceMetrics,
     url: string
   ) {
-    console.log('🔍 [Performance] Generating issues...')
-
     const issues: any[] = []
 
     if (metrics.largestContentfulPaint > 2500) {
-      console.warn('🚨 [Performance] LCP issue detected')
-
       issues.push({
         type: 'performance',
         severity:
-          metrics.largestContentfulPaint > 4000 ? 'critical' : 'high',
+          metrics.largestContentfulPaint > 4000
+            ? 'critical'
+            : 'high',
         title: 'Slow Largest Contentful Paint (LCP)',
         description:
           'Main content takes too long to load. Optimize hero images and critical resources.',
@@ -194,12 +204,12 @@ export class PerformanceScanner {
     }
 
     if (metrics.cumulativeLayoutShift > 0.1) {
-      console.warn('🚨 [Performance] CLS issue detected')
-
       issues.push({
         type: 'performance',
         severity:
-          metrics.cumulativeLayoutShift > 0.25 ? 'critical' : 'medium',
+          metrics.cumulativeLayoutShift > 0.25
+            ? 'critical'
+            : 'medium',
         title: 'High Cumulative Layout Shift (CLS)',
         description:
           'Unexpected layout shifts detected. Reserve space for images and dynamic content.',
@@ -210,8 +220,6 @@ export class PerformanceScanner {
     }
 
     if (metrics.totalBlockingTime > 300) {
-      console.warn('🚨 [Performance] TBT issue detected')
-
       issues.push({
         type: 'performance',
         severity: 'high',
@@ -228,11 +236,9 @@ export class PerformanceScanner {
   }
 
   // --------------------------------------------
-  // FALLBACK (TS-safe)
+  // FALLBACK (always safe)
   // --------------------------------------------
   private static getFallbackMetrics(): PerformanceMetrics {
-    console.warn('⚠️ [Performance] Using fallback metrics')
-
     return {
       mobileScore: 0,
       desktopScore: 0,

@@ -21,7 +21,7 @@ export class SEOScanner {
   }
 
   private static calculateSEOMetrics(
-    $: cheerio.CheerioAPI,
+    $: ReturnType<typeof cheerio.load>,
     html: string,
     pageUrl: string
   ): SEOMetrics {
@@ -139,7 +139,7 @@ export class SEOScanner {
   }
 
   private static generateSEOIssues(
-    _: cheerio.CheerioAPI,
+    $: ReturnType<typeof cheerio.load>,
     metrics: SEOMetrics
   ): AuditIssue[] {
 

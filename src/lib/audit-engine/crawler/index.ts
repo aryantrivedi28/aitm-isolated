@@ -1,10 +1,12 @@
-import puppeteer, { Browser, Page } from 'puppeteer-core'
+import puppeteer from 'puppeteer-core'
+import type * as Puppeteer from 'puppeteer-core'
 import chromium from '@sparticuz/chromium'
 import { CrawlResult } from '../types'
 
 export class AdvancedCrawler {
-  private browser: Browser | null = null
-  private page: Page | null = null
+  private browser: Puppeteer.Browser | null = null
+  private page: Puppeteer.Page | null = null
+
 
   async initialize() {
     console.log('🕷️ [Crawler] Initializing browser...')
@@ -29,8 +31,10 @@ export class AdvancedCrawler {
       else {
         // ✅ Local machine
         this.browser = await puppeteer.launch({
-          headless: true,
+          args: chromium.args,
           executablePath: await chromium.executablePath(),
+          headless: true,
+          defaultViewport: null,
         })
       }
 

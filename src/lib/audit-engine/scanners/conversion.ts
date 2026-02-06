@@ -13,7 +13,7 @@ export class ConversionScanner {
     return { metrics, issues }
   }
 
-  private static calculateConversionMetrics($: cheerio.CheerioAPI, html: string): ConversionMetrics {
+  private static calculateConversionMetrics($: ReturnType<typeof cheerio.load>, html: string): ConversionMetrics {
     // Email capture
     const emailCapture = this.detectEmailCapture($, html)
     
@@ -46,7 +46,7 @@ export class ConversionScanner {
     }
   }
 
-  private static detectEmailCapture($: cheerio.CheerioAPI, html: string) {
+  private static detectEmailCapture($: ReturnType<typeof cheerio.load>, html: string) {
     const emailForms = $('form').filter((_, form) => {
       const formHtml = $(form).html() || ''
       return formHtml.includes('email') || formHtml.includes('@')
@@ -65,7 +65,7 @@ export class ConversionScanner {
     }
   }
 
-  private static detectUpsells($: cheerio.CheerioAPI, html: string) {
+  private static detectUpsells($: ReturnType<typeof cheerio.load>, html: string) {
     const relatedProducts = html.includes('related-products') || 
                            $('.related-products, .product-recommendations').length > 0
     
@@ -82,7 +82,7 @@ export class ConversionScanner {
     }
   }
 
-  private static detectUrgency($: cheerio.CheerioAPI, html: string) {
+  private static detectUrgency($: ReturnType<typeof cheerio.load>, html: string) {
     const countdownTimers = html.includes('countdown') || 
                            $('.countdown-timer, .timer').length > 0
     
@@ -100,7 +100,7 @@ export class ConversionScanner {
     }
   }
 
-  private static detectFreeShipping($: cheerio.CheerioAPI, html: string) {
+  private static detectFreeShipping($: ReturnType<typeof cheerio.load>, html: string) {
     const hasBar = html.includes('free-shipping') || 
                   $('.free-shipping-bar, .shipping-progress').length > 0
     
@@ -118,7 +118,7 @@ export class ConversionScanner {
     }
   }
 
-  private static generateConversionIssues($: cheerio.CheerioAPI, metrics: ConversionMetrics): AuditIssue[] {
+  private static generateConversionIssues($: ReturnType<typeof cheerio.load>, metrics: ConversionMetrics): AuditIssue[] {
     const issues: AuditIssue[] = []
     
     // No email capture
