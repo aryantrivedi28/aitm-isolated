@@ -38,7 +38,7 @@ export class PageAnalyzer {
     return productData
   }
 
-  private static extractPrice($: cheerio.CheerioAPI) {
+  private static extractPrice($: ReturnType<typeof cheerio.load>) {
     const priceSelectors = [
       '.product-price',
       '.price',
@@ -60,7 +60,7 @@ export class PageAnalyzer {
     return 0
   }
 
-  private static extractImages($: cheerio.CheerioAPI) {
+  private static extractImages($: ReturnType<typeof cheerio.load>) {
     const images: string[] = []
     
     // Look for product images
@@ -84,7 +84,7 @@ export class PageAnalyzer {
     return images
   }
 
-  private static extractAvailability($: cheerio.CheerioAPI) {
+  private static extractAvailability($: ReturnType<typeof cheerio.load>) {
     const inStockText = ['in stock', 'available', 'add to cart']
     const outOfStockText = ['out of stock', 'sold out', 'unavailable']
     

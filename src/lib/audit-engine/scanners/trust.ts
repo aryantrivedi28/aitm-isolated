@@ -13,7 +13,7 @@ export class TrustScanner {
     return { metrics, issues }
   }
 
-  private static calculateTrustMetrics($: cheerio.CheerioAPI, html: string): TrustMetrics {
+  private static calculateTrustMetrics($: ReturnType<typeof cheerio.load>, html: string): TrustMetrics {
     // Security indicators
     const ssl = html.includes('https://') || window.location.protocol === 'https:'
     const secureCheckout = html.includes('secure-checkout') || html.includes('checkout.shopify.com')
@@ -46,7 +46,7 @@ export class TrustScanner {
     }
   }
 
-  private static detectPaymentIcons($: cheerio.CheerioAPI, html: string): boolean {
+  private static detectPaymentIcons($: ReturnType<typeof cheerio.load>, html: string): boolean {
     const paymentTerms = [
       'visa', 'mastercard', 'amex', 'discover', 'paypal', 
       'apple-pay', 'google-pay', 'shop-pay', 'klarna', 'afterpay'
@@ -58,7 +58,7 @@ export class TrustScanner {
     )
   }
 
-  private static detectSocialProof($: cheerio.CheerioAPI, html: string) {
+  private static detectSocialProof($: ReturnType<typeof cheerio.load>, html: string) {
     const hasReviews = html.includes('review') || $('.review, .testimonial').length > 0
     const hasTestimonials = html.includes('testimonial') || $('.testimonial').length > 0
     const hasTrustpilot = html.includes('trustpilot') || $('img[src*="trustpilot"]').length > 0
@@ -72,7 +72,7 @@ export class TrustScanner {
     }
   }
 
-  private static detectPolicies($: cheerio.CheerioAPI, html: string) {
+  private static detectPolicies($: ReturnType<typeof cheerio.load>, html: string) {
     const links = $('a').toArray()
     
     const refundPolicy = links.some(el => 
@@ -103,7 +103,7 @@ export class TrustScanner {
     }
   }
 
-  private static detectContactInfo($: cheerio.CheerioAPI, html: string) {
+  private static detectContactInfo($: ReturnType<typeof cheerio.load>, html: string) {
     const hasAddress = html.includes('address') || $('address').length > 0
     const hasPhone = html.includes('tel:') || $('a[href^="tel:"]').length > 0
     const hasEmail = html.includes('mailto:') || $('a[href^="mailto:"]').length > 0
@@ -117,7 +117,7 @@ export class TrustScanner {
     }
   }
 
-  private static generateTrustIssues($: cheerio.CheerioAPI, metrics: TrustMetrics): AuditIssue[] {
+  private static generateTrustIssues($: ReturnType<typeof cheerio.load>, metrics: TrustMetrics): AuditIssue[] {
     const issues: AuditIssue[] = []
     
     // No SSL (though Shopify enforces this)

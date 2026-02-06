@@ -176,7 +176,7 @@ export interface AuditIssue {
   subcategory: string;
   severity: 'critical' | 'high' | 'medium' | 'low';
   confidence: number;
-  
+
   // Metrics
   metric?: {
     name: string;
@@ -184,28 +184,28 @@ export interface AuditIssue {
     target: string | number;
     unit: string;
   };
-  
+
   // Business Impact
-  businessImpact: string;
-  technicalImpact: string;
-  
-  // Solutions
-  solutionSteps: string[];
   codeExamples?: string[];
-  
+
   // Evidence - MAKE THESE OPTIONAL
   affectedPages?: string[];
   screenshotUrl?: string;
   htmlSnippet?: string;
-  
+
   // AI Analysis
   aiExplanation?: string;
   fixPriority: number;
   estimatedTime: string;
-  
+
   // Audit Info
   detectedBy: string;
   ruleId: string;
+
+  businessImpact?: string
+  technicalImpact?: string
+  solutionSteps?: string[]
+
 }
 
 export interface AuditResult {
