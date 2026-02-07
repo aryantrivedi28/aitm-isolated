@@ -2,10 +2,10 @@ import * as cheerio from 'cheerio'
 import { TrustMetrics, AuditIssue } from '../types'
 
 export class TrustScanner {
-  static scan(html: string): {
+  static async scan(html: string): Promise<{
     metrics: TrustMetrics
     issues: AuditIssue[]
-  } {
+  }> {
     const $ = cheerio.load(html)
     const metrics = this.calculateTrustMetrics($, html)
     const issues = this.generateTrustIssues($, metrics)

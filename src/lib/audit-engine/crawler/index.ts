@@ -1,12 +1,15 @@
 import puppeteer from 'puppeteer-core'
-import type * as Puppeteer from 'puppeteer-core'
 import chromium from '@sparticuz/chromium'
+import type * as Puppeteer from 'puppeteer-core'
 import { CrawlResult } from '../types'
 
 export class AdvancedCrawler {
   private browser: Puppeteer.Browser | null = null
   private page: Puppeteer.Page | null = null
 
+  /* =========================================
+     INIT
+  ========================================= */
 
   async initialize() {
     console.log('🕷️ [Crawler] Initializing browser...')
@@ -16,34 +19,46 @@ export class AdvancedCrawler {
 
     try {
       if (browserlessKey) {
-        // ✅ Browserless
         this.browser = await puppeteer.connect({
           browserWSEndpoint: `wss://chrome.browserless.io?token=${browserlessKey}`,
         })
       }
       else if (isServerless) {
-        // ✅ Vercel / serverless
+        // ✅ serverless only
         this.browser = await puppeteer.launch({
           args: chromium.args,
           executablePath: await chromium.executablePath(),
+          headless: true
         })
       }
       else {
-        // ✅ Local machine
+        // ✅ local → normal Chrome
         this.browser = await puppeteer.launch({
-          args: chromium.args,
-          executablePath: await chromium.executablePath(),
           headless: true,
-          defaultViewport: null,
+          args: ['--no-sandbox']
         })
       }
 
       this.page = await this.browser.newPage()
 
       await this.page.setViewport({ width: 1920, height: 1080 })
+
       await this.page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36'
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120 Safari/537.36'
       )
+
+      /* 🚀 HUGE SPEED BOOST */
+      await this.page.setRequestInterception(true)
+
+      this.page.on('request', req => {
+        const type = req.resourceType()
+
+        if (['image', 'font', 'media'].includes(type)) {
+          req.abort()
+        } else {
+          req.continue()
+        }
+      })
 
       console.log('✅ [Crawler] Browser initialized')
     } catch (error) {
@@ -52,83 +67,91 @@ export class AdvancedCrawler {
     }
   }
 
+  /* =========================================
+     CRAWL
+  ========================================= */
+
   async crawl(url: string): Promise<CrawlResult> {
     if (!this.page) throw new Error('Crawler not initialized')
 
     console.log(`🌐 [Crawler] Crawling: ${url}`)
+
     const startTime = Date.now()
 
-    try {
-      // 🚀 Faster + safer navigation
-      const response = await this.page.goto(url, {
-        waitUntil: 'domcontentloaded', // ✅ KEY FIX
+    const goto = async () =>
+      this.page!.goto(url, {
+        waitUntil: 'networkidle2', // 🔥 no more sleep hacks
         timeout: 45000,
       })
 
-      // Wait a bit for JS-heavy sites (Shopify, Next, etc.)
-      await new Promise(resolve => setTimeout(resolve, 3000))
+    let response
 
+    try {
+      response = await goto()
+    } catch {
+      console.log('Retrying navigation...')
+      response = await goto()
+    }
 
-      const html = await this.page.content()
+    const html = await this.page.content()
 
-      const desktopScreenshot = await this.page.screenshot({
-        encoding: 'base64',
-        fullPage: true,
-      })
+    /* 🔥 only one compressed screenshot */
+    const screenshot = await this.page.screenshot({
+      encoding: 'base64',
+      type: 'jpeg',
+      quality: 60,
+      fullPage: true
+    })
 
-      await this.page.setViewport({ width: 375, height: 812 })
-      await new Promise(resolve => setTimeout(resolve, 1000))
+    const resources = await this.page.evaluate(() => {
+      const scripts = Array.from(document.scripts)
+        .map(s => s.src)
+        .filter(Boolean)
 
+      const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+        .map(l => (l as HTMLLinkElement).href)
+        .filter(Boolean)
 
-      const mobileScreenshot = await this.page.screenshot({
-        encoding: 'base64',
-        fullPage: true,
-      })
+      const images = Array.from(document.images)
+        .map(img => img.src)
+        .filter(Boolean)
 
-      const resources = await this.page.evaluate(() => {
-        const scripts = Array.from(document.scripts)
-          .map(s => s.src)
-          .filter(Boolean)
-
-        const styles = Array.from(document.styleSheets)
-          .map(s => s.href)
-          .filter((href): href is string => Boolean(href))
-
-        const images = Array.from(document.images)
-          .map(img => img.src)
-          .filter(Boolean)
-
-        const fonts = Array.from(document.fonts).map(f => f.family)
-
-        return { scripts, styles, images, fonts }
-      })
-
-      const loadTime = Date.now() - startTime
-
-      console.log(`✅ [Crawler] Completed in ${loadTime}ms`)
+      const fonts = Array.from(document.fonts || [])
+        .map((f: any) => f.family || '')
+        .filter(Boolean)
 
       return {
-        url,
-        html,
-        screenshots: {
-          desktop: `data:image/png;base64,${desktopScreenshot}`,
-          mobile: `data:image/png;base64,${mobileScreenshot}`,
-        },
-        resources,
-        headers: response?.headers() || {},
-        status: response?.status() || 0,
-        loadTime,
+        scripts,
+        styles,
+        images,
+        fonts
       }
-    } catch (error) {
-      console.error('❌ [Crawler] Crawl failed:', error)
-      throw error
+    })
+
+
+    const loadTime = Date.now() - startTime
+
+    console.log(`✅ [Crawler] Completed in ${loadTime}ms`)
+
+    return {
+      url,
+      html,
+      screenshots: {
+        desktop: `data:image/jpeg;base64,${screenshot}`,
+        mobile: '' // removed
+      },
+      resources,
+      headers: response?.headers() || {},
+      status: response?.status() || 0,
+      loadTime,
     }
   }
 
+  /* =========================================
+     CLOSE
+  ========================================= */
 
   async close() {
-    if (this.browser) {
-      await this.browser.close()
-    }
+    if (this.browser) await this.browser.close()
   }
 }

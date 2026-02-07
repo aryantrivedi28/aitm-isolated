@@ -2,10 +2,10 @@ import * as cheerio from 'cheerio'
 import { ConversionMetrics, AuditIssue } from '../types'
 
 export class ConversionScanner {
-  static scan(html: string): {
+  static async scan(html: string): Promise<{
     metrics: ConversionMetrics
     issues: AuditIssue[]
-  } {
+  }> {
     const $ = cheerio.load(html)
     const metrics = this.calculateConversionMetrics($, html)
     const issues = this.generateConversionIssues($, metrics)

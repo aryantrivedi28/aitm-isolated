@@ -3,10 +3,10 @@ import { SEOMetrics, AuditIssue } from '../types'
 
 export class SEOScanner {
 
-  static scan(html: string, pageUrl: string): {
+  static async scan(html: string, pageUrl: string): Promise<{
     metrics: SEOMetrics
     issues: AuditIssue[]
-  } {
+  }> {
     const $ = cheerio.load(html)
 
     console.log('🔍 SEO Scan started for:', pageUrl)

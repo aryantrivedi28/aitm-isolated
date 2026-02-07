@@ -2,13 +2,13 @@ import * as cheerio from 'cheerio'
 import { UXMetrics, AuditIssue } from '../types'
 
 export class UXScanner {
-  static scan(
+  static async scan(
     html: string,
     storeUrl: string
-  ): {
+  ): Promise<{
     metrics: UXMetrics
     issues: AuditIssue[]
-  } {
+  }> {
     try {
       const $ = cheerio.load(html)
       const metrics = this.calculateUXMetrics($, html, storeUrl)
