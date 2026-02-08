@@ -1,12 +1,14 @@
 export interface ShopifyStoreInfo {
   url: string;
   isShopify: boolean;
-  theme: {
+
+  theme?: {
     name: string;
     version: string;
     isOs20: boolean;
     isLegacy: boolean;
   };
+
   apps: {
     count: number;
     list: string[];
@@ -17,6 +19,7 @@ export interface ShopifyStoreInfo {
   country: string;
   language: string;
 }
+
 
 export interface PerformanceMetrics {
   mobileScore: number;

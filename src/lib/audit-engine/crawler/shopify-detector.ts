@@ -3,10 +3,21 @@ import { ShopifyStoreInfo } from '../types'
 export class ShopifyDetector {
   static detect(html: string, headers: Record<string, string>, url: string): ShopifyStoreInfo {
     const isShopify = this.isShopifyStore(html, headers, url)
-    
+
     if (!isShopify) {
-      throw new Error('Not a Shopify store')
+      return {
+        url,
+        isShopify: false,
+        apps: { count: 0, list: [] },
+        products: 0,
+        collections: 0,
+        currency: this.extractCurrency(html),
+        country: this.extractCountry(headers),
+        language: this.extractLanguage(html)
+      }
     }
+
+
 
     const theme = this.extractThemeInfo(html)
     const apps = this.detectApps(html)
@@ -27,10 +38,10 @@ export class ShopifyDetector {
   private static isShopifyStore(html: string, headers: Record<string, string>, url: string): boolean {
     // Check URL pattern
     if (url.includes('.myshopify.com')) return true
-    
+
     // Check headers
     if (headers['x-shopid'] || headers['x-shopify-stage']) return true
-    
+
     // Check HTML content
     const shopifyIndicators = [
       'shopify',
@@ -43,7 +54,7 @@ export class ShopifyDetector {
       'Shopify.money_format'
     ]
 
-    return shopifyIndicators.some(indicator => 
+    return shopifyIndicators.some(indicator =>
       html.toLowerCase().includes(indicator.toLowerCase())
     )
   }
@@ -51,11 +62,11 @@ export class ShopifyDetector {
   private static extractThemeInfo(html: string) {
     const themeMatch = html.match(/Shopify\.theme\s*=\s*({[^}]+})/)
     const theme = themeMatch ? JSON.parse(themeMatch[1]) : {}
-    
-    const isOs20 = html.includes('"api_version":"') || 
-                   html.includes('template_suffix') ||
-                   html.includes('sections/')
-    
+
+    const isOs20 = html.includes('"api_version":"') ||
+      html.includes('template_suffix') ||
+      html.includes('sections/')
+
     return {
       name: theme.name || 'Unknown',
       version: theme.version || '1.0',
@@ -67,9 +78,9 @@ export class ShopifyDetector {
   private static detectApps(html: string) {
     const scriptTags = html.match(/<script[^>]+src="[^"]+"[^>]*>/g) || []
     const linkTags = html.match(/<link[^>]+href="[^"]+"[^>]*>/g) || []
-    
+
     const allAssets = [...scriptTags, ...linkTags]
-    
+
     const appPatterns = [
       'apps.shopify.com',
       'shopifyapps',
@@ -85,7 +96,7 @@ export class ShopifyDetector {
       'stamped.io'
     ]
 
-    const detectedApps = appPatterns.filter(pattern => 
+    const detectedApps = appPatterns.filter(pattern =>
       allAssets.some(asset => asset.includes(pattern))
     )
 
@@ -99,7 +110,7 @@ export class ShopifyDetector {
     // Try to extract product count from structured data
     const productMatch = html.match(/"productCount":\s*(\d+)/)
     const collectionMatch = html.match(/"collectionCount":\s*(\d+)/)
-    
+
     return {
       products: productMatch ? parseInt(productMatch[1]) : 0,
       collections: collectionMatch ? parseInt(collectionMatch[1]) : 0
@@ -108,9 +119,9 @@ export class ShopifyDetector {
 
   private static extractCurrency(html: string) {
     const currencyMatch = html.match(/"currency":\s*"([^"]+)"/) ||
-                         html.match(/money_format":\s*"([^"]+)"/) ||
-                         html.match(/data-currency="([^"]+)"/)
-    
+      html.match(/money_format":\s*"([^"]+)"/) ||
+      html.match(/data-currency="([^"]+)"/)
+
     return currencyMatch ? currencyMatch[1] : 'USD'
   }
 
@@ -120,8 +131,8 @@ export class ShopifyDetector {
 
   private static extractLanguage(html: string) {
     const langMatch = html.match(/lang="([^"]+)"/) ||
-                     html.match(/"locale":\s*"([^"]+)"/)
-    
+      html.match(/"locale":\s*"([^"]+)"/)
+
     return langMatch ? langMatch[1] : 'en'
   }
 }
