@@ -2,7 +2,7 @@ export interface ShopifyStoreInfo {
   url: string;
   isShopify: boolean;
 
-  theme?: {
+  theme: {
     name: string;
     version: string;
     isOs20: boolean;

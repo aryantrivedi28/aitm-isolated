@@ -34,8 +34,8 @@ export class AuditDB {
 
     // Extract metrics
     const metrics = {
-      shopify_theme: result.storeInfo.theme.name,
-      theme_version: result.storeInfo.theme.version,
+      shopify_theme: result.storeInfo?.theme.name,
+      theme_version: result.storeInfo?.theme.version,
       apps_detected: result.storeInfo.apps.count,
       products_count: result.storeInfo.products,
       collections_count: result.storeInfo.collections,
