@@ -4,10 +4,19 @@ export class ShopifyDetector {
   static detect(html: string, headers: Record<string, string>, url: string): ShopifyStoreInfo {
     const isShopify = this.isShopifyStore(html, headers, url)
 
+    const DEFAULT_THEME = {
+      name: 'N/A',
+      version: 'N/A',
+      isOs20: false,
+      isLegacy: false
+    }
+
+
     if (!isShopify) {
       return {
         url,
         isShopify: false,
+        theme: DEFAULT_THEME,
         apps: { count: 0, list: [] },
         products: 0,
         collections: 0,
@@ -16,6 +25,7 @@ export class ShopifyDetector {
         language: this.extractLanguage(html)
       }
     }
+
 
 
 
