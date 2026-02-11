@@ -313,14 +313,14 @@ export default function ClientDashboardPage() {
     if (sub.time_slot_selected_at) {
       return {
         label: "Awaiting Schedule",
-        className: "bg-[#FFE01B]/10 text-[#241C15] border-[#FFE01B]/30",
+        className: "bg-[#f7af00]/10 text-[#241C15] border-[#f7af00]/30",
         icon: <Clock3 className="w-3 h-3" />,
       }
     }
     if (sub.is_selected) {
       return {
         label: "Selected",
-        className: "bg-[#FFE01B]/20 text-[#241C15] border-[#FFE01B]/40",
+        className: "bg-[#f7af00]/20 text-[#241C15] border-[#f7af00]/40",
         icon: <Check className="w-3 h-3" />,
       }
     }
@@ -332,7 +332,7 @@ export default function ClientDashboardPage() {
       <div className="min-h-screen bg-[#fbf5e5] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <div className="w-16 h-16 border-4 border-[#FFE01B]/30 border-t-[#FFE01B] rounded-full animate-spin"></div>
+            <div className="w-16 h-16 border-4 border-[#f7af00]/30 border-t-[#f7af00] rounded-full animate-spin"></div>
             <Building2 className="w-8 h-8 text-[#241C15] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
           </div>
           <p className="text-[#241C15] font-medium">Loading your dashboard...</p>
@@ -356,26 +356,28 @@ export default function ClientDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-[#FFE01B] rounded-xl shadow-sm">
+              <div className="p-2.5 bg-[#f7af00] rounded-xl shadow-sm">
                 <Building2 className="w-6 h-6 text-[#241C15]" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-[#241C15]">Client Dashboard</h1>
                 <p className="text-sm text-[#241C15]/60 flex items-center gap-1.5">
-                  <Zap className="w-3.5 h-3.5 text-[#FFE01B]" />
+                  <Zap className="w-3.5 h-3.5 text-[#f7af00]" />
                   Manage your hiring pipeline
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => router.push("/client/hirings/create")}
-                className="px-5 py-2.5 bg-[#FFE01B] hover:bg-[#e6ca18] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 transition-all shadow-sm hover:shadow-md"
+                onClick={() => router.push("/find-talent/direct-hiring")}
+                className="px-5 py-2.5 bg-[#f7af00] hover:bg-[#f7af00] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 transition-all shadow-sm hover:shadow-md"
               >
                 <Plus className="w-4 h-4" strokeWidth={2.5} />
                 New Hiring
               </button>
-              <button className="px-5 py-2.5 bg-[#f0eadd] border border-[#241C15]/15 hover:border-[#FFE01B] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 transition-all">
+              <button
+                onClick={() => router.push("/find-talent/assisted-hiring")}
+                className="px-5 py-2.5 bg-[#f0eadd] border border-[#241C15]/15 hover:border-[#f7af00] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 transition-all">
                 <Sparkles className="w-4 h-4" />
                 Assisted Hiring
               </button>
@@ -402,20 +404,19 @@ export default function ClientDashboardPage() {
           ].map((stat, idx) => (
             <div
               key={idx}
-              className={`rounded-xl p-4 border transition-all hover:shadow-md ${
-                stat.accent
+              className={`rounded-xl p-4 border transition-all hover:shadow-md ${stat.accent
                   ? "bg-[#f0eadd] border-[#f0eadd] text-black"
                   : stat.highlight
-                    ? "bg-[#FFE01B]/10 border-[#FFE01B]/30"
+                    ? "bg-[#f7af00]/10 border-[#f7af00]/30"
                     : "bg-[#f0eadd] border-[#241C15]/10"
-              }`}
+                }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <div className={`p-2 rounded-lg ${stat.accent ? "bg-[#FFE01B]" : "bg-[#fbf5e5]"}`}>
+                <div className={`p-2 rounded-lg ${stat.accent ? "bg-[#f7af00]" : "bg-[#fbf5e5]"}`}>
                   <stat.icon className={`w-4 h-4 ${stat.accent ? "text-[#241C15]" : "text-[#241C15]/70"}`} />
                 </div>
                 <div className="flex items-center gap-1">
-                  <TrendingUp className={`w-3 h-3 ${stat.accent ? "text-[#FFE01B]" : "text-[#241C15]/40"}`} />
+                  <TrendingUp className={`w-3 h-3 ${stat.accent ? "text-[#f7af00]" : "text-[#241C15]/40"}`} />
                 </div>
               </div>
               <div className={`text-2xl font-bold mb-0.5 ${stat.accent ? "text-black" : "text-[#241C15]"}`}>
@@ -438,7 +439,7 @@ export default function ClientDashboardPage() {
                 placeholder="Search hiring forms..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 rounded-lg border border-[#241C15]/10 focus:border-[#FFE01B] focus:ring-2 focus:ring-[#FFE01B]/20 outline-none transition-all bg-[#fbf5e5]/50 text-[#241C15] placeholder:text-[#241C15]/40"
+                className="w-full pl-11 pr-4 py-3 rounded-lg border border-[#241C15]/10 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00]/20 outline-none transition-all bg-[#fbf5e5]/50 text-[#241C15] placeholder:text-[#241C15]/40"
               />
             </div>
             <div className="flex gap-3 w-full lg:w-auto">
@@ -447,7 +448,7 @@ export default function ClientDashboardPage() {
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-full lg:w-40 pl-10 pr-4 py-3 rounded-lg border border-[#241C15]/10 focus:border-[#FFE01B] focus:ring-2 focus:ring-[#FFE01B]/20 outline-none bg-[#fbf5e5]/50 font-medium text-[#241C15] cursor-pointer appearance-none"
+                  className="w-full lg:w-40 pl-10 pr-4 py-3 rounded-lg border border-[#241C15]/10 focus:border-[#f7af00] focus:ring-2 focus:ring-[#f7af00]/20 outline-none bg-[#fbf5e5]/50 font-medium text-[#241C15] cursor-pointer appearance-none"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
@@ -468,7 +469,7 @@ export default function ClientDashboardPage() {
           <div className="p-6 border-b border-[#241C15]/10 bg-[#fbf5e5]/30">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-[#FFE01B] rounded-lg">
+                <div className="p-2 bg-[#f7af00] rounded-lg">
                   <ClipboardList className="w-5 h-5 text-[#241C15]" />
                 </div>
                 <div>
@@ -504,7 +505,7 @@ export default function ClientDashboardPage() {
                 </p>
                 <button
                   onClick={() => router.push("/client/hirings/create")}
-                  className="px-6 py-2.5 bg-[#FFE01B] hover:bg-[#e6ca18] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 mx-auto transition-all"
+                  className="px-6 py-2.5 bg-[#f7af00] hover:bg-[#f7af00] text-[#241C15] rounded-lg font-semibold flex items-center gap-2 mx-auto transition-all"
                 >
                   <Plus className="w-4 h-4" />
                   Create Hiring Request
@@ -520,7 +521,7 @@ export default function ClientDashboardPage() {
                   return (
                     <div
                       key={form.id}
-                      className="rounded-xl border border-[#241C15]/10 bg-[#f0eadd] hover:border-[#FFE01B]/50 transition-all hover:shadow-md"
+                      className="rounded-xl border border-[#241C15]/10 bg-[#f0eadd] hover:border-[#f7af00]/50 transition-all hover:shadow-md"
                     >
                       <div className="p-5">
                         <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
@@ -528,16 +529,15 @@ export default function ClientDashboardPage() {
                             <div className="flex flex-wrap items-center gap-2 mb-3">
                               <h3 className="font-bold text-lg text-[#241C15]">{form.form_name}</h3>
                               <span
-                                className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                                  form.status === "active"
-                                    ? "bg-[#FFE01B]/20 text-[#241C15] border border-[#FFE01B]/40"
+                                className={`px-2.5 py-1 rounded-full text-xs font-semibold ${form.status === "active"
+                                    ? "bg-[#f7af00]/20 text-[#241C15] border border-[#f7af00]/40"
                                     : "bg-[#241C15]/5 text-[#241C15]/60 border border-[#241C15]/10"
-                                }`}
+                                  }`}
                               >
                                 {form.status?.toUpperCase()}
                               </span>
                               {pendingTimeSlotSubs.length > 0 && (
-                                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#241C15] text-[#FFE01B] flex items-center gap-1">
+                                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#241C15] text-[#f7af00] flex items-center gap-1">
                                   <Clock3 className="w-3 h-3" />
                                   {pendingTimeSlotSubs.length} need slots
                                 </span>
@@ -546,15 +546,15 @@ export default function ClientDashboardPage() {
 
                             <div className="flex flex-wrap gap-3 text-sm text-[#241C15]/70 mb-3">
                               <span className="flex items-center gap-1.5 bg-[#fbf5e5] px-2.5 py-1 rounded-md">
-                                <Briefcase className="w-3.5 h-3.5 text-[#FFE01B]" />
+                                <Briefcase className="w-3.5 h-3.5 text-[#f7af00]" />
                                 {form.role_type}
                               </span>
                               <span className="flex items-center gap-1.5 bg-[#fbf5e5] px-2.5 py-1 rounded-md">
-                                <Users2 className="w-3.5 h-3.5 text-[#FFE01B]" />
+                                <Users2 className="w-3.5 h-3.5 text-[#f7af00]" />
                                 {formSubs.length} submissions
                               </span>
                               <span className="flex items-center gap-1.5 bg-[#fbf5e5] px-2.5 py-1 rounded-md">
-                                <Calendar className="w-3.5 h-3.5 text-[#FFE01B]" />
+                                <Calendar className="w-3.5 h-3.5 text-[#f7af00]" />
                                 {formatDate(form.created_at)}
                               </span>
                             </div>
@@ -565,7 +565,7 @@ export default function ClientDashboardPage() {
                                   (cat: string, i: number) => (
                                     <span
                                       key={i}
-                                      className="px-2.5 py-1 bg-[#FFE01B]/10 rounded-md text-xs font-medium text-[#241C15] border border-[#FFE01B]/20"
+                                      className="px-2.5 py-1 bg-[#f7af00]/10 rounded-md text-xs font-medium text-[#241C15] border border-[#f7af00]/20"
                                     >
                                       {cat}
                                     </span>
@@ -587,7 +587,7 @@ export default function ClientDashboardPage() {
                             )}
                             <button
                               onClick={() => toggleForm(form.id)}
-                              className="p-2 rounded-lg border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#FFE01B]/10 transition-all"
+                              className="p-2 rounded-lg border border-[#241C15]/10 hover:border-[#f7af00]/40 hover:bg-[#f7af00]/10 transition-all"
                             >
                               {expandedForm === form.id ? (
                                 <ChevronUp className="w-5 h-5 text-[#241C15]" />
@@ -604,7 +604,7 @@ export default function ClientDashboardPage() {
                         <div className="border-t border-[#241C15]/10 bg-[#f0eadd] p-5">
                           <div className="flex items-center justify-between mb-4">
                             <h4 className="text-sm font-semibold text-black flex items-center gap-2">
-                              <Users2 className="w-4 h-4 text-[#FFE01B]" />
+                              <Users2 className="w-4 h-4 text-[#f7af00]" />
                               Submissions ({formSubs.length})
                             </h4>
                             {formSubs.length > 3 && (
@@ -625,17 +625,17 @@ export default function ClientDashboardPage() {
                                 const needsTimeSlot = sub.is_selected && !sub.time_slot_selected_at
 
                                 return (
-                                  <div key={sub.id} className="rounded-lg p-4 bg-white border border-[#241C15]/10">
+                                  <div key={sub.id} className="rounded-lg p-4 bg-[#f0eadd] border border-[#241C15]/10">
                                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                                       <div className="flex items-start gap-3 flex-1">
-                                        <div className="p-2 bg-[#FFE01B]/20 rounded-lg">
+                                        <div className="p-2 bg-[#f7af00]/20 rounded-lg">
                                           <User className="w-5 h-5 text-[#241C15]" />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                           <div className="flex flex-wrap items-center gap-2 mb-1">
                                             <p className="font-semibold text-[#241C15]">{sub.name}</p>
                                             {isNewSubmission(sub.created_at) && (
-                                              <span className="px-2 py-0.5 bg-[#FFE01B] text-[#241C15] rounded text-xs font-semibold">
+                                              <span className="px-2 py-0.5 bg-[#f7af00] text-[#241C15] rounded text-xs font-semibold">
                                                 New
                                               </span>
                                             )}
@@ -664,8 +664,8 @@ export default function ClientDashboardPage() {
                                       </div>
 
                                       <div className="flex items-center gap-2">
-                                        <div className="flex items-center gap-1 px-2 py-1 bg-[#FFE01B]/10 rounded border border-[#FFE01B]/20">
-                                          <Star className="w-3 h-3 text-[#FFE01B] fill-current" />
+                                        <div className="flex items-center gap-1 px-2 py-1 bg-[#f7af00]/10 rounded border border-[#f7af00]/20">
+                                          <Star className="w-3 h-3 text-[#f7af00] fill-current" />
                                           <span className="text-sm font-bold text-[#241C15]">
                                             {sub.profile_rating?.toFixed(1) || "N/A"}
                                           </span>
@@ -676,7 +676,7 @@ export default function ClientDashboardPage() {
                                             {needsTimeSlot && (
                                               <button
                                                 onClick={() => handleScheduleInterview(sub)}
-                                                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#241C15] text-[#FFE01B] hover:bg-[#241C15]/90 transition-all flex items-center gap-1"
+                                                className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#241C15] text-[#f7af00] hover:bg-[#241C15]/90 transition-all flex items-center gap-1"
                                               >
                                                 <Clock3 className="w-3 h-3" />
                                                 Select Slot
@@ -693,7 +693,7 @@ export default function ClientDashboardPage() {
                                         ) : (
                                           <button
                                             onClick={(e) => handleSelectCandidate(e, sub, form.id)}
-                                            className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#FFE01B] text-[#241C15] hover:bg-[#e6ca18] transition-all flex items-center gap-1"
+                                            className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#f7af00] text-[#241C15] hover:bg-[#e6ca18] transition-all flex items-center gap-1"
                                           >
                                             <CheckCircle2 className="w-3 h-3" />
                                             Select
@@ -725,7 +725,7 @@ export default function ClientDashboardPage() {
       {/* View All Modal */}
       {viewAllModal && (
         <div className="fixed inset-0 bg-[#241C15]/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden border border-[#241C15]/10 shadow-2xl">
+          <div className="bg-[#f0eadd] rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden border border-[#241C15]/10 shadow-2xl">
             <div className="flex items-center justify-between p-6 border-b border-[#241C15]/10 bg-[#fbf5e5]">
               <div>
                 <h2 className="text-xl font-bold text-[#241C15]">All Submissions</h2>
@@ -751,19 +751,19 @@ export default function ClientDashboardPage() {
                     return (
                       <div
                         key={sub.id}
-                        className="rounded-xl p-5 border border-[#241C15]/10 bg-white hover:border-[#FFE01B]/50 transition-all"
+                        className="rounded-xl p-5 underline underline-offset-2 bg-[#f0eadd] transition-all"
                       >
                         <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-5">
                           <div className="flex-1">
                             <div className="flex items-start gap-4 mb-4">
-                              <div className="p-3 bg-[#FFE01B]/20 rounded-xl">
+                              <div className="p-3 bg-[#f7af00] rounded-xl">
                                 <User className="w-6 h-6 text-[#241C15]" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex flex-wrap items-center gap-2 mb-2">
                                   <h3 className="font-bold text-lg text-[#241C15]">{sub.name}</h3>
                                   {isNewSubmission(sub.created_at) && (
-                                    <span className="px-2 py-0.5 bg-[#FFE01B] text-[#241C15] rounded text-xs font-semibold">
+                                    <span className="px-2 py-0.5 bg-[#f7af00] text-[#241C15] rounded text-xs font-semibold">
                                       New
                                     </span>
                                   )}
@@ -779,18 +779,18 @@ export default function ClientDashboardPage() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                                   <div className="flex items-center gap-2 p-2 bg-[#fbf5e5] rounded-lg">
-                                    <Mail className="w-4 h-4 text-[#FFE01B]" />
+                                    <Mail className="w-4 h-4 text-[#f7af00]" />
                                     <span className="text-sm text-[#241C15] truncate">{sub.email}</span>
                                   </div>
                                   {sub.phone && (
                                     <div className="flex items-center gap-2 p-2 bg-[#fbf5e5] rounded-lg">
-                                      <Phone className="w-4 h-4 text-[#FFE01B]" />
+                                      <Phone className="w-4 h-4 text-[#f7af00]" />
                                       <span className="text-sm text-[#241C15]">{sub.phone}</span>
                                     </div>
                                   )}
                                   {sub.years_experience && (
                                     <div className="flex items-center gap-2 p-2 bg-[#fbf5e5] rounded-lg">
-                                      <Award className="w-4 h-4 text-[#FFE01B]" />
+                                      <Award className="w-4 h-4 text-[#f7af00]" />
                                       <span className="text-sm text-[#241C15]">{sub.years_experience} years exp</span>
                                     </div>
                                   )}
@@ -804,7 +804,7 @@ export default function ClientDashboardPage() {
                                   href={sub.portfolio_link}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
+                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#f7af00]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
                                 >
                                   <Globe className="w-3.5 h-3.5" />
                                   Portfolio
@@ -816,7 +816,7 @@ export default function ClientDashboardPage() {
                                   href={sub.github_link}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
+                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#f7af00]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
                                 >
                                   <Github className="w-3.5 h-3.5" />
                                   GitHub
@@ -828,7 +828,7 @@ export default function ClientDashboardPage() {
                                   href={sub.resume_link}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
+                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#f7af00]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
                                 >
                                   <FileCode className="w-3.5 h-3.5" />
                                   Resume
@@ -840,7 +840,7 @@ export default function ClientDashboardPage() {
                                   href={sub.proposal_link}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#FFE01B]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
+                                  className="px-3 py-1.5 bg-white rounded-lg text-xs font-medium border border-[#241C15]/10 hover:border-[#f7af00]/40 hover:bg-[#fbf5e5] transition-all flex items-center gap-1.5"
                                 >
                                   <MessageSquare className="w-3.5 h-3.5" />
                                   Proposal
@@ -851,17 +851,17 @@ export default function ClientDashboardPage() {
                           </div>
 
                           <div className="flex flex-col gap-2 xl:w-48">
-                            <div className="flex items-center gap-2 px-3 py-2 bg-[#FFE01B]/10 rounded-lg border border-[#FFE01B]/20 mb-2">
-                              <Star className="w-4 h-4 text-[#FFE01B] fill-current" />
-                              <span className="font-bold text-[#241C15]">
+                            <div className="flex items-center gap-2 px-3 py-2 bg-[#f7af00] rounded-lg border border-[#f7af00]/20 mb-2">
+                              <Star className="w-4 h-4 text-[#f7af00] fill-current" />
+                              <span className="font-medium text-[#241C15]">
                                 {sub.profile_rating?.toFixed(1) || "N/A"}
                               </span>
-                              <span className="text-xs text-[#241C15]/60">/5.0</span>
+                              <span className="text-base text-[#241C15]/60">/10.0</span>
                             </div>
 
                             {sub.is_selected ? (
                               <div className="space-y-2">
-                                <div className="px-3 py-2 text-sm font-semibold rounded-lg bg-[#FFE01B]/20 text-[#241C15] border border-[#FFE01B]/40 text-center flex items-center justify-center gap-1.5">
+                                <div className="px-3 py-2 text-sm font-semibold rounded-lg bg-[#f7af00] text-[#241C15] border border-[#f7af00]/40 text-center flex items-center justify-center gap-1.5">
                                   <CheckCircle2 className="w-4 h-4" />
                                   Selected
                                 </div>
@@ -871,7 +871,7 @@ export default function ClientDashboardPage() {
                                       handleScheduleInterview(sub)
                                       setViewAllModal(null)
                                     }}
-                                    className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#241C15] text-[#FFE01B] hover:bg-[#241C15]/90 transition-all flex items-center justify-center gap-1.5"
+                                    className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#241C15] text-[#f7af00] hover:bg-[#241C15]/90 transition-all flex items-center justify-center gap-1.5"
                                   >
                                     <Clock3 className="w-4 h-4" />
                                     Select Time Slot
@@ -882,7 +882,7 @@ export default function ClientDashboardPage() {
                                     handleDeselectCandidate(e, sub, viewAllModal.form.id)
                                     setViewAllModal(null)
                                   }}
-                                  className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#241C15]/5 text-[#241C15]/70 hover:bg-[#241C15]/10 transition-all flex items-center justify-center gap-1.5"
+                                  className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#fbf5e5] text-[#241C15]/70 hover:bg-[#241C15]/10 transition-all flex items-center justify-center gap-1.5"
                                 >
                                   <XCircle className="w-4 h-4" />
                                   Deselect
@@ -894,7 +894,7 @@ export default function ClientDashboardPage() {
                                   handleSelectCandidate(e, sub, viewAllModal.form.id)
                                   setViewAllModal(null)
                                 }}
-                                className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#FFE01B] text-[#241C15] hover:bg-[#e6ca18] transition-all flex items-center justify-center gap-1.5"
+                                className="w-full px-3 py-2 text-sm font-semibold rounded-lg bg-[#f7af00] text-[#241C15] hover:bg-[#e6ca18] transition-all flex items-center justify-center gap-1.5"
                               >
                                 <CheckCircle2 className="w-4 h-4" />
                                 Select Candidate
