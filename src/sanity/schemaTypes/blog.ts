@@ -1,4 +1,5 @@
 // sanity-studio/schemas/blogPost.ts
+
 export default {
   name: 'blogPost',
   title: 'Blog Post',
@@ -24,17 +25,19 @@ export default {
       name: 'featuredImage',
       title: 'Featured Image',
       type: 'image',
-      options: {
-        hotspot: true,
-      },
+      options: { hotspot: true },
     },
     {
       name: 'excerpt',
       title: 'Excerpt',
       type: 'text',
       rows: 3,
-      description: 'Short summary shown on blog listing'
     },
+
+    /* =========================
+       BLOG SECTIONS
+    ========================= */
+
     {
       name: 'sections',
       title: 'Blog Sections',
@@ -48,15 +51,54 @@ export default {
               name: 'heading',
               title: 'Heading',
               type: 'string',
-              description: 'H2 heading (## in markdown)'
             },
             {
               name: 'paragraphs',
               title: 'Paragraphs',
               type: 'array',
               of: [{ type: 'text', rows: 4 }],
-              description: 'Multiple paragraphs for this section'
             },
+
+            /* ✅ NEW TABLE FIELD */
+            {
+              name: 'tables',
+              title: 'Tables (Optional)',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  name: 'table',
+                  fields: [
+                    {
+                      name: 'hasHeader',
+                      title: 'Include Header Row?',
+                      type: 'boolean',
+                      initialValue: true,
+                    },
+                    {
+                      name: 'rows',
+                      title: 'Rows',
+                      type: 'array',
+                      of: [
+                        {
+                          type: 'object',
+                          fields: [
+                            {
+                              name: 'cells',
+                              title: 'Cells',
+                              type: 'array',
+                              of: [{ type: 'string' }],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+
+            /* EXISTING SUBSECTIONS */
             {
               name: 'subsections',
               title: 'Sub-sections',
@@ -69,20 +111,18 @@ export default {
                       name: 'subheading',
                       title: 'Sub-heading',
                       type: 'string',
-                      description: 'Sub-heading within section'
                     },
                     {
                       name: 'content',
                       title: 'Content',
                       type: 'array',
-                      of: [{ type: 'text', rows: 3 }]
+                      of: [{ type: 'text', rows: 3 }],
                     },
                     {
                       name: 'listItems',
                       title: 'List Items',
                       type: 'array',
                       of: [{ type: 'string' }],
-                      description: 'Bullet points/lists'
                     }
                   ]
                 }
@@ -92,18 +132,21 @@ export default {
         }
       ]
     },
+
     {
       name: 'finalThoughts',
       title: 'Final Thoughts',
       type: 'array',
       of: [{ type: 'text', rows: 3 }]
     },
+
     {
       name: 'publishedAt',
       title: 'Published Date',
       type: 'datetime',
       validation: (Rule: any) => Rule.required()
     },
+
     {
       name: 'category',
       title: 'Category',
@@ -118,12 +161,14 @@ export default {
         ]
       }
     },
+
     {
       name: 'readTime',
       title: 'Read Time (minutes)',
       type: 'number'
     }
   ],
+
   preview: {
     select: {
       title: 'title',

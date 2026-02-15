@@ -1,4 +1,14 @@
-import { BlogSection, BlogSubsection } from '../../types/blog'
+interface TableRow {
+  _key?: string
+  cells: string[]
+}
+
+interface Table {
+  _key?: string
+  hasHeader?: boolean
+  rows: TableRow[]
+}
+
 interface Subsection {
   _key: string
   subheading: string
@@ -11,6 +21,7 @@ interface Section {
   heading: string
   paragraphs: string[]
   subsections?: Subsection[]
+  tables?: Table[]   // ✅ NEW
 }
 
 interface BlogContentProps {
@@ -21,16 +32,18 @@ interface BlogContentProps {
 export default function BlogContent({ sections, finalThoughts }: BlogContentProps) {
   return (
     <div className="space-y-10">
-      {/* Main Sections */}
       {sections?.map((section, sectionIndex) => (
         <div key={section._key} className="group">
-          {/* Main Heading */}
+          
+          {/* Heading */}
           {section.heading && (
             <div className="mb-6 relative">
               <div className="flex items-start gap-4 pb-4 border-b-2 border-[#f7af00]">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 rounded-full bg-[#f7af00] flex items-center justify-center shadow-md">
-                    <span className="text-xs font-bold text-[#050504]">{sectionIndex + 1}</span>
+                    <span className="text-xs font-bold text-[#050504]">
+                      {sectionIndex + 1}
+                    </span>
                   </div>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-medium text-[#050504] flex-1 leading-tight">
@@ -49,13 +62,55 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
             ))}
           </div>
 
+          {/* ================= TABLES ================= */}
+          {section.tables?.map((table, tableIndex) => (
+            <div
+              key={table._key || tableIndex}
+              className="ml-12 mt-8 overflow-x-auto"
+            >
+              <div className="rounded-lg border border-[#f7af00]/40 shadow-sm">
+                <table className="min-w-full text-left border-collapse">
+                  <tbody>
+                    {table.rows?.map((row, rowIndex) => {
+                      const isHeader = table.hasHeader && rowIndex === 0
+
+                      return (
+                        <tr
+                          key={row._key || rowIndex}
+                          className={isHeader ? "bg-[#f7af00]/20" : "bg-white"}
+                        >
+                          {row.cells?.map((cell, cellIndex) =>
+                            isHeader ? (
+                              <th
+                                key={cellIndex}
+                                className="border border-[#f7af00]/30 px-4 py-3 text-[#050504] font-semibold"
+                              >
+                                {cell}
+                              </th>
+                            ) : (
+                              <td
+                                key={cellIndex}
+                                className="border border-[#f7af00]/20 px-4 py-3 text-[#31302f]"
+                              >
+                                {cell}
+                              </td>
+                            )
+                          )}
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+
           {/* Subsections */}
           {section.subsections?.map((subsection) => (
             <div
               key={subsection._key}
               className="ml-12 mt-8 p-6 bg-[#f0eadd] rounded-lg border border-[#f7af00] shadow-sm hover:shadow-md transition-all"
             >
-              {/* Sub-heading */}
               {subsection.subheading && (
                 <div className="mb-5">
                   <h3 className="text-xl font-medium text-[#050504] flex items-center gap-2 mb-2">
@@ -65,7 +120,6 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
                 </div>
               )}
 
-              {/* Sub-section content */}
               {subsection.content && subsection.content.length > 0 && (
                 <div className="space-y-4 mb-5">
                   {subsection.content.map((content, idx) => (
@@ -76,7 +130,6 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
                 </div>
               )}
 
-              {/* List items */}
               {subsection.listItems && subsection.listItems.length > 0 && (
                 <ul className="space-y-3">
                   {subsection.listItems.map((item, idx) => (
@@ -122,7 +175,9 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
                   />
                 </svg>
               </div>
-              <h3 className="text-2xl font-medium text-[#050504]">Key Takeaways</h3>
+              <h3 className="text-2xl font-medium text-[#050504]">
+                Key Takeaways
+              </h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -131,7 +186,9 @@ export default function BlogContent({ sections, finalThoughts }: BlogContentProp
                   <div className="w-8 h-8 rounded-full bg-[#f7af00] flex items-center justify-center flex-shrink-0 font-bold text-[#050504] text-sm">
                     {index + 1}
                   </div>
-                  <p className="text-[#31302f] leading-relaxed">{thought}</p>
+                  <p className="text-[#31302f] leading-relaxed">
+                    {thought}
+                  </p>
                 </div>
               ))}
             </div>

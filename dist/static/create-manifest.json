@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "createdAt": "2026-01-16T07:54:33.395Z",
+  "createdAt": "2026-02-15T10:36:16.299Z",
   "workspaces": [
     {
       "name": "default",
@@ -8,13 +8,13 @@
       "basePath": "/studio",
       "projectId": "v80x384s",
       "dataset": "production",
-      "icon": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect width=\"32\" height=\"32\" rx=\"2\" fill=\"#59f3ba\"></rect><text x=\"50%\" y=\"50%\" text-anchor=\"middle\" alignment-baseline=\"middle\" fill=\"hsla(158, 87%, 25%, 1)\" class=\"sc-gzpDuk hfXNsv\">D</text></svg>",
+      "icon": null,
       "mediaLibrary": {
         "enabled": false
       },
-      "schema": "d5a96e43.create-schema.json",
-      "tools": "46f6d878.create-tools.json"
+      "schema": "02d0ce0f.create-schema.json",
+      "tools": "d8640c31.create-tools.json"
     }
   ],
-  "studioVersion": "4.20.3"
+  "studioVersion": "4.22.0"
 }
