@@ -206,13 +206,26 @@ export default function CaseStudyPage({
               </motion.div>
 
               <motion.div className="flex flex-col sm:flex-row gap-3 sm:gap-4" variants={fadeInLeft}>
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-6 py-3 sm:px-8 sm:py-4 bg-[#f7af00] text-[#050504] rounded-xl sm:rounded-2xl font-bold cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-300 text-center"
-                >
-                  View Results
-                </motion.div>
+                <Link
+                    href={study.callToActionButton?.link || study.callToActionLink || "/client-request"}
+                    className="group inline-flex items-center justify-center gap-2 sm:gap-3"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.05, x: 5 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="font-medium px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-[#f7af00] text-[#050504] rounded-xl sm:rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center gap-2 sm:gap-3"
+                    >
+                      <span className="text-sm sm:text-base">
+                        {study.callToActionButton?.text || "View Results"}
+                      </span>
+                      <motion.div
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                      >
+                        <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </motion.div>
+                    </motion.div>
+                  </Link>
               </motion.div>
             </motion.div>
 
