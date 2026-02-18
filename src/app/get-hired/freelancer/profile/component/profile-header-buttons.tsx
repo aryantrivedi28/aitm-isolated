@@ -1,4 +1,5 @@
 "use client"
+
 import {
   Dialog,
   DialogContent,
@@ -17,7 +18,6 @@ import {
   FolderOpen,
   Save,
   Loader2,
-  Trash2,
   Upload,
   Code2,
   Palette,
@@ -37,32 +37,37 @@ import {
   Globe,
   Zap,
   Menu,
+  Star,
+  CheckCircle,
+  AlertCircle,
+  FileText,
 } from "lucide-react"
 import { ImageUpload } from "../../../../../components/freelancer/portfolio-image-upload"
 import { DialogTrigger, DialogOverlay } from "@radix-ui/react-dialog"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface WorkExperience {
   id: string
-  role: string
+  title: string
   company: string
   location?: string
-  startDate: string
-  endDate?: string
+  start_date: string
+  end_date?: string
   current: boolean
   description: string
   achievements?: string[]
 }
 
 interface CaseStudyItem {
-  id: string
+  id?: string
   title: string
   description: string
+  outcome: string
   image_url: string
   image_path?: string
   project_url?: string
-  category: string
-  tools?: string[]
+  category?: string
+  technologies?: string[]
 }
 
 interface ProfileHeaderButtonsProps {
@@ -72,38 +77,49 @@ interface ProfileHeaderButtonsProps {
   setShowExperienceModal: (value: boolean) => void
   showCaseStudyModal: boolean
   setShowCaseStudyModal: (value: boolean) => void
+  showTestimonialModal: boolean
+  setShowTestimonialModal: (value: boolean) => void
   newExperience: WorkExperience
   setNewExperience: (experience: WorkExperience) => void
   newCaseStudyItem: CaseStudyItem
   setNewCaseStudyItem: (item: CaseStudyItem) => void
+  newTestimonial?: any
+  setNewTestimonial?: (testimonial: any) => void
   uploadingImages: Record<string, boolean>
   error: string
   savingCaseStudy: boolean
+  savingTestimonial?: boolean
   savingExperience: boolean
   handleAddExperience: () => Promise<void>
   handleAddCaseStudyItem: () => Promise<void>
+  handleAddTestimonial?: () => Promise<void>
   handleImageUpload: (itemId: string, file: File) => Promise<void>
+  handleImageDelete?: (itemId: string, imagePath: string) => Promise<void>
   resetNewExperience: () => void
   resetNewCaseStudyItem: () => void
+  resetNewTestimonial?: () => void
+  onSubmitForReview?: () => Promise<void>
+  reviewStatus?: string
+  canSubmitForReview?: boolean
+  loading?: boolean
 }
 
 const CASE_STUDY_CATEGORIES = [
-  { value: "marketing", label: "Marketing", icon: Megaphone },
-  { value: "social-media-marketing", label: "Social Media Marketing", icon: TrendingUp },
-  { value: "seo-content", label: "SEO & Content", icon: Target },
-  { value: "email-crm", label: "Email & CRM", icon: Mail },
-  { value: "influencer-partnerships", label: "Influencer & Partnerships", icon: Users },
-  { value: "brand-creative-strategy", label: "Brand & Creative Strategy", icon: Palette },
-  { value: "analytics-data", label: "Analytics & Data", icon: BarChart },
-  { value: "growth-gtm", label: "Growth & GTM", icon: Rocket },
-  { value: "gohighlevel", label: "GoHighLevel", icon: Gauge },
-  { value: "shopify", label: "Shopify", icon: ShoppingBag },
-  { value: "fractional-cmo", label: "Fractional CMO", icon: Crown },
-  { value: "video-editing", label: "Video Editing", icon: Video },
-  { value: "creatives", label: "Creatives", icon: PaletteIcon },
-  { value: "ui-ux-design", label: "UI UX Design", icon: Layout },
-  { value: "website-development", label: "Website Development", icon: Globe },
-  { value: "no-code-automation", label: "No-code & Automation", icon: Zap },
+  { value: "Web Development", label: "Web Development", icon: Code2 },
+  { value: "Shopify", label: "Shopify", icon: ShoppingBag },
+  { value: "SEO", label: "SEO", icon: Target },
+  { value: "UI/UX Design", label: "UI/UX Design", icon: Layout },
+  { value: "Marketing", label: "Marketing", icon: Megaphone },
+  { value: "Social Media", label: "Social Media", icon: TrendingUp },
+  { value: "Email Marketing", label: "Email Marketing", icon: Mail },
+  { value: "Content Writing", label: "Content Writing", icon: FileText },
+  { value: "Brand Strategy", label: "Brand Strategy", icon: Palette },
+  { value: "Analytics", label: "Analytics", icon: BarChart },
+  { value: "Growth", label: "Growth", icon: Rocket },
+  { value: "Automation", label: "Automation", icon: Zap },
+  { value: "Video Editing", label: "Video Editing", icon: Video },
+  { value: "No-Code", label: "No-Code", icon: Globe },
+  { value: "Other", label: "Other", icon: FolderOpen },
 ]
 
 export function ProfileHeaderButtons({
@@ -113,6 +129,8 @@ export function ProfileHeaderButtons({
   setShowExperienceModal,
   showCaseStudyModal,
   setShowCaseStudyModal,
+  showTestimonialModal,
+  setShowTestimonialModal,
   newExperience,
   setNewExperience,
   newCaseStudyItem,
@@ -121,13 +139,32 @@ export function ProfileHeaderButtons({
   error,
   savingCaseStudy,
   savingExperience,
+  savingTestimonial,
   handleAddExperience,
   handleAddCaseStudyItem,
+  handleAddTestimonial,
   handleImageUpload,
+  handleImageDelete,
   resetNewExperience,
   resetNewCaseStudyItem,
+  resetNewTestimonial,
+  onSubmitForReview,
+  reviewStatus,
+  canSubmitForReview,
+  loading,
 }: ProfileHeaderButtonsProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [localError, setLocalError] = useState("")
+  const [localSuccess, setLocalSuccess] = useState("")
+
+  // Sync with parent error
+  useEffect(() => {
+    if (error) {
+      setLocalError(error)
+      const timer = setTimeout(() => setLocalError(""), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [error])
 
   // Button hover handler
   const handleButtonHover = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -141,6 +178,42 @@ export function ProfileHeaderButtons({
     const target = e.currentTarget
     target.style.transform = 'scale(1)'
     target.style.boxShadow = '0 2px 6px rgba(36, 28, 21, 0.05)'
+  }
+
+  // Handle experience form validation
+  const validateExperienceForm = () => {
+    if (!newExperience.title) return "Job title is required"
+    if (!newExperience.company) return "Company is required"
+    if (!newExperience.start_date) return "Start date is required"
+    return null
+  }
+
+  // Handle case study form validation
+  const validateCaseStudyForm = () => {
+    if (!newCaseStudyItem.title) return "Project title is required"
+    if (!newCaseStudyItem.description) return "Description is required"
+    if (!newCaseStudyItem.outcome) return "Outcome is required"
+    return null
+  }
+
+  // Wrapper for add experience with validation
+  const handleAddExperienceWithValidation = async () => {
+    const validationError = validateExperienceForm()
+    if (validationError) {
+      setLocalError(validationError)
+      return
+    }
+    await handleAddExperience()
+  }
+
+  // Wrapper for add case study with validation
+  const handleAddCaseStudyWithValidation = async () => {
+    const validationError = validateCaseStudyForm()
+    if (validationError) {
+      setLocalError(validationError)
+      return
+    }
+    await handleAddCaseStudyItem()
   }
 
   return (
@@ -217,8 +290,8 @@ export function ProfileHeaderButtons({
                   </label>
                   <input
                     type="text"
-                    value={newExperience.role}
-                    onChange={(e) => setNewExperience({ ...newExperience, role: e.target.value })}
+                    value={newExperience.title}
+                    onChange={(e) => setNewExperience({ ...newExperience, title: e.target.value })}
                     className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-offset-0"
                     style={{ 
                       borderColor: "#241C15", 
@@ -271,8 +344,8 @@ export function ProfileHeaderButtons({
                   </label>
                   <input
                     type="month"
-                    value={newExperience.startDate}
-                    onChange={(e) => setNewExperience({ ...newExperience, startDate: e.target.value })}
+                    value={newExperience.start_date}
+                    onChange={(e) => setNewExperience({ ...newExperience, start_date: e.target.value })}
                     className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-offset-0"
                     style={{ 
                       borderColor: "#241C15", 
@@ -290,8 +363,8 @@ export function ProfileHeaderButtons({
                   </label>
                   <input
                     type="month"
-                    value={newExperience.endDate}
-                    onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
+                    value={newExperience.end_date}
+                    onChange={(e) => setNewExperience({ ...newExperience, end_date: e.target.value })}
                     className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-offset-0"
                     style={{ 
                       borderColor: "#241C15", 
@@ -310,7 +383,7 @@ export function ProfileHeaderButtons({
                         setNewExperience({
                           ...newExperience,
                           current: e.target.checked,
-                          endDate: e.target.checked ? "" : newExperience.endDate,
+                          end_date: e.target.checked ? "" : newExperience.end_date,
                         })
                       }
                       className="w-4 h-4 rounded cursor-pointer"
@@ -341,9 +414,10 @@ export function ProfileHeaderButtons({
                 />
               </div>
 
-              {error && (
-                <div className="p-3 rounded-lg border" style={{ backgroundColor: "#f0eadd", borderColor: "#241C15", color: "#241C15" }}>
-                  {error}
+              {(localError || error) && (
+                <div className="p-3 rounded-lg border flex items-center space-x-2" style={{ backgroundColor: "#f0eadd", borderColor: "#241C15" }}>
+                  <AlertCircle className="h-4 w-4" style={{ color: "#241C15" }} />
+                  <span className="text-sm" style={{ color: "#241C15" }}>{localError || error}</span>
                 </div>
               )}
             </div>
@@ -352,6 +426,7 @@ export function ProfileHeaderButtons({
               <DialogClose asChild>
                 <Button
                   variant="outline"
+                  onClick={resetNewExperience}
                   className="text-sm font-medium px-4 py-2.5 rounded-lg transition-all"
                   style={{ 
                     color: "#31302f", 
@@ -365,7 +440,7 @@ export function ProfileHeaderButtons({
                 </Button>
               </DialogClose>
               <Button
-                onClick={handleAddExperience}
+                onClick={handleAddExperienceWithValidation}
                 disabled={savingExperience}
                 className="text-sm font-medium flex items-center space-x-2 px-4 py-2.5 rounded-lg transition-all"
                 style={{ 
@@ -392,7 +467,7 @@ export function ProfileHeaderButtons({
           </DialogContent>
         </Dialog>
 
-        {/* Add Case Study Item Button */}
+        {/* Add Case Study Button */}
         <Dialog open={showCaseStudyModal} onOpenChange={setShowCaseStudyModal}>
           <DialogOverlay className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" />
           <DialogTrigger asChild>
@@ -407,7 +482,7 @@ export function ProfileHeaderButtons({
               onMouseLeave={handleButtonLeave}
             >
               <FolderOpen className="h-4 w-4" />
-              <span>Add Case Studies</span>
+              <span>Case Study</span>
               <Plus className="h-4 w-4" />
             </Button>
           </DialogTrigger>
@@ -424,7 +499,7 @@ export function ProfileHeaderButtons({
                 <span>Add Case Study</span>
               </DialogTitle>
               <DialogDescription className="text-sm" style={{ color: "#31302f" }}>
-                Showcase your best work with project details and screenshots.
+                Showcase your best work with project details, outcomes, and screenshots.
               </DialogDescription>
             </DialogHeader>
 
@@ -441,7 +516,7 @@ export function ProfileHeaderButtons({
                       type="button"
                       onClick={() => setNewCaseStudyItem({ ...newCaseStudyItem, category: value })}
                       className={`flex flex-col items-center space-y-2 p-3 rounded-lg border text-center transition-all ${
-                        newCaseStudyItem.category === value ? "ring-1 ring-offset-1" : ""
+                        newCaseStudyItem.category === value ? "ring-2" : ""
                       }`}
                       style={{
                         borderColor: newCaseStudyItem.category === value ? "#f7af00" : "#241C15",
@@ -459,7 +534,7 @@ export function ProfileHeaderButtons({
               {/* Screenshot Upload */}
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                  Project Screenshot <span style={{ color: "#241C15" }}>*</span>
+                  Project Screenshot
                 </label>
                 <ImageUpload
                   itemId="new-case-study"
@@ -467,11 +542,15 @@ export function ProfileHeaderButtons({
                   isUploading={uploadingImages["new-case-study"] || false}
                   imageUrl={newCaseStudyItem.image_url}
                   onDelete={() => {
-                    setNewCaseStudyItem({
-                      ...newCaseStudyItem,
-                      image_url: "",
-                      image_path: "",
-                    })
+                    if (handleImageDelete && newCaseStudyItem.image_path) {
+                      handleImageDelete("new-case-study", newCaseStudyItem.image_path)
+                    } else {
+                      setNewCaseStudyItem({
+                        ...newCaseStudyItem,
+                        image_url: "",
+                        image_path: "",
+                      })
+                    }
                   }}
                   accentColor="#f7af00"
                   bgColor="#faf4e5"
@@ -523,28 +602,46 @@ export function ProfileHeaderButtons({
                 <textarea
                   value={newCaseStudyItem.description}
                   onChange={(e) => setNewCaseStudyItem({ ...newCaseStudyItem, description: e.target.value })}
-                  rows={4}
+                  rows={3}
                   className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 resize-none"
                   style={{ 
                     borderColor: "#241C15", 
                     color: "#31302f",
                     backgroundColor: "#f0eadd"
                   }}
-                  placeholder="Describe your project, what you built, and the impact..."
+                  placeholder="Describe your project, what you built, and the approach..."
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                  Tools & Technologies (comma-separated)
+                  Outcome / Results <span style={{ color: "#241C15" }}>*</span>
                 </label>
                 <input
                   type="text"
-                  value={newCaseStudyItem.tools?.join(", ") || ""}
+                  value={newCaseStudyItem.outcome}
+                  onChange={(e) => setNewCaseStudyItem({ ...newCaseStudyItem, outcome: e.target.value })}
+                  className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-offset-0"
+                  style={{ 
+                    borderColor: "#241C15", 
+                    color: "#31302f",
+                    backgroundColor: "#f0eadd"
+                  }}
+                  placeholder="e.g., Increased conversion by 50%, Reduced load time by 40%"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
+                  Technologies Used (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={newCaseStudyItem.technologies?.join(", ") || ""}
                   onChange={(e) =>
                     setNewCaseStudyItem({
                       ...newCaseStudyItem,
-                      tools: e.target.value.split(",").map((t) => t.trim()),
+                      technologies: e.target.value.split(",").map((t) => t.trim()).filter(Boolean),
                     })
                   }
                   className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-offset-0"
@@ -557,9 +654,10 @@ export function ProfileHeaderButtons({
                 />
               </div>
 
-              {error && (
-                <div className="p-3 rounded-lg border" style={{ backgroundColor: "#f0eadd", borderColor: "#241C15", color: "#241C15" }}>
-                  {error}
+              {(localError || error) && (
+                <div className="p-3 rounded-lg border flex items-center space-x-2" style={{ backgroundColor: "#f0eadd", borderColor: "#241C15" }}>
+                  <AlertCircle className="h-4 w-4" style={{ color: "#241C15" }} />
+                  <span className="text-sm" style={{ color: "#241C15" }}>{localError || error}</span>
                 </div>
               )}
             </div>
@@ -568,6 +666,7 @@ export function ProfileHeaderButtons({
               <DialogClose asChild>
                 <Button
                   variant="outline"
+                  onClick={resetNewCaseStudyItem}
                   className="text-sm font-medium px-4 py-2.5 rounded-lg transition-all"
                   style={{ 
                     color: "#31302f", 
@@ -581,7 +680,7 @@ export function ProfileHeaderButtons({
                 </Button>
               </DialogClose>
               <Button
-                onClick={handleAddCaseStudyItem}
+                onClick={handleAddCaseStudyWithValidation}
                 disabled={savingCaseStudy}
                 className="text-sm font-medium flex items-center space-x-2 px-4 py-2.5 rounded-lg transition-all"
                 style={{ 
@@ -607,6 +706,79 @@ export function ProfileHeaderButtons({
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Add Testimonial Button (if props provided) */}
+        {setShowTestimonialModal && handleAddTestimonial && (
+          <Dialog open={showTestimonialModal} onOpenChange={setShowTestimonialModal}>
+            <DialogOverlay className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" />
+            <DialogTrigger asChild>
+              <Button
+                className="flex items-center space-x-2 font-semibold text-sm px-4 py-2.5 rounded-lg transition-all"
+                style={{ 
+                  backgroundColor: "#241C15", 
+                  color: "#f7af00",
+                  boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
+                }}
+                onMouseEnter={handleButtonHover}
+                onMouseLeave={handleButtonLeave}
+              >
+                <Star className="h-4 w-4" />
+                <span>Testimonial</span>
+                <Plus className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent 
+              className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-1.5rem)] sm:max-w-[600px] max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border"
+              style={{ 
+                backgroundColor: "#faf4e5",
+                borderColor: "#241C15"
+              }}
+            >
+              <DialogHeader className="space-y-2">
+                <DialogTitle className="flex items-center space-x-2 text-xl" style={{ color: "#050504" }}>
+                  <Star className="h-5 w-5" style={{ color: "#f7af00" }} />
+                  <span>Add Testimonial</span>
+                </DialogTitle>
+                <DialogDescription className="text-sm" style={{ color: "#31302f" }}>
+                  Share what clients have said about your work.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-4 py-4">
+                {/* Testimonial form fields would go here */}
+                <p className="text-sm" style={{ color: "#31302f" }}>Testimonial form implementation...</p>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Submit for Review Button */}
+        {onSubmitForReview && reviewStatus === "pending" && canSubmitForReview && (
+          <Button
+            onClick={onSubmitForReview}
+            disabled={loading}
+            className="flex items-center space-x-2 font-semibold text-sm px-4 py-2.5 rounded-lg transition-all"
+            style={{ 
+              backgroundColor: "#f7af00", 
+              color: "#050504",
+              boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
+            }}
+            onMouseEnter={handleButtonHover}
+            onMouseLeave={handleButtonLeave}
+          >
+            {loading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Submitting...</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle className="h-4 w-4" />
+                <span>Submit for Review</span>
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
       {/* Mobile Menu Toggle and Buttons */}
@@ -661,332 +833,86 @@ export function ProfileHeaderButtons({
               </Button>
 
               {/* Add Experience Button */}
-              <Dialog open={showExperienceModal} onOpenChange={setShowExperienceModal}>
-                <DialogTrigger asChild>
-                  <Button
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full font-semibold text-sm px-4 py-3 rounded-lg transition-all"
-                    style={{ 
-                      backgroundColor: "#241C15", 
-                      color: "#f7af00",
-                    }}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <Briefcase className="h-4 w-4" />
-                      <span>Add Experience</span>
-                    </div>
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent 
-                  className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-1.5rem)] max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border"
-                  style={{ 
-                    backgroundColor: "#faf4e5",
-                    borderColor: "#241C15"
-                  }}
-                >
-                  <DialogHeader className="space-y-2">
-                    <DialogTitle className="text-lg" style={{ color: "#050504" }}>
-                      Add Work Experience
-                    </DialogTitle>
-                    <DialogDescription className="text-sm" style={{ color: "#31302f" }}>
-                      Share your professional experience
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                          Job Title
-                        </label>
-                        <input
-                          type="text"
-                          value={newExperience.role}
-                          onChange={(e) => setNewExperience({ ...newExperience, role: e.target.value })}
-                          className="w-full px-4 py-2.5 border rounded-lg text-sm"
-                          style={{ 
-                            borderColor: "#241C15", 
-                            color: "#31302f",
-                            backgroundColor: "#f0eadd"
-                          }}
-                          placeholder="e.g., Senior Developer"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                          Company
-                        </label>
-                        <input
-                          type="text"
-                          value={newExperience.company}
-                          onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
-                          className="w-full px-4 py-2.5 border rounded-lg text-sm"
-                          style={{ 
-                            borderColor: "#241C15", 
-                            color: "#31302f",
-                            backgroundColor: "#f0eadd"
-                          }}
-                          placeholder="Company name"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                          Start Date
-                        </label>
-                        <input
-                          type="month"
-                          value={newExperience.startDate}
-                          onChange={(e) => setNewExperience({ ...newExperience, startDate: e.target.value })}
-                          className="w-full px-3 py-2 border rounded-lg text-sm"
-                          style={{ 
-                            borderColor: "#241C15", 
-                            color: "#31302f",
-                            backgroundColor: "#f0eadd"
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                          End Date
-                        </label>
-                        <input
-                          type="month"
-                          value={newExperience.endDate}
-                          onChange={(e) => setNewExperience({ ...newExperience, endDate: e.target.value })}
-                          className="w-full px-3 py-2 border rounded-lg text-sm"
-                          style={{ 
-                            borderColor: "#241C15", 
-                            color: "#31302f",
-                            backgroundColor: "#f0eadd"
-                          }}
-                          disabled={newExperience.current}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={newExperience.current}
-                        onChange={(e) =>
-                          setNewExperience({
-                            ...newExperience,
-                            current: e.target.checked,
-                            endDate: e.target.checked ? "" : newExperience.endDate,
-                          })
-                        }
-                        className="w-4 h-4 rounded"
-                        style={{ accentColor: "#f7af00" }}
-                      />
-                      <span className="text-sm" style={{ color: "#31302f" }}>
-                        Currently here
-                      </span>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                        Description
-                      </label>
-                      <textarea
-                        value={newExperience.description}
-                        onChange={(e) => setNewExperience({ ...newExperience, description: e.target.value })}
-                        rows={3}
-                        className="w-full px-4 py-2.5 border rounded-lg text-sm resize-none"
-                        style={{ 
-                          borderColor: "#241C15", 
-                          color: "#31302f",
-                          backgroundColor: "#f0eadd"
-                        }}
-                        placeholder="Describe your responsibilities..."
-                      />
-                    </div>
-
-                    {error && (
-                      <div className="p-3 rounded-lg border" style={{ backgroundColor: "#f0eadd", borderColor: "#241C15", color: "#241C15" }}>
-                        {error}
-                      </div>
-                    )}
-                  </div>
-
-                  <DialogFooter className="flex gap-2">
-                    <DialogClose asChild>
-                      <Button
-                        variant="outline"
-                        className="text-sm font-medium px-4 py-2.5 rounded-lg flex-1"
-                        style={{ 
-                          color: "#31302f", 
-                          borderColor: "#241C15",
-                          backgroundColor: "transparent"
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </DialogClose>
-                    <Button
-                      onClick={handleAddExperience}
-                      disabled={savingExperience}
-                      className="text-sm font-medium px-4 py-2.5 rounded-lg flex-1"
-                      style={{ 
-                        backgroundColor: "#f7af00", 
-                        color: "#050504"
-                      }}
-                    >
-                      {savingExperience ? "Saving..." : "Save"}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <Button
+                onClick={() => {
+                  setShowExperienceModal(true)
+                  setMobileMenuOpen(false)
+                }}
+                className="flex items-center justify-between w-full font-semibold text-sm px-4 py-3 rounded-lg transition-all"
+                style={{ 
+                  backgroundColor: "#241C15", 
+                  color: "#f7af00",
+                }}
+              >
+                <div className="flex items-center space-x-3">
+                  <Briefcase className="h-4 w-4" />
+                  <span>Add Experience</span>
+                </div>
+                <Plus className="h-4 w-4" />
+              </Button>
 
               {/* Add Case Study Button */}
-              <Dialog open={showCaseStudyModal} onOpenChange={setShowCaseStudyModal}>
-                <DialogTrigger asChild>
-                  <Button
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-between w-full font-semibold text-sm px-4 py-3 rounded-lg transition-all"
-                    style={{ 
-                      backgroundColor: "#f7af00", 
-                      color: "#050504",
-                    }}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <FolderOpen className="h-4 w-4" />
-                      <span>Add Case Study</span>
-                    </div>
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent 
-                  className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-1.5rem)] max-h-[90vh] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl border"
+              <Button
+                onClick={() => {
+                  setShowCaseStudyModal(true)
+                  setMobileMenuOpen(false)
+                }}
+                className="flex items-center justify-between w-full font-semibold text-sm px-4 py-3 rounded-lg transition-all"
+                style={{ 
+                  backgroundColor: "#f7af00", 
+                  color: "#050504",
+                }}
+              >
+                <div className="flex items-center space-x-3">
+                  <FolderOpen className="h-4 w-4" />
+                  <span>Add Case Study</span>
+                </div>
+                <Plus className="h-4 w-4" />
+              </Button>
+
+              {/* Add Testimonial Button (if available) */}
+              {setShowTestimonialModal && (
+                <Button
+                  onClick={() => {
+                    setShowTestimonialModal(true)
+                    setMobileMenuOpen(false)
+                  }}
+                  className="flex items-center justify-between w-full font-semibold text-sm px-4 py-3 rounded-lg transition-all"
                   style={{ 
-                    backgroundColor: "#faf4e5",
-                    borderColor: "#241C15"
+                    backgroundColor: "#241C15", 
+                    color: "#f7af00",
                   }}
                 >
-                  <DialogHeader className="space-y-2">
-                    <DialogTitle className="text-lg" style={{ color: "#050504" }}>
-                      Add Case Study
-                    </DialogTitle>
-                    <DialogDescription className="text-sm" style={{ color: "#31302f" }}>
-                      Showcase your best work
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <div className="space-y-4 py-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                        Project Title
-                      </label>
-                      <input
-                        type="text"
-                        value={newCaseStudyItem.title}
-                        onChange={(e) => setNewCaseStudyItem({ ...newCaseStudyItem, title: e.target.value })}
-                        className="w-full px-4 py-2.5 border rounded-lg text-sm"
-                        style={{ 
-                          borderColor: "#241C15", 
-                          color: "#31302f",
-                          backgroundColor: "#f0eadd"
-                        }}
-                        placeholder="e.g., E-Commerce Platform"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                        Description
-                      </label>
-                      <textarea
-                        value={newCaseStudyItem.description}
-                        onChange={(e) => setNewCaseStudyItem({ ...newCaseStudyItem, description: e.target.value })}
-                        rows={3}
-                        className="w-full px-4 py-2.5 border rounded-lg text-sm resize-none"
-                        style={{ 
-                          borderColor: "#241C15", 
-                          color: "#31302f",
-                          backgroundColor: "#f0eadd"
-                        }}
-                        placeholder="Describe your project..."
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                        Category
-                      </label>
-                      <select
-                        value={newCaseStudyItem.category}
-                        onChange={(e) => setNewCaseStudyItem({ ...newCaseStudyItem, category: e.target.value })}
-                        className="w-full px-4 py-2.5 border rounded-lg text-sm"
-                        style={{ 
-                          borderColor: "#241C15", 
-                          color: "#31302f",
-                          backgroundColor: "#f0eadd"
-                        }}
-                      >
-                        {CASE_STUDY_CATEGORIES.map(({ value, label }) => (
-                          <option key={value} value={value}>
-                            {label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
-                        Project URL (optional)
-                      </label>
-                      <input
-                        type="url"
-                        value={newCaseStudyItem.project_url}
-                        onChange={(e) => setNewCaseStudyItem({ ...newCaseStudyItem, project_url: e.target.value })}
-                        className="w-full px-4 py-2.5 border rounded-lg text-sm"
-                        style={{ 
-                          borderColor: "#241C15", 
-                          color: "#31302f",
-                          backgroundColor: "#f0eadd"
-                        }}
-                        placeholder="https://example.com"
-                      />
-                    </div>
-
-                    {error && (
-                      <div className="p-3 rounded-lg border" style={{ backgroundColor: "#f0eadd", borderColor: "#241C15", color: "#241C15" }}>
-                        {error}
-                      </div>
-                    )}
+                  <div className="flex items-center space-x-3">
+                    <Star className="h-4 w-4" />
+                    <span>Add Testimonial</span>
                   </div>
+                  <Plus className="h-4 w-4" />
+                </Button>
+              )}
 
-                  <DialogFooter className="flex gap-2">
-                    <DialogClose asChild>
-                      <Button
-                        variant="outline"
-                        className="text-sm font-medium px-4 py-2.5 rounded-lg flex-1"
-                        style={{ 
-                          color: "#31302f", 
-                          borderColor: "#241C15",
-                          backgroundColor: "transparent"
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </DialogClose>
-                    <Button
-                      onClick={handleAddCaseStudyItem}
-                      disabled={savingCaseStudy}
-                      className="text-sm font-medium px-4 py-2.5 rounded-lg flex-1"
-                      style={{ 
-                        backgroundColor: "#f7af00", 
-                        color: "#050504"
-                      }}
-                    >
-                      {savingCaseStudy ? "Saving..." : "Save"}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              {/* Submit for Review Button (mobile) */}
+              {onSubmitForReview && reviewStatus === "pending" && canSubmitForReview && (
+                <Button
+                  onClick={() => {
+                    onSubmitForReview()
+                    setMobileMenuOpen(false)
+                  }}
+                  disabled={loading}
+                  className="flex items-center justify-center w-full font-semibold text-sm px-4 py-3 rounded-lg transition-all"
+                  style={{ 
+                    backgroundColor: "#f7af00", 
+                    color: "#050504",
+                  }}
+                >
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                  )}
+                  <span>{loading ? "Submitting..." : "Submit for Review"}</span>
+                </Button>
+              )}
             </div>
           </div>
         )}

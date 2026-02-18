@@ -65,7 +65,7 @@ export default function FreelancerPage() {
       }
 
       // ✅ Redirect user according to profile completion
-      if (data.redirectTo === "/get-hired/freelancer/onboarding") {
+      if (data.redirectTo === "/get-hired/freelancer/profile-data") {
         // User is new or incomplete profile
         window.location.href = data.redirectTo
       } else {

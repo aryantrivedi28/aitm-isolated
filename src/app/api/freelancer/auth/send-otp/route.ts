@@ -4,13 +4,21 @@ import nodemailer from "nodemailer"
 
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json()
+    console.log("🚀 OTP API triggered")
+
+    const body = await request.json()
+    console.log("📩 Request Body:", body)
+
+    const { email } = body
 
     if (!email) {
+      console.error("❌ Email missing in request")
       return NextResponse.json({ error: "Email is required" }, { status: 400 })
     }
 
-    // Fetch freelancer if exists
+    console.log("🔍 Checking freelancer in DB for:", email)
+
+    // Fetch freelancer
     const { data: freelancer, error: fetchError } = await supabase
       .from("freelancers")
       .select("email")
@@ -18,16 +26,20 @@ export async function POST(request: NextRequest) {
       .maybeSingle()
 
     if (fetchError) {
-      console.error("⚠️ Error fetching freelancer:", fetchError)
+      console.error("⚠️ Supabase Fetch Error:", fetchError)
       return NextResponse.json({ error: "Failed to fetch freelancer" }, { status: 500 })
     }
+
+    console.log("👤 Freelancer Exists:", !!freelancer)
 
     // Generate OTP
     const otp = String(Math.floor(100000 + Math.random() * 900000))
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
     const timestamp = new Date().toISOString()
 
-    // Insert or Update freelancer OTP
+    console.log("🔢 Generated OTP:", otp)
+    console.log("⏳ OTP Expiry:", otpExpiresAt)
+
     const upsertData: Record<string, any> = {
       email,
       otp,
@@ -36,29 +48,48 @@ export async function POST(request: NextRequest) {
       updated_at: timestamp,
     }
 
+    let dbResponse
+
     if (!freelancer) {
+      console.log("🆕 Inserting new freelancer")
+
       upsertData["name"] = ""
       upsertData["created_at"] = timestamp
-      await supabase.from("freelancers").insert([upsertData])
+
+      dbResponse = await supabase.from("freelancers").insert([upsertData])
     } else {
-      await supabase.from("freelancers").update(upsertData).eq("email", email)
+      console.log("♻️ Updating existing freelancer")
+
+      dbResponse = await supabase
+        .from("freelancers")
+        .update(upsertData)
+        .eq("email", email)
     }
 
+    if (dbResponse.error) {
+      console.error("❌ Supabase Insert/Update Error:", dbResponse.error)
+      return NextResponse.json({ error: "Database update failed" }, { status: 500 })
+    }
+
+    console.log("✅ Database updated successfully")
+
     // Nodemailer config
+    console.log("📨 Creating mail transporter...")
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
-      secure: false, // ❌ SSL disabled for port 587
+      secure: false,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-      requireTLS: true, // 🔒 use STARTTLS upgrade
+      requireTLS: true,
     })
 
+    console.log("📤 Sending OTP email...")
 
-    // Send OTP Email
-    await transporter.sendMail({
+    const mailResponse = await transporter.sendMail({
       from: `"Freelance Portal" <${process.env.SMTP_USER}>`,
       to: email,
       subject: "Your Freelancer OTP Code",
@@ -72,18 +103,23 @@ export async function POST(request: NextRequest) {
       `,
     })
 
-    // console.log(`📧 OTP sent to: ${email}`)
-    // console.log(`🔢 OTP Code: ${otp}`)
+    console.log("📧 Mail Response:", mailResponse)
+    console.log("✅ OTP sent successfully to:", email)
 
     return NextResponse.json({
       success: true,
       message: "OTP sent successfully",
       isNewUser: !freelancer,
     })
+
   } catch (error: any) {
-    console.error("🔥 OTP Error:", error)
+    console.error("🔥 OTP API Fatal Error:")
+    console.error("Message:", error?.message)
+    console.error("Stack:", error?.stack)
+    console.error("Full Error:", error)
+
     return NextResponse.json(
-      { error: "Server error", details: error.message },
+      { error: "Server error", details: error?.message },
       { status: 500 },
     )
   }

@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     const redirectTo = isProfileComplete
       ? "/get-hired/freelancer/dashboard"
-      : "/get-hired/freelancer/onboarding"
+      : "/get-hired/freelancer/profile-data"
 
     // 🍪 Create session cookie
     const response = NextResponse.json({
