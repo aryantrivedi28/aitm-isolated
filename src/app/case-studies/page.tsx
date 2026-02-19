@@ -44,14 +44,17 @@ const scaleIn: Variants = {
 }
 
 interface CaseStudy {
-  _id: string
+  id: string
   title: string
   description: string
-  slug: { current: string }
+  slug: string
   tags?: string[]
-  mainImage: { asset: { url: string } }
-  _createdAt: string
+  imageUrl?: string | null
+  createdAt: string
+  source: "company" | "freelancer"
 }
+
+
 
 // Category and Subcategory data structure
 const categoryData = {
@@ -243,26 +246,55 @@ export default function CaseStudiesPage() {
   useEffect(() => {
     async function fetchCaseStudies() {
       try {
-        const studies = await client.fetch(`
+        // 1️⃣ Fetch company studies from Sanity
+        const companyStudies = await client.fetch(`
         *[_type == "caseStudy" && isHidden != true] 
-          | order(order asc, ranking asc, _createdAt desc) {
-            _id,
-            title,
-            description,
-            slug,
-            tags,
-            _createdAt,
-            order,
-            ranking,
-            isHidden,
-            mainImage {
-              asset -> {
-                url
-              }
+        | order(order asc, ranking asc, _createdAt desc) {
+          _id,
+          title,
+          description,
+          slug,
+          tags,
+          _createdAt,
+          mainImage {
+            asset -> {
+              url
             }
           }
+        }
       `)
-        setCaseStudies(studies || [])
+
+        const formattedCompany = companyStudies.map((study: any) => ({
+          id: study._id,
+          title: study.title,
+          description: study.description,
+          slug: study.slug?.current,
+          tags: study.tags || [],
+          imageUrl: study.mainImage?.asset?.url || null,
+          createdAt: study._createdAt,
+          source: "company" as const
+        }))
+
+
+        // 2️⃣ Fetch freelancer studies
+        const res = await fetch("/api/freelancer/case-studies")
+        const freelancerData = await res.json()
+        console.log("freelancerData", freelancerData)
+
+        const freelancerStudies = (freelancerData.caseStudies || []).map((study: any) => ({
+          id: study.id,
+          title: study.title,
+          description: study.description,
+          slug: study.slug,
+          tags: study.technologies || [],
+          imageUrl: study.image_url || null,
+          createdAt: study.created_at,
+          source: "freelancer" as const
+        }))
+
+        // 3️⃣ Merge both
+        setCaseStudies([...formattedCompany, ...freelancerStudies])
+
       } catch (error) {
         console.error("Error fetching case studies:", error)
       } finally {
@@ -275,18 +307,17 @@ export default function CaseStudiesPage() {
 
   // Simplified filtering logic
   const filteredCaseStudies = caseStudies.filter((study) => {
-    // If no service is selected, show all
     if (!selectedCategory) return true;
 
-    // Check if the selected service appears in tags, title, or description
+    const search = selectedCategory.toLowerCase()
+
     return (
-      study.tags?.some((tag) =>
-        tag.toLowerCase().includes(selectedCategory.toLowerCase())
-      ) ||
-      study.title?.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-      study.description?.toLowerCase().includes(selectedCategory.toLowerCase())
-    );
-  });
+      study.tags?.some(tag => tag.toLowerCase().includes(search)) ||
+      study.title?.toLowerCase().includes(search) ||
+      study.description?.toLowerCase().includes(search)
+    )
+  })
+
 
   if (loading) {
     return (
@@ -303,6 +334,7 @@ export default function CaseStudiesPage() {
       </div>
     )
   }
+  console.log(filteredCaseStudies)
 
   if (!caseStudies || caseStudies.length === 0) {
     return (
@@ -528,7 +560,7 @@ export default function CaseStudiesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredCaseStudies.map((study, i) => (
                 <motion.article
-                  key={study._id}
+                  key={`${study.source}-${study.id || study.slug}`}
                   variants={scaleIn}
                   initial="hidden"
                   whileInView="visible"
@@ -546,14 +578,15 @@ export default function CaseStudiesPage() {
                 >
                   {/* IMAGE */}
                   <div className="relative h-48">
-                    {study.mainImage?.asset?.url ? (
+                    {study.imageUrl ? (
                       <Image
-                        src={study.mainImage.asset.url}
+                        src={study.imageUrl}
                         alt={study.title}
                         fill
                         className="object-cover"
                       />
                     ) : (
+
                       <div className="h-full bg-[#faf4e5]" />
                     )}
                   </div>
@@ -588,7 +621,7 @@ export default function CaseStudiesPage() {
                     )}
 
                     <Link
-                      href={`/case-studies/${study.slug.current}`}
+                      href={`/case-studies/${study.slug}`}
                       className="
                         inline-flex
                         items-center

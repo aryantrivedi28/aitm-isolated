@@ -47,7 +47,6 @@ export async function POST(request: Request) {
 
             const profileData = {
                   name: formData.name,
-                  email: formData.email,
                   phone: formData.phone || null,
                   title: formData.title || null,
                   bio: formData.bio || null,
@@ -58,38 +57,38 @@ export async function POST(request: Request) {
                   tools_tech_stack: formData.tools_tech_stack || [],
                   languages: formData.languages || [],
                   certifications: formData.certifications || [],
+
                   github_url: formData.github_url || formData.portfolio_links?.github || null,
                   linkedin_url: formData.linkedin_url || formData.portfolio_links?.linkedin || null,
                   twitter_url: formData.twitter_url || formData.portfolio_links?.twitter || null,
                   portfolio_url: formData.portfolio_url || formData.portfolio_links?.website || null,
-                  portfolio_links: formData.portfolio_links?.other
-                        ? JSON.stringify(formData.portfolio_links.other)
-                        : '[]',
-                  case_studies: formData.case_studies || [],
+
+                  portfolio_links: formData.portfolio_links?.other || [],
+
                   testimonials: formData.testimonials || [],
                   work_experience: formData.work_experience || [],
                   education: formData.education || [],
 
                   availability: formData.availability || 'full-time',
+
                   profile_status: 'pending_review',
                   review_status: 'pending_review',
                   submitted_at: timestamp,
                   updated_at: timestamp,
                   last_profile_update: timestamp,
                   profile_completed: true,
-                  email_verified: true,
-                  verified: false,
-                  otp_verified: true
             }
+
 
             // ==============================
             // 🔍 CHECK EXISTING PROFILE
             // ==============================
-            const { data: existingProfile } = await supabase
+            const { data: existingProfile, error } = await supabase
                   .from("freelancers")
                   .select("id")
                   .eq("id", freelancerId)
-                  .single()
+                  .maybeSingle()
+
 
             let result
 
@@ -127,11 +126,12 @@ export async function POST(request: Request) {
             // 🤖 TRIGGER AI SCORING
             // ==============================
             try {
-                  await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/freelancer/onboarding/score`, {
+                  await fetch(`${request.headers.get("origin")}/api/freelancer/onboarding/score`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ userId: freelancerId })
                   })
+
             } catch (err) {
                   console.error("⚠️ AI scoring failed:", err)
             }

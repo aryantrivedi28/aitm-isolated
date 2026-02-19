@@ -16,13 +16,22 @@ const parseJsonField = (field: any): any => {
   return field
 }
 
+const generateSlug = (title: string) => {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+}
+
+
 // GET: Fetch complete profile
 export async function GET() {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-    
+
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -81,9 +90,9 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-    
+
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -168,30 +177,56 @@ export async function PUT(request: Request) {
 
       case 'add_case_study': {
         const caseStudies = parseJsonField(currentProfile.case_studies)
-        const newStudy = { id: crypto.randomUUID(), ...data, created_at: new Date().toISOString() }
+
+        const baseSlug = generateSlug(data.title)
+        const uniqueSlug = `${baseSlug}-${Date.now()}`
+
+        const newStudy = {
+          id: crypto.randomUUID(),
+          slug: uniqueSlug, // ✅ ADD THIS
+          ...data,
+          created_at: new Date().toISOString()
+        }
+
         const updatedStudies = [...caseStudies, newStudy]
+
         updates.case_studies = JSON.stringify(updatedStudies)
         updates.case_study_count = updatedStudies.length
-        
-        // Update categories
-        const categories = [...new Set(updatedStudies.map((cs: any) => cs.category).filter(Boolean))]
+
+        const categories = [
+          ...new Set(updatedStudies.map((cs: any) => cs.category).filter(Boolean))
+        ]
         updates.case_study_categories = categories
+
         break
       }
+
 
       case 'update_case_study': {
         const { id, ...studyData } = data
         const caseStudies = parseJsonField(currentProfile.case_studies)
-        const updatedStudies = caseStudies.map((item: any) => 
-          item.id === id ? { ...item, ...studyData, updated_at: new Date().toISOString() } : item
-        )
+
+        const updatedStudies = caseStudies.map((item: any) => {
+          if (item.id === id) {
+            return {
+              ...item,
+              ...studyData,
+              slug: item.slug || generateSlug(studyData.title) + "-" + Date.now(),
+              updated_at: new Date().toISOString()
+            }
+          }
+          return item
+        })
         updates.case_studies = JSON.stringify(updatedStudies)
-        
-        // Update categories
-        const categories = [...new Set(updatedStudies.map((cs: any) => cs.category).filter(Boolean))]
+
+        const categories = [
+          ...new Set(updatedStudies.map((cs: any) => cs.category).filter(Boolean))
+        ]
         updates.case_study_categories = categories
+
         break
       }
+
 
       case 'delete_case_study': {
         const { id } = data
@@ -199,7 +234,7 @@ export async function PUT(request: Request) {
         const updatedStudies = caseStudies.filter((item: any) => item.id !== id)
         updates.case_studies = JSON.stringify(updatedStudies)
         updates.case_study_count = updatedStudies.length
-        
+
         // Update categories
         const categories = [...new Set(updatedStudies.map((cs: any) => cs.category).filter(Boolean))]
         updates.case_study_categories = categories
@@ -332,10 +367,10 @@ export async function PUT(request: Request) {
       portfolio_links: parseJsonField(updatedProfile.portfolio_links),
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       profile: parsedProfile,
-      message: "Profile updated successfully" 
+      message: "Profile updated successfully"
     })
 
   } catch (error) {
@@ -351,9 +386,9 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-    
+
     const { data: { user }, error: authError } = await supabase.auth.getUser()
-    
+
     if (authError || !user) {
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -396,9 +431,9 @@ export async function DELETE(request: Request) {
             { status: 500 }
           )
         }
-        return NextResponse.json({ 
-          success: true, 
-          message: "Account deleted successfully" 
+        return NextResponse.json({
+          success: true,
+          message: "Account deleted successfully"
         })
 
       default:

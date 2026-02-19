@@ -1,4 +1,5 @@
-// app/api/freelancer/score/route.ts
+// src/app/api/freelancer/onboarding/score/route.ts
+
 import { NextResponse } from "next/server"
 import { supabase } from "../../../../../lib/SupabaseAuthClient"
 
@@ -6,85 +7,133 @@ export async function POST(request: Request) {
   try {
     const { userId } = await request.json()
 
-    // Get the freelancer profile
-    const { data: profile, error } = await supabase
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 }
+      )
+    }
+
+    // ==============================
+    // 📌 FETCH FREELANCER PROFILE
+    // ==============================
+    const { data: profile, error: profileError } = await supabase
       .from("freelancers")
       .select("*")
       .eq("id", userId)
       .single()
 
-    if (error || !profile) {
+    if (profileError || !profile) {
+      console.error("Profile fetch error:", profileError)
       return NextResponse.json(
         { error: "Profile not found" },
         { status: 404 }
       )
     }
 
-    // Calculate AI score
+    // ==============================
+    // 📌 FETCH CASE STUDIES (NEW TABLE)
+    // ==============================
+    const { data: caseStudies, error: caseError } = await supabase
+      .from("freelancer_case_studies")
+      .select("id")
+      .eq("freelancer_id", userId)
+
+    if (caseError) {
+      console.error("Case study fetch error:", caseError)
+    }
+
+    // ==============================
+    // 🧠 AI SCORING LOGIC
+    // ==============================
     let score = 0
     const maxScore = 100
 
-    // Base score for completing profile
+    // Base completion score
     score += 10
 
-    // Experience score
+    // Experience
     if (profile.experience_years) {
       score += Math.min(profile.experience_years * 2, 15)
     }
 
-    // Skills score
+    // Skills
     score += Math.min((profile.skills?.length || 0) * 2, 10)
+
+    // Tools
     score += Math.min((profile.tools_tech_stack?.length || 0) * 1, 10)
 
-    // Portfolio links score
+    // Portfolio links
     let portfolioCount = 0
+
     if (profile.portfolio_url) portfolioCount++
     if (profile.github_url) portfolioCount++
     if (profile.linkedin_url) portfolioCount++
     if (profile.twitter_url) portfolioCount++
-    const otherLinks = profile.portfolio_links ? JSON.parse(profile.portfolio_links) : []
-    portfolioCount += otherLinks.length
+
+    if (Array.isArray(profile.portfolio_links)) {
+      portfolioCount += profile.portfolio_links.length
+    }
+
     score += Math.min(portfolioCount * 2, 10)
 
-    // Case studies score
-    const caseStudies = profile.case_studies ? JSON.parse(profile.case_studies) : []
-    score += Math.min(caseStudies.length * 5, 15)
+    // Case studies (from new table)
+    score += Math.min((caseStudies?.length || 0) * 5, 15)
 
-    // Testimonials score
-    const testimonials = profile.testimonials ? JSON.parse(profile.testimonials) : []
-    score += Math.min(testimonials.length * 5, 10)
+    // Testimonials (JSONB)
+    if (Array.isArray(profile.testimonials)) {
+      score += Math.min(profile.testimonials.length * 5, 10)
+    }
 
-    // Work experience score
-    const workExp = profile.work_experience ? JSON.parse(profile.work_experience) : []
-    score += Math.min(workExp.length * 3, 10)
+    // Work experience
+    if (Array.isArray(profile.work_experience)) {
+      score += Math.min(profile.work_experience.length * 3, 10)
+    }
 
-    // Education score
-    const education = profile.education ? JSON.parse(profile.education) : []
-    score += Math.min(education.length * 2, 5)
+    // Education
+    if (Array.isArray(profile.education)) {
+      score += Math.min(profile.education.length * 2, 5)
+    }
 
-    // Languages and certifications
+    // Languages
     score += Math.min((profile.languages?.length || 0) * 1, 3)
+
+    // Certifications
     score += Math.min((profile.certifications?.length || 0) * 1, 2)
 
-    // Update the profile with the AI score
-    await supabase
+    // Cap score at max
+    score = Math.min(score, maxScore)
+
+    // ==============================
+    // 💾 UPDATE PROFILE SCORE
+    // ==============================
+    const { error: updateError } = await supabase
       .from("freelancers")
-      .update({ 
+      .update({
         profile_rating: score,
         updated_at: new Date().toISOString()
       })
       .eq("id", userId)
 
-    return NextResponse.json({ 
-      success: true, 
+    if (updateError) {
+      console.error("Score update error:", updateError)
+      return NextResponse.json(
+        { error: "Failed to update score" },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({
+      success: true,
       score,
-      maxScore 
+      maxScore
     })
 
   } catch (error) {
-    console.error("AI scoring error:", error)
+    console.error("AI scoring fatal error:", error)
+
     return NextResponse.json(
-      { error: "Failed to calculate score" },
+      { error: "Internal server error" },
       { status: 500 }
     )
   }

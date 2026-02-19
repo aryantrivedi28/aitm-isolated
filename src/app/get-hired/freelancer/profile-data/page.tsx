@@ -5,15 +5,15 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-  User, 
-  Mail, 
-  Briefcase, 
-  Layers, 
-  Clock, 
-  Wrench, 
-  Link as LinkIcon, 
-  FileText, 
+import {
+  User,
+  Mail,
+  Briefcase,
+  Layers,
+  Clock,
+  Wrench,
+  Link as LinkIcon,
+  FileText,
   Star,
   ChevronRight,
   ChevronLeft,
@@ -153,7 +153,7 @@ export default function FreelancerOnboarding() {
       try {
         const response = await fetch("/api/freelancer/auth/me")
         const data = await response.json()
-        
+
         if (data.user) {
           setFormData(prev => ({
             ...prev,
@@ -338,7 +338,7 @@ export default function FreelancerOnboarding() {
   const updateCaseStudy = (index: number, field: keyof CaseStudy, value: string) => {
     setFormData(prev => ({
       ...prev,
-      case_studies: prev.case_studies.map((cs, i) => 
+      case_studies: prev.case_studies.map((cs, i) =>
         i === index ? { ...cs, [field]: value } : cs
       )
     }))
@@ -364,7 +364,7 @@ export default function FreelancerOnboarding() {
   const updateTestimonial = (index: number, field: keyof Testimonial, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      testimonials: prev.testimonials.map((t, i) => 
+      testimonials: prev.testimonials.map((t, i) =>
         i === index ? { ...t, [field]: value } : t
       )
     }))
@@ -407,7 +407,7 @@ export default function FreelancerOnboarding() {
   const updateWorkExperience = (index: number, field: keyof WorkExperience, value: any) => {
     setFormData(prev => ({
       ...prev,
-      work_experience: prev.work_experience.map((we, i) => 
+      work_experience: prev.work_experience.map((we, i) =>
         i === index ? { ...we, [field]: value } : we
       )
     }))
@@ -439,7 +439,7 @@ export default function FreelancerOnboarding() {
   const updateEducation = (index: number, field: keyof Education, value: any) => {
     setFormData(prev => ({
       ...prev,
-      education: prev.education.map((edu, i) => 
+      education: prev.education.map((edu, i) =>
         i === index ? { ...edu, [field]: value } : edu
       )
     }))
@@ -489,7 +489,6 @@ export default function FreelancerOnboarding() {
         tools_tech_stack: formData.tools_tech_stack,
         languages: formData.languages,
         certifications: formData.certifications,
-        case_studies: formData.case_studies,
         testimonials: formData.testimonials,
         work_experience: formData.work_experience,
         education: formData.education,
@@ -516,8 +515,31 @@ export default function FreelancerOnboarding() {
         return
       }
 
+      // Save case studies separately
+      for (const study of formData.case_studies) {
+        if (!study.title || !study.description) continue
+
+        await fetch("/api/freelancer/case-studies", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            title: study.title,
+            description: study.description,
+            category: formData.primary_category
+              .toLowerCase()
+              .replace(/\s+/g, "-"), // convert to slug
+            outcome: study.outcome || "",
+            technologies: study.technologies || [],
+            project_url: study.project_url || ""
+          })
+        })
+      }
+
+
+
       setSuccess(true)
-      
+
       // Redirect to dashboard after 2 seconds
       setTimeout(() => {
         router.push("/get-hired/freelancer/dashboard")
@@ -602,25 +624,23 @@ export default function FreelancerOnboarding() {
               const StepIcon = step.icon
               const isActive = currentStep === step.number
               const isCompleted = currentStep > step.number
-              
+
               return (
                 <div key={step.number} className="flex-1 relative">
                   <div className="flex items-center">
                     <div className="relative z-10">
-                      <div 
-                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
-                          isActive || isCompleted ? 'bg-[#f7af00]' : 'bg-[#f0eadd]'
-                        }`}
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${isActive || isCompleted ? 'bg-[#f7af00]' : 'bg-[#f0eadd]'
+                          }`}
                         style={{ border: '2px solid #241C15' }}
                       >
                         <StepIcon className="h-6 w-6" style={{ color: '#050504' }} />
                       </div>
                     </div>
                     {index < steps.length - 1 && (
-                      <div 
-                        className={`flex-1 h-1 mx-2 ${
-                          isCompleted ? 'bg-[#f7af00]' : 'bg-[#f0eadd]'
-                        }`}
+                      <div
+                        className={`flex-1 h-1 mx-2 ${isCompleted ? 'bg-[#f7af00]' : 'bg-[#f0eadd]'
+                          }`}
                         style={{ backgroundColor: isCompleted ? '#f7af00' : '#241C15' }}
                       />
                     )}
@@ -823,7 +843,7 @@ export default function FreelancerOnboarding() {
                         </span>
                       ))}
                     </div>
-                    
+
                     {showSkillInput ? (
                       <div className="flex items-center space-x-2">
                         <input
@@ -883,7 +903,7 @@ export default function FreelancerOnboarding() {
                         </span>
                       ))}
                     </div>
-                    
+
                     {showToolInput ? (
                       <div className="flex items-center space-x-2">
                         <input
@@ -943,7 +963,7 @@ export default function FreelancerOnboarding() {
                         </span>
                       ))}
                     </div>
-                    
+
                     {showLanguageInput ? (
                       <div className="flex items-center space-x-2">
                         <input
@@ -1003,7 +1023,7 @@ export default function FreelancerOnboarding() {
                         </span>
                       ))}
                     </div>
-                    
+
                     {showCertificationInput ? (
                       <div className="flex items-center space-x-2">
                         <input
@@ -1210,7 +1230,7 @@ export default function FreelancerOnboarding() {
                     <h3 className="text-xl font-medium mb-4" style={{ color: '#050504' }}>
                       Client Testimonials
                     </h3>
-                    
+
                     {formData.testimonials.map((testimonial, index) => (
                       <div key={index} className="p-4 rounded-lg border relative mb-4" style={{ borderColor: '#241C15' }}>
                         {index > 0 && (
@@ -1292,7 +1312,7 @@ export default function FreelancerOnboarding() {
                     <h3 className="text-xl font-medium mb-4" style={{ color: '#050504' }}>
                       Work Experience
                     </h3>
-                    
+
                     {formData.work_experience.map((exp, index) => (
                       <div key={index} className="p-4 rounded-lg border relative mb-4" style={{ borderColor: '#241C15' }}>
                         <button
@@ -1301,7 +1321,7 @@ export default function FreelancerOnboarding() {
                         >
                           <X className="h-4 w-4" style={{ color: '#050504' }} />
                         </button>
-                        
+
                         <div className="space-y-3">
                           <input
                             type="text"
@@ -1377,7 +1397,7 @@ export default function FreelancerOnboarding() {
                     <h3 className="text-xl font-medium mb-4" style={{ color: '#050504' }}>
                       Education
                     </h3>
-                    
+
                     {formData.education.map((edu, index) => (
                       <div key={index} className="p-4 rounded-lg border relative mb-4" style={{ borderColor: '#241C15' }}>
                         <button
@@ -1386,7 +1406,7 @@ export default function FreelancerOnboarding() {
                         >
                           <X className="h-4 w-4" style={{ color: '#050504' }} />
                         </button>
-                        
+
                         <div className="space-y-3">
                           <input
                             type="text"
@@ -1444,9 +1464,9 @@ export default function FreelancerOnboarding() {
                   onClick={() => setCurrentStep(prev => prev - 1)}
                   disabled={currentStep === 1}
                   className="px-6 py-3 rounded-lg flex items-center space-x-2 disabled:opacity-50"
-                  style={{ 
-                    backgroundColor: 'transparent', 
-                    border: '1px solid #241C15', 
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: '1px solid #241C15',
                     color: '#31302f'
                   }}
                   onMouseEnter={handleButtonHover}
@@ -1461,8 +1481,8 @@ export default function FreelancerOnboarding() {
                     onClick={() => setCurrentStep(prev => prev + 1)}
                     disabled={!validateStep(currentStep)}
                     className="px-6 py-3 rounded-lg flex items-center space-x-2 disabled:opacity-50"
-                    style={{ 
-                      backgroundColor: '#f7af00', 
+                    style={{
+                      backgroundColor: '#f7af00',
                       color: '#050504'
                     }}
                     onMouseEnter={handleButtonHover}
@@ -1476,8 +1496,8 @@ export default function FreelancerOnboarding() {
                     onClick={handleSubmit}
                     disabled={loading || !validateStep(currentStep)}
                     className="px-8 py-3 rounded-lg flex items-center space-x-2 disabled:opacity-50"
-                    style={{ 
-                      backgroundColor: '#f7af00', 
+                    style={{
+                      backgroundColor: '#f7af00',
                       color: '#050504'
                     }}
                     onMouseEnter={handleButtonHover}

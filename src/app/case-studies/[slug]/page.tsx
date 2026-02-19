@@ -89,51 +89,102 @@ export default function CaseStudyPage({
   useEffect(() => {
     async function fetchStudy() {
       const { slug } = await params
-      const fetchedStudy: CaseStudy = await client.fetch(
-        `*[_type == "caseStudy" && slug.current == $slug && isHidden != true][0]{
-  _id,
-  title,
-  subtitle,
-  slug,
-  description,
-  tags,
-  order,
-  ranking,
-  isHidden,
-  mainImage { asset -> { url } },
-  video {
-    videoUrl,
-    caption,
-    videoFile { asset -> { url } }
-  },
-  challenge,
-  finzieAdvantage,
-  teamMember {
-    name,
-    role,
-    bio,
-    image { asset -> { url } }
-  },
-  snapshot,
-  testimonial {
-    quote,
-    authorName,
-    authorRole,
-    image { asset -> { url } }
-  },
-  callToActionText,
-  callToActionButton { text, link }
-}
-`,
-        { slug }
-      );
 
-      if (!fetchedStudy) {
-        notFound()
+      // 1️⃣ Try Sanity first (unchanged logic)
+      const fetchedStudy: CaseStudy | null = await client.fetch(
+        `*[_type == "caseStudy" && slug.current == $slug && isHidden != true][0]{
+        _id,
+        title,
+        subtitle,
+        slug,
+        description,
+        tags,
+        order,
+        ranking,
+        isHidden,
+        mainImage { asset -> { url } },
+        video {
+          videoUrl,
+          caption,
+          videoFile { asset -> { url } }
+        },
+        challenge,
+        finzieAdvantage,
+        teamMember {
+          name,
+          role,
+          bio,
+          image { asset -> { url } }
+        },
+        snapshot,
+        testimonial {
+          quote,
+          authorName,
+          authorRole,
+          image { asset -> { url } }
+        },
+        callToActionText,
+        callToActionButton { text, link }
+      }`,
+        { slug }
+      )
+
+      if (fetchedStudy) {
+        setStudy(fetchedStudy)
+        setLoading(false)
+        return
       }
 
-      setStudy(fetchedStudy)
-      setLoading(false)
+      // 2️⃣ If not found → Try Supabase (Freelancer case study)
+      try {
+        const res = await fetch(`/api/freelancer/case-studies/${slug}`)
+        const data = await res.json()
+
+        if (!res.ok || !data.caseStudy) {
+          notFound()
+        }
+
+
+        const freelancerStudy = data.caseStudy
+
+        if (!freelancerStudy) {
+          notFound()
+        }
+
+        // Transform freelancer data to match UI format
+        const transformedStudy: CaseStudy = {
+          _id: freelancerStudy.id,
+          title: freelancerStudy.title,
+          subtitle: freelancerStudy.freelancerName || "Freelancer Case Study",
+          description: freelancerStudy.description,
+          tags: freelancerStudy.tags || [],
+          snapshot: [],
+          challenge: null,
+          finzieAdvantage: null,
+          mainImage: freelancerStudy.imageUrl
+            ? { asset: { url: freelancerStudy.imageUrl } }
+            : { asset: { url: "" } },
+          teamMember: {
+            name: freelancerStudy.freelancerName || "",
+            role: "Freelancer",
+            bio: "",
+            image: { asset: { url: "" } },
+          },
+          testimonial: {
+            quote: "",
+            authorName: "",
+            authorRole: "",
+            image: { asset: { url: "" } },
+          },
+          video: undefined,
+        }
+
+        setStudy(transformedStudy)
+        setLoading(false)
+      } catch (error) {
+        console.error("Freelancer fetch error:", error)
+        notFound()
+      }
     }
 
     fetchStudy()
@@ -161,31 +212,31 @@ export default function CaseStudyPage({
       <section className="relative min-h-[80vh] md:min-h-screen flex items-center">
         <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-16 items-center">
-            <motion.div 
-              className="space-y-6 md:space-y-8 order-2 lg:order-1" 
-              initial="initial" 
-              animate="animate" 
+            <motion.div
+              className="space-y-6 md:space-y-8 order-2 lg:order-1"
+              initial="initial"
+              animate="animate"
               variants={staggerContainer}
             >
               <motion.div className="space-y-4 md:space-y-6" variants={fadeInLeft}>
-                <motion.h1 
-                  className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#050504] leading-tight" 
+                <motion.h1
+                  className="text-3xl sm:text-4xl lg:text-5xl font-medium text-[#050504] leading-tight"
                   variants={fadeInLeft}
                 >
                   {study.title}
                 </motion.h1>
 
                 {study.subtitle && (
-                  <motion.h2 
-                    className="text-lg sm:text-xl lg:text-2xl text-[#31302f] font-medium" 
+                  <motion.h2
+                    className="text-lg sm:text-xl lg:text-2xl text-[#31302f] font-medium"
                     variants={fadeInLeft}
                   >
                     {study.subtitle}
                   </motion.h2>
                 )}
 
-                <motion.p 
-                  className="text-sm sm:text-base text-[#31302f] leading-relaxed max-w-3xl" 
+                <motion.p
+                  className="text-sm sm:text-base text-[#31302f] leading-relaxed max-w-3xl"
                   variants={fadeInLeft}
                 >
                   {study.description}
@@ -207,25 +258,25 @@ export default function CaseStudyPage({
 
               <motion.div className="flex flex-col sm:flex-row gap-3 sm:gap-4" variants={fadeInLeft}>
                 <Link
-                    href={study.callToActionButton?.link || study.callToActionLink || "/client-request"}
-                    className="group inline-flex items-center justify-center gap-2 sm:gap-3"
+                  href={study.callToActionButton?.link || study.callToActionLink || "/client-request"}
+                  className="group inline-flex items-center justify-center gap-2 sm:gap-3"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.05, x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="font-medium px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-[#f7af00] text-[#050504] rounded-xl sm:rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center gap-2 sm:gap-3"
                   >
+                    <span className="text-sm sm:text-base">
+                      {study.callToActionButton?.text || "View Results"}
+                    </span>
                     <motion.div
-                      whileHover={{ scale: 1.05, x: 5 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="font-medium px-6 py-3 sm:px-8 sm:py-4 md:px-10 md:py-5 bg-[#f7af00] text-[#050504] rounded-xl sm:rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center gap-2 sm:gap-3"
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                     >
-                      <span className="text-sm sm:text-base">
-                        {study.callToActionButton?.text || "View Results"}
-                      </span>
-                      <motion.div
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                      >
-                        <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
-                      </motion.div>
+                      <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
                     </motion.div>
-                  </Link>
+                  </motion.div>
+                </Link>
               </motion.div>
             </motion.div>
 
@@ -377,8 +428,8 @@ export default function CaseStudyPage({
             variants={staggerContainer}
             className="relative"
           >
-            <motion.h3 
-              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-[#050504] mb-8 sm:mb-12 text-center" 
+            <motion.h3
+              className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-[#050504] mb-8 sm:mb-12 text-center"
               variants={fadeInUp}
             >
               Key Results & Impact
@@ -524,8 +575,8 @@ export default function CaseStudyPage({
           >
             <div className="relative bg-[#f0eadd] rounded-xl sm:rounded-2xl lg:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16 text-[#050504] overflow-hidden">
               <div className="relative z-10">
-                <motion.h3 
-                  className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium mb-4 sm:mb-6" 
+                <motion.h3
+                  className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-medium mb-4 sm:mb-6"
                   variants={fadeInUp}
                 >
                   {study.callToActionText || "Ready to Transform Your Business?"}

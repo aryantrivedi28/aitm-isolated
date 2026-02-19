@@ -1,265 +1,246 @@
 // app/api/freelancer/case-studies/route.ts
-import { type NextRequest, NextResponse } from "next/server"
+
+import { NextRequest, NextResponse } from "next/server"
 import { supabase } from "../../../../lib/SupabaseAuthClient"
 import { cookies } from "next/headers"
 import { v4 as uuidv4 } from "uuid"
 
-// Get freelancer ID from cookie
 async function getFreelancerId() {
   const cookieStore = await cookies()
   const sessionCookie = cookieStore.get("freelancer_session")
-  if (!sessionCookie?.value) return null
+
+  if (!sessionCookie?.value) {
+    console.error("❌ No freelancer_session cookie found")
+    return null
+  }
+
   try {
     const session = JSON.parse(sessionCookie.value)
     return session.id
-  } catch {
+  } catch (err) {
+    console.error("❌ Error parsing freelancer_session cookie:", err)
     return null
   }
 }
 
-// Valid categories for case studies (matching frontend)
-const VALID_CATEGORIES = [
-  'marketing',
-  'social-media-marketing',
-  'seo-content',
-  'email-crm',
-  'influencer-partnerships',
-  'brand-creative-strategy',
-  'analytics-data',
-  'growth-gtm',
-  'gohighlevel',
-  'shopify',
-  'fractional-cmo',
-  'video-editing',
-  'creatives',
-  'ui-ux-design',
-  'website-development',
-  'no-code-automation',
-]
-
-// Validate case study
-function validateCaseStudy(caseStudy: any): boolean {
-  return (
-    typeof caseStudy === 'object' &&
-    caseStudy !== null &&
-    typeof caseStudy.title === 'string' &&
-    caseStudy.title.trim().length > 0 &&
-    typeof caseStudy.description === 'string' &&
-    caseStudy.description.trim().length > 0 &&
-    typeof caseStudy.category === 'string' &&
-    VALID_CATEGORIES.includes(caseStudy.category)
-  )
+function generateSlug(title: string) {
+  return `${title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")}-${uuidv4().slice(0, 6)}`
 }
 
-// GET — Fetch Case Studies
-export async function GET() {
+/* ===========================
+   GET — All Case Studies
+=========================== */
 
+export async function GET() {
+  try {
+    const { data, error } = await supabase
+      .from("freelancer_case_studies")
+      .select(`
+        id,
+        title,
+        description,
+        slug,
+        category,
+        outcome,
+        technologies,
+        image_url,
+        project_url,
+        created_at,
+        freelancers ( name )
+      `)
+
+    if (error) {
+      console.error("❌ GET Case Studies Error:", error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      caseStudies: data.map(cs => ({
+        id: cs.id,
+        title: cs.title,
+        description: cs.description,
+        slug: cs.slug,
+        category: cs.category,
+        outcome: cs.outcome,
+        technologies: cs.technologies,
+        imageUrl: cs.image_url,
+        projectUrl: cs.project_url,
+        createdAt: cs.created_at,
+        freelancerName: cs.freelancers?.[0]?.name || "Unknown",
+        source: "freelancer"
+      }))
+    })
+
+
+  } catch (err) {
+    console.error("❌ GET API Crash:", err)
+    return NextResponse.json({ error: "Internal error" }, { status: 500 })
+  }
+}
+
+/* ===========================
+   POST — Create
+=========================== */
+
+export async function POST(request: NextRequest) {
   try {
     const freelancerId = await getFreelancerId()
-    console.log("👤 Logged-in freelancer ID:", freelancerId)
 
-    if (!freelancerId)
+    if (!freelancerId) {
+      console.error("❌ Unauthorized POST attempt")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
-    // Fetch the profile to get case studies
-    const { data: profile, error } = await supabase
-      .from("freelancers")
-      .select("case_studies, case_study_categories")
-      .eq("id", freelancerId)
+    const body = await request.json()
+    console.log("📥 POST Body:", body)
+
+    if (!body.title || !body.description || !body.category) {
+      console.error("❌ Missing required fields")
+      return NextResponse.json(
+        { error: "Title, description, and category required" },
+        { status: 400 }
+      )
+    }
+
+    const slug = generateSlug(body.title)
+
+    const { data, error } = await supabase
+      .from("freelancer_case_studies")
+      .insert([{
+        freelancer_id: freelancerId,
+        slug,
+        title: body.title.trim(),
+        description: body.description.trim(),
+        category: body.category
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, "-"),
+        outcome: body.outcome || null,
+        technologies: body.technologies || [],
+        image_url: body.image_url || null,
+        project_url: body.project_url || null,
+      }])
+      .select()
       .single()
 
     if (error) {
-      console.error("❌ Error fetching case studies:", error)
-      return NextResponse.json({ error: "Failed to fetch case studies" }, { status: 500 })
+      console.error("❌ POST Insert Error:", error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    console.log("✅ Case Study Created:", data)
 
-    return NextResponse.json({
-      case_studies: profile.case_studies || [],
-      categories: profile.case_study_categories || []
-    })
-  } catch (error) {
-    console.error("❌ GET Case Studies Error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json({ success: true, caseStudy: data })
+
+  } catch (err) {
+    console.error("❌ POST API Crash:", err)
+    return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }
 
-// POST — Add Case Study
-export async function POST(request: NextRequest) {
+/* ===========================
+   PUT — UPDATE Case Study
+=========================== */
 
+export async function PUT(request: NextRequest) {
   try {
     const freelancerId = await getFreelancerId()
-    if (!freelancerId)
+
+    if (!freelancerId) {
+      console.error("❌ Unauthorized PUT attempt")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
-    const newCaseStudy = await request.json()
-    
-    // Validate required fields
-    if (!newCaseStudy.title || !newCaseStudy.description || !newCaseStudy.category) {
+    const body = await request.json()
+    console.log("📥 PUT Body:", body)
+
+    if (!body.id) {
+      console.error("❌ Missing case study ID")
       return NextResponse.json(
-        { error: "Title, description, and category are required" },
+        { error: "Case study ID required" },
         { status: 400 }
       )
     }
 
-    // Validate category
-    if (!VALID_CATEGORIES.includes(newCaseStudy.category)) {
-      return NextResponse.json(
-        { 
-          error: `Invalid category. Must be one of: ${VALID_CATEGORIES.join(', ')}` 
-        },
-        { status: 400 }
-      )
+    const updateData: any = {
+      updated_at: new Date().toISOString()
     }
 
-    // Validate the case study object
-    if (!validateCaseStudy(newCaseStudy)) {
-      return NextResponse.json(
-        { error: "Invalid case study structure" },
-        { status: 400 }
-      )
+    if (body.title) {
+      updateData.title = body.title.trim()
+      updateData.slug = generateSlug(body.title)
     }
 
-    // Generate ID and timestamps
-    const caseStudyWithId = {
-      id: uuidv4(),
-      ...newCaseStudy,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+    if (body.description) updateData.description = body.description.trim()
+    if (body.category) updateData.category = body.category
+    if (body.outcome !== undefined)
+      updateData.outcome = body.outcome
+
+    if (body.technologies !== undefined && Array.isArray(body.technologies)) {
+      updateData.technologies = body.technologies
     }
+    if (body.project_url !== undefined) updateData.project_url = body.project_url
 
-    // Get current case studies and categories
-    const { data: currentProfile, error: fetchError } = await supabase
-      .from("freelancers")
-      .select("case_studies, case_study_categories")
-      .eq("id", freelancerId)
-      .single()
-
-    if (fetchError) {
-      console.error("❌ Error fetching current profile:", fetchError)
-      return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 })
-    }
-
-    const currentCaseStudies = currentProfile.case_studies || []
-    const currentCategories = currentProfile.case_study_categories || []
-    
-    // Add new case study
-    const updatedCaseStudies = [...currentCaseStudies, caseStudyWithId]
-    
-    // Update categories if not already included
-    let updatedCategories = [...currentCategories]
-    if (!updatedCategories.includes(newCaseStudy.category)) {
-      updatedCategories.push(newCaseStudy.category)
-    }
-
-    // Update case studies and categories
-    const { data: updatedProfile, error: updateError } = await supabase
-      .from("freelancers")
-      .update({
-        case_studies: updatedCaseStudies,
-        case_study_categories: updatedCategories,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", freelancerId)
+    const { data, error } = await supabase
+      .from("freelancer_case_studies")
+      .update(updateData)
+      .eq("id", body.id)
+      .eq("freelancer_id", freelancerId)
       .select()
       .single()
 
-    if (updateError) {
-      console.error("❌ Error adding case study:", updateError)
-      return NextResponse.json({ error: "Failed to add case study" }, { status: 500 })
+    if (error) {
+      console.error("❌ PUT Update Error:", error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    console.log("✅ Case Study Updated:", data)
 
-    return NextResponse.json({
-      success: true,
-      case_studies: updatedProfile.case_studies,
-      categories: updatedProfile.case_study_categories,
-      newItem: caseStudyWithId
-    })
-  } catch (error) {
-    console.error("❌ POST Case Study Error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json({ success: true, caseStudy: data })
+
+  } catch (err) {
+    console.error("❌ PUT API Crash:", err)
+    return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }
 
-// DELETE — Remove Case Study
-export async function DELETE(request: NextRequest) {
+/* ===========================
+   DELETE
+=========================== */
 
+export async function DELETE(request: NextRequest) {
   try {
     const freelancerId = await getFreelancerId()
-    if (!freelancerId)
+
+    if (!freelancerId) {
+      console.error("❌ Unauthorized DELETE attempt")
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
     const { id } = await request.json()
+    console.log("🗑 DELETE ID:", id)
 
-    if (!id) {
-      return NextResponse.json(
-        { error: "Case study ID is required" },
-        { status: 400 }
-      )
+    const { error } = await supabase
+      .from("freelancer_case_studies")
+      .delete()
+      .eq("id", id)
+      .eq("freelancer_id", freelancerId)
+
+    if (error) {
+      console.error("❌ DELETE Error:", error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    // Get current case studies and categories
-    const { data: currentProfile, error: fetchError } = await supabase
-      .from("freelancers")
-      .select("case_studies, case_study_categories")
-      .eq("id", freelancerId)
-      .single()
+    console.log("✅ Case Study Deleted:", id)
 
-    if (fetchError) {
-      console.error("❌ Error fetching current profile:", fetchError)
-      return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 })
-    }
+    return NextResponse.json({ success: true })
 
-    const currentCaseStudies = currentProfile.case_studies || []
-    const caseStudyToDelete = currentCaseStudies.find((item: any) => item.id === id)
-
-    if (!caseStudyToDelete) {
-      return NextResponse.json(
-        { error: "Case study not found" },
-        { status: 404 }
-      )
-    }
-
-    // Remove the case study
-    const updatedCaseStudies = currentCaseStudies.filter((item: any) => item.id !== id)
-
-    // Update categories - remove if category is no longer used
-    const currentCategories = currentProfile.case_study_categories || []
-    const deletedCategory = caseStudyToDelete.category
-    
-    // Check if category is still used by other case studies
-    const categoryStillUsed = updatedCaseStudies.some((item: any) => item.category === deletedCategory)
-    
-    let updatedCategories = [...currentCategories]
-    if (!categoryStillUsed) {
-      updatedCategories = updatedCategories.filter((cat: string) => cat !== deletedCategory)
-    }
-
-    // Update case studies and categories
-    const { data: updatedProfile, error: updateError } = await supabase
-      .from("freelancers")
-      .update({
-        case_studies: updatedCaseStudies,
-        case_study_categories: updatedCategories,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", freelancerId)
-      .select()
-      .single()
-
-    if (updateError) {
-      console.error("❌ Error deleting case study:", updateError)
-      return NextResponse.json({ error: "Failed to delete case study" }, { status: 500 })
-    }
-
-    return NextResponse.json({
-      success: true,
-      case_studies: updatedProfile.case_studies,
-      categories: updatedProfile.case_study_categories
-    })
-  } catch (error) {
-    console.error("❌ DELETE Case Study Error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+  } catch (err) {
+    console.error("❌ DELETE API Crash:", err)
+    return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }

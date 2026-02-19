@@ -1,9 +1,8 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { supabaseAdmin } from "../../../../../lib/supabase-admin"
 import { cookies } from "next/headers"
 import { v4 as uuidv4 } from "uuid"
 
-// Get freelancer ID from cookie
 async function getFreelancerId() {
   const cookieStore = await cookies()
   const sessionCookie = cookieStore.get("freelancer_session")
@@ -16,187 +15,107 @@ async function getFreelancerId() {
   }
 }
 
-// POST — Upload Image for Case Study
-export async function POST(request: NextRequest) {
+/* ===========================
+   POST — Upload Image
+=========================== */
 
+export async function POST(request: NextRequest) {
   try {
     const freelancerId = await getFreelancerId()
     if (!freelancerId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
     const formData = await request.formData()
-    const file = formData.get('file') as File
-    const itemId = formData.get('itemId') as string
+    const file = formData.get("file") as File
+    const caseStudyId = formData.get("caseStudyId") as string
 
-    if (!file) {
+    if (!file || !caseStudyId)
       return NextResponse.json(
-        { error: "No file provided" },
+        { error: "File and caseStudyId required" },
         { status: 400 }
       )
-    }
 
-    if (!itemId) {
-      return NextResponse.json(
-        { error: "Item ID is required" },
-        { status: 400 }
-      )
-    }
-
-    // Validate file type
-    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-    if (!validTypes.includes(file.type)) {
-      return NextResponse.json(
-        { error: "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed" },
-        { status: 400 }
-      )
-    }
-
-    // Validate file size (5MB max)
-    const maxSize = 5 * 1024 * 1024 // 5MB
-    if (file.size > maxSize) {
-      return NextResponse.json(
-        { error: "File too large. Maximum size is 5MB" },
-        { status: 400 }
-      )
-    }
-
-    // Generate unique filename
-    const fileExt = file.name.split('.').pop()
+    const fileExt = file.name.split(".").pop()
     const fileName = `${uuidv4()}.${fileExt}`
     const filePath = `case-studies/${freelancerId}/${fileName}`
 
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from("freelancer-assets")
+      .upload(filePath, file)
 
-    // Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
-      .from('freelancer-assets')
-      .upload(filePath, file, {
-        cacheControl: '3600',
-        upsert: false
-      })
+    if (uploadError)
+      return NextResponse.json(
+        { error: "Upload failed" },
+        { status: 500 }
+      )
 
-    if (uploadError) {
-      console.error("❌ Error uploading file:", uploadError)
-      return NextResponse.json({ error: "Failed to upload file" }, { status: 500 })
-    }
-
-    // Get public URL
     const { data: { publicUrl } } = supabaseAdmin.storage
-      .from('freelancer-assets')
+      .from("freelancer-assets")
       .getPublicUrl(filePath)
 
-
-    if (itemId !== 'new-case-study') {
-      // Get current case studies
-      const { data: currentProfile, error: fetchError } = await supabaseAdmin
-        .from("freelancers")
-        .select("case_studies")
-        .eq("id", freelancerId)
-        .single()
-
-      if (!fetchError && currentProfile.case_studies) {
-        const caseStudies = currentProfile.case_studies || []
-        const caseStudyIndex = caseStudies.findIndex((item: any) => item.id === itemId)
-        
-        if (caseStudyIndex !== -1) {
-          // Update the case study with new image
-          caseStudies[caseStudyIndex] = {
-            ...caseStudies[caseStudyIndex],
-            image_url: publicUrl,
-            image_path: filePath,
-            updated_at: new Date().toISOString(),
-          }
-
-          const { error: updateError } = await supabaseAdmin
-            .from("freelancers")
-            .update({
-              case_studies: caseStudies,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("id", freelancerId)
-
-          if (updateError) {
-            console.error("❌ Error updating case study with image:", updateError)
-            // Continue anyway - the file was uploaded successfully
-          }
-        }
-      }
-    }
+    // Update case study record
+    await supabaseAdmin
+      .from("freelancer_case_studies")
+      .update({
+        image_url: publicUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", caseStudyId)
+      .eq("freelancer_id", freelancerId)
 
     return NextResponse.json({
       success: true,
-      imageUrl: publicUrl,
-      imagePath: filePath
+      imageUrl: publicUrl
     })
+
   } catch (error) {
-    console.error("❌ POST Image Upload Error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
 
-// DELETE — Remove Image for Case Study
-export async function DELETE(request: NextRequest) {
+/* ===========================
+   DELETE — Remove Image
+=========================== */
 
+export async function DELETE(request: NextRequest) {
   try {
     const freelancerId = await getFreelancerId()
     if (!freelancerId)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-    const { imagePath, itemId } = await request.json()
+    const { caseStudyId } = await request.json()
 
-    if (!imagePath) {
-      return NextResponse.json(
-        { error: "Image path is required" },
-        { status: 400 }
-      )
-    }
+    const { data } = await supabaseAdmin
+      .from("freelancer_case_studies")
+      .select("image_url")
+      .eq("id", caseStudyId)
+      .eq("freelancer_id", freelancerId)
+      .single()
 
+    if (!data?.image_url)
+      return NextResponse.json({ success: true })
 
-    // Delete from storage
-    const { error: storageError } = await supabaseAdmin.storage
-      .from('freelancer-assets')
+    const imagePath = data.image_url.split("/storage/v1/object/public/freelancer-assets/")[1]
+
+    await supabaseAdmin.storage
+      .from("freelancer-assets")
       .remove([imagePath])
 
-
-    if (itemId && itemId !== 'new-case-study') {
-      // Get current case studies
-      const { data: currentProfile, error: fetchError } = await supabaseAdmin
-        .from("freelancers")
-        .select("case_studies")
-        .eq("id", freelancerId)
-        .single()
-
-      if (!fetchError && currentProfile.case_studies) {
-        const caseStudies = currentProfile.case_studies || []
-        const caseStudyIndex = caseStudies.findIndex((item: any) => item.id === itemId)
-        
-        if (caseStudyIndex !== -1) {
-          // Update the case study to remove image
-          caseStudies[caseStudyIndex] = {
-            ...caseStudies[caseStudyIndex],
-            image_url: null,
-            image_path: null,
-            updated_at: new Date().toISOString(),
-          }
-
-          const { error: updateError } = await supabaseAdmin
-            .from("freelancers")
-            .update({
-              case_studies: caseStudies,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("id", freelancerId)
-
-          if (updateError) {
-            console.error("❌ Error updating case study after image deletion:", updateError)
-            // Continue anyway - the image was deleted from storage
-          }
-        }
-      }
-    }
+    await supabaseAdmin
+      .from("freelancer_case_studies")
+      .update({ image_url: null })
+      .eq("id", caseStudyId)
+      .eq("freelancer_id", freelancerId)
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error("❌ DELETE Image Upload Error:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+
+  } catch {
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }
