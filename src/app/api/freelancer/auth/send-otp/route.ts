@@ -4,19 +4,15 @@ import nodemailer from "nodemailer"
 
 export async function POST(request: NextRequest) {
   try {
-    console.log("🚀 OTP API triggered")
 
     const body = await request.json()
-    console.log("📩 Request Body:", body)
 
     const { email } = body
 
     if (!email) {
-      console.error("❌ Email missing in request")
       return NextResponse.json({ error: "Email is required" }, { status: 400 })
     }
 
-    console.log("🔍 Checking freelancer in DB for:", email)
 
     // Fetch freelancer
     const { data: freelancer, error: fetchError } = await supabase
@@ -26,19 +22,15 @@ export async function POST(request: NextRequest) {
       .maybeSingle()
 
     if (fetchError) {
-      console.error("⚠️ Supabase Fetch Error:", fetchError)
       return NextResponse.json({ error: "Failed to fetch freelancer" }, { status: 500 })
     }
 
-    console.log("👤 Freelancer Exists:", !!freelancer)
 
     // Generate OTP
     const otp = String(Math.floor(100000 + Math.random() * 900000))
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
     const timestamp = new Date().toISOString()
 
-    console.log("🔢 Generated OTP:", otp)
-    console.log("⏳ OTP Expiry:", otpExpiresAt)
 
     const upsertData: Record<string, any> = {
       email,
@@ -58,7 +50,6 @@ export async function POST(request: NextRequest) {
 
       dbResponse = await supabase.from("freelancers").insert([upsertData])
     } else {
-      console.log("♻️ Updating existing freelancer")
 
       dbResponse = await supabase
         .from("freelancers")
@@ -67,14 +58,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (dbResponse.error) {
-      console.error("❌ Supabase Insert/Update Error:", dbResponse.error)
       return NextResponse.json({ error: "Database update failed" }, { status: 500 })
     }
 
-    console.log("✅ Database updated successfully")
-
-    // Nodemailer config
-    console.log("📨 Creating mail transporter...")
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -86,8 +72,6 @@ export async function POST(request: NextRequest) {
       },
       requireTLS: true,
     })
-
-    console.log("📤 Sending OTP email...")
 
     const mailResponse = await transporter.sendMail({
       from: `"Freelance Portal" <${process.env.SMTP_USER}>`,
@@ -103,8 +87,6 @@ export async function POST(request: NextRequest) {
       `,
     })
 
-    console.log("📧 Mail Response:", mailResponse)
-    console.log("✅ OTP sent successfully to:", email)
 
     return NextResponse.json({
       success: true,
@@ -113,10 +95,6 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error("🔥 OTP API Fatal Error:")
-    console.error("Message:", error?.message)
-    console.error("Stack:", error?.stack)
-    console.error("Full Error:", error)
 
     return NextResponse.json(
       { error: "Server error", details: error?.message },
