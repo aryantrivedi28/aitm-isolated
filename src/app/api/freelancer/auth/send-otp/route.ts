@@ -3,18 +3,23 @@ import { supabase } from "../../../../../lib/SupabaseAuthClient"
 import nodemailer from "nodemailer"
 
 export async function POST(request: NextRequest) {
-  try {
+  console.log("🚀 OTP API Called")
 
+  try {
     const body = await request.json()
+    console.log("📥 Request Body:", body)
 
     const { email } = body
 
     if (!email) {
+      console.log("❌ Email missing in request")
       return NextResponse.json({ error: "Email is required" }, { status: 400 })
     }
 
+    console.log("📧 Processing email:", email)
 
     // Fetch freelancer
+    console.log("🔍 Checking if freelancer exists...")
     const { data: freelancer, error: fetchError } = await supabase
       .from("freelancers")
       .select("email")
@@ -22,15 +27,19 @@ export async function POST(request: NextRequest) {
       .maybeSingle()
 
     if (fetchError) {
+      console.error("❌ Supabase fetch error:", fetchError)
       return NextResponse.json({ error: "Failed to fetch freelancer" }, { status: 500 })
     }
 
+    console.log("✅ Freelancer fetch result:", freelancer)
 
     // Generate OTP
     const otp = String(Math.floor(100000 + Math.random() * 900000))
     const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString()
     const timestamp = new Date().toISOString()
 
+    console.log("🔐 Generated OTP:", otp)
+    console.log("⏳ OTP Expires At:", otpExpiresAt)
 
     const upsertData: Record<string, any> = {
       email,
@@ -50,6 +59,7 @@ export async function POST(request: NextRequest) {
 
       dbResponse = await supabase.from("freelancers").insert([upsertData])
     } else {
+      console.log("♻️ Updating existing freelancer")
 
       dbResponse = await supabase
         .from("freelancers")
@@ -58,9 +68,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (dbResponse.error) {
+      console.error("❌ Database update failed:", dbResponse.error)
       return NextResponse.json({ error: "Database update failed" }, { status: 500 })
     }
 
+    console.log("✅ Database operation successful")
+
+    // SMTP Debug
+    console.log("📨 Creating SMTP transporter...")
+    console.log("SMTP HOST:", process.env.SMTP_HOST)
+    console.log("SMTP PORT:", process.env.SMTP_PORT)
+    console.log("SMTP USER:", process.env.SMTP_USER ? "✔ Loaded" : "❌ Missing")
+    console.log("SMTP PASS:", process.env.SMTP_PASS ? "✔ Loaded" : "❌ Missing")
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -72,6 +91,8 @@ export async function POST(request: NextRequest) {
       },
       requireTLS: true,
     })
+
+    console.log("📤 Sending OTP email...")
 
     const mailResponse = await transporter.sendMail({
       from: `"Freelance Portal" <${process.env.SMTP_USER}>`,
@@ -87,6 +108,8 @@ export async function POST(request: NextRequest) {
       `,
     })
 
+    console.log("✅ Email sent successfully")
+    console.log("📬 Mail Response:", mailResponse)
 
     return NextResponse.json({
       success: true,
@@ -95,6 +118,9 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: any) {
+    console.error("🔥 Server Error:", error)
+    console.error("🔥 Error Message:", error?.message)
+    console.error("🔥 Error Stack:", error?.stack)
 
     return NextResponse.json(
       { error: "Server error", details: error?.message },

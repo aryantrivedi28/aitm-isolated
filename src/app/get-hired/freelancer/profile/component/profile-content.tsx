@@ -18,7 +18,7 @@ import {
   FileText,
   ExternalLink,
   Plus,
-  Trash2,
+  X,
   FolderOpen,
   Building2,
   Code2,
@@ -30,23 +30,54 @@ import {
   Twitter,
   Calendar,
   MapPin,
-  X,
   AlertCircle,
   Star,
-  Wrench
+  Wrench,
+  Percent,
+  DollarSign,
+  Target,
+  Layers,
+  ChevronDown,
+  ChevronUp,
+  Image as ImageIcon,
+  Link as LinkIcon
 } from "lucide-react"
+import Image from "next/image"
 
-// Update interfaces to match your data structure
+// Updated interfaces to match database structure
+interface CaseStudyMetric {
+  label: string
+  value: number
+  type: 'number' | 'percentage' | 'currency'
+  trend?: 'up' | 'down' | 'neutral'
+}
+
 interface CaseStudy {
-  id?: string
+  id: string
   title: string
-  description: string
-  outcome: string
-  technologies?: string[]
-  category?: string
-  image_url?: string
-  image_path?: string
+  short_summary: string
+  category: string
+  industry: string
+  problem_statement: string
+  solution_provided: string
+  strategy?: string
+  implementation?: string
+  results_overview: string
+  metrics: CaseStudyMetric[]
+  technologies: string[]
+  tags: string[]
+  image_url: string
+  gallery_images: string[]
   project_url?: string
+  testimonial?: {
+    content: string
+    author?: string
+    role?: string
+  }
+  status: 'draft' | 'pending' | 'approved' | 'rejected'
+  is_featured: boolean
+  view_count: number
+  created_at: string
 }
 
 interface Testimonial {
@@ -57,6 +88,8 @@ interface Testimonial {
   rating: number
   date?: string
   linkedin_url?: string
+  role?: string
+  avatar_url?: string
 }
 
 interface WorkExperience {
@@ -69,6 +102,7 @@ interface WorkExperience {
   current: boolean
   description: string
   achievements?: string[]
+  technologies?: string[]
 }
 
 interface Project {
@@ -79,6 +113,15 @@ interface Project {
   project_url?: string
   start_date?: string
   end_date?: string
+  image_url?: string
+}
+
+interface Education {
+  degree: string
+  institution: string
+  graduation_year: number
+  field_of_study?: string
+  grade?: string
 }
 
 interface ProfileContentProps {
@@ -96,6 +139,7 @@ interface ProfileContentProps {
     availability: string
     primary_category: string
     subcategory: string
+    subcategories: string[]
     github_url: string
     linkedin_url: string
     twitter_url: string
@@ -103,7 +147,7 @@ interface ProfileContentProps {
     other_portfolio_links: string[]
     hourly_rate: number | null
     languages: string[]
-    education: string[]
+    education: Education[] | string[]
     certifications: string[]
     resume_url: string
     projects: Project[]
@@ -132,13 +176,50 @@ interface ProfileContentProps {
   handleCertificationsChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   handleSubmit: (e: React.FormEvent) => Promise<void>
   setFormData: (data: any) => void
-  removeWorkExperience: (id: string) => void
+  removeWorkExperience: (id: string) => Promise<void>
   removeCaseStudyItem: (id: string) => Promise<void>
-  removeTestimonial: (id: string) => void
+  removeTestimonial: (id: string) => Promise<void>
   onAddExperience: () => void
   onAddCaseStudy: () => void
   onAddTestimonial: () => void
   onStartEditing: () => void
+  onEditCaseStudy?: (caseStudy: CaseStudy) => void
+  onToggleSection?: (section: string) => void
+  expandedSections?: Record<string, boolean>
+}
+
+// Helper function to format education display
+const formatEducationDisplay = (edu: Education | string): string => {
+  if (typeof edu === 'string') {
+    return edu
+  }
+  const parts = [
+    edu.degree,
+    edu.institution,
+    edu.graduation_year
+  ].filter(Boolean)
+  return parts.join(' — ')
+}
+
+// Helper to get metric icon
+const getMetricIcon = (type: string) => {
+  switch (type) {
+    case 'percentage': return <Percent className="h-4 w-4" />
+    case 'currency': return <DollarSign className="h-4 w-4" />
+    default: return <TrendingUp className="h-4 w-4" />
+  }
+}
+
+// Helper to format metric value
+const formatMetricValue = (metric: CaseStudyMetric): string => {
+  switch (metric.type) {
+    case 'percentage':
+      return `${metric.value}%`
+    case 'currency':
+      return `$${metric.value.toLocaleString()}`
+    default:
+      return metric.value.toLocaleString()
+  }
 }
 
 export function ProfileContent({
@@ -161,6 +242,14 @@ export function ProfileContent({
   onAddCaseStudy,
   onAddTestimonial,
   onStartEditing,
+  onEditCaseStudy,
+  onToggleSection,
+  expandedSections = {
+    caseStudies: true,
+    testimonials: true,
+    experience: true,
+    education: true
+  }
 }: ProfileContentProps) {
   // Get data from formData or profile
   const caseStudies = formData?.case_studies || profile?.case_studies || []
@@ -293,6 +382,61 @@ export function ProfileContent({
                     <option value="Digital Marketing">Digital Marketing</option>
                   </select>
                 </div>
+
+                {/* Subcategories */}
+                {formData.primary_category && (
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
+                      Subcategories
+                    </label>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {formData.subcategories?.map((sub: string) => (
+                        <Badge
+                          key={sub}
+                          className="text-xs px-3 py-1.5 rounded-full flex items-center gap-1"
+                          style={{ backgroundColor: "#f7af00", color: "#050504" }}
+                        >
+                          {sub}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData({
+                                ...formData,
+                                subcategories: formData.subcategories.filter((s: string) => s !== sub)
+                              })
+                            }}
+                            className="ml-1 hover:opacity-70"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Add subcategory and press Enter"
+                      className="w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-offset-0"
+                      style={{
+                        borderColor: "#241C15",
+                        color: "#31302f",
+                        backgroundColor: "#f0eadd"
+                      }}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          const input = e.currentTarget
+                          const value = input.value.trim()
+                          if (value && !formData.subcategories?.includes(value)) {
+                            setFormData({
+                              ...formData,
+                              subcategories: [...(formData.subcategories || []), value]
+                            })
+                            input.value = ''
+                          }
+                        }
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -606,6 +750,61 @@ export function ProfileContent({
                     </div>
                   </div>
                 </div>
+
+                {/* Other Portfolio Links */}
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: "#31302f" }}>
+                    Other Portfolio Links
+                  </label>
+                  {formData.other_portfolio_links?.map((link: string, index: number) => (
+                    <div key={index} className="flex items-center gap-2 mb-2">
+                      <input
+                        type="url"
+                        value={link}
+                        onChange={(e) => {
+                          const newLinks = [...formData.other_portfolio_links]
+                          newLinks[index] = e.target.value
+                          setFormData({ ...formData, other_portfolio_links: newLinks })
+                        }}
+                        className="flex-1 px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-offset-0"
+                        style={{
+                          borderColor: "#241C15",
+                          color: "#31302f",
+                          backgroundColor: "#f0eadd"
+                        }}
+                        placeholder="https://..."
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newLinks = formData.other_portfolio_links.filter((_: string, i: number) => i !== index)
+                          setFormData({ ...formData, other_portfolio_links: newLinks })
+                        }}
+                        className="p-2 hover:bg-[#f0eadd] rounded-lg"
+                      >
+                        <X className="h-4 w-4" style={{ color: "#31302f" }} />
+                      </button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setFormData({
+                        ...formData,
+                        other_portfolio_links: [...(formData.other_portfolio_links || []), ""]
+                      })
+                    }}
+                    className="w-full mt-2 px-4 py-2 rounded-lg flex items-center justify-center gap-2 text-sm"
+                    style={{
+                      backgroundColor: "transparent",
+                      border: "2px dashed #241C15",
+                      color: "#31302f"
+                    }}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Another Link
+                  </Button>
+                </div>
               </div>
             </div>
 
@@ -718,7 +917,7 @@ export function ProfileContent({
               <p className="text-sm font-medium mb-3" style={{ color: "#31302f" }}>
                 {formData.title}
               </p>
-              
+
               {formData.primary_category && (
                 <Badge
                   className="mb-2 text-xs px-3 py-1 rounded-full"
@@ -728,8 +927,36 @@ export function ProfileContent({
                   }}
                 >
                   {formData.primary_category}
-                  {formData.subcategory && ` • ${formData.subcategory}`}
                 </Badge>
+              )}
+
+              {/* Subcategories */}
+              {formData.subcategories && formData.subcategories.length > 0 && (
+                <div className="flex flex-wrap gap-1 justify-center mb-4">
+                  {formData.subcategories.slice(0, 3).map((sub: string) => (
+                    <Badge
+                      key={sub}
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: "#f7af00",
+                        color: "#050504",
+                      }}
+                    >
+                      {sub}
+                    </Badge>
+                  ))}
+                  {formData.subcategories.length > 3 && (
+                    <Badge
+                      className="text-xs px-2 py-0.5 rounded-full"
+                      style={{
+                        backgroundColor: "#f0eadd",
+                        color: "#241C15",
+                      }}
+                    >
+                      +{formData.subcategories.length - 3}
+                    </Badge>
+                  )}
+                </div>
               )}
 
               <Badge
@@ -965,14 +1192,14 @@ export function ProfileContent({
           <CardContent>
             {education.length > 0 ? (
               <ul className="space-y-3">
-                {education.map((edu: string, index: number) => (
+                {education.map((edu: Education | string, index: number) => (
                   <li
                     key={index}
                     className="flex items-start space-x-3 text-sm"
                     style={{ color: "#31302f" }}
                   >
                     <CheckCircle className="h-5 w-5 mt-0.5 flex-shrink-0" style={{ color: "#f7af00" }} />
-                    <span>{edu}</span>
+                    <span>{formatEducationDisplay(edu)}</span>
                   </li>
                 ))}
               </ul>
@@ -1049,9 +1276,266 @@ export function ProfileContent({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm leading-relaxed" style={{ color: "#31302f" }}>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "#31302f" }}>
               {formData?.bio || "No bio added yet. Click Edit Profile to add your bio."}
             </p>
+          </CardContent>
+        </Card>
+
+        {/* Case Studies Section - UPDATED with new structure */}
+        <Card className="border-0 shadow-sm rounded-xl" style={{ backgroundColor: "#faf4e5" }}>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-bold flex items-center space-x-2" style={{ color: "#050504" }}>
+                <FolderOpen className="h-5 w-5" style={{ color: "#f7af00" }} />
+                <span>Case Studies</span>
+              </CardTitle>
+              <div className="flex items-center gap-2">
+                {caseStudies.length > 0 && onToggleSection && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onToggleSection('caseStudies')}
+                    className="text-xs hover:bg-[#f0eadd]"
+                    style={{ color: "#241C15" }}
+                  >
+                    {expandedSections.caseStudies ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onAddCaseStudy}
+                  className="text-xs hover:bg-[#f0eadd]"
+                  style={{ color: "#241C15" }}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {caseStudies.length > 0 ? (
+              <div className={`space-y-4 ${!expandedSections.caseStudies ? 'max-h-[500px] overflow-y-auto' : ''}`}>
+                {caseStudies.map((item: CaseStudy) => (
+                  <div
+                    key={item.id}
+                    className="group rounded-xl border overflow-hidden transition-all hover:shadow-sm relative"
+                    style={{
+                      backgroundColor: "#f0eadd",
+                      borderColor: "#241C15"
+                    }}
+                  >
+                    <div className="flex items-start gap-4 p-4">
+                      {/* Image */}
+                      {item.image_url && (
+                        <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                          <img
+                            src={item.image_url}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h4 className="font-semibold text-base" style={{ color: "#050504" }}>
+                              {item.title}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge
+                                className="text-xs px-2 py-0.5 rounded-full"
+                                style={{ backgroundColor: "#f7af00", color: "#050504" }}
+                              >
+                                {item.category}
+                              </Badge>
+                              {item.industry && (
+                                <Badge
+                                  className="text-xs px-2 py-0.5 rounded-full"
+                                  style={{ backgroundColor: "#faf4e5", color: "#241C15" }}
+                                >
+                                  {item.industry}
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {onEditCaseStudy && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => onEditCaseStudy(item)}
+                                className="p-1 h-8 w-8"
+                                style={{ color: "#241C15" }}
+                              >
+                                <Edit3 className="h-4 w-4" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeCaseStudyItem(item.id)}
+                              className="p-1 h-8 w-8"
+                              style={{ color: "#241C15" }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Short Summary */}
+                        <p className="text-sm mb-3 line-clamp-2" style={{ color: "#31302f" }}>
+                          {item.short_summary}
+                        </p>
+
+                        {/* Metrics */}
+                        {item.metrics && item.metrics.length > 0 && (
+                          <div className="flex flex-wrap gap-3 mb-3">
+                            {item.metrics.slice(0, 3).map((metric, idx) => (
+                              <div
+                                key={idx}
+                                className="flex items-center gap-1 text-sm"
+                                style={{ color: "#050504" }}
+                              >
+                                {getMetricIcon(metric.type)}
+                                <span className="font-medium">{formatMetricValue(metric)}</span>
+                                <span className="text-xs" style={{ color: "#31302f" }}>
+                                  {metric.label}
+                                </span>
+                              </div>
+                            ))}
+                            {item.metrics.length > 3 && (
+                              <span className="text-xs" style={{ color: "#31302f" }}>
+                                +{item.metrics.length - 3} more
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Technologies */}
+                        {item.technologies && item.technologies.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {item.technologies.slice(0, 3).map((tech, i) => (
+                              <Badge
+                                key={i}
+                                className="text-xs px-2 py-1 rounded-full"
+                                style={{
+                                  backgroundColor: "#faf4e5",
+                                  color: "#241C15"
+                                }}
+                              >
+                                {tech}
+                              </Badge>
+                            ))}
+                            {item.technologies.length > 3 && (
+                              <Badge
+                                className="text-xs px-2 py-1 rounded-full"
+                                style={{
+                                  backgroundColor: "#faf4e5",
+                                  color: "#241C15"
+                                }}
+                              >
+                                +{item.technologies.length - 3}
+                              </Badge>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Project Link */}
+                        {item.project_url && (
+                          <a
+                            href={item.project_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 mt-3 text-sm hover:underline"
+                            style={{ color: "#241C15" }}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            <span>View Project</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Expandable details (Problem, Solution, Results) */}
+                    <div className="border-t px-4 py-3" style={{ borderColor: "#241C15" }}>
+                      <details className="group">
+                        <summary className="text-sm font-medium cursor-pointer list-none flex items-center gap-2">
+                          <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+                          <span style={{ color: "#050504" }}>View full details</span>
+                        </summary>
+                        <div className="mt-3 space-y-3">
+                          {item.problem_statement && (
+                            <div>
+                              <h5 className="text-xs font-medium mb-1" style={{ color: "#31302f" }}>
+                                Problem:
+                              </h5>
+                              <p className="text-sm" style={{ color: "#31302f" }}>
+                                {item.problem_statement}
+                              </p>
+                            </div>
+                          )}
+                          {item.solution_provided && (
+                            <div>
+                              <h5 className="text-xs font-medium mb-1" style={{ color: "#31302f" }}>
+                                Solution:
+                              </h5>
+                              <p className="text-sm" style={{ color: "#31302f" }}>
+                                {item.solution_provided}
+                              </p>
+                            </div>
+                          )}
+                          {item.results_overview && (
+                            <div>
+                              <h5 className="text-xs font-medium mb-1" style={{ color: "#31302f" }}>
+                                Results:
+                              </h5>
+                              <p className="text-sm" style={{ color: "#31302f" }}>
+                                {item.results_overview}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </details>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 rounded-lg" style={{ backgroundColor: "#f0eadd" }}>
+                <FolderOpen className="h-12 w-12 mx-auto mb-4" style={{ color: "#f7af00" }} />
+                <p className="text-sm font-medium mb-2" style={{ color: "#31302f" }}>
+                  Add your Case Studies
+                </p>
+                <p className="text-sm mb-4" style={{ color: "#31302f", opacity: 0.8 }}>
+                  Showcase your best work with detailed case studies including metrics and results
+                </p>
+                <Button
+                  onClick={onAddCaseStudy}
+                  className="mt-4 px-4 py-2 rounded-lg transition-all"
+                  style={{
+                    backgroundColor: "#241C15",
+                    color: "#f7af00",
+                    boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
+                  }}
+                  onMouseEnter={handleButtonHover}
+                  onMouseLeave={handleButtonLeave}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Case Study
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -1064,92 +1548,148 @@ export function ProfileContent({
                   <Star className="h-5 w-5" style={{ color: "#f7af00" }} />
                   <span>Testimonials</span>
                 </CardTitle>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onAddTestimonial}
-                  className="text-xs hover:bg-[#f0eadd]"
-                  style={{ color: "#241C15" }}
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {testimonials.map((testimonial: Testimonial) => (
-                <div
-                  key={testimonial.id}
-                  className="p-4 rounded-lg relative group"
-                  style={{ backgroundColor: "#f0eadd" }}
-                >
+                <div className="flex items-center gap-2">
+                  {testimonials.length > 0 && onToggleSection && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onToggleSection('testimonials')}
+                      className="text-xs hover:bg-[#f0eadd]"
+                      style={{ color: "#241C15" }}
+                    >
+                      {expandedSections.testimonials ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </Button>
+                  )}
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => testimonial.id && removeTestimonial(testimonial.id)}
-                    className="absolute top-2 right-2 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={onAddTestimonial}
+                    className="text-xs hover:bg-[#f0eadd]"
                     style={{ color: "#241C15" }}
                   >
-                    <X className="h-4 w-4" />
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add
                   </Button>
-                  <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: "#f7af00" }}>
-                        <User className="h-5 w-5" style={{ color: "#050504" }} />
+                </div>
+              </div>
+            </CardHeader>
+            {expandedSections.testimonials && (
+              <CardContent className="space-y-4">
+                {testimonials.map((testimonial: Testimonial) => (
+                  <div
+                    key={testimonial.id}
+                    className="p-4 rounded-lg relative group"
+                    style={{ backgroundColor: "#f0eadd" }}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => testimonial.id && removeTestimonial(testimonial.id)}
+                      className="absolute top-2 right-2 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      style={{ color: "#241C15" }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <div className="flex items-start space-x-4">
+                      <div className="flex-shrink-0">
+                        {testimonial.avatar_url ? (
+                          <img
+                            src={testimonial.avatar_url}
+                            alt={testimonial.client_name}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: "#f7af00" }}>
+                            <User className="h-5 w-5" style={{ color: "#050504" }} />
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <div>
-                          <h4 className="font-semibold text-sm" style={{ color: "#050504" }}>
-                            {testimonial.client_name}
-                          </h4>
-                          {testimonial.company && (
-                            <p className="text-xs" style={{ color: "#31302f" }}>{testimonial.company}</p>
-                          )}
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <h4 className="font-semibold text-sm" style={{ color: "#050504" }}>
+                              {testimonial.client_name}
+                            </h4>
+                            <div className="flex items-center gap-2">
+                              {testimonial.role && (
+                                <p className="text-xs" style={{ color: "#31302f" }}>{testimonial.role}</p>
+                              )}
+                              {testimonial.company && (
+                                <>
+                                  <span style={{ color: "#31302f" }}>•</span>
+                                  <p className="text-xs" style={{ color: "#31302f" }}>{testimonial.company}</p>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            {[...Array(5)].map((_, i) => (
+                              <Star
+                                key={i}
+                                className={`h-3 w-3 ${i < testimonial.rating ? 'fill-current' : ''}`}
+                                style={{ color: i < testimonial.rating ? '#f7af00' : '#31302f' }}
+                              />
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-3 w-3 ${i < testimonial.rating ? 'fill-current' : ''}`}
-                              style={{ color: i < testimonial.rating ? '#f7af00' : '#31302f' }}
-                            />
-                          ))}
-                        </div>
+                        <p className="text-sm" style={{ color: "#31302f" }}>"{testimonial.content}"</p>
+                        {testimonial.date && (
+                          <p className="text-xs mt-2" style={{ color: "#31302f", opacity: 0.7 }}>
+                            {new Date(testimonial.date).toLocaleDateString()}
+                          </p>
+                        )}
+                        {testimonial.linkedin_url && (
+                          <a
+                            href={testimonial.linkedin_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 mt-2 text-xs hover:underline"
+                            style={{ color: "#241C15" }}
+                          >
+                            <Linkedin className="h-3 w-3" />
+                            <span>LinkedIn Profile</span>
+                          </a>
+                        )}
                       </div>
-                      <p className="text-sm" style={{ color: "#31302f" }}>"{testimonial.content}"</p>
-                      {testimonial.date && (
-                        <p className="text-xs mt-2" style={{ color: "#31302f", opacity: 0.7 }}>
-                          {new Date(testimonial.date).toLocaleDateString()}
-                        </p>
-                      )}
                     </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
+                ))}
+              </CardContent>
+            )}
           </Card>
         )}
 
         {/* Projects */}
-        <Card className="border-0 shadow-sm rounded-xl" style={{ backgroundColor: "#faf4e5" }}>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg font-bold flex items-center space-x-2" style={{ color: "#050504" }}>
-              <FolderOpen className="h-5 w-5" style={{ color: "#f7af00" }} />
-              <span>Projects</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {projects.length > 0 ? (
-              projects.map((project: Project, idx: number) => (
+        {projects.length > 0 && (
+          <Card className="border-0 shadow-sm rounded-xl" style={{ backgroundColor: "#faf4e5" }}>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg font-bold flex items-center space-x-2" style={{ color: "#050504" }}>
+                <FolderOpen className="h-5 w-5" style={{ color: "#f7af00" }} />
+                <span>Projects</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {projects.map((project: Project, idx: number) => (
                 <div
                   key={idx}
                   className="p-4 rounded-lg transition-all hover:shadow-sm"
                   style={{ backgroundColor: "#f0eadd" }}
                 >
-                  <div className="flex items-start justify-between">
-                    <div>
+                  <div className="flex items-start gap-4">
+                    {project.image_url && (
+                      <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                        <img
+                          src={project.image_url}
+                          alt={project.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="flex-1">
                       <h4 className="font-semibold text-base mb-2" style={{ color: "#050504" }}>
                         {project.name}
                       </h4>
@@ -1184,14 +1724,10 @@ export function ProfileContent({
                     </div>
                   </div>
                 </div>
-              ))
-            ) : (
-              <p className="text-sm" style={{ color: "#31302f" }}>
-                No projects added yet.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Work Experience Section */}
         <Card className="border-0 shadow-sm rounded-xl" style={{ backgroundColor: "#faf4e5" }}>
@@ -1201,256 +1737,142 @@ export function ProfileContent({
                 <Briefcase className="h-5 w-5" style={{ color: "#f7af00" }} />
                 <span>Work Experience</span>
               </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onAddExperience}
-                className="text-xs hover:bg-[#f0eadd]"
-                style={{ color: "#241C15" }}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {workExperience.length > 0 ? (
-              <div className="space-y-5">
-                {workExperience.map((exp: WorkExperience) => (
-                  <div
-                    key={exp.id}
-                    className="relative pl-8 pb-5 border-l-2 last:pb-0 group"
-                    style={{ borderLeftColor: "#f7af00" }}
+              <div className="flex items-center gap-2">
+                {workExperience.length > 0 && onToggleSection && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onToggleSection('experience')}
+                    className="text-xs hover:bg-[#f0eadd]"
+                    style={{ color: "#241C15" }}
                   >
-                    <div
-                      className="absolute -left-2 top-0 w-4 h-4 rounded-full"
-                      style={{ backgroundColor: "#f7af00" }}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => exp.id && removeWorkExperience(exp.id)}
-                      className="absolute -right-2 top-0 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ color: "#241C15" }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-base mb-1" style={{ color: "#050504" }}>
-                        {exp.title}
-                      </h4>
-                      <div className="flex items-center space-x-2 mb-2">
-                        <Building2 className="h-4 w-4" style={{ color: "#f7af00" }} />
-                        <span className="text-sm" style={{ color: "#31302f" }}>{exp.company}</span>
-                        {exp.location && (
-                          <>
-                            <span style={{ color: "#31302f" }}>•</span>
-                            <MapPin className="h-3 w-3" style={{ color: "#f7af00" }} />
-                            <span className="text-sm" style={{ color: "#31302f" }}>{exp.location}</span>
-                          </>
-                        )}
-                      </div>
-                      <p className="text-xs mb-3 flex items-center space-x-2" style={{ color: "#31302f" }}>
-                        <Calendar className="h-3 w-3" style={{ color: "#f7af00" }} />
-                        <span>
-                          {exp.start_date} - {exp.current ? "Present" : exp.end_date || "N/A"}
-                        </span>
-                      </p>
-                      {exp.description && (
-                        <p className="text-sm mb-3" style={{ color: "#31302f" }}>
-                          {exp.description}
-                        </p>
-                      )}
-                      {exp.achievements && exp.achievements.length > 0 && (
-                        <ul className="space-y-2">
-                          {exp.achievements.map((achievement: string, i: number) => (
-                            <li
-                              key={i}
-                              className="text-sm flex items-start space-x-2"
-                              style={{ color: "#31302f" }}
-                            >
-                              <CheckCircle
-                                className="h-4 w-4 mt-0.5 flex-shrink-0"
-                                style={{ color: "#f7af00" }}
-                              />
-                              <span>{achievement}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 rounded-lg" style={{ backgroundColor: "#f0eadd" }}>
-                <Briefcase className="h-12 w-12 mx-auto mb-4" style={{ color: "#f7af00" }} />
-                <p className="text-sm mb-4" style={{ color: "#31302f" }}>
-                  No work experience added yet.
-                </p>
+                    {expandedSections.experience ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                )}
                 <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={onAddExperience}
-                  className="px-4 py-2 rounded-lg transition-all"
-                  style={{
-                    backgroundColor: "#241C15",
-                    color: "#f7af00",
-                    boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
-                  }}
-                  onMouseEnter={handleButtonHover}
-                  onMouseLeave={handleButtonLeave}
+                  className="text-xs hover:bg-[#f0eadd]"
+                  style={{ color: "#241C15" }}
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Experience
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
                 </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Case Studies Section */}
-        <Card className="border-0 shadow-sm rounded-xl" style={{ backgroundColor: "#faf4e5" }}>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-bold flex items-center space-x-2" style={{ color: "#050504" }}>
-                <FolderOpen className="h-5 w-5" style={{ color: "#f7af00" }} />
-                <span>Case Studies</span>
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onAddCaseStudy}
-                className="text-xs hover:bg-[#f0eadd]"
-                style={{ color: "#241C15" }}
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
             </div>
           </CardHeader>
-          <CardContent>
-            {caseStudies.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {caseStudies.map((item: CaseStudy) => (
-                  <div
-                    key={item.id}
-                    className="group rounded-xl border overflow-hidden transition-all hover:shadow-sm relative"
-                    style={{
-                      backgroundColor: "#f0eadd",
-                      borderColor: "#241C15"
-                    }}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => item.id && removeCaseStudyItem(item.id)}
-                      className="absolute top-2 right-2 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                      style={{ color: "#241C15", backgroundColor: "#faf4e5" }}
+          {expandedSections.experience && (
+            <CardContent>
+              {workExperience.length > 0 ? (
+                <div className="space-y-5">
+                  {workExperience.map((exp: WorkExperience) => (
+                    <div
+                      key={exp.id}
+                      className="relative pl-8 pb-5 border-l-2 last:pb-0 group"
+                      style={{ borderLeftColor: "#f7af00" }}
                     >
-                      <X className="h-4 w-4" />
-                    </Button>
-                    {item.image_url && (
-                      <div className="relative h-48 overflow-hidden">
-                        <img
-                          src={item.image_url || "/placeholder.svg"}
-                          alt={item.title}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      </div>
-                    )}
-                    <div className="p-4">
-                      <h4
-                        className="font-semibold text-base line-clamp-1 mb-2"
-                        style={{ color: "#050504" }}
+                      <div
+                        className="absolute -left-2 top-0 w-4 h-4 rounded-full"
+                        style={{ backgroundColor: "#f7af00" }}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => exp.id && removeWorkExperience(exp.id)}
+                        className="absolute -right-2 top-0 p-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{ color: "#241C15" }}
                       >
-                        {item.title}
-                      </h4>
-                      <p
-                        className="text-sm mb-3 line-clamp-2"
-                        style={{ color: "#31302f" }}
-                      >
-                        {item.description}
-                      </p>
-                      <p
-                        className="text-sm font-medium mb-3"
-                        style={{ color: "#f7af00" }}
-                      >
-                        Outcome: {item.outcome}
-                      </p>
-                      {item.technologies && item.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {item.technologies.slice(0, 3).map((tech, i) => (
-                            <Badge
-                              key={i}
-                              className="text-xs px-2 py-1 rounded-full"
-                              style={{
-                                backgroundColor: "#f7af00",
-                                color: "#050504"
-                              }}
-                            >
-                              {tech}
-                            </Badge>
-                          ))}
-                          {item.technologies.length > 3 && (
-                            <Badge
-                              className="text-xs px-2 py-1 rounded-full"
-                              style={{
-                                backgroundColor: "#faf4e5",
-                                color: "#241C15"
-                              }}
-                            >
-                              +{item.technologies.length - 3}
-                            </Badge>
+                        <X className="h-4 w-4" />
+                      </Button>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-base mb-1" style={{ color: "#050504" }}>
+                          {exp.title}
+                        </h4>
+                        <div className="flex items-center flex-wrap gap-2 mb-2">
+                          <Building2 className="h-4 w-4" style={{ color: "#f7af00" }} />
+                          <span className="text-sm" style={{ color: "#31302f" }}>{exp.company}</span>
+                          {exp.location && (
+                            <>
+                              <span style={{ color: "#31302f" }}>•</span>
+                              <MapPin className="h-3 w-3" style={{ color: "#f7af00" }} />
+                              <span className="text-sm" style={{ color: "#31302f" }}>{exp.location}</span>
+                            </>
                           )}
                         </div>
-                      )}
-                      {item.project_url && (
-                        <a
-                          href={item.project_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center space-x-1 mt-3 text-sm hover:underline"
-                          style={{ color: "#241C15" }}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          <span>View Project</span>
-                        </a>
-                      )}
+                        <p className="text-xs mb-3 flex items-center space-x-2" style={{ color: "#31302f" }}>
+                          <Calendar className="h-3 w-3" style={{ color: "#f7af00" }} />
+                          <span>
+                            {exp.start_date} - {exp.current ? "Present" : exp.end_date || "N/A"}
+                          </span>
+                        </p>
+                        {exp.description && (
+                          <p className="text-sm mb-3" style={{ color: "#31302f" }}>
+                            {exp.description}
+                          </p>
+                        )}
+                        {exp.achievements && exp.achievements.length > 0 && (
+                          <ul className="space-y-2">
+                            {exp.achievements.map((achievement: string, i: number) => (
+                              <li
+                                key={i}
+                                className="text-sm flex items-start space-x-2"
+                                style={{ color: "#31302f" }}
+                              >
+                                <CheckCircle
+                                  className="h-4 w-4 mt-0.5 flex-shrink-0"
+                                  style={{ color: "#f7af00" }}
+                                />
+                                <span>{achievement}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {exp.technologies && exp.technologies.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            {exp.technologies.map((tech, i) => (
+                              <Badge
+                                key={i}
+                                className="text-xs px-2 py-1 rounded-full"
+                                style={{ backgroundColor: "#faf4e5", color: "#241C15" }}
+                              >
+                                {tech}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 rounded-lg" style={{ backgroundColor: "#f0eadd" }}>
-                <FolderOpen
-                  className="h-12 w-12 mx-auto mb-4"
-                  style={{ color: "#f7af00" }}
-                />
-                <p
-                  className="text-sm font-medium mb-2"
-                  style={{ color: "#31302f" }}
-                >
-                  Add your Case Studies
-                </p>
-                <p className="text-sm" style={{ color: "#31302f", opacity: 0.8 }}>
-                  Showcase your best work with detailed case studies
-                </p>
-                <Button
-                  onClick={onAddCaseStudy}
-                  className="mt-4 px-4 py-2 rounded-lg transition-all"
-                  style={{
-                    backgroundColor: "#241C15",
-                    color: "#f7af00",
-                    boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
-                  }}
-                  onMouseEnter={handleButtonHover}
-                  onMouseLeave={handleButtonLeave}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Case Study
-                </Button>
-              </div>
-            )}
-          </CardContent>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 rounded-lg" style={{ backgroundColor: "#f0eadd" }}>
+                  <Briefcase className="h-12 w-12 mx-auto mb-4" style={{ color: "#f7af00" }} />
+                  <p className="text-sm mb-4" style={{ color: "#31302f" }}>
+                    No work experience added yet.
+                  </p>
+                  <Button
+                    onClick={onAddExperience}
+                    className="px-4 py-2 rounded-lg transition-all"
+                    style={{
+                      backgroundColor: "#241C15",
+                      color: "#f7af00",
+                      boxShadow: "0 2px 6px rgba(36, 28, 21, 0.05)"
+                    }}
+                    onMouseEnter={handleButtonHover}
+                    onMouseLeave={handleButtonLeave}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Experience
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          )}
         </Card>
       </div>
     </div>

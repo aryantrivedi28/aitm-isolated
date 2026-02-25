@@ -25,16 +25,33 @@ import {
   Github,
   Linkedin,
   Twitter,
-  Globe
+  Globe,
+  Award,
+  GraduationCap,
+  BookOpen,
+  Target,
+  TrendingUp,
+  DollarSign,
+  Calendar
 } from "lucide-react"
 
-// Define the form data structure matching your table
+// Define types matching our database structure
+interface CaseStudyMetric {
+  label: string
+  value: number
+  type: 'number' | 'percentage' | 'currency'
+}
+
 interface CaseStudy {
   title: string
-  description: string
-  outcome: string
-  technologies?: string[]
-  category?: string
+  short_summary: string
+  category: string
+  industry: string
+  problem_statement: string
+  solution_provided: string
+  results_overview: string
+  metrics: CaseStudyMetric[]
+  technologies: string[]
   image_url?: string
   project_url?: string
 }
@@ -46,6 +63,7 @@ interface Testimonial {
   rating: number
   date?: string
   linkedin_url?: string
+  role?: string
 }
 
 interface WorkExperience {
@@ -55,6 +73,7 @@ interface WorkExperience {
   end_date?: string
   current: boolean
   description: string
+  achievements?: string[]
 }
 
 interface Education {
@@ -62,33 +81,51 @@ interface Education {
   institution: string
   graduation_year: number
   field_of_study?: string
+  grade?: string
 }
 
 interface FormData {
+  // Basic Info
   name: string
   email: string
   phone?: string
   title: string
   bio: string
+
+  // Categories & Expertise
   primary_category: string
-  subcategory: string
+  subcategories: string[]
   experience_years: number
+
+  // Skills & Tools
   skills: string[]
   tools_tech_stack: string[]
+
+  // Links
   portfolio_links: {
     website?: string
     github?: string
     linkedin?: string
     twitter?: string
-    other?: string[]
+    other: string[]
   }
+
+  // Portfolio Content
   case_studies: CaseStudy[]
   testimonials: Testimonial[]
+
+  // Experience
   work_experience: WorkExperience[]
   education: Education[]
+
+  // Additional
   languages: string[]
   certifications: string[]
   availability: string
+  hourly_rate?: number
+  preferred_project_size?: string
+
+  // URLs (for backward compatibility)
   photo_url?: string
   github_url?: string
   linkedin_url?: string
@@ -96,20 +133,76 @@ interface FormData {
   portfolio_url?: string
 }
 
+// Categories with their subcategories
+const categoryOptions = [
+  {
+    name: "Web Development",
+    subcategories: ["Frontend", "Backend", "Full Stack", "React/Next.js", "Node.js", "Python/Django", "Ruby on Rails", "PHP/Laravel"],
+    industries: ["E-commerce", "SaaS", "Education", "Healthcare", "Finance", "Real Estate", "Travel", "Media"]
+  },
+  {
+    name: "Shopify Development",
+    subcategories: ["Theme Development", "App Development", "Store Setup", "Migration", "Customization", "Performance Optimization"],
+    industries: ["E-commerce", "Retail", "Fashion", "Electronics", "Home & Garden", "Beauty"]
+  },
+  {
+    name: "SEO Optimization",
+    subcategories: ["Technical SEO", "On-page SEO", "Off-page SEO", "Local SEO", "E-commerce SEO", "International SEO"],
+    industries: ["E-commerce", "SaaS", "Local Business", "Professional Services", "Publishing", "Travel"]
+  },
+  {
+    name: "UI/UX Design",
+    subcategories: ["Web Design", "Mobile Design", "User Research", "Prototyping", "Design Systems", "Wireframing"],
+    industries: ["SaaS", "E-commerce", "Mobile Apps", "Enterprise", "Startups"]
+  },
+  {
+    name: "Digital Marketing",
+    subcategories: ["Social Media", "Email Marketing", "PPC Advertising", "Content Strategy", "Analytics", "Growth Hacking"],
+    industries: ["E-commerce", "SaaS", "B2B", "B2C", "Professional Services"]
+  }
+]
+
+// Availability options
+const availabilityOptions = [
+  { value: "full-time", label: "Full Time (40+ hrs/week)" },
+  { value: "part-time", label: "Part Time (20-30 hrs/week)" },
+  { value: "contract", label: "Contract/Freelance" },
+  { value: "available", label: "Available for Work" }
+]
+
+// Project size options
+const projectSizeOptions = [
+  "Small (Under $5,000)",
+  "Medium ($5,000 - $20,000)",
+  "Large ($20,000 - $50,000)",
+  "Enterprise ($50,000+)"
+]
+
 export default function FreelancerOnboarding() {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+
+  // Input states for dynamic additions
   const [toolInput, setToolInput] = useState("")
   const [skillInput, setSkillInput] = useState("")
   const [languageInput, setLanguageInput] = useState("")
   const [certificationInput, setCertificationInput] = useState("")
+  const [subcategoryInput, setSubcategoryInput] = useState("")
+
+  // UI states
   const [showToolInput, setShowToolInput] = useState(false)
   const [showSkillInput, setShowSkillInput] = useState(false)
   const [showLanguageInput, setShowLanguageInput] = useState(false)
   const [showCertificationInput, setShowCertificationInput] = useState(false)
+  const [showSubcategoryInput, setShowSubcategoryInput] = useState(false)
+
+  // Metric input for case studies
+  const [newMetric, setNewMetric] = useState<CaseStudyMetric>({ label: "", value: 0, type: "number" })
+  const [activeCaseStudyIndex, setActiveCaseStudyIndex] = useState<number | null>(null)
 
   // Initialize form data
   const [formData, setFormData] = useState<FormData>({
@@ -119,7 +212,7 @@ export default function FreelancerOnboarding() {
     title: "",
     bio: "",
     primary_category: "",
-    subcategory: "",
+    subcategories: [],
     experience_years: 0,
     skills: [],
     tools_tech_stack: [],
@@ -130,29 +223,36 @@ export default function FreelancerOnboarding() {
       twitter: "",
       other: []
     },
-    case_studies: [
-      { title: "", description: "", outcome: "" }
-    ],
-    testimonials: [
-      { client_name: "", company: "", content: "", rating: 5 }
-    ],
+    case_studies: [],
+    testimonials: [],
     work_experience: [],
     education: [],
     languages: [],
     certifications: [],
-    availability: "full-time",
+    availability: "available",
+    hourly_rate: undefined,
+    preferred_project_size: "",
     github_url: "",
     linkedin_url: "",
     twitter_url: "",
     portfolio_url: ""
   })
 
-  // Fetch user data on mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/api/freelancer/auth/me")
-        const data = await response.json()
+        const response = await fetch("/api/freelancer/me")
+
+        const text = await response.text()
+
+        let data: any = {}
+
+        try {
+          data = JSON.parse(text)
+        } catch {
+          console.error("Auth API returned HTML:", text)
+          return
+        }
 
         if (data.user) {
           setFormData(prev => ({
@@ -163,6 +263,7 @@ export default function FreelancerOnboarding() {
             photo_url: data.user.photo_url || ""
           }))
         }
+
       } catch (err) {
         console.error("Failed to fetch user data:", err)
       }
@@ -171,54 +272,37 @@ export default function FreelancerOnboarding() {
     fetchUserData()
   }, [])
 
-  // Categories options
-  const primaryCategories = [
-    "Web Development",
-    "Shopify Development",
-    "SEO Optimization",
-    "UI/UX Design",
-    "Content Writing",
-    "Digital Marketing",
-    "Mobile App Development",
-    "E-commerce Development",
-    "WordPress Development",
-    "Graphic Design"
-  ]
-
-  const subcategories: Record<string, string[]> = {
-    "Web Development": ["Frontend", "Backend", "Full Stack", "React/Next.js", "Node.js", "Python/Django"],
-    "Shopify Development": ["Theme Development", "App Development", "Store Setup", "Migration", "Customization"],
-    "SEO Optimization": ["Technical SEO", "On-page SEO", "Off-page SEO", "Local SEO", "E-commerce SEO"],
-    "UI/UX Design": ["Web Design", "Mobile Design", "User Research", "Prototyping", "Design Systems"],
-    "Content Writing": ["Blog Posts", "Technical Writing", "Copywriting", "SEO Content", "Ghostwriting"],
-    "Digital Marketing": ["Social Media", "Email Marketing", "PPC Advertising", "Analytics", "Strategy"],
-    "Mobile App Development": ["iOS", "Android", "React Native", "Flutter", "Cross-platform"],
-    "E-commerce Development": ["WooCommerce", "Magento", "BigCommerce", "Custom Solutions"],
-    "WordPress Development": ["Theme Development", "Plugin Development", "Custom CMS", "WooCommerce"],
-    "Graphic Design": ["Brand Identity", "Logo Design", "Print Design", "Social Media Graphics"]
-  }
-
-  const availabilityOptions = [
-    "full-time",
-    "part-time",
-    "contract",
-    "freelance",
-    "available"
-  ]
 
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    const { name, value, type } = e.target
+
+    // Handle numeric inputs
+    if (type === 'number') {
+      setFormData(prev => ({ ...prev, [name]: parseFloat(value) || 0 }))
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }))
+    }
+
+    // Clear validation error for this field
+    if (validationErrors[name]) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
   }
 
   // Handle skills
   const addSkill = () => {
-    if (skillInput.trim() && !formData.skills.includes(skillInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        skills: [...prev.skills, skillInput.trim()]
-      }))
+    if (skillInput.trim()) {
+      if (!formData.skills.includes(skillInput.trim())) {
+        setFormData(prev => ({
+          ...prev,
+          skills: [...prev.skills, skillInput.trim()]
+        }))
+      }
       setSkillInput("")
       setShowSkillInput(false)
     }
@@ -233,11 +317,13 @@ export default function FreelancerOnboarding() {
 
   // Handle tools/tech stack
   const addTool = () => {
-    if (toolInput.trim() && !formData.tools_tech_stack.includes(toolInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        tools_tech_stack: [...prev.tools_tech_stack, toolInput.trim()]
-      }))
+    if (toolInput.trim()) {
+      if (!formData.tools_tech_stack.includes(toolInput.trim())) {
+        setFormData(prev => ({
+          ...prev,
+          tools_tech_stack: [...prev.tools_tech_stack, toolInput.trim()]
+        }))
+      }
       setToolInput("")
       setShowToolInput(false)
     }
@@ -250,13 +336,36 @@ export default function FreelancerOnboarding() {
     }))
   }
 
+  // Handle subcategories
+  const addSubcategory = () => {
+    if (subcategoryInput.trim()) {
+      if (!formData.subcategories.includes(subcategoryInput.trim())) {
+        setFormData(prev => ({
+          ...prev,
+          subcategories: [...prev.subcategories, subcategoryInput.trim()]
+        }))
+      }
+      setSubcategoryInput("")
+      setShowSubcategoryInput(false)
+    }
+  }
+
+  const removeSubcategory = (subcategory: string) => {
+    setFormData(prev => ({
+      ...prev,
+      subcategories: prev.subcategories.filter(s => s !== subcategory)
+    }))
+  }
+
   // Handle languages
   const addLanguage = () => {
-    if (languageInput.trim() && !formData.languages.includes(languageInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        languages: [...prev.languages, languageInput.trim()]
-      }))
+    if (languageInput.trim()) {
+      if (!formData.languages.includes(languageInput.trim())) {
+        setFormData(prev => ({
+          ...prev,
+          languages: [...prev.languages, languageInput.trim()]
+        }))
+      }
       setLanguageInput("")
       setShowLanguageInput(false)
     }
@@ -271,11 +380,13 @@ export default function FreelancerOnboarding() {
 
   // Handle certifications
   const addCertification = () => {
-    if (certificationInput.trim() && !formData.certifications.includes(certificationInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        certifications: [...prev.certifications, certificationInput.trim()]
-      }))
+    if (certificationInput.trim()) {
+      if (!formData.certifications.includes(certificationInput.trim())) {
+        setFormData(prev => ({
+          ...prev,
+          certifications: [...prev.certifications, certificationInput.trim()]
+        }))
+      }
       setCertificationInput("")
       setShowCertificationInput(false)
     }
@@ -300,15 +411,13 @@ export default function FreelancerOnboarding() {
   }
 
   const addOtherPortfolioLink = () => {
-    if (formData.portfolio_links.other) {
-      setFormData(prev => ({
-        ...prev,
-        portfolio_links: {
-          ...prev.portfolio_links,
-          other: [...(prev.portfolio_links.other || []), ""]
-        }
-      }))
-    }
+    setFormData(prev => ({
+      ...prev,
+      portfolio_links: {
+        ...prev.portfolio_links,
+        other: [...(prev.portfolio_links.other || []), ""]
+      }
+    }))
   }
 
   const updateOtherPortfolioLink = (index: number, value: string) => {
@@ -334,23 +443,35 @@ export default function FreelancerOnboarding() {
     }))
   }
 
-  // Handle case studies
-  const updateCaseStudy = (index: number, field: keyof CaseStudy, value: string) => {
+  // Handle case studies (updated for new structure)
+  const addCaseStudy = () => {
+    const newCaseStudy: CaseStudy = {
+      title: "",
+      short_summary: "",
+      category: formData.primary_category,
+      industry: "",
+      problem_statement: "",
+      solution_provided: "",
+      results_overview: "",
+      metrics: [],
+      technologies: [],
+      image_url: "",
+      project_url: ""
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      case_studies: [...prev.case_studies, newCaseStudy]
+    }))
+  }
+
+  const updateCaseStudy = (index: number, field: keyof CaseStudy, value: any) => {
     setFormData(prev => ({
       ...prev,
       case_studies: prev.case_studies.map((cs, i) =>
         i === index ? { ...cs, [field]: value } : cs
       )
     }))
-  }
-
-  const addCaseStudy = () => {
-    if (formData.case_studies.length < 3) {
-      setFormData(prev => ({
-        ...prev,
-        case_studies: [...prev.case_studies, { title: "", description: "", outcome: "" }]
-      }))
-    }
   }
 
   const removeCaseStudy = (index: number) => {
@@ -360,7 +481,75 @@ export default function FreelancerOnboarding() {
     }))
   }
 
+  // Handle metrics for case studies
+  const addMetric = (caseStudyIndex: number) => {
+    if (newMetric.label && newMetric.value) {
+      setFormData(prev => ({
+        ...prev,
+        case_studies: prev.case_studies.map((cs, i) =>
+          i === caseStudyIndex
+            ? { ...cs, metrics: [...cs.metrics, { ...newMetric }] }
+            : cs
+        )
+      }))
+      setNewMetric({ label: "", value: 0, type: "number" })
+      setActiveCaseStudyIndex(null)
+    }
+  }
+
+  const removeMetric = (caseStudyIndex: number, metricIndex: number) => {
+    setFormData(prev => ({
+      ...prev,
+      case_studies: prev.case_studies.map((cs, i) =>
+        i === caseStudyIndex
+          ? { ...cs, metrics: cs.metrics.filter((_, mi) => mi !== metricIndex) }
+          : cs
+      )
+    }))
+  }
+
+  // Handle technologies for case studies
+  const addCaseStudyTechnology = (caseStudyIndex: number, tech: string) => {
+    if (tech.trim()) {
+      setFormData(prev => ({
+        ...prev,
+        case_studies: prev.case_studies.map((cs, i) =>
+          i === caseStudyIndex
+            ? { ...cs, technologies: [...cs.technologies, tech.trim()] }
+            : cs
+        )
+      }))
+    }
+  }
+
+  const removeCaseStudyTechnology = (caseStudyIndex: number, tech: string) => {
+    setFormData(prev => ({
+      ...prev,
+      case_studies: prev.case_studies.map((cs, i) =>
+        i === caseStudyIndex
+          ? { ...cs, technologies: cs.technologies.filter(t => t !== tech) }
+          : cs
+      )
+    }))
+  }
+
   // Handle testimonials
+  const addTestimonial = () => {
+    const newTestimonial: Testimonial = {
+      client_name: "",
+      company: "",
+      content: "",
+      rating: 5,
+      date: new Date().toISOString().split('T')[0],
+      role: ""
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      testimonials: [...prev.testimonials, newTestimonial]
+    }))
+  }
+
   const updateTestimonial = (index: number, field: keyof Testimonial, value: string | number) => {
     setFormData(prev => ({
       ...prev,
@@ -368,15 +557,6 @@ export default function FreelancerOnboarding() {
         i === index ? { ...t, [field]: value } : t
       )
     }))
-  }
-
-  const addTestimonial = () => {
-    if (formData.testimonials.length < 3) {
-      setFormData(prev => ({
-        ...prev,
-        testimonials: [...prev.testimonials, { client_name: "", company: "", content: "", rating: 5 }]
-      }))
-    }
   }
 
   const removeTestimonial = (index: number) => {
@@ -388,19 +568,19 @@ export default function FreelancerOnboarding() {
 
   // Handle work experience
   const addWorkExperience = () => {
+    const newExp: WorkExperience = {
+      title: "",
+      company: "",
+      start_date: "",
+      end_date: "",
+      current: false,
+      description: "",
+      achievements: []
+    }
+
     setFormData(prev => ({
       ...prev,
-      work_experience: [
-        ...prev.work_experience,
-        {
-          title: "",
-          company: "",
-          start_date: "",
-          end_date: "",
-          current: false,
-          description: ""
-        }
-      ]
+      work_experience: [...prev.work_experience, newExp]
     }))
   }
 
@@ -422,17 +602,17 @@ export default function FreelancerOnboarding() {
 
   // Handle education
   const addEducation = () => {
+    const newEdu: Education = {
+      degree: "",
+      institution: "",
+      graduation_year: new Date().getFullYear(),
+      field_of_study: "",
+      grade: ""
+    }
+
     setFormData(prev => ({
       ...prev,
-      education: [
-        ...prev.education,
-        {
-          degree: "",
-          institution: "",
-          graduation_year: new Date().getFullYear(),
-          field_of_study: ""
-        }
-      ]
+      education: [...prev.education, newEdu]
     }))
   }
 
@@ -454,51 +634,96 @@ export default function FreelancerOnboarding() {
 
   // Validate current step
   const validateStep = (step: number): boolean => {
+    const errors: Record<string, string> = {}
+
     switch (step) {
       case 1: // Basic Info
-        return !!(
-          formData.name &&
-          formData.title &&
-          formData.primary_category &&
-          formData.experience_years > 0
-        )
+        if (!formData.name) errors.name = "Name is required"
+        if (!formData.title) errors.title = "Professional title is required"
+        if (!formData.primary_category) errors.primary_category = "Primary category is required"
+        if (formData.experience_years <= 0) errors.experience_years = "Experience years must be greater than 0"
+        break
+
       case 2: // Professional Details
-        return !!(formData.skills.length > 0 && formData.bio)
+        if (formData.skills.length === 0) errors.skills = "At least one skill is required"
+        if (!formData.bio) errors.bio = "Bio is required"
+        if (formData.bio && formData.bio.length < 50) errors.bio = "Bio should be at least 50 characters"
+        break
+
       case 3: // Portfolio & Social
-        return true // Optional
-      case 4: // Case Studies & Testimonials
-        return formData.case_studies.every(cs => cs.title && cs.description && cs.outcome)
-      case 5: // Experience & Education
-        return true // Optional but recommended
-      default:
-        return true
+        // Optional - no validation needed
+        break
+
+      case 4: // Case Studies
+        if (formData.case_studies.length === 0) {
+          errors.case_studies = "At least one case study is recommended"
+        } else {
+          formData.case_studies.forEach((cs, index) => {
+            if (!cs.title) errors[`case_study_${index}_title`] = `Case study ${index + 1} title is required`
+            if (!cs.short_summary) errors[`case_study_${index}_summary`] = `Case study ${index + 1} summary is required`
+            if (cs.metrics.length === 0) errors[`case_study_${index}_metrics`] = `Case study ${index + 1} should have at least one metric`
+          })
+        }
+        break
+
+      case 5: // Experience
+        // Optional - no validation needed
+        break
     }
+
+    setValidationErrors(errors)
+    return Object.keys(errors).length === 0
   }
 
   // Handle form submission
   const handleSubmit = async () => {
+    if (!validateStep(5)) {
+      setError("Please fill in all required fields")
+      return
+    }
+
     setLoading(true)
     setError("")
 
     try {
       // Prepare data for submission
       const submitData = {
-        ...formData,
-        // Ensure arrays are properly formatted
+        // Basic Info
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        title: formData.title,
+        bio: formData.bio,
+
+        // Categories
+        primary_category: formData.primary_category,
+        subcategories: formData.subcategories,
+        experience_years: formData.experience_years,
+
+        // Skills & Tools
         skills: formData.skills,
         tools_tech_stack: formData.tools_tech_stack,
+
+        // Links
+        github_url: formData.portfolio_links.github || formData.github_url,
+        linkedin_url: formData.portfolio_links.linkedin || formData.linkedin_url,
+        twitter_url: formData.portfolio_links.twitter || formData.twitter_url,
+        portfolio_url: formData.portfolio_links.website || formData.portfolio_url,
+        other_links: formData.portfolio_links.other,
+
+        // Portfolio
+        case_studies: JSON.stringify(formData.case_studies),
+        testimonials: JSON.stringify(formData.testimonials),
+
+        // Experience
+        work_experience: JSON.stringify(formData.work_experience),
+        education: JSON.stringify(formData.education),
+
+        // Additional
         languages: formData.languages,
         certifications: formData.certifications,
-        testimonials: formData.testimonials,
-        work_experience: formData.work_experience,
-        education: formData.education,
-        // Portfolio links as separate fields
-        github_url: formData.portfolio_links.github,
-        linkedin_url: formData.portfolio_links.linkedin,
-        twitter_url: formData.portfolio_links.twitter,
-        portfolio_url: formData.portfolio_links.website,
-        // Additional portfolio links as JSON
-        portfolio_links: JSON.stringify(formData.portfolio_links.other || [])
+        availability: formData.availability,
+        preferred_project_size: formData.preferred_project_size
       }
 
       const response = await fetch("/api/freelancer/onboarding/submit", {
@@ -508,16 +733,25 @@ export default function FreelancerOnboarding() {
         credentials: "include"
       })
 
-      const data = await response.json()
+      // Read as text first
+      const text = await response.text()
 
-      if (!response.ok) {
-        setError(data.error || "Failed to submit profile")
-        return
+      let data
+
+      try {
+        data = JSON.parse(text)
+      } catch {
+        console.error("API returned HTML:", text)
+        throw new Error("Server error. API returned invalid response.")
       }
 
-      // Save case studies separately
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to submit profile")
+      }
+
+      // Save case studies separately using our new API
       for (const study of formData.case_studies) {
-        if (!study.title || !study.description) continue
+        if (!study.title || !study.short_summary) continue
 
         await fetch("/api/freelancer/case-studies", {
           method: "POST",
@@ -525,18 +759,20 @@ export default function FreelancerOnboarding() {
           credentials: "include",
           body: JSON.stringify({
             title: study.title,
-            description: study.description,
-            category: formData.primary_category
-              .toLowerCase()
-              .replace(/\s+/g, "-"), // convert to slug
-            outcome: study.outcome || "",
-            technologies: study.technologies || [],
-            project_url: study.project_url || ""
+            short_summary: study.short_summary,
+            category: study.category || formData.primary_category,
+            industry: study.industry || "",
+            problem_statement: study.problem_statement,
+            solution_provided: study.solution_provided,
+            results_overview: study.results_overview,
+            metrics: study.metrics,
+            technologies: study.technologies,
+            image_url: study.image_url,
+            project_url: study.project_url,
+            status: "pending" // Requires admin approval
           })
         })
       }
-
-
 
       setSuccess(true)
 
@@ -545,21 +781,31 @@ export default function FreelancerOnboarding() {
         router.push("/get-hired/freelancer/dashboard")
       }, 2000)
 
-    } catch (err) {
-      setError("An error occurred. Please try again.")
+    } catch (err: any) {
+      setError(err.message || "An error occurred. Please try again.")
       console.error(err)
     } finally {
       setLoading(false)
     }
   }
 
+  // Get current category's subcategories
+  const currentSubcategories = categoryOptions.find(
+    cat => cat.name === formData.primary_category
+  )?.subcategories || []
+
+  // Get current category's industries
+  const currentIndustries = categoryOptions.find(
+    cat => cat.name === formData.primary_category
+  )?.industries || []
+
   // Steps configuration
   const steps = [
-    { number: 1, title: "Basic Info", icon: User },
-    { number: 2, title: "Professional Details", icon: Briefcase },
-    { number: 3, title: "Portfolio & Social", icon: Globe },
-    { number: 4, title: "Case Studies", icon: FileText },
-    { number: 5, title: "Experience", icon: Layers },
+    { number: 1, title: "Basic Info", icon: User, description: "Tell us who you are" },
+    { number: 2, title: "Professional Details", icon: Briefcase, description: "Your skills and expertise" },
+    { number: 3, title: "Portfolio & Social", icon: Globe, description: "Connect your online presence" },
+    { number: 4, title: "Case Studies", icon: FileText, description: "Showcase your best work" },
+    { number: 5, title: "Experience", icon: Layers, description: "Your professional journey" },
   ]
 
   // Button hover handler
@@ -645,9 +891,14 @@ export default function FreelancerOnboarding() {
                       />
                     )}
                   </div>
-                  <p className="text-sm mt-2 font-medium" style={{ color: '#31302f' }}>
-                    {step.title}
-                  </p>
+                  <div className="mt-2">
+                    <p className="text-sm font-medium" style={{ color: '#31302f' }}>
+                      {step.title}
+                    </p>
+                    <p className="text-xs" style={{ color: '#31302f', opacity: 0.7 }}>
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
               )
             })}
@@ -661,11 +912,7 @@ export default function FreelancerOnboarding() {
               Step {currentStep}: {steps[currentStep - 1].title}
             </CardTitle>
             <CardDescription className="text-base" style={{ color: '#31302f' }}>
-              {currentStep === 1 && "Let's start with your basic professional information"}
-              {currentStep === 2 && "Add your skills, bio, and professional details"}
-              {currentStep === 3 && "Connect your portfolio and social profiles"}
-              {currentStep === 4 && "Share case studies that showcase your expertise"}
-              {currentStep === 5 && "Add your work experience and education"}
+              {steps[currentStep - 1].description}
             </CardDescription>
           </CardHeader>
 
@@ -693,10 +940,14 @@ export default function FreelancerOnboarding() {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                      style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-1 ${validationErrors.name ? 'border-red-500' : ''
+                        }`}
+                      style={{ borderColor: validationErrors.name ? '#EF4444' : '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                       placeholder="John Doe"
                     />
+                    {validationErrors.name && (
+                      <p className="mt-1 text-xs text-red-500">{validationErrors.name}</p>
+                    )}
                   </div>
 
                   <div>
@@ -708,10 +959,14 @@ export default function FreelancerOnboarding() {
                       name="title"
                       value={formData.title}
                       onChange={handleInputChange}
-                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                      style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-1 ${validationErrors.title ? 'border-red-500' : ''
+                        }`}
+                      style={{ borderColor: validationErrors.title ? '#EF4444' : '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                       placeholder="e.g., Senior Web Developer"
                     />
+                    {validationErrors.title && (
+                      <p className="mt-1 text-xs text-red-500">{validationErrors.title}</p>
+                    )}
                   </div>
 
                   <div>
@@ -722,33 +977,104 @@ export default function FreelancerOnboarding() {
                       name="primary_category"
                       value={formData.primary_category}
                       onChange={handleInputChange}
-                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                      style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-1 ${validationErrors.primary_category ? 'border-red-500' : ''
+                        }`}
+                      style={{ borderColor: validationErrors.primary_category ? '#EF4444' : '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                     >
                       <option value="">Select a category</option>
-                      {primaryCategories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
+                      {categoryOptions.map(cat => (
+                        <option key={cat.name} value={cat.name}>{cat.name}</option>
                       ))}
                     </select>
+                    {validationErrors.primary_category && (
+                      <p className="mt-1 text-xs text-red-500">{validationErrors.primary_category}</p>
+                    )}
                   </div>
 
                   {formData.primary_category && (
                     <div>
-                      <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
-                        Subcategory
+                      <label className="block text-sm font-medium mb-2" style={{ color: '#31302f' }}>
+                        Subcategories (Optional - select your specialties)
                       </label>
-                      <select
-                        name="subcategory"
-                        value={formData.subcategory}
-                        onChange={handleInputChange}
-                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                        style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
-                      >
-                        <option value="">Select a subcategory</option>
-                        {subcategories[formData.primary_category]?.map(sub => (
-                          <option key={sub} value={sub}>{sub}</option>
+
+                      {/* Display selected subcategories */}
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {formData.subcategories.map(sub => (
+                          <span
+                            key={sub}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm"
+                            style={{ backgroundColor: '#f7af00', color: '#050504' }}
+                          >
+                            {sub}
+                            <button
+                              onClick={() => removeSubcategory(sub)}
+                              className="ml-2 hover:opacity-70"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
                         ))}
-                      </select>
+                      </div>
+
+                      {/* Show available subcategories */}
+                      <div className="grid grid-cols-2 gap-2 mb-3">
+                        {currentSubcategories
+                          .filter(sub => !formData.subcategories.includes(sub))
+                          .slice(0, 6)
+                          .map(sub => (
+                            <button
+                              key={sub}
+                              onClick={() => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  subcategories: [...prev.subcategories, sub]
+                                }))
+                              }}
+                              className="text-left px-3 py-2 rounded-lg text-sm hover:bg-[#f7af00]/20"
+                              style={{ border: '1px solid #241C15' }}
+                            >
+                              {sub}
+                            </button>
+                          ))}
+                      </div>
+
+                      {/* Custom subcategory input */}
+                      {showSubcategoryInput ? (
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="text"
+                            value={subcategoryInput}
+                            onChange={(e) => setSubcategoryInput(e.target.value)}
+                            placeholder="Enter custom subcategory"
+                            className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-1"
+                            style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                            onKeyPress={(e) => e.key === 'Enter' && addSubcategory()}
+                          />
+                          <Button
+                            onClick={addSubcategory}
+                            className="p-3 rounded-lg"
+                            style={{ backgroundColor: '#f7af00', color: '#050504' }}
+                          >
+                            Add
+                          </Button>
+                          <Button
+                            onClick={() => setShowSubcategoryInput(false)}
+                            className="p-3 rounded-lg"
+                            style={{ backgroundColor: 'transparent', border: '1px solid #241C15', color: '#31302f' }}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          onClick={() => setShowSubcategoryInput(true)}
+                          className="w-full p-3 rounded-lg flex items-center justify-center space-x-2"
+                          style={{ backgroundColor: 'transparent', border: '2px dashed #241C15', color: '#31302f' }}
+                        >
+                          <Plus className="h-5 w-5" />
+                          <span>Add Custom Subcategory</span>
+                        </Button>
+                      )}
                     </div>
                   )}
 
@@ -764,12 +1090,15 @@ export default function FreelancerOnboarding() {
                       min="0"
                       max="50"
                       step="0.5"
-                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                      style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-1 ${validationErrors.experience_years ? 'border-red-500' : ''
+                        }`}
+                      style={{ borderColor: validationErrors.experience_years ? '#EF4444' : '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                       placeholder="5"
                     />
+                    {validationErrors.experience_years && (
+                      <p className="mt-1 text-xs text-red-500">{validationErrors.experience_years}</p>
+                    )}
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
                       Availability
@@ -782,7 +1111,25 @@ export default function FreelancerOnboarding() {
                       style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                     >
                       {availabilityOptions.map(opt => (
-                        <option key={opt} value={opt}>{opt.replace('-', ' ').toUpperCase()}</option>
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
+                      Preferred Project Size - Optional
+                    </label>
+                    <select
+                      name="preferred_project_size"
+                      value={formData.preferred_project_size}
+                      onChange={handleInputChange}
+                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                      style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                    >
+                      <option value="">Select project size</option>
+                      {projectSizeOptions.map(opt => (
+                        <option key={opt} value={opt}>{opt}</option>
                       ))}
                     </select>
                   </div>
@@ -816,10 +1163,19 @@ export default function FreelancerOnboarding() {
                       value={formData.bio}
                       onChange={handleInputChange}
                       rows={5}
-                      className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                      style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                      className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-1 ${validationErrors.bio ? 'border-red-500' : ''
+                        }`}
+                      style={{ borderColor: validationErrors.bio ? '#EF4444' : '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                       placeholder="Tell us about yourself, your expertise, and what makes you unique..."
                     />
+                    {validationErrors.bio && (
+                      <p className="mt-1 text-xs text-red-500">{validationErrors.bio}</p>
+                    )}
+                    {formData.bio && (
+                      <p className="mt-1 text-xs" style={{ color: '#31302f' }}>
+                        {formData.bio.length} characters {formData.bio.length < 50 ? '(minimum 50 recommended)' : ''}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -843,6 +1199,9 @@ export default function FreelancerOnboarding() {
                         </span>
                       ))}
                     </div>
+                    {validationErrors.skills && (
+                      <p className="mt-1 text-xs text-red-500">{validationErrors.skills}</p>
+                    )}
 
                     {showSkillInput ? (
                       <div className="flex items-center space-x-2">
@@ -1169,60 +1528,287 @@ export default function FreelancerOnboarding() {
                 </div>
               )}
 
-              {/* Step 4: Case Studies */}
+              {/* Step 4: Case Studies - Updated to match new structure */}
               {currentStep === 4 && (
-                <div className="space-y-6">
-                  {formData.case_studies.map((study, index) => (
-                    <div key={index} className="p-4 rounded-lg border relative" style={{ borderColor: '#241C15' }}>
-                      {index > 0 && (
-                        <button
-                          onClick={() => removeCaseStudy(index)}
-                          className="absolute -top-2 -right-2 p-1 rounded-full bg-[#f7af00] hover:opacity-70"
-                        >
-                          <X className="h-4 w-4" style={{ color: '#050504' }} />
-                        </button>
-                      )}
-                      <h3 className="text-lg font-medium mb-3" style={{ color: '#050504' }}>
-                        Case Study {index + 1}
+                <div className="space-y-8">
+                  {formData.case_studies.length === 0 ? (
+                    <div className="text-center py-8">
+                      <FileText className="h-16 w-16 mx-auto mb-4" style={{ color: '#31302f' }} />
+                      <h3 className="text-xl font-medium mb-2" style={{ color: '#050504' }}>
+                        No Case Studies Yet
                       </h3>
-                      <div className="space-y-3">
-                        <input
-                          type="text"
-                          placeholder="Project Title"
-                          value={study.title}
-                          onChange={(e) => updateCaseStudy(index, 'title', e.target.value)}
-                          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                          style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
-                        />
-                        <textarea
-                          placeholder="Project Description"
-                          value={study.description}
-                          onChange={(e) => updateCaseStudy(index, 'description', e.target.value)}
-                          rows={3}
-                          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                          style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
-                        />
-                        <input
-                          type="text"
-                          placeholder="Key Outcome/Result"
-                          value={study.outcome}
-                          onChange={(e) => updateCaseStudy(index, 'outcome', e.target.value)}
-                          className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                          style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
-                        />
-                      </div>
+                      <p className="mb-4" style={{ color: '#31302f' }}>
+                        Add your first case study to showcase your best work
+                      </p>
+                      <Button
+                        onClick={addCaseStudy}
+                        className="px-6 py-3 rounded-lg"
+                        style={{ backgroundColor: '#f7af00', color: '#050504' }}
+                      >
+                        <Plus className="h-5 w-5 mr-2" />
+                        Add Case Study
+                      </Button>
                     </div>
-                  ))}
+                  ) : (
+                    <>
+                      {formData.case_studies.map((study, index) => (
+                        <div key={index} className="p-6 rounded-lg border relative" style={{ borderColor: '#241C15' }}>
+                          <button
+                            onClick={() => removeCaseStudy(index)}
+                            className="absolute -top-2 -right-2 p-1 rounded-full bg-[#f7af00] hover:opacity-70"
+                          >
+                            <X className="h-4 w-4" style={{ color: '#050504' }} />
+                          </button>
 
-                  {formData.case_studies.length < 3 && (
-                    <Button
-                      onClick={addCaseStudy}
-                      className="w-full p-3 rounded-lg flex items-center justify-center space-x-2"
-                      style={{ backgroundColor: 'transparent', border: '2px dashed #241C15', color: '#31302f' }}
-                    >
-                      <Plus className="h-5 w-5" />
-                      <span>Add Another Case Study</span>
-                    </Button>
+                          <h3 className="text-lg font-medium mb-4" style={{ color: '#050504' }}>
+                            Case Study {index + 1}
+                          </h3>
+
+                          <div className="space-y-4">
+                            {/* Title */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
+                                Project Title *
+                              </label>
+                              <input
+                                type="text"
+                                value={study.title}
+                                onChange={(e) => updateCaseStudy(index, 'title', e.target.value)}
+                                placeholder="e.g., E-commerce Platform Redesign"
+                                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                                style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                              />
+                            </div>
+
+                            {/* Short Summary */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
+                                Short Summary *
+                              </label>
+                              <input
+                                type="text"
+                                value={study.short_summary}
+                                onChange={(e) => updateCaseStudy(index, 'short_summary', e.target.value)}
+                                placeholder="Brief overview of the project (1-2 sentences)"
+                                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                                style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                              />
+                            </div>
+
+                            {/* Industry */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
+                                Industry
+                              </label>
+                              <select
+                                value={study.industry}
+                                onChange={(e) => updateCaseStudy(index, 'industry', e.target.value)}
+                                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                                style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                              >
+                                <option value="">Select industry</option>
+                                {currentIndustries.map(industry => (
+                                  <option key={industry} value={industry}>{industry}</option>
+                                ))}
+                              </select>
+                            </div>
+
+                            {/* Problem Statement */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
+                                Problem Statement
+                              </label>
+                              <textarea
+                                value={study.problem_statement}
+                                onChange={(e) => updateCaseStudy(index, 'problem_statement', e.target.value)}
+                                rows={3}
+                                placeholder="What challenge did the client face?"
+                                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                                style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                              />
+                            </div>
+
+                            {/* Solution */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
+                                Solution Provided
+                              </label>
+                              <textarea
+                                value={study.solution_provided}
+                                onChange={(e) => updateCaseStudy(index, 'solution_provided', e.target.value)}
+                                rows={3}
+                                placeholder="How did you solve the problem?"
+                                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                                style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                              />
+                            </div>
+
+                            {/* Metrics */}
+                            <div>
+                              <label className="block text-sm font-medium mb-2" style={{ color: '#31302f' }}>
+                                Key Metrics *
+                              </label>
+
+                              {/* Display existing metrics */}
+                              <div className="space-y-2 mb-3">
+                                {study.metrics.map((metric, mi) => (
+                                  <div key={mi} className="flex items-center justify-between p-2 bg-[#faf4e5] rounded-lg">
+                                    <div>
+                                      <span className="font-medium">{metric.label}: </span>
+                                      <span>
+                                        {metric.type === 'percentage' ? `${metric.value}%` :
+                                          metric.type === 'currency' ? `$${metric.value}` :
+                                            metric.value}
+                                      </span>
+                                    </div>
+                                    <button
+                                      onClick={() => removeMetric(index, mi)}
+                                      className="text-red-500 hover:text-red-700"
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Add new metric */}
+                              {activeCaseStudyIndex === index ? (
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="text"
+                                    placeholder="Metric label (e.g., ROAS)"
+                                    value={newMetric.label}
+                                    onChange={(e) => setNewMetric({ ...newMetric, label: e.target.value })}
+                                    className="flex-1 p-2 border rounded-lg"
+                                    style={{ borderColor: '#241C15', backgroundColor: '#faf4e5' }}
+                                  />
+                                  <input
+                                    type="number"
+                                    placeholder="Value"
+                                    value={newMetric.value}
+                                    onChange={(e) => setNewMetric({ ...newMetric, value: parseFloat(e.target.value) || 0 })}
+                                    className="w-24 p-2 border rounded-lg"
+                                    style={{ borderColor: '#241C15', backgroundColor: '#faf4e5' }}
+                                  />
+                                  <select
+                                    value={newMetric.type}
+                                    onChange={(e) => setNewMetric({ ...newMetric, type: e.target.value as any })}
+                                    className="w-24 p-2 border rounded-lg"
+                                    style={{ borderColor: '#241C15', backgroundColor: '#faf4e5' }}
+                                  >
+                                    <option value="number">Number</option>
+                                    <option value="percentage">%</option>
+                                    <option value="currency">$</option>
+                                  </select>
+                                  <Button
+                                    onClick={() => addMetric(index)}
+                                    className="p-2 rounded-lg"
+                                    style={{ backgroundColor: '#f7af00', color: '#050504' }}
+                                  >
+                                    Add
+                                  </Button>
+                                  <Button
+                                    onClick={() => setActiveCaseStudyIndex(null)}
+                                    className="p-2 rounded-lg"
+                                    style={{ backgroundColor: 'transparent', border: '1px solid #241C15', color: '#31302f' }}
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              ) : (
+                                <Button
+                                  onClick={() => setActiveCaseStudyIndex(index)}
+                                  className="w-full p-2 rounded-lg flex items-center justify-center space-x-2"
+                                  style={{ backgroundColor: 'transparent', border: '2px dashed #241C15', color: '#31302f' }}
+                                >
+                                  <Plus className="h-4 w-4" />
+                                  <span>Add Metric</span>
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Results Overview */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
+                                Results Overview
+                              </label>
+                              <textarea
+                                value={study.results_overview}
+                                onChange={(e) => updateCaseStudy(index, 'results_overview', e.target.value)}
+                                rows={2}
+                                placeholder="Summary of the results achieved"
+                                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                                style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                              />
+                            </div>
+
+                            {/* Technologies */}
+                            <div>
+                              <label className="block text-sm font-medium mb-2" style={{ color: '#31302f' }}>
+                                Technologies Used
+                              </label>
+                              <div className="flex flex-wrap gap-2 mb-2">
+                                {study.technologies.map(tech => (
+                                  <span
+                                    key={tech}
+                                    className="inline-flex items-center px-3 py-1 rounded-full text-sm"
+                                    style={{ backgroundColor: '#f7af00', color: '#050504' }}
+                                  >
+                                    {tech}
+                                    <button
+                                      onClick={() => removeCaseStudyTechnology(index, tech)}
+                                      className="ml-2 hover:opacity-70"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="text"
+                                  placeholder="Add technology"
+                                  onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                      addCaseStudyTechnology(index, (e.target as HTMLInputElement).value)
+                                        ; (e.target as HTMLInputElement).value = ''
+                                    }
+                                  }}
+                                  className="flex-1 p-2 border rounded-lg"
+                                  style={{ borderColor: '#241C15', backgroundColor: '#faf4e5' }}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Project URL */}
+                            <div>
+                              <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
+                                Project URL
+                              </label>
+                              <input
+                                type="url"
+                                value={study.project_url || ''}
+                                onChange={(e) => updateCaseStudy(index, 'project_url', e.target.value)}
+                                placeholder="https://..."
+                                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                                style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                      {formData.case_studies.length < 3 && (
+                        <Button
+                          onClick={addCaseStudy}
+                          className="w-full p-4 rounded-lg flex items-center justify-center space-x-2"
+                          style={{ backgroundColor: 'transparent', border: '2px dashed #241C15', color: '#31302f' }}
+                        >
+                          <Plus className="h-5 w-5" />
+                          <span>Add Another Case Study</span>
+                        </Button>
+                      )}
+                    </>
                   )}
 
                   {/* Testimonials Section */}
@@ -1233,17 +1819,13 @@ export default function FreelancerOnboarding() {
 
                     {formData.testimonials.map((testimonial, index) => (
                       <div key={index} className="p-4 rounded-lg border relative mb-4" style={{ borderColor: '#241C15' }}>
-                        {index > 0 && (
-                          <button
-                            onClick={() => removeTestimonial(index)}
-                            className="absolute -top-2 -right-2 p-1 rounded-full bg-[#f7af00] hover:opacity-70"
-                          >
-                            <X className="h-4 w-4" style={{ color: '#050504' }} />
-                          </button>
-                        )}
-                        <h4 className="text-lg font-medium mb-3" style={{ color: '#050504' }}>
-                          Testimonial {index + 1}
-                        </h4>
+                        <button
+                          onClick={() => removeTestimonial(index)}
+                          className="absolute -top-2 -right-2 p-1 rounded-full bg-[#f7af00] hover:opacity-70"
+                        >
+                          <X className="h-4 w-4" style={{ color: '#050504' }} />
+                        </button>
+
                         <div className="space-y-3">
                           <div className="grid grid-cols-2 gap-3">
                             <input
@@ -1263,6 +1845,25 @@ export default function FreelancerOnboarding() {
                               style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                             />
                           </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <input
+                              type="text"
+                              placeholder="Client Role (e.g., CEO)"
+                              value={testimonial.role || ''}
+                              onChange={(e) => updateTestimonial(index, 'role', e.target.value)}
+                              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                              style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                            />
+                            <input
+                              type="date"
+                              value={testimonial.date || ''}
+                              onChange={(e) => updateTestimonial(index, 'date', e.target.value)}
+                              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
+                              style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                            />
+                          </div>
+
                           <textarea
                             placeholder="Testimonial Content"
                             value={testimonial.content}
@@ -1271,20 +1872,28 @@ export default function FreelancerOnboarding() {
                             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
                             style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                           />
+
                           <div>
                             <label className="block text-sm font-medium mb-1" style={{ color: '#31302f' }}>
                               Rating (1-5)
                             </label>
-                            <select
-                              value={testimonial.rating}
-                              onChange={(e) => updateTestimonial(index, 'rating', parseInt(e.target.value))}
-                              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
-                              style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
-                            >
-                              {[1, 2, 3, 4, 5].map(num => (
-                                <option key={num} value={num}>{num} Star{num !== 1 ? 's' : ''}</option>
+                            <div className="flex items-center space-x-2">
+                              {[1, 2, 3, 4, 5].map(rating => (
+                                <button
+                                  key={rating}
+                                  type="button"
+                                  onClick={() => updateTestimonial(index, 'rating', rating)}
+                                  className="focus:outline-none"
+                                >
+                                  <Star
+                                    className={`h-6 w-6 ${rating <= testimonial.rating
+                                      ? 'fill-current text-[#f7af00]'
+                                      : 'text-gray-400'
+                                      }`}
+                                  />
+                                </button>
                               ))}
-                            </select>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -1331,6 +1940,7 @@ export default function FreelancerOnboarding() {
                             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
                             style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                           />
+
                           <input
                             type="text"
                             placeholder="Company"
@@ -1339,6 +1949,7 @@ export default function FreelancerOnboarding() {
                             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
                             style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                           />
+
                           <div className="grid grid-cols-2 gap-3">
                             <input
                               type="text"
@@ -1355,8 +1966,10 @@ export default function FreelancerOnboarding() {
                               onChange={(e) => updateWorkExperience(index, 'end_date', e.target.value)}
                               className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
                               style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
+                              disabled={exp.current}
                             />
                           </div>
+
                           <div className="flex items-center space-x-2">
                             <input
                               type="checkbox"
@@ -1370,6 +1983,7 @@ export default function FreelancerOnboarding() {
                               I currently work here
                             </label>
                           </div>
+
                           <textarea
                             placeholder="Job Description"
                             value={exp.description}
@@ -1416,6 +2030,7 @@ export default function FreelancerOnboarding() {
                             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
                             style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                           />
+
                           <input
                             type="text"
                             placeholder="Institution"
@@ -1424,11 +2039,12 @@ export default function FreelancerOnboarding() {
                             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
                             style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
                           />
+
                           <div className="grid grid-cols-2 gap-3">
                             <input
                               type="text"
                               placeholder="Field of Study"
-                              value={edu.field_of_study}
+                              value={edu.field_of_study || ''}
                               onChange={(e) => updateEducation(index, 'field_of_study', e.target.value)}
                               className="w-full p-3 border rounded-lg focus:outline-none focus:ring-1"
                               style={{ borderColor: '#241C15', backgroundColor: '#faf4e5', color: '#31302f' }}
@@ -1458,6 +2074,18 @@ export default function FreelancerOnboarding() {
                 </div>
               )}
 
+              {/* Validation Summary */}
+              {Object.keys(validationErrors).length > 0 && (
+                <div className="p-4 rounded-lg border" style={{ backgroundColor: '#f0eadd', borderColor: '#241C15' }}>
+                  <h4 className="font-medium mb-2" style={{ color: '#31302f' }}>Please fix the following:</h4>
+                  <ul className="list-disc list-inside space-y-1">
+                    {Object.values(validationErrors).map((error, index) => (
+                      <li key={index} className="text-sm text-red-600">{error}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {/* Navigation Buttons */}
               <div className="flex justify-between pt-6 border-t" style={{ borderTopColor: '#f7af00' }}>
                 <Button
@@ -1478,9 +2106,12 @@ export default function FreelancerOnboarding() {
 
                 {currentStep < 5 ? (
                   <Button
-                    onClick={() => setCurrentStep(prev => prev + 1)}
-                    disabled={!validateStep(currentStep)}
-                    className="px-6 py-3 rounded-lg flex items-center space-x-2 disabled:opacity-50"
+                    onClick={() => {
+                      if (validateStep(currentStep)) {
+                        setCurrentStep(prev => prev + 1)
+                      }
+                    }}
+                    className="px-6 py-3 rounded-lg flex items-center space-x-2"
                     style={{
                       backgroundColor: '#f7af00',
                       color: '#050504'
@@ -1494,7 +2125,7 @@ export default function FreelancerOnboarding() {
                 ) : (
                   <Button
                     onClick={handleSubmit}
-                    disabled={loading || !validateStep(currentStep)}
+                    disabled={loading}
                     className="px-8 py-3 rounded-lg flex items-center space-x-2 disabled:opacity-50"
                     style={{
                       backgroundColor: '#f7af00',

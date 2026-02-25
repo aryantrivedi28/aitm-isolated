@@ -1,246 +1,235 @@
-// app/api/freelancer/case-studies/route.ts
+import { NextResponse } from 'next/server'
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
 
-import { NextRequest, NextResponse } from "next/server"
-import { supabase } from "../../../../lib/SupabaseAuthClient"
-import { cookies } from "next/headers"
-import { v4 as uuidv4 } from "uuid"
-
-async function getFreelancerId() {
-  const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get("freelancer_session")
-
-  if (!sessionCookie?.value) {
-    console.error("❌ No freelancer_session cookie found")
-    return null
-  }
-
-  try {
-    const session = JSON.parse(sessionCookie.value)
-    return session.id
-  } catch (err) {
-    console.error("❌ Error parsing freelancer_session cookie:", err)
-    return null
-  }
-}
-
-function generateSlug(title: string) {
-  return `${title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")}-${uuidv4().slice(0, 6)}`
-}
-
-/* ===========================
-   GET — All Case Studies
-=========================== */
-
-export async function GET() {
-  try {
-    const { data, error } = await supabase
-      .from("freelancer_case_studies")
-      .select(`
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url)
+  const supabase = createRouteHandlerClient({ cookies })
+  
+  let query = supabase
+    .from('freelancer_case_studies')
+    .select(`
+      *,
+      freelancer:freelancers (
         id,
+        full_name,
+        avatar_url,
         title,
-        description,
-        slug,
-        category,
-        outcome,
-        technologies,
-        image_url,
-        project_url,
-        created_at,
-        freelancers ( name )
-      `)
+        hourly_rate,
+        skills
+      )
+    `)
 
-    if (error) {
-      console.error("❌ GET Case Studies Error:", error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json({
-      caseStudies: data.map(cs => ({
-        id: cs.id,
-        title: cs.title,
-        description: cs.description,
-        slug: cs.slug,
-        category: cs.category,
-        outcome: cs.outcome,
-        technologies: cs.technologies,
-        imageUrl: cs.image_url,
-        projectUrl: cs.project_url,
-        createdAt: cs.created_at,
-        freelancerName: cs.freelancers?.[0]?.name || "Unknown",
-        source: "freelancer"
-      }))
-    })
-
-
-  } catch (err) {
-    console.error("❌ GET API Crash:", err)
-    return NextResponse.json({ error: "Internal error" }, { status: 500 })
+  // Apply filters
+  const status = searchParams.get('status')
+  if (status) {
+    query = query.eq('status', status)
+  } else {
+    query = query.eq('status', 'approved') // Default to approved for public
   }
+
+  // Category filter
+  if (searchParams.get('category')) {
+    query = query.eq('category', searchParams.get('category'))
+  }
+
+  // Industry filter
+  if (searchParams.get('industry')) {
+    query = query.eq('industry', searchParams.get('industry'))
+  }
+
+  // Freelancer filter
+  if (searchParams.get('freelancer')) {
+    query = query.eq('freelancer_id', searchParams.get('freelancer'))
+  }
+
+  // Tag filter (using array contains)
+  if (searchParams.get('tag')) {
+    query = query.contains('tags', [searchParams.get('tag')])
+  }
+
+  // Featured filter
+  if (searchParams.get('featured') === 'true') {
+    query = query.eq('is_featured', true)
+  }
+
+  // Search by title or summary
+  if (searchParams.get('search')) {
+    const search = searchParams.get('search')
+    query = query.or(`title.ilike.%${search}%,short_summary.ilike.%${search}%`)
+  }
+
+  // Sorting
+  const sortBy = searchParams.get('sort') || 'created_at'
+  const sortOrder = searchParams.get('order') || 'desc'
+  query = query.order(sortBy, { ascending: sortOrder === 'asc' })
+
+  // Pagination
+  const page = parseInt(searchParams.get('page') || '1')
+  const limit = parseInt(searchParams.get('limit') || '12')
+  const start = (page - 1) * limit
+  const end = start + limit - 1
+
+  // Get total count for pagination
+  const { count } = await supabase
+    .from('freelancer_case_studies')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', status || 'approved')
+
+  query = query.range(start, end)
+
+  const { data, error } = await query
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json({ 
+    data,
+    pagination: {
+      page,
+      limit,
+      total: count,
+      totalPages: Math.ceil((count || 0) / limit)
+    }
+  })
 }
 
-/* ===========================
-   POST — Create
-=========================== */
-
-export async function POST(request: NextRequest) {
-  try {
-    const freelancerId = await getFreelancerId()
-
-    if (!freelancerId) {
-      console.error("❌ Unauthorized POST attempt")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const body = await request.json()
-    console.log("📥 POST Body:", body)
-
-    if (!body.title || !body.description || !body.category) {
-      console.error("❌ Missing required fields")
-      return NextResponse.json(
-        { error: "Title, description, and category required" },
-        { status: 400 }
-      )
-    }
-
-    const slug = generateSlug(body.title)
-
-    const { data, error } = await supabase
-      .from("freelancer_case_studies")
-      .insert([{
-        freelancer_id: freelancerId,
-        slug,
-        title: body.title.trim(),
-        description: body.description.trim(),
-        category: body.category
-          .toLowerCase()
-          .trim()
-          .replace(/\s+/g, "-"),
-        outcome: body.outcome || null,
-        technologies: body.technologies || [],
-        image_url: body.image_url || null,
-        project_url: body.project_url || null,
-      }])
-      .select()
-      .single()
-
-    if (error) {
-      console.error("❌ POST Insert Error:", error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    console.log("✅ Case Study Created:", data)
-
-    return NextResponse.json({ success: true, caseStudy: data })
-
-  } catch (err) {
-    console.error("❌ POST API Crash:", err)
-    return NextResponse.json({ error: "Internal error" }, { status: 500 })
+export async function POST(request: Request) {
+  const supabase = createRouteHandlerClient({ cookies })
+  
+  // Check authentication
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-}
 
-/* ===========================
-   PUT — UPDATE Case Study
-=========================== */
+  // Check if user is a freelancer
+  const { data: freelancer, error: freelancerError } = await supabase
+    .from('freelancers')
+    .select('id')
+    .eq('user_id', user.id)
+    .single()
 
-export async function PUT(request: NextRequest) {
-  try {
-    const freelancerId = await getFreelancerId()
+  if (freelancerError || !freelancer) {
+    return NextResponse.json({ error: 'Freelancer profile not found' }, { status: 403 })
+  }
 
-    if (!freelancerId) {
-      console.error("❌ Unauthorized PUT attempt")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const body = await request.json()
+
+  // Validate required fields
+  const requiredFields = [
+    'title', 'category', 'industry', 'short_summary',
+    'problem_statement', 'solution_provided', 'results_overview',
+    'image_url', 'metrics'
+  ]
+
+  for (const field of requiredFields) {
+    if (!body[field]) {
+      return NextResponse.json({ 
+        error: `Missing required field: ${field}` 
+      }, { status: 400 })
     }
+  }
 
-    const body = await request.json()
-    console.log("📥 PUT Body:", body)
+  // Validate metrics
+  if (!Array.isArray(body.metrics) || body.metrics.length === 0) {
+    return NextResponse.json({ 
+      error: 'At least one metric is required' 
+    }, { status: 400 })
+  }
 
-    if (!body.id) {
-      console.error("❌ Missing case study ID")
-      return NextResponse.json(
-        { error: "Case study ID required" },
-        { status: 400 }
-      )
-    }
+  // Generate unique slug
+  let slug = body.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
 
-    const updateData: any = {
+  // Check if slug exists and make it unique
+  const { data: existing } = await supabase
+    .from('freelancer_case_studies')
+    .select('slug')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (existing) {
+    slug = `${slug}-${Date.now()}`
+  }
+
+  const { data, error } = await supabase
+    .from('freelancer_case_studies')
+    .insert({
+      ...body,
+      freelancer_id: freelancer.id,
+      slug,
+      status: 'draft',
+      created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
-    }
+    })
+    .select()
+    .single()
 
-    if (body.title) {
-      updateData.title = body.title.trim()
-      updateData.slug = generateSlug(body.title)
-    }
-
-    if (body.description) updateData.description = body.description.trim()
-    if (body.category) updateData.category = body.category
-    if (body.outcome !== undefined)
-      updateData.outcome = body.outcome
-
-    if (body.technologies !== undefined && Array.isArray(body.technologies)) {
-      updateData.technologies = body.technologies
-    }
-    if (body.project_url !== undefined) updateData.project_url = body.project_url
-
-    const { data, error } = await supabase
-      .from("freelancer_case_studies")
-      .update(updateData)
-      .eq("id", body.id)
-      .eq("freelancer_id", freelancerId)
-      .select()
-      .single()
-
-    if (error) {
-      console.error("❌ PUT Update Error:", error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    console.log("✅ Case Study Updated:", data)
-
-    return NextResponse.json({ success: true, caseStudy: data })
-
-  } catch (err) {
-    console.error("❌ PUT API Crash:", err)
-    return NextResponse.json({ error: "Internal error" }, { status: 500 })
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
+
+  return NextResponse.json({ data })
 }
 
-/* ===========================
-   DELETE
-=========================== */
-
-export async function DELETE(request: NextRequest) {
-  try {
-    const freelancerId = await getFreelancerId()
-
-    if (!freelancerId) {
-      console.error("❌ Unauthorized DELETE attempt")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    const { id } = await request.json()
-    console.log("🗑 DELETE ID:", id)
-
-    const { error } = await supabase
-      .from("freelancer_case_studies")
-      .delete()
-      .eq("id", id)
-      .eq("freelancer_id", freelancerId)
-
-    if (error) {
-      console.error("❌ DELETE Error:", error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    console.log("✅ Case Study Deleted:", id)
-
-    return NextResponse.json({ success: true })
-
-  } catch (err) {
-    console.error("❌ DELETE API Crash:", err)
-    return NextResponse.json({ error: "Internal error" }, { status: 500 })
+export async function DELETE(request: Request) {
+  const supabase = createRouteHandlerClient({ cookies })
+  
+  // Check authentication
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id')
+
+  if (!id) {
+    return NextResponse.json({ error: 'Case study ID required' }, { status: 400 })
+  }
+
+  // Check if user is admin or the freelancer owner
+  const { data: caseStudy } = await supabase
+    .from('freelancer_case_studies')
+    .select('freelancer_id')
+    .eq('id', id)
+    .single()
+
+  if (!caseStudy) {
+    return NextResponse.json({ error: 'Case study not found' }, { status: 404 })
+  }
+
+  const { data: freelancer } = await supabase
+    .from('freelancers')
+    .select('id')
+    .eq('user_id', user.id)
+    .single()
+
+  const { data: adminCheck } = await supabase
+    .from('admins')
+    .select('id')
+    .eq('user_id', user.id)
+    .single()
+
+  const isOwner = freelancer?.id === caseStudy.freelancer_id
+  const isAdmin = !!adminCheck
+
+  if (!isOwner && !isAdmin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  const { error } = await supabase
+    .from('freelancer_case_studies')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json({ success: true })
 }
