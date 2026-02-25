@@ -276,25 +276,8 @@ export default function CaseStudiesPage() {
         }))
 
 
-        // 2️⃣ Fetch freelancer studies
-        const res = await fetch("/api/freelancer/case-studies")
-        const freelancerData = await res.json()
-        console.log("freelancerData", freelancerData)
-
-        const freelancerStudies = (freelancerData.caseStudies || []).map((study: any) => ({
-          id: study.id,
-          title: study.title,
-          description: study.description,
-          slug: study.slug,
-          tags: study.technologies || [],
-          imageUrl: study.image_url || null,
-          createdAt: study.created_at,
-          source: "freelancer" as const
-        }))
-
         // 3️⃣ Merge both
-        setCaseStudies([...formattedCompany, ...freelancerStudies])
-
+        setCaseStudies(formattedCompany)
       } catch (error) {
         console.error("Error fetching case studies:", error)
       } finally {

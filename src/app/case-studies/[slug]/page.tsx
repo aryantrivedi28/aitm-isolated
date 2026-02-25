@@ -134,57 +134,6 @@ export default function CaseStudyPage({
         setLoading(false)
         return
       }
-
-      // 2️⃣ If not found → Try Supabase (Freelancer case study)
-      try {
-        const res = await fetch(`/api/freelancer/case-studies/${slug}`)
-        const data = await res.json()
-
-        if (!res.ok || !data.caseStudy) {
-          notFound()
-        }
-
-
-        const freelancerStudy = data.caseStudy
-
-        if (!freelancerStudy) {
-          notFound()
-        }
-
-        // Transform freelancer data to match UI format
-        const transformedStudy: CaseStudy = {
-          _id: freelancerStudy.id,
-          title: freelancerStudy.title,
-          subtitle: freelancerStudy.freelancerName || "Freelancer Case Study",
-          description: freelancerStudy.description,
-          tags: freelancerStudy.tags || [],
-          snapshot: [],
-          challenge: null,
-          finzieAdvantage: null,
-          mainImage: freelancerStudy.imageUrl
-            ? { asset: { url: freelancerStudy.imageUrl } }
-            : { asset: { url: "" } },
-          teamMember: {
-            name: freelancerStudy.freelancerName || "",
-            role: "Freelancer",
-            bio: "",
-            image: { asset: { url: "" } },
-          },
-          testimonial: {
-            quote: "",
-            authorName: "",
-            authorRole: "",
-            image: { asset: { url: "" } },
-          },
-          video: undefined,
-        }
-
-        setStudy(transformedStudy)
-        setLoading(false)
-      } catch (error) {
-        console.error("Freelancer fetch error:", error)
-        notFound()
-      }
     }
 
     fetchStudy()
