@@ -1,4 +1,4 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabase } from '../../../lib/SupabaseAuthClient'
 import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
@@ -13,7 +13,7 @@ interface Metric {
 }
 
 export default async function FreelancerCaseStudyPage({ params }: { params: { slug: string } }) {
-  const supabase = createServerComponentClient({ cookies })
+
   
   const { data: caseStudy } = await supabase
     .from('freelancer_case_studies')

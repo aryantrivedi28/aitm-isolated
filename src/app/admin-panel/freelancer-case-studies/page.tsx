@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabase } from '../../../lib/SupabaseAuthClient'
 import Link from 'next/link'
 import { Plus, Filter, Download } from 'lucide-react'
 import AdminCaseStudyTable from './components/AdminCaseStudyTable'
@@ -13,7 +13,7 @@ export default function AdminFreelancerCaseStudies() {
   const [caseStudies, setCaseStudies] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
-  const supabase = createClientComponentClient()
+
 
   useEffect(() => {
     fetchCaseStudies()

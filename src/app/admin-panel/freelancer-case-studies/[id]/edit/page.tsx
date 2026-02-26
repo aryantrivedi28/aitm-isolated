@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { supabase } from '../../../../../lib/SupabaseAuthClient'
 import { ArrowLeft, Save, X, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
 export default function EditCaseStudyPage({ params }: { params: { id: string } }) {
   const router = useRouter()
-  const supabase = createClientComponentClient()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [formData, setFormData] = useState({
