@@ -144,7 +144,7 @@ export default function Header() {
               <nav className="hidden lg:flex items-center space-x-1">
                 {[
                   "Home",
-                  "About Us",
+                  "About",
                   "Services",
                   "Case Studies",
                   "Resources",
