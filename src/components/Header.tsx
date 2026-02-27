@@ -186,7 +186,7 @@ export default function Header() {
                 <nav className="px-2 py-4 space-y-1">
                   {[
                     "Home",
-                    "About Us",
+                    "About",
                     "Case Studies",
                     "Services",
                     "Resources",
