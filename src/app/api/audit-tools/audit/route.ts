@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { AuditDB, supabase } from '../../../../lib/db/supabase'
 import { runCompleteAudit } from '../../../../lib/audit-engine'
+import { addContactToBrevo } from '../../../../lib/brevo'
 
 /**
  * Request validation schema
@@ -31,14 +32,52 @@ export async function POST(request: NextRequest) {
       // Save success result
       await AuditDB.saveAuditResults(audit.id, result)
 
+      await supabase
+        .from('audits')
+        .update({
+          status: 'completed',
+          completed_at: new Date().toISOString()
+        })
+        .eq('id', audit.id)
+
+      /**
+       * 🔥 Send contact to Brevo
+       */
+      // Fetch updated audit record
+      const { data: updatedAudit } = await supabase
+        .from('audits')
+        .select('*')
+        .eq('id', audit.id)
+        .single()
+
+      if (
+        updatedAudit &&
+        updatedAudit.status === 'completed' &&
+        !updatedAudit.is_email_sent
+      ) {
+        try {
+          await addContactToBrevo(updatedAudit)
+
+          await supabase
+            .from('audits')
+            .update({ is_email_sent: true })
+            .eq('id', audit.id)
+
+          console.log('📩 Email automation triggered')
+        } catch (brevoError) {
+          console.error('Brevo integration failed:', brevoError)
+        }
+      }
       return NextResponse.json({
         success: true,
         auditId: audit.id,
         status: 'completed'
       })
-    } catch (err: unknown) {
+    } catch (engineError: unknown) {
       const debugMessage =
-        err instanceof Error ? err.message : 'Unknown audit engine error'
+        engineError instanceof Error
+          ? engineError.message
+          : 'Unknown audit engine error'
 
       // Update audit as failed
       await supabase
@@ -64,9 +103,11 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
-  } catch (err) {
+  } catch (validationError) {
     const debugMessage =
-      err instanceof Error ? err.message : 'Invalid request payload'
+      validationError instanceof Error
+        ? validationError.message
+        : 'Invalid request payload'
 
     // If audit was created but something failed before engine
     if (auditId) {

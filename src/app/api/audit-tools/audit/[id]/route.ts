@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AuditDB } from '../../../../../lib/db/supabase'
 
-
-
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id: auditId } = await context.params
+
+    const auditId = params.id
 
     if (!auditId) {
       return NextResponse.json(
@@ -49,8 +48,11 @@ export async function GET(
       createdAt: audit.created_at,
       completedAt: audit.completed_at
     })
+
   } catch (error) {
+
     console.error('Status check error:', error)
+
     return NextResponse.json(
       { error: 'Failed to get audit status' },
       { status: 500 }
