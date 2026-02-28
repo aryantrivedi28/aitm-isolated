@@ -3,59 +3,73 @@ import { AuditDB } from '../../../../../lib/db/supabase'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+
   try {
 
-    const auditId = params.id
+    const { id } = await context.params
 
-    if (!auditId) {
-      return NextResponse.json(
-        { error: 'Audit ID missing' },
-        { status: 400 }
-      )
+    const audit =
+      await AuditDB.getAuditById(id)
+
+    const issuesList =
+      await AuditDB.getIssuesByAuditId(id)
+
+
+    const issues = {
+
+      critical:
+        issuesList.filter(
+          i => i.severity === 'critical'
+        ),
+
+      high:
+        issuesList.filter(
+          i => i.severity === 'high'
+        ),
+
+      medium:
+        issuesList.filter(
+          i => i.severity === 'medium'
+        ),
+
+      low:
+        issuesList.filter(
+          i => i.severity === 'low'
+        )
     }
 
-    const audit = await AuditDB.getAuditById(auditId)
-
-    if (!audit) {
-      return NextResponse.json(
-        { error: 'Audit not found' },
-        { status: 404 }
-      )
-    }
 
     return NextResponse.json({
-      id: audit.id,
-      status: audit.status,
+
+      ...audit,
+
       scores: {
         overall: audit.overall_score,
-        performance: audit.performance_score,
-        seo: audit.seo_score,
-        ux: audit.ux_score,
-        conversion: audit.conversion_score,
-        trust: audit.trust_score
+        performance:
+          audit.performance_score,
+        seo:
+          audit.seo_score,
+        ux:
+          audit.ux_score,
+        conversion:
+          audit.conversion_score,
+        trust:
+          audit.trust_score
       },
-      issues: {
-        critical: audit.critical_issues ?? [],
-        high: audit.high_issues ?? [],
-        medium: audit.medium_issues ?? [],
-        low: audit.low_issues ?? []
-      },
-      recommendations: audit.recommendations ?? [],
-      ai_summary: audit.ai_summary,
-      isCompleted: audit.status === 'completed',
-      createdAt: audit.created_at,
-      completedAt: audit.completed_at
+
+      issues
+
     })
 
-  } catch (error) {
-
-    console.error('Status check error:', error)
+  }
+  catch (error) {
 
     return NextResponse.json(
-      { error: 'Failed to get audit status' },
+      { error: 'Failed to fetch audit' },
       { status: 500 }
     )
   }
+
 }
