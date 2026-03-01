@@ -40,7 +40,7 @@ export async function sendAuditEmail(auditId: string) {
     console.log('Email sent:', info.messageId)
     
     // Mark as sent
-    await AuditDB.markEmailSent(auditId)
+    // await AuditDB.markEmailSent(auditId)
     
     return true
   } catch (error) {

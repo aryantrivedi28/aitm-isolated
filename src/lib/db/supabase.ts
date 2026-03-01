@@ -305,6 +305,7 @@ export class AuditDB {
         .from('audits')
         .select(`
           id,
+          email,
           store_name,
           store_url,
           shopify_theme,
