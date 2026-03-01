@@ -34,5 +34,77 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
+    {
+       url: `${baseUrl}/case-studies/shopify-store-upgrade-and-automation-for-a-us-ecommerce-brand`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/shopify-maintenance-bug-fixing-and-loyalty-integration-for-a-us-b2c-brand`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/shopify-migration-and-conversion-optimization`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/shopify-holiday-conversion-rate-optimization-for-a-d2c-brand`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/high-traffic-custom-shopify-landing-page-development-for-a-d2c-brand`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/shopify-seo-and-social-commerce-integration`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/shopify-ui-ux-revamp-and-conversion-optimization-for-a-d2c-brand`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/gohighlevel-affiliate-management-system-for-a-media-company`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/gohighlevel-automation`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/gohighlevel-automation-optimization-for-a-service-based-business`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/gohighlevel-property-website-setup-for-a-real-estate-brand`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+       url: `${baseUrl}/case-studies/gohighlevel-parent-saas-and-multi-crm-automation-system-for-an-energy-platform`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
   ]
 }
