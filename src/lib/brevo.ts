@@ -3,9 +3,11 @@ type AuditData = {
   email: string
   store_url?: string
   overall_score?: number
+  critical_issues?: number
 }
 
 const LIST_ID = 3
+const TEMPLATE_ID = 3
 
 export async function addContactToBrevo(audit: AuditData) {
 
@@ -16,14 +18,20 @@ export async function addContactToBrevo(audit: AuditData) {
     console.log("Email:", audit.email)
     console.log("Audit ID:", audit.id)
     console.log("Store URL:", audit.store_url)
-    console.log("Score:", audit.overall_score)
+    console.log("Overall Score:", audit.overall_score)
+    console.log("Critical Issues:", audit.critical_issues)
 
-    console.log("BREVO API KEY EXISTS:",
-      !!process.env.BREVO_API_KEY
-    )
+    const apiKey = process.env.BREVO_API_KEY
 
+    if (!apiKey) {
+      throw new Error("BREVO_API_KEY missing")
+    }
 
-    const payload = {
+    /**
+     * STEP 1 — Add Contact
+     */
+
+    const contactPayload = {
 
       email: audit.email,
 
@@ -43,12 +51,57 @@ export async function addContactToBrevo(audit: AuditData) {
 
     }
 
-    console.log("Payload sent to Brevo:")
-    console.log(JSON.stringify(payload, null, 2))
-
-
-    const response = await fetch(
+    const contactResponse = await fetch(
       "https://api.brevo.com/v3/contacts",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": apiKey
+        },
+
+        body: JSON.stringify(contactPayload)
+      }
+    )
+
+    console.log("Contact Status:", contactResponse.status)
+
+    /**
+     * STEP 2 — Send Email
+     */
+
+    const emailPayload = {
+
+      sender: {
+        email: "aryan@finzie.co",
+        name: "Finzie"
+      },
+
+      to: [
+        {
+          email: audit.email
+        }
+      ],
+
+      templateId: TEMPLATE_ID,
+
+      params: {
+
+        store_url: audit.store_url ?? "",
+
+        overall_score: audit.overall_score ?? 0,
+
+        audit_id: audit.id ?? "",
+
+        critical_issues: audit.critical_issues ?? 0
+
+      }
+
+    }
+
+    const emailResponse = await fetch(
+      "https://api.brevo.com/v3/smtp/email",
       {
 
         method: "POST",
@@ -57,33 +110,32 @@ export async function addContactToBrevo(audit: AuditData) {
 
           "Content-Type": "application/json",
 
-          "api-key": process.env.BREVO_API_KEY!
+          "api-key": apiKey
 
         },
 
-        body: JSON.stringify(payload)
+        body: JSON.stringify(emailPayload)
 
       }
     )
 
+    console.log("Email Status:", emailResponse.status)
 
-    console.log("Brevo Status:", response.status)
+    const emailText = await emailResponse.text()
 
-    const text = await response.text()
+    console.log("Email Response:", emailText)
 
-    console.log("Brevo Raw Response:", text)
+    if (!emailResponse.ok) {
 
-    console.log("========== BREVO DEBUG END ==========")
-
-
-    if (!response.ok) {
-
-      throw new Error(text || "Brevo request failed")
+      throw new Error(emailText)
 
     }
 
-    return true
+    console.log("✅ Email Sent Successfully")
 
+    console.log("========== BREVO DEBUG END ==========")
+
+    return true
 
   } catch (error: any) {
 
