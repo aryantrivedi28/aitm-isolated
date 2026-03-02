@@ -268,11 +268,11 @@ export default function FreelancerCaseStudiesContent() {
                             {/* Freelancer Info */}
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-3">
-                                {study.freelancer?.avatar_url ? (
+                                {study.freelancer?.photo_url ? (
                                   <div className="relative h-10 w-10 rounded-full overflow-hidden">
                                     <Image
-                                      src={study.freelancer.avatar_url}
-                                      alt={study.freelancer.full_name}
+                                      src={study.freelancer.photo_url}
+                                      alt={study.freelancer.name}
                                       fill
                                       className="object-cover"
                                     />
@@ -280,12 +280,12 @@ export default function FreelancerCaseStudiesContent() {
                                 ) : (
                                   <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                                     <span className="text-gray-500 text-sm">
-                                      {study.freelancer?.full_name?.charAt(0)}
+                                      {study.freelancer?.name?.charAt(0)}
                                     </span>
                                   </div>
                                 )}
                                 <div>
-                                  <p className="font-medium text-sm">{study.freelancer?.full_name}</p>
+                                  <p className="font-medium text-sm">{study.freelancer?.name}</p>
                                   <p className="text-xs text-gray-500">{study.freelancer?.title}</p>
                                 </div>
                               </div>
