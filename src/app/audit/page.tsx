@@ -384,7 +384,7 @@ export default function Home() {
                 className="text-xs sm:text-sm"
                 style={{ color: colors.gray }}
               >
-                This may take 2-3 minutes
+                This may take 1 minutes
               </p>
             </motion.div>
           </motion.div>
