@@ -121,16 +121,6 @@ export default function AuditPage() {
               >
                 {audit.store_url}
               </p>
-              <div className="mt-2 space-y-1">
-                <p className="text-xs" style={{ color: colors.gray }}>
-                  Theme: <span style={{ color: colors.dark }} className="font-medium">{audit.shopify_theme}</span>
-                </p>
-                <p className="text-xs" style={{ color: colors.gray }}>
-                  Completed: <span style={{ color: colors.dark }} className="font-medium">
-                    {new Date(audit.completedAt).toLocaleDateString()} {new Date(audit.completedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </p>
-              </div>
             </div>
 
             <div className="flex gap-2 sm:gap-3 items-center justify-end flex-wrap">
