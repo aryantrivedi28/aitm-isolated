@@ -124,8 +124,8 @@ interface ProfileHeaderButtonsProps {
   setShowTestimonialModal: (value: boolean) => void
   newExperience: WorkExperience
   setNewExperience: (experience: WorkExperience) => void
-  newCaseStudyItem: CaseStudy
-  setNewCaseStudyItem: React.Dispatch<React.SetStateAction<CaseStudy>>
+  newCaseStudyItem: Partial<CaseStudy>
+  setNewCaseStudyItem: React.Dispatch<React.SetStateAction<Partial<CaseStudy>>>
   newTestimonial?: Testimonial
   setNewTestimonial?: (testimonial: Testimonial) => void
   uploadingImages: Record<string, boolean>
@@ -322,7 +322,8 @@ export function ProfileHeaderButtons({
     if (!newCaseStudyItem.title) return "Project title is required"
     if (!newCaseStudyItem.short_summary) return "Short summary is required"
     if (!newCaseStudyItem.category) return "Category is required"
-    if (newCaseStudyItem.metrics.length === 0) return "At least one metric is required"
+    if (!newCaseStudyItem.metrics || newCaseStudyItem.metrics.length === 0)
+      return "At least one metric is required"
     return null
   }
 
@@ -366,21 +367,37 @@ export function ProfileHeaderButtons({
 
   // Add metric to case study
   const addMetric = () => {
+
     if (newMetric.label && newMetric.value) {
+
       setNewCaseStudyItem({
         ...newCaseStudyItem,
-        metrics: [...newCaseStudyItem.metrics, { ...newMetric }]
+        metrics: [
+          ...(newCaseStudyItem.metrics || []),
+          { ...newMetric }
+        ]
       })
-      setNewMetric({ label: "", value: 0, type: "number" })
+
+      setNewMetric({
+        label: "",
+        value: 0,
+        type: "number"
+      })
+
     }
+
   }
 
   // Remove metric from case study
   const removeMetric = (index: number) => {
+
     setNewCaseStudyItem({
       ...newCaseStudyItem,
-      metrics: newCaseStudyItem.metrics.filter((_, i) => i !== index)
+      metrics: (newCaseStudyItem.metrics || []).filter(
+        (_, i) => i !== index
+      )
     })
+
   }
 
   // Get metric icon
@@ -975,7 +992,7 @@ export function ProfileHeaderButtons({
 
                 {/* Display existing metrics */}
                 <div className="space-y-2 mb-3">
-                  {newCaseStudyItem.metrics.map((metric, index) => (
+                  {(newCaseStudyItem.metrics || []).map((metric, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-[#f0eadd] rounded-lg">
                       <div className="flex items-center space-x-3">
                         {getMetricIcon(metric.type)}

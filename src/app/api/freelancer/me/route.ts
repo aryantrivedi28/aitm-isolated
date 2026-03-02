@@ -1,4 +1,3 @@
-import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
 import { supabase } from "../../../../lib/SupabaseAuthClient"

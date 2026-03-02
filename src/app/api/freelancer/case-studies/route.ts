@@ -1,235 +1,341 @@
-import { NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers"
+import { NextResponse } from "next/server"
+import { supabase } from "../../../../lib/SupabaseAuthClient"
+
+/*
+|--------------------------------------------------------------------------
+| GET - Fetch Logged-in Freelancer Case Studies
+|--------------------------------------------------------------------------
+*/
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url)
-  const supabase = createRouteHandlerClient({ cookies })
-  
-  let query = supabase
-    .from('freelancer_case_studies')
-    .select(`
-      *,
-      freelancer:freelancers (
-        id,
-        full_name,
-        avatar_url,
-        title,
-        hourly_rate,
-        skills
+
+  try {
+
+    console.log("🚀 Freelancer Case Studies API Triggered")
+
+    const { searchParams } = new URL(request.url)
+
+    /* ---------------- COOKIE AUTH ---------------- */
+
+    const cookieStore = await cookies()
+    const sessionCookie = cookieStore.get("freelancer_session")
+
+    if (!sessionCookie?.value) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
       )
-    `)
-
-  // Apply filters
-  const status = searchParams.get('status')
-  if (status) {
-    query = query.eq('status', status)
-  } else {
-    query = query.eq('status', 'approved') // Default to approved for public
-  }
-
-  // Category filter
-  if (searchParams.get('category')) {
-    query = query.eq('category', searchParams.get('category'))
-  }
-
-  // Industry filter
-  if (searchParams.get('industry')) {
-    query = query.eq('industry', searchParams.get('industry'))
-  }
-
-  // Freelancer filter
-  if (searchParams.get('freelancer')) {
-    query = query.eq('freelancer_id', searchParams.get('freelancer'))
-  }
-
-  // Tag filter (using array contains)
-  if (searchParams.get('tag')) {
-    query = query.contains('tags', [searchParams.get('tag')])
-  }
-
-  // Featured filter
-  if (searchParams.get('featured') === 'true') {
-    query = query.eq('is_featured', true)
-  }
-
-  // Search by title or summary
-  if (searchParams.get('search')) {
-    const search = searchParams.get('search')
-    query = query.or(`title.ilike.%${search}%,short_summary.ilike.%${search}%`)
-  }
-
-  // Sorting
-  const sortBy = searchParams.get('sort') || 'created_at'
-  const sortOrder = searchParams.get('order') || 'desc'
-  query = query.order(sortBy, { ascending: sortOrder === 'asc' })
-
-  // Pagination
-  const page = parseInt(searchParams.get('page') || '1')
-  const limit = parseInt(searchParams.get('limit') || '12')
-  const start = (page - 1) * limit
-  const end = start + limit - 1
-
-  // Get total count for pagination
-  const { count } = await supabase
-    .from('freelancer_case_studies')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', status || 'approved')
-
-  query = query.range(start, end)
-
-  const { data, error } = await query
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
-  return NextResponse.json({ 
-    data,
-    pagination: {
-      page,
-      limit,
-      total: count,
-      totalPages: Math.ceil((count || 0) / limit)
     }
-  })
+
+    const session = JSON.parse(sessionCookie.value)
+    const freelancerId = session.id
+
+    console.log("👤 Freelancer ID:", freelancerId)
+
+
+    /* ---------------- BASE QUERY ---------------- */
+
+    let query = supabase
+      .from("freelancer_case_studies")
+      .select(`
+        *,
+        freelancer:freelancers (
+          id,
+          name,
+          photo_url,
+          title,
+          skills,
+          profile_rating,
+          verified,
+          public_profile_url
+        )
+      `)
+      .eq("freelancer_id", freelancerId)
+
+
+    /* ---------------- STATUS FILTER ---------------- */
+
+    const status = searchParams.get("status")
+
+    if (status) {
+
+      const statuses = status.split(",")
+
+      console.log("📌 Status:", statuses)
+
+      query = query.in("status", statuses)
+
+    }
+
+
+    /* ---------------- CATEGORY ---------------- */
+
+    const category = searchParams.get("category")
+
+    if (category) {
+      query = query.eq("category", category)
+    }
+
+
+    /* ---------------- INDUSTRY ---------------- */
+
+    const industry = searchParams.get("industry")
+
+    if (industry) {
+      query = query.eq("industry", industry)
+    }
+
+
+    /* ---------------- TAG ---------------- */
+
+    const tag = searchParams.get("tag")
+
+    if (tag) {
+      query = query.contains("tags", [tag])
+    }
+
+
+    /* ---------------- FEATURED ---------------- */
+
+    if (searchParams.get("featured") === "true") {
+      query = query.eq("is_featured", true)
+    }
+
+
+    /* ---------------- SEARCH ---------------- */
+
+    const search = searchParams.get("search")
+
+    if (search) {
+
+      query = query.or(
+        `title.ilike.%${search}%,short_summary.ilike.%${search}%`
+      )
+
+    }
+
+
+    /* ---------------- SORT ---------------- */
+
+    const sortBy = searchParams.get("sort") || "created_at"
+    const order = searchParams.get("order") || "desc"
+
+    query = query.order(sortBy, {
+      ascending: order === "asc"
+    })
+
+
+    /* ---------------- PAGINATION ---------------- */
+
+    const page = parseInt(searchParams.get("page") || "1")
+    const limit = parseInt(searchParams.get("limit") || "12")
+
+    const start = (page - 1) * limit
+    const end = start + limit - 1
+
+
+    /* ---------------- COUNT QUERY ---------------- */
+
+    let countQuery = supabase
+      .from("freelancer_case_studies")
+      .select("*", { count: "exact", head: true })
+      .eq("freelancer_id", freelancerId)
+
+
+    if (status) {
+      countQuery = countQuery.in(
+        "status",
+        status.split(",")
+      )
+    }
+
+
+    const { count } = await countQuery
+
+
+    /* ---------------- FETCH ---------------- */
+
+    query = query.range(start, end)
+
+    const { data, error } = await query
+
+    if (error) {
+
+      console.error("❌ Fetch Error:", error)
+
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500 }
+      )
+
+    }
+
+
+    console.log("✅ Case Studies:", data?.length)
+
+
+    return NextResponse.json({
+
+      data,
+
+      pagination: {
+        page,
+        limit,
+        total: count,
+        totalPages: Math.ceil((count || 0) / limit)
+      }
+
+    })
+
+
+  } catch (err) {
+
+    console.error("🔥 API Error:", err)
+
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    )
+
+  }
+
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| POST - Create Case Study
+|--------------------------------------------------------------------------
+*/
+
 export async function POST(request: Request) {
-  const supabase = createRouteHandlerClient({ cookies })
-  
-  // Check authentication
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const cookieStore = await cookies()
+  const sessionCookie = cookieStore.get("freelancer_session")
+
+  if (!sessionCookie?.value) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
   }
 
-  // Check if user is a freelancer
-  const { data: freelancer, error: freelancerError } = await supabase
-    .from('freelancers')
-    .select('id')
-    .eq('user_id', user.id)
-    .single()
+  const session = JSON.parse(sessionCookie.value)
+  const freelancerId = session.id
 
-  if (freelancerError || !freelancer) {
-    return NextResponse.json({ error: 'Freelancer profile not found' }, { status: 403 })
-  }
 
   const body = await request.json()
 
-  // Validate required fields
-  const requiredFields = [
-    'title', 'category', 'industry', 'short_summary',
-    'problem_statement', 'solution_provided', 'results_overview',
-    'image_url', 'metrics'
-  ]
 
-  for (const field of requiredFields) {
-    if (!body[field]) {
-      return NextResponse.json({ 
-        error: `Missing required field: ${field}` 
-      }, { status: 400 })
-    }
-  }
+  /* ---------- Generate Slug ---------- */
 
-  // Validate metrics
-  if (!Array.isArray(body.metrics) || body.metrics.length === 0) {
-    return NextResponse.json({ 
-      error: 'At least one metric is required' 
-    }, { status: 400 })
-  }
-
-  // Generate unique slug
   let slug = body.title
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
 
-  // Check if slug exists and make it unique
-  const { data: existing } = await supabase
-    .from('freelancer_case_studies')
-    .select('slug')
-    .eq('slug', slug)
-    .maybeSingle()
+
+  const { data: existing } =
+    await supabase
+      .from("freelancer_case_studies")
+      .select("slug")
+      .eq("slug", slug)
+      .maybeSingle()
+
 
   if (existing) {
     slug = `${slug}-${Date.now()}`
   }
 
-  const { data, error } = await supabase
-    .from('freelancer_case_studies')
-    .insert({
-      ...body,
-      freelancer_id: freelancer.id,
-      slug,
-      status: 'draft',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    })
-    .select()
-    .single()
+
+  /* ---------- Insert ---------- */
+
+  const { data, error } =
+    await supabase
+      .from("freelancer_case_studies")
+      .insert({
+        ...body,
+        freelancer_id: freelancerId,
+        slug,
+        status: "draft"
+      })
+      .select()
+      .single()
+
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    )
+
   }
+
 
   return NextResponse.json({ data })
+
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| DELETE Case Study
+|--------------------------------------------------------------------------
+*/
+
 export async function DELETE(request: Request) {
-  const supabase = createRouteHandlerClient({ cookies })
-  
-  // Check authentication
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const cookieStore = await cookies()
+  const sessionCookie = cookieStore.get("freelancer_session")
+
+  if (!sessionCookie?.value) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    )
   }
 
-  const { searchParams } = new URL(request.url)
-  const id = searchParams.get('id')
+  const session = JSON.parse(sessionCookie.value)
+  const freelancerId = session.id
+
+
+  const { searchParams } =
+    new URL(request.url)
+
+  const id = searchParams.get("id")
 
   if (!id) {
-    return NextResponse.json({ error: 'Case study ID required' }, { status: 400 })
+    return NextResponse.json(
+      { error: "Case study ID required" },
+      { status: 400 }
+    )
   }
 
-  // Check if user is admin or the freelancer owner
-  const { data: caseStudy } = await supabase
-    .from('freelancer_case_studies')
-    .select('freelancer_id')
-    .eq('id', id)
-    .single()
 
-  if (!caseStudy) {
-    return NextResponse.json({ error: 'Case study not found' }, { status: 404 })
-  }
+  /* Only Owner Can Delete */
 
-  const { data: freelancer } = await supabase
-    .from('freelancers')
-    .select('id')
-    .eq('user_id', user.id)
-    .single()
+  const { error } =
+    await supabase
+      .from("freelancer_case_studies")
+      .delete()
+      .eq("id", id)
+      .eq("freelancer_id", freelancerId)
 
-  const { data: adminCheck } = await supabase
-    .from('admins')
-    .select('id')
-    .eq('user_id', user.id)
-    .single()
-
-  const isOwner = freelancer?.id === caseStudy.freelancer_id
-  const isAdmin = !!adminCheck
-
-  if (!isOwner && !isAdmin) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-  }
-
-  const { error } = await supabase
-    .from('freelancer_case_studies')
-    .delete()
-    .eq('id', id)
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+
+    return NextResponse.json(
+      { error: error.message },
+      { status: 500 }
+    )
+
   }
 
-  return NextResponse.json({ success: true })
+
+  return NextResponse.json({
+    success: true
+  })
+
 }

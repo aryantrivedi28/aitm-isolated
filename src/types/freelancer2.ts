@@ -50,8 +50,8 @@ export interface CaseStudy {
   }
   freelancer?: {
     id: string
-    full_name: string
-    avatar_url?: string
+    name: string
+    photo_url?: string
     title?: string
     hourly_rate?: number
     skills?: string[]

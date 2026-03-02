@@ -21,10 +21,9 @@ export default async function FreelancerCaseStudyPage({ params }: { params: { sl
       *,
       freelancer:freelancers (
         id,
-        full_name,
-        avatar_url,
+        name,
+        phoro_url,
         title,
-        hourly_rate,
         skills,
         experience_years,
         completed_projects,

@@ -36,7 +36,6 @@ import {
 } from "lucide-react"
 import { ProfileHeaderButtons } from "./component/profile-header-buttons"
 import { ProfileContent } from "./component/profile-content"
-import { freelancerApi } from "../../../../lib/freelancer-api"
 import Image from "next/image"
 
 const fetcher = (url: string) => fetch(url, { credentials: "include" }).then((res) => res.json())
@@ -50,8 +49,9 @@ interface CaseStudyMetric {
 }
 
 interface CaseStudy {
-  id: string
+  id?: string
   title: string
+  slug?: string
   short_summary: string
   category: string
   industry: string
@@ -75,12 +75,7 @@ interface CaseStudy {
   is_featured: boolean
   view_count: number
   created_at: string
-}
-
-type CaseStudyItem = Omit<CaseStudy, 'is_featured' | 'view_count' | 'created_at'> & {
-  is_featured?: boolean
-  view_count?: number
-  created_at?: string
+  freelancer_id?: string
 }
 
 interface Testimonial {
@@ -133,47 +128,6 @@ interface Project {
   image_url?: string
 }
 
-interface FreelancerProfile {
-  id: string
-  name: string
-  email: string
-  phone: string | null
-  title: string | null
-  bio: string | null
-  skills: string[]
-  tools_tech_stack: string[]
-  experience_years: number
-  availability: string
-  primary_category: string | null
-  subcategory: string | null
-  subcategories: string[]
-  github_url: string | null
-  linkedin_url: string | null
-  twitter_url: string | null
-  portfolio_url: string | null
-  portfolio_links: string[] | any
-  hourly_rate: number | null
-  languages: string[]
-  education: Education[] | any
-  certifications: string[]
-  resume_url: string | null
-  projects: Project[]
-  background_type: "tech" | "non-tech" | "both"
-  profile_rating: number | null
-  rating_feedback: string[]
-  photo_url: string | null
-  case_studies: CaseStudy[]
-  testimonials: Testimonial[]
-  work_experience: WorkExperience[]
-  case_study_count: number
-  case_study_categories: string[]
-  verified: boolean
-  profile_status: string
-  review_status: string
-  created_at: string
-  updated_at: string
-}
-
 // Helper function to parse JSON fields
 const parseJsonField = (field: any): any[] => {
   if (!field) return []
@@ -213,31 +167,6 @@ const formatEducation = (edu: any): string => {
 // Transform API profile shape into UI form state
 const mapApiProfileToFormData = (profile: any): any => {
   if (!profile) return {}
-
-  // Parse case studies with the new structure
-  const caseStudies = parseJsonField(profile.case_studies).map((item: any, index: number) => ({
-    id: item.id || `cs-${index}`,
-    title: item.title || "",
-    short_summary: item.short_summary || item.description || "",
-    category: item.category || profile.primary_category || "Web Development",
-    industry: item.industry || "",
-    problem_statement: item.problem_statement || "",
-    solution_provided: item.solution_provided || "",
-    strategy: item.strategy || "",
-    implementation: item.implementation || "",
-    results_overview: item.results_overview || item.outcome || "",
-    metrics: Array.isArray(item.metrics) ? item.metrics : [],
-    technologies: Array.isArray(item.technologies) ? item.technologies : [],
-    tags: Array.isArray(item.tags) ? item.tags : [],
-    image_url: item.image_url || "",
-    gallery_images: Array.isArray(item.gallery_images) ? item.gallery_images : [],
-    project_url: item.project_url || "",
-    testimonial: item.testimonial || null,
-    status: item.status || "draft",
-    is_featured: item.is_featured || false,
-    view_count: item.view_count || 0,
-    created_at: item.created_at || new Date().toISOString()
-  }))
 
   const testimonials = parseJsonField(profile.testimonials).map((item: any, index: number) => ({
     id: item.id || `test-${index}`,
@@ -336,10 +265,10 @@ const mapApiProfileToFormData = (profile: any): any => {
     profile_rating: profile.profile_rating ?? null,
     rating_feedback: Array.isArray(profile.rating_feedback) ? profile.rating_feedback : [],
     photo_url: profile.photo_url || "",
-    case_studies: caseStudies,
+    case_studies: [], // Will be populated from separate API call
     testimonials: testimonials,
     work_experience: workExperience,
-    case_study_count: profile.case_study_count || caseStudies.length,
+    case_study_count: profile.case_study_count || 0,
     case_study_categories: Array.isArray(profile.case_study_categories) ? profile.case_study_categories : [],
     verified: profile.verified || false,
     profile_status: profile.profile_status || "pending",
@@ -397,12 +326,11 @@ export default function FreelancerProfilePage() {
   const [showCaseStudyModal, setShowCaseStudyModal] = useState(false)
   const [showTestimonialModal, setShowTestimonialModal] = useState(false)
   const [showExperienceModal, setShowExperienceModal] = useState(false)
-  const [showMetricModal, setShowMetricModal] = useState(false)
   const [savingCaseStudy, setSavingCaseStudy] = useState(false)
   const [savingTestimonial, setSavingTestimonial] = useState(false)
   const [savingExperience, setSavingExperience] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [editingCaseStudyId, setEditingCaseStudyId] = useState<string | null>(null)
+  const [editingCaseStudy, setEditingCaseStudy] = useState<CaseStudy | null>(null)
 
   // Metric input for case studies
   const [newMetric, setNewMetric] = useState<CaseStudyMetric>({
@@ -411,9 +339,8 @@ export default function FreelancerProfilePage() {
     type: "number"
   })
 
-  // New case study (updated for new structure)
-  const [newCaseStudyItem, setNewCaseStudyItem] = useState<CaseStudy>({
-    id: crypto.randomUUID(),
+  // New case study
+  const [newCaseStudyItem, setNewCaseStudyItem] = useState<Partial<CaseStudy>>({
     title: "",
     short_summary: "",
     category: "",
@@ -429,11 +356,7 @@ export default function FreelancerProfilePage() {
     image_url: "",
     gallery_images: [],
     project_url: "",
-    testimonial: undefined,
-    status: "draft",
-    is_featured: false,
-    view_count: 0,
-    created_at: new Date().toISOString()
+    status: "draft"
   })
 
   // New testimonial
@@ -462,10 +385,25 @@ export default function FreelancerProfilePage() {
     technologies: []
   })
 
-  const { data: profileData, mutate, isLoading } = useSWR("/api/freelancer/profile", fetcher, {
-    revalidateOnFocus: false,
-    revalidateOnReconnect: false,
-  })
+  // Fetch profile data
+  const { data: profileData, mutate: mutateProfile, isLoading: profileLoading } = useSWR(
+    "/api/freelancer/profile",
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  )
+
+  // Fetch case studies for the authenticated freelancer
+  const { data: caseStudiesData, mutate: mutateCaseStudies, isLoading: caseStudiesLoading } = useSWR(
+    "/api/freelancer/case-studies?status=draft,pending,approved",
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  )
 
   const [formData, setFormData] = useState<any>({
     name: "",
@@ -509,11 +447,33 @@ export default function FreelancerProfilePage() {
     setIsClient(true)
   }, [])
 
+  useEffect(()=>{
+  console.log("SWR Case Studies:", caseStudiesData)
+},[caseStudiesData])
+
+  // Merge profile data with case studies
+  // Replace your existing useEffect that merges profile and case studies
   useEffect(() => {
-    if (profileData?.profile) {
-      setFormData(mapApiProfileToFormData(profileData.profile))
-    }
-  }, [profileData])
+
+    const mappedProfile = mapApiProfileToFormData(profileData?.profile || {})
+
+    const fetchedCaseStudies = caseStudiesData?.data || []
+
+    console.log("ProfileData:", profileData)
+    console.log("CaseStudiesData:", caseStudiesData)
+    console.log("Fetched Case Studies:", fetchedCaseStudies)
+
+    setFormData((prev: any) => ({
+      ...prev,
+      ...mappedProfile,
+      case_studies: fetchedCaseStudies
+    }))
+
+  }, [profileData, caseStudiesData])
+  // Add this useEffect to debug
+  useEffect(() => {
+    console.log('FormData case studies:', formData.case_studies)
+  }, [formData.case_studies])
 
   // Handle mobile menu close when clicking outside
   useEffect(() => {
@@ -561,9 +521,19 @@ export default function FreelancerProfilePage() {
     setError("")
 
     try {
-      const result = await freelancerApi.uploadCaseStudyImage(itemId, file)
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('caseStudyId', itemId)
 
-      if (!result.success) {
+      const response = await fetch('/api/freelancer/case-studies/upload-image', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
         setError(result.error || "Failed to upload image")
         return
       }
@@ -574,19 +544,9 @@ export default function FreelancerProfilePage() {
           image_url: result.imageUrl || "",
         }))
       } else {
-        // Update existing case study in the database
-        const caseStudy = formData.case_studies.find((cs: CaseStudy) => cs.id === itemId)
-        if (caseStudy) {
-          const updatedCaseStudy = {
-            ...caseStudy,
-            image_url: result.imageUrl
-          }
-          await freelancerApi.updateCaseStudy(itemId, updatedCaseStudy)
-
-          // Refresh data
-          mutate()
-          setSuccessMessage("Image uploaded successfully")
-        }
+        // Refresh case studies to get updated image
+        mutateCaseStudies()
+        setSuccessMessage("Image uploaded successfully")
       }
     } catch (err) {
       setError("Failed to upload image. Please try again.")
@@ -600,19 +560,25 @@ export default function FreelancerProfilePage() {
     if (!imageUrl) return
 
     try {
-      const result = await freelancerApi.deleteCaseStudyImage(imageUrl, itemId)
+      const response = await fetch(`/api/freelancer/case-studies/image?url=${encodeURIComponent(imageUrl)}&id=${itemId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
 
-      if (result.success) {
+      const result = await response.json()
+
+      if (response.ok) {
         if (itemId === "new-case-study") {
           setNewCaseStudyItem((prev) => ({
             ...prev,
             image_url: "",
           }))
         } else {
-          // Refresh data
-          mutate()
+          mutateCaseStudies()
           setSuccessMessage("Image deleted successfully")
         }
+      } else {
+        setError(result.error || "Failed to delete image")
       }
     } catch (err) {
       console.error("Failed to delete image:", err)
@@ -625,11 +591,23 @@ export default function FreelancerProfilePage() {
   // -----------------------
   const removeCaseStudyItem = async (id: string) => {
     try {
-      const result = await freelancerApi.deleteCaseStudy(id)
+      // Find the case study to get its slug
+      const caseStudy = formData.case_studies.find((cs: CaseStudy) => cs.id === id)
+      if (!caseStudy?.slug) {
+        setError("Case study not found")
+        return
+      }
 
-      if (result.success) {
+      const response = await fetch(`/api/freelancer/case-studies/${caseStudy.slug}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
         setSuccessMessage("Case study deleted successfully")
-        mutate() // Refresh data
+        mutateCaseStudies() // Refresh case studies
       } else {
         setError(result.error || "Failed to delete case study")
       }
@@ -640,52 +618,44 @@ export default function FreelancerProfilePage() {
   }
 
   const editCaseStudy = (caseStudy: CaseStudy): void => {
-    setEditingCaseStudyId(caseStudy.id)
-    setNewCaseStudyItem({ ...caseStudy, id: caseStudy.id })
+    setEditingCaseStudy(caseStudy)
+    setNewCaseStudyItem({
+      title: caseStudy.title,
+      short_summary: caseStudy.short_summary,
+      category: caseStudy.category,
+      industry: caseStudy.industry,
+      problem_statement: caseStudy.problem_statement,
+      solution_provided: caseStudy.solution_provided,
+      strategy: caseStudy.strategy,
+      implementation: caseStudy.implementation,
+      results_overview: caseStudy.results_overview,
+      metrics: caseStudy.metrics,
+      technologies: caseStudy.technologies,
+      tags: caseStudy.tags,
+      image_url: caseStudy.image_url,
+      gallery_images: caseStudy.gallery_images,
+      project_url: caseStudy.project_url,
+      status: caseStudy.status
+    })
     setShowCaseStudyModal(true)
   }
 
   // Add metric to case study
-  const addMetricToCaseStudy = (caseStudyId: string, metric: CaseStudyMetric) => {
+  const addMetricToCaseStudy = (metric: CaseStudyMetric) => {
     if (!metric.label || metric.value === 0) return
 
-    if (caseStudyId === "new-case-study") {
-      setNewCaseStudyItem(prev => ({
-        ...prev,
-        metrics: [...prev.metrics, metric]
-      }))
-    } else {
-      // Update existing case study
-      const caseStudy = formData.case_studies.find((cs: CaseStudy) => cs.id === caseStudyId)
-      if (caseStudy) {
-        const updatedCaseStudy = {
-          ...caseStudy,
-          metrics: [...caseStudy.metrics, metric]
-        }
-        freelancerApi.updateCaseStudy(caseStudyId, updatedCaseStudy)
-        mutate()
-      }
-    }
+    setNewCaseStudyItem(prev => ({
+      ...prev,
+      metrics: [...(prev.metrics || []), metric]
+    }))
     setNewMetric({ label: "", value: 0, type: "number" })
   }
 
-  const removeMetricFromCaseStudy = (caseStudyId: string, metricIndex: number) => {
-    if (caseStudyId === "new-case-study") {
-      setNewCaseStudyItem(prev => ({
-        ...prev,
-        metrics: prev.metrics.filter((_, i) => i !== metricIndex)
-      }))
-    } else {
-      const caseStudy = formData.case_studies.find((cs: CaseStudy) => cs.id === caseStudyId)
-      if (caseStudy) {
-        const updatedCaseStudy: CaseStudy = {
-          ...caseStudy,
-          metrics: caseStudy.metrics.filter((_: CaseStudyMetric, i: number) => i !== metricIndex)
-        }
-        freelancerApi.updateCaseStudy(caseStudyId, updatedCaseStudy)
-        mutate()
-      }
-    }
+  const removeMetricFromCaseStudy = (metricIndex: number) => {
+    setNewCaseStudyItem(prev => ({
+      ...prev,
+      metrics: (prev.metrics || []).filter((_, i) => i !== metricIndex)
+    }))
   }
 
   // -----------------------
@@ -693,11 +663,16 @@ export default function FreelancerProfilePage() {
   // -----------------------
   const removeTestimonial = async (id: string) => {
     try {
-      const result = await freelancerApi.deleteTestimonial(id)
+      const response = await fetch(`/api/freelancer/testimonials?id=${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
 
-      if (result.success) {
+      const result = await response.json()
+
+      if (response.ok) {
         setSuccessMessage("Testimonial deleted successfully")
-        mutate()
+        mutateProfile()
       } else {
         setError(result.error || "Failed to delete testimonial")
       }
@@ -712,11 +687,16 @@ export default function FreelancerProfilePage() {
   // -----------------------
   const removeWorkExperience = async (id: string) => {
     try {
-      const result = await freelancerApi.deleteWorkExperience(id)
+      const response = await fetch(`/api/freelancer/work-experience?id=${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
 
-      if (result.success) {
+      const result = await response.json()
+
+      if (response.ok) {
         setSuccessMessage("Work experience deleted successfully")
-        mutate()
+        mutateProfile()
       } else {
         setError(result.error || "Failed to delete work experience")
       }
@@ -730,9 +710,8 @@ export default function FreelancerProfilePage() {
   // Resetters
   // -----------------------
   const resetNewCaseStudyItem = () => {
-    setEditingCaseStudyId(null)
+    setEditingCaseStudy(null)
     setNewCaseStudyItem({
-      id: crypto.randomUUID(),
       title: "",
       short_summary: "",
       category: formData.primary_category || "",
@@ -748,11 +727,7 @@ export default function FreelancerProfilePage() {
       image_url: "",
       gallery_images: [],
       project_url: "",
-      testimonial: undefined,
-      status: "draft",
-      is_featured: false,
-      view_count: 0,
-      created_at: new Date().toISOString()
+      status: "draft"
     })
   }
 
@@ -851,7 +826,7 @@ export default function FreelancerProfilePage() {
       return
     }
 
-    if (newCaseStudyItem.metrics.length === 0) {
+    if (!newCaseStudyItem.metrics || newCaseStudyItem.metrics.length === 0) {
       setError("Please add at least one metric to showcase results")
       return
     }
@@ -860,21 +835,30 @@ export default function FreelancerProfilePage() {
     setError("")
 
     try {
-      let result
-      if (editingCaseStudyId) {
+      let response
+      if (editingCaseStudy?.slug) {
         // Update existing case study
-        result = await freelancerApi.updateCaseStudy(editingCaseStudyId, newCaseStudyItem)
+        response = await fetch(`/api/freelancer/case-studies/${editingCaseStudy.slug}`, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newCaseStudyItem)
+        })
       } else {
         // Create new case study
-        result = await freelancerApi.addCaseStudy({
-          ...newCaseStudyItem,
-          status: "draft"
+        response = await fetch('/api/freelancer/case-studies', {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newCaseStudyItem)
         })
       }
 
-      if (result.success) {
-        setSuccessMessage(editingCaseStudyId ? "Case study updated successfully" : "Case study added successfully")
-        mutate()
+      const result = await response.json()
+
+      if (response.ok) {
+        setSuccessMessage(editingCaseStudy ? "Case study updated successfully" : "Case study added successfully")
+        mutateCaseStudies() // Refresh case studies
         resetNewCaseStudyItem()
         setShowCaseStudyModal(false)
       } else {
@@ -899,11 +883,18 @@ export default function FreelancerProfilePage() {
     setError("")
 
     try {
-      const result = await freelancerApi.addTestimonial(newTestimonial)
+      const response = await fetch('/api/freelancer/testimonials', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTestimonial)
+      })
 
-      if (result.success) {
+      const result = await response.json()
+
+      if (response.ok) {
         setSuccessMessage("Testimonial added successfully")
-        mutate()
+        mutateProfile()
         resetNewTestimonial()
         setShowTestimonialModal(false)
       } else {
@@ -928,11 +919,18 @@ export default function FreelancerProfilePage() {
     setError("")
 
     try {
-      const result = await freelancerApi.addWorkExperience(newExperience)
+      const response = await fetch('/api/freelancer/work-experience', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newExperience)
+      })
 
-      if (result.success) {
+      const result = await response.json()
+
+      if (response.ok) {
         setSuccessMessage("Work experience added successfully")
-        mutate()
+        mutateProfile()
         resetNewExperience()
         setShowExperienceModal(false)
       } else {
@@ -976,14 +974,21 @@ export default function FreelancerProfilePage() {
         certifications: formData.certifications,
       }
 
-      const response = await freelancerApi.updateProfile(profileUpdates)
+      const response = await fetch('/api/freelancer/profile', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileUpdates)
+      })
 
-      if (response.success) {
+      const result = await response.json()
+
+      if (response.ok) {
         setSuccessMessage("Profile updated successfully")
-        mutate()
+        mutateProfile()
         setIsEditing(false)
       } else {
-        setError(response.error || "Failed to update profile")
+        setError(result.error || "Failed to update profile")
       }
     } catch (err) {
       setError("An error occurred. Please try again.")
@@ -999,11 +1004,16 @@ export default function FreelancerProfilePage() {
     setError("")
 
     try {
-      const result = await freelancerApi.submitForReview()
+      const response = await fetch('/api/freelancer/profile/submit-for-review', {
+        method: 'POST',
+        credentials: 'include',
+      })
 
-      if (result.success) {
+      const result = await response.json()
+
+      if (response.ok) {
         setSuccessMessage("Profile submitted for review successfully")
-        mutate()
+        mutateProfile()
       } else {
         setError(result.error || "Failed to submit for review")
       }
@@ -1034,6 +1044,8 @@ export default function FreelancerProfilePage() {
       default: return <TrendingUp className="h-4 w-4" />
     }
   }
+
+  const isLoading = profileLoading || caseStudiesLoading
 
   if (!isClient) return null
 
@@ -1353,14 +1365,14 @@ export default function FreelancerProfilePage() {
         )}
       </main>
 
-      {/* Case Study Modal (Updated for new structure) */}
+      {/* Case Study Modal */}
       {showCaseStudyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: "rgba(36, 28, 21, 0.5)" }}>
           <div className="w-full max-w-2xl rounded-xl border max-h-[90vh] overflow-y-auto" style={{ backgroundColor: "#faf4e5", borderColor: "#241C15" }}>
             <div className="p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold" style={{ color: "#050504" }}>
-                  {editingCaseStudyId ? "Edit Case Study" : "Add Case Study"}
+                  {editingCaseStudy ? "Edit Case Study" : "Add Case Study"}
                 </h3>
                 <button
                   onClick={() => {
@@ -1543,7 +1555,7 @@ export default function FreelancerProfilePage() {
 
                   {/* Display existing metrics */}
                   <div className="space-y-2 mb-3">
-                    {newCaseStudyItem.metrics.map((metric, index) => (
+                    {(newCaseStudyItem.metrics || []).map((metric, index) => (
                       <div key={index} className="flex items-center justify-between p-2 bg-[#f0eadd] rounded-lg">
                         <div className="flex items-center space-x-3">
                           {getMetricIcon(metric.type)}
@@ -1557,7 +1569,7 @@ export default function FreelancerProfilePage() {
                           </div>
                         </div>
                         <button
-                          onClick={() => removeMetricFromCaseStudy("new-case-study", index)}
+                          onClick={() => removeMetricFromCaseStudy(index)}
                           className="text-red-500 hover:text-red-700"
                         >
                           <X className="h-4 w-4" />
@@ -1597,8 +1609,7 @@ export default function FreelancerProfilePage() {
                     <Button
                       onClick={() => {
                         if (newMetric.label && newMetric.value) {
-                          addMetricToCaseStudy("new-case-study", { ...newMetric })
-                          setNewMetric({ label: "", value: 0, type: "number" })
+                          addMetricToCaseStudy({ ...newMetric })
                         }
                       }}
                       className="p-2 rounded-lg"
@@ -1635,7 +1646,7 @@ export default function FreelancerProfilePage() {
                   </label>
                   <input
                     type="text"
-                    value={newCaseStudyItem.technologies?.join(", ")}
+                    value={(newCaseStudyItem.technologies || []).join(", ")}
                     onChange={(e) => setNewCaseStudyItem({
                       ...newCaseStudyItem,
                       technologies: e.target.value.split(",").map(t => t.trim()).filter(Boolean)
@@ -1682,7 +1693,7 @@ export default function FreelancerProfilePage() {
                         className="w-full h-48 object-cover rounded-lg"
                       />
                       <button
-                        onClick={() => handleCaseStudyImageDelete("new-case-study", newCaseStudyItem.image_url)}
+                        onClick={() => handleCaseStudyImageDelete("new-case-study", newCaseStudyItem.image_url || "")}
                         className="absolute top-2 right-2 p-1 rounded-full bg-red-500 text-white hover:bg-red-600"
                       >
                         <X className="h-4 w-4" />
@@ -1756,7 +1767,7 @@ export default function FreelancerProfilePage() {
                       Saving...
                     </>
                   ) : (
-                    editingCaseStudyId ? "Update" : "Save"
+                    editingCaseStudy ? "Update" : "Save"
                   )}
                 </Button>
               </div>
@@ -1900,7 +1911,7 @@ export default function FreelancerProfilePage() {
                   </label>
                   <input
                     type="text"
-                    value={newExperience.technologies?.join(", ")}
+                    value={(newExperience.technologies || []).join(", ")}
                     onChange={(e) => setNewExperience({
                       ...newExperience,
                       technologies: e.target.value.split(",").map(t => t.trim()).filter(Boolean)
