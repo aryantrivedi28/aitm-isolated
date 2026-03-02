@@ -1,16 +1,17 @@
 import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { supabase } from "../../../../lib/SupabaseAuthClient"
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
+
+  const { id } = await context.params
 
   const cookieStore = await cookies()
 
-  const sessionCookie =
-    cookieStore.get("token")
+  const sessionCookie = cookieStore.get("token")
 
   if (!sessionCookie?.value) {
 
@@ -27,14 +28,10 @@ export async function PATCH(
     await supabase
       .from("freelancer_case_studies")
       .update({
-
         ...body,
-        updated_at:
-          new Date().toISOString()
-
+        updated_at: new Date().toISOString()
       })
-      .eq("id", params.id)
-
+      .eq("id", id)
 
   if (error) {
 
@@ -44,7 +41,6 @@ export async function PATCH(
     )
 
   }
-
 
   return NextResponse.json({
     success: true
