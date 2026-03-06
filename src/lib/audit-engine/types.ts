@@ -1,25 +1,32 @@
 export interface ShopifyStoreInfo {
-  url: string;
-  isShopify: boolean;
+
+  url: string
+
+  isShopify: boolean
 
   theme: {
-    name: string;
-    version: string;
-    isOs20: boolean;
-    isLegacy: boolean;
-  };
+    name: string | null
+    version: string | null
+    isOs20: boolean
+    isLegacy: boolean
+  }
 
   apps: {
-    count: number;
-    list: string[];
-  };
-  products: number;
-  collections: number;
-  currency: string;
-  country: string;
-  language: string;
-}
+    count: number
+    list: string[]
+  }
 
+  products: number | null
+
+  collections: number | null
+
+  currency: string | null
+
+  country: string | null
+
+  language: string | null
+
+}
 
 export interface PerformanceMetrics {
   mobileScore: number;

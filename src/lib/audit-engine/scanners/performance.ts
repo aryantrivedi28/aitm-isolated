@@ -1,6 +1,6 @@
 // src/lib/audit-engine/scanners/performance.ts
 
-type PageSpeedStrategy = 'mobile' | 'desktop'
+type PageSpeedStrategy = "mobile" | "desktop"
 
 interface PerformanceMetrics {
   mobileScore: number
@@ -30,7 +30,7 @@ interface PerformanceMetrics {
 export class PerformanceScanner {
 
   /* ===================================================
-     SAFE PageSpeed call (never throws)
+     PAGE SPEED CALL
   =================================================== */
 
   private static async runPageSpeed(
@@ -39,7 +39,11 @@ export class PerformanceScanner {
   ): Promise<any | null> {
 
     const apiKey = process.env.PAGESPEED_API_KEY
-    if (!apiKey) return null
+
+    if (!apiKey) {
+      console.warn("⚠️ PAGESPEED_API_KEY missing")
+      return null
+    }
 
     const endpoint =
       `https://www.googleapis.com/pagespeedonline/v5/runPagespeed` +
@@ -49,41 +53,54 @@ export class PerformanceScanner {
       `&key=${apiKey}`
 
     const controller = new AbortController()
-
-    // 🔥 25s realistic timeout (not 12s)
-    const timeout = setTimeout(() => controller.abort(), 25_000)
+    const timeout = setTimeout(() => controller.abort(), 60000)
 
     try {
-      const res = await fetch(endpoint, { signal: controller.signal })
 
-      if (!res.ok) return null
+      const res = await fetch(endpoint, {
+        signal: controller.signal
+      })
+
+      if (!res.ok) {
+        console.error(`❌ PageSpeed ${strategy} failed`, res.status)
+        return null
+      }
 
       const data = await res.json()
 
       return data.lighthouseResult ?? null
-    } catch {
-      return null // 🔥 never throw
+
+    } catch (error) {
+
+      console.error(`❌ PageSpeed ${strategy} error`, error)
+
+      return null
+
     } finally {
+
       clearTimeout(timeout)
+
     }
   }
 
   /* ===================================================
-     MAIN SCAN (PARALLEL + SAFE)
+     MAIN SCAN
   =================================================== */
 
   static async scan(url: string) {
-    console.log('🚀 [Performance] Starting performance scan')
+
 
     try {
 
-      // 🔥 PARALLEL instead of sequential
       const [mobile, desktop] = await Promise.all([
-        this.runPageSpeed(url, 'mobile'),
-        this.runPageSpeed(url, 'desktop')
+        this.runPageSpeed(url, "mobile"),
+        this.runPageSpeed(url, "desktop")
       ])
 
       if (!mobile && !desktop) {
+
+        console.warn("⚠️ PageSpeed failed for both strategies")
+
         return {
           metrics: this.getFallbackMetrics(),
           issues: []
@@ -94,6 +111,7 @@ export class PerformanceScanner {
       const audits = base.audits
 
       const metrics: PerformanceMetrics = {
+
         mobileScore: mobile
           ? Math.round((mobile.categories.performance.score ?? 0) * 100)
           : 0,
@@ -102,27 +120,46 @@ export class PerformanceScanner {
           ? Math.round((desktop.categories.performance.score ?? 0) * 100)
           : 0,
 
-        loadTime: audits['interactive']?.numericValue ?? 0,
-        firstContentfulPaint: audits['first-contentful-paint']?.numericValue ?? 0,
-        largestContentfulPaint: audits['largest-contentful-paint']?.numericValue ?? 0,
-        cumulativeLayoutShift: audits['cumulative-layout-shift']?.numericValue ?? 0,
-        totalBlockingTime: audits['total-blocking-time']?.numericValue ?? 0,
-        speedIndex: audits['speed-index']?.numericValue ?? 0,
-        interactiveTime: audits['interactive']?.numericValue ?? 0,
+        loadTime: audits["interactive"]?.numericValue ?? 0,
 
-        mainThreadTime: audits['mainthread-work-breakdown']?.numericValue ?? 0,
-        totalByteWeight: audits['total-byte-weight']?.numericValue ?? 0,
-        unusedJavaScript: audits['unused-javascript']?.numericValue ?? 0,
-        unusedCSS: audits['unused-css-rules']?.numericValue ?? 0,
+        firstContentfulPaint:
+          audits["first-contentful-paint"]?.numericValue ?? 0,
+
+        largestContentfulPaint:
+          audits["largest-contentful-paint"]?.numericValue ?? 0,
+
+        cumulativeLayoutShift:
+          audits["cumulative-layout-shift"]?.numericValue ?? 0,
+
+        totalBlockingTime:
+          audits["total-blocking-time"]?.numericValue ?? 0,
+
+        speedIndex:
+          audits["speed-index"]?.numericValue ?? 0,
+
+        interactiveTime:
+          audits["interactive"]?.numericValue ?? 0,
+
+        mainThreadTime:
+          audits["mainthread-work-breakdown"]?.numericValue ?? 0,
+
+        totalByteWeight:
+          audits["total-byte-weight"]?.numericValue ?? 0,
+
+        unusedJavaScript:
+          audits["unused-javascript"]?.numericValue ?? 0,
+
+        unusedCSS:
+          audits["unused-css-rules"]?.numericValue ?? 0,
 
         imageOptimization: {
           totalImages: 0,
           oversizedImages: 0,
           unoptimizedImages: 0,
           formatRecommendations: [
-            'Use WebP / AVIF',
-            'Lazy load images',
-            'Serve responsive sizes'
+            "Use WebP / AVIF",
+            "Lazy load images",
+            "Serve responsive sizes"
           ]
         }
       }
@@ -131,7 +168,10 @@ export class PerformanceScanner {
 
       return { metrics, issues }
 
-    } catch {
+    } catch (error) {
+
+      console.error("❌ Performance scanner crashed", error)
+
       return {
         metrics: this.getFallbackMetrics(),
         issues: []
@@ -144,42 +184,58 @@ export class PerformanceScanner {
   =================================================== */
 
   private static generateIssues(metrics: PerformanceMetrics, url: string) {
+
     const issues: any[] = []
 
     if (metrics.largestContentfulPaint > 2500) {
+
       issues.push({
-        type: 'performance',
-        severity: metrics.largestContentfulPaint > 4000 ? 'critical' : 'high',
-        title: 'Slow Largest Contentful Paint (LCP)',
-        description: 'Optimize hero images and critical resources.',
-        metric: 'LCP',
+        type: "performance",
+        severity:
+          metrics.largestContentfulPaint > 4000
+            ? "critical"
+            : "high",
+        title: "Slow Largest Contentful Paint (LCP)",
+        description:
+          "Optimize hero images and critical resources.",
+        metric: "LCP",
         value: Math.round(metrics.largestContentfulPaint),
         url
       })
+
     }
 
     if (metrics.cumulativeLayoutShift > 0.1) {
+
       issues.push({
-        type: 'performance',
-        severity: metrics.cumulativeLayoutShift > 0.25 ? 'critical' : 'medium',
-        title: 'High Cumulative Layout Shift (CLS)',
-        description: 'Reserve space for images and dynamic content.',
-        metric: 'CLS',
+        type: "performance",
+        severity:
+          metrics.cumulativeLayoutShift > 0.25
+            ? "critical"
+            : "medium",
+        title: "High Cumulative Layout Shift (CLS)",
+        description:
+          "Reserve space for images and dynamic content.",
+        metric: "CLS",
         value: metrics.cumulativeLayoutShift,
         url
       })
+
     }
 
     if (metrics.totalBlockingTime > 300) {
+
       issues.push({
-        type: 'performance',
-        severity: 'high',
-        title: 'High Total Blocking Time (TBT)',
-        description: 'Reduce JS size and defer unused scripts.',
-        metric: 'TBT',
+        type: "performance",
+        severity: "high",
+        title: "High Total Blocking Time (TBT)",
+        description:
+          "Reduce JS size and defer unused scripts.",
+        metric: "TBT",
         value: metrics.totalBlockingTime,
         url
       })
+
     }
 
     return issues
@@ -190,6 +246,7 @@ export class PerformanceScanner {
   =================================================== */
 
   private static getFallbackMetrics(): PerformanceMetrics {
+
     return {
       mobileScore: 0,
       desktopScore: 0,

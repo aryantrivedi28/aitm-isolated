@@ -15,7 +15,6 @@ export class AuditEngine {
   private storeUrl: string
 
   constructor(storeUrl: string) {
-    console.log('🧱 AuditEngine constructor called')
     this.storeUrl = storeUrl
   }
 
@@ -25,13 +24,11 @@ export class AuditEngine {
 
   private async safe<T>(fn: () => Promise<T>, label?: string): Promise<T> {
     try {
-      console.log(`🟡 Starting scanner: ${label ?? 'unknown'}`)
       const result = await fn()
-      console.log(`🟢 Completed scanner: ${label ?? 'unknown'}`)
       return result
     } catch (e) {
-      console.error(`🔴 Scanner failed: ${label ?? 'unknown'}`, e)
-      throw e
+      console.error(`🔴 Scanner failed: ${label}`, e)
+      return null as any
     }
   }
 
@@ -40,59 +37,42 @@ export class AuditEngine {
   ===================================================== */
 
   async run(): Promise<AuditResult> {
-    console.log('🚀 Starting audit for:', this.storeUrl)
-    console.time('⏱ Total Audit Time')
 
     try {
       /* =========================================
          1️⃣ INIT CRAWLER
       ========================================= */
 
-      console.log('🧭 Initializing crawler...')
       this.crawler = new AdvancedCrawler()
       await this.crawler.initialize()
-      console.log('✅ Crawler initialized')
 
       /* =========================================
          2️⃣ PARALLEL: performance + crawl
       ========================================= */
 
-      console.log('⚡ Running performance scan + site crawl in parallel')
-
       const [performance, crawlResult] = await Promise.all([
-        this.safe(
-          () => PerformanceScanner.scan(this.storeUrl),
-          'PerformanceScanner'
-        ),
-        this.safe(
-          () => this.crawler!.crawl(this.storeUrl),
-          'AdvancedCrawler.crawl'
-        )
+        this.safe(() => PerformanceScanner.scan(this.storeUrl), "PerformanceScanner"),
+        this.safe(() => this.crawler!.crawl(this.storeUrl), "AdvancedCrawler.crawl")
       ])
 
-      console.log('📊 Performance metrics:', performance.metrics)
-      console.log('🕸 Crawl result summary:', {
-        htmlLength: crawlResult.html?.length,
-        headers: crawlResult.headers
-      })
+      if (!crawlResult) {
+        console.warn("⚠️ Crawl failed — continuing with limited data")
+      }
+
 
       /* =========================================
          3️⃣ STORE DETECTION
       ========================================= */
 
-      console.log('🏪 Detecting store platform...')
       const storeInfo = ShopifyDetector.detect(
         crawlResult.html,
         crawlResult.headers,
         this.storeUrl
       )
-      console.log('🛍 Store detected:', storeInfo)
 
       /* =========================================
          4️⃣ PARALLEL SCANNERS
       ========================================= */
-
-      console.log('🔍 Running SEO / UX / Conversion / Trust scanners')
 
       const [seo, ux, conversion, trust] = await Promise.all([
         this.safe(
@@ -113,16 +93,11 @@ export class AuditEngine {
         )
       ])
 
-      console.log('📈 SEO metrics:', seo.metrics)
-      console.log('🎨 UX metrics:', ux.metrics)
-      console.log('🛒 Conversion metrics:', conversion.metrics)
-      console.log('🔐 Trust metrics:', trust.metrics)
 
       /* =========================================
          5️⃣ MERGE ISSUES
       ========================================= */
 
-      console.log('🧩 Merging issues from all scanners')
 
       const allIssues = [
         ...performance.issues,
@@ -132,23 +107,12 @@ export class AuditEngine {
         ...trust.issues
       ]
 
-      console.log(`📌 Total raw issues: ${allIssues.length}`)
 
       const classifiedIssues = IssueClassifier.classify(allIssues)
-
-      console.log(
-        '🏷 Classified issues breakdown:',
-        classifiedIssues.reduce((acc: any, i: any) => {
-          acc[i.severity] = (acc[i.severity] || 0) + 1
-          return acc
-        }, {})
-      )
 
       /* =========================================
          6️⃣ SCORES
       ========================================= */
-
-      console.log('🧮 Calculating scores')
 
       const scores = ScoreCalculator.calculate({
         performance: performance.metrics,
@@ -159,13 +123,9 @@ export class AuditEngine {
         issues: classifiedIssues
       })
 
-      console.log('🏆 Final scores:', scores)
-
       /* =========================================
          7️⃣ AI
       ========================================= */
-
-      console.log('🤖 Running AI store analysis')
 
       const aiAnalysis = await AIAnalyzer.analyzeStore(this.storeUrl, {
         storeInfo,
@@ -173,21 +133,10 @@ export class AuditEngine {
         issues: classifiedIssues
       })
 
-      console.log('🧠 AI analysis completed')
-
-      console.log('✨ Enhancing issues with AI')
 
       const enhancedIssues = await AIAnalyzer.enhanceIssues(classifiedIssues)
-
-      console.log(`🧠 Enhanced issues count: ${enhancedIssues.length}`)
-
-      console.log('📋 Generating recommendations')
       const recommendations = this.generateRecommendations(enhancedIssues)
 
-      console.log('🎯 Recommendations ready:', recommendations)
-
-      console.log('✅ Audit completed successfully')
-      console.timeEnd('⏱ Total Audit Time')
 
       return {
         storeInfo,
@@ -206,9 +155,7 @@ export class AuditEngine {
       console.error('❌ Audit failed completely:', err)
       throw err
     } finally {
-      console.log('🧹 Cleaning up crawler')
       if (this.crawler) await this.crawler.close()
-      console.log('🧼 Crawler closed')
     }
   }
 
@@ -217,7 +164,6 @@ export class AuditEngine {
   ===================================================== */
 
   private generateRecommendations(issues: any[]) {
-    console.log('🧠 Processing recommendations from issues')
 
     const pick = (severity: string) => {
       const selected = issues
@@ -225,8 +171,6 @@ export class AuditEngine {
         .slice(0, 5)
         .map(i => i.solutionSteps?.[0] || i.title || 'Fix issue')
         .filter(Boolean)
-
-      console.log(`➡ ${severity.toUpperCase()} recommendations:`, selected)
       return selected
     }
 
@@ -244,6 +188,5 @@ export class AuditEngine {
 ===================================================== */
 
 export async function runCompleteAudit(storeUrl: string): Promise<AuditResult> {
-  console.log('🔁 runCompleteAudit called for:', storeUrl)
   return new AuditEngine(storeUrl).run()
 }

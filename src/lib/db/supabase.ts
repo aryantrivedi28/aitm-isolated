@@ -11,6 +11,10 @@ export const supabase = createClient(
 
 export class AuditDB {
 
+  /* ===============================
+     CREATE AUDIT RECORD
+  =============================== */
+
   static async createAuditRecord(
     email: string,
     storeUrl: string,
@@ -34,6 +38,9 @@ export class AuditDB {
     return data
   }
 
+  /* ===============================
+     SAVE AUDIT RESULTS
+  =============================== */
 
   static async saveAuditResults(
     auditId: string,
@@ -41,181 +48,181 @@ export class AuditDB {
   ) {
 
     const int = (v?: number) =>
-      typeof v === 'number'
-        ? Math.round(v)
-        : null
+      typeof v === "number" ? Math.round(v) : null
 
+    /* Clean JSON to avoid Supabase stripping values */
+    const rawMetrics = JSON.parse(
+      JSON.stringify({
+        performance: result.performance,
+        seo: result.seo,
+        ux: result.ux,
+        conversion: result.conversion,
+        trust: result.trust
+      })
+    )
 
-    // =========================
-    // UPDATE AUDIT SUMMARY
-    // =========================
+    const recommendations = {
+      critical: result.recommendations?.critical || [],
+      high: result.recommendations?.high || [],
+      medium: result.recommendations?.medium || [],
+      low: result.recommendations?.low || []
+    }
 
     const { error } = await supabase
-      .from('audits')
+      .from("audits")
       .update({
 
-        shopify_theme: result.storeInfo?.theme.name,
-        theme_version: result.storeInfo?.theme.version,
+        /* ================= STORE INFO ================= */
 
-        apps_detected:
-          result.storeInfo.apps.count,
+        shopify_theme: result.storeInfo?.theme?.name || null,
+        theme_version: result.storeInfo?.theme?.version || null,
 
-        products_count:
-          result.storeInfo.products,
+        currency: result.storeInfo?.currency || null,
+        country: result.storeInfo?.country || null,
+        language: result.storeInfo?.language || null,
 
-        collections_count:
-          result.storeInfo.collections,
+        apps_detected: result.storeInfo?.apps?.count || 0,
+        apps_list: result.storeInfo?.apps?.list || [],
 
+        products_count: result.storeInfo?.products || 0,
+        collections_count: result.storeInfo?.collections || 0,
 
-        mobile_score:
-          result.performance.mobileScore,
+        /* ================= PERFORMANCE ================= */
 
-        desktop_score:
-          result.performance.desktopScore,
+        mobile_score: result.performance?.mobileScore || 0,
+        desktop_score: result.performance?.desktopScore || 0,
 
-        load_time_ms:
-          int(result.performance.loadTime),
+        load_time_ms: int(result.performance?.loadTime),
+        lcp_ms: int(result.performance?.largestContentfulPaint),
+        inp_ms: int(result.performance?.interactiveTime),
+        tbt_ms: int(result.performance?.totalBlockingTime),
 
-        lcp_ms:
-          int(
-            result.performance
-              .largestContentfulPaint
-          ),
+        cls_score: result.performance?.cumulativeLayoutShift ?? null,
 
-        inp_ms:
-          int(result.performance.interactiveTime),
+        /* ================= SEO ================= */
 
-        tbt_ms:
-          int(
-            result.performance
-              .totalBlockingTime
-          ),
+        has_meta_title: result.seo?.metaTitle?.present ?? false,
+        meta_title_length: result.seo?.metaTitle?.length ?? null,
 
-        cls_score:
-          result.performance
-            .cumulativeLayoutShift,
+        has_meta_description: result.seo?.metaDescription?.present ?? false,
+        meta_description_length: result.seo?.metaDescription?.length ?? null,
 
+        has_structured_data: result.seo?.structuredData?.present ?? false,
+        structured_data_type: result.seo?.structuredData?.type ?? null,
+        structured_data_valid: result.seo?.structuredData?.valid ?? null,
 
-        has_meta_title:
-          result.seo.metaTitle.present,
+        h1_count: result.seo?.headingStructure?.h1Count ?? 0,
+        h2_count: result.seo?.headingStructure?.h2Count ?? 0,
+        h3_count: result.seo?.headingStructure?.h3Count ?? 0,
 
-        has_meta_description:
-          result.seo.metaDescription.present,
+        heading_hierarchy_valid:
+          result.seo?.headingStructure?.hierarchyValid ?? false,
 
-        has_structured_data:
-          result.seo.structuredData.present,
+        has_canonical: result.seo?.canonicalUrl?.present ?? false,
+        canonical_valid: result.seo?.canonicalUrl?.valid ?? false,
 
-        h1_count:
-          result.seo.headingStructure.h1Count,
+        has_robots_txt: result.seo?.robotsTxt?.present ?? false,
+        has_sitemap: result.seo?.sitemap?.present ?? false,
 
-        internal_links:
-          result.seo.internalLinks,
+        internal_links: result.seo?.internalLinks ?? 0,
+        external_links: result.seo?.externalLinks ?? 0,
 
-        external_links:
-          result.seo.externalLinks,
+        /* ================= UX ================= */
 
+        mobile_friendly: result.ux?.mobileFriendly ?? false,
 
-        mobile_friendly:
-          result.ux.mobileFriendly,
+        has_sticky_cart: result.ux?.productPage?.stickyAddToCart ?? false,
+        has_image_zoom: result.ux?.productPage?.imageZoom ?? false,
+        has_video: result.ux?.productPage?.videos ?? false,
 
-        has_sticky_cart:
-          result.ux.productPage.stickyAddToCart,
+        has_variant_selector:
+          result.ux?.productPage?.variantSelector ?? false,
 
-        has_image_zoom:
-          result.ux.productPage.imageZoom,
+        has_stock_status:
+          result.ux?.productPage?.stockStatus ?? false,
 
-        has_video:
-          result.ux.productPage.videos,
+        has_size_guide:
+          result.ux?.productPage?.sizeGuide ?? false,
 
         has_reviews:
-          result.ux.productPage.reviews.present,
+          result.ux?.productPage?.reviews?.present ?? false,
+
+        review_count:
+          result.ux?.productPage?.reviews?.count ?? 0,
 
         has_trust_badges:
-          result.ux.productPage.trustBadges,
+          result.ux?.productPage?.trustBadges ?? false,
 
         has_faq:
-          result.ux.productPage.faq,
+          result.ux?.productPage?.faq ?? false,
 
+        menu_items_count:
+          result.ux?.navigation?.menuItems ?? 0,
+
+        /* ================= CONVERSION ================= */
 
         has_upsells:
-          result.conversion.upsells.relatedProducts,
+          result.conversion?.upsells?.relatedProducts ?? false,
+
+        has_product_bundles:
+          result.conversion?.upsells?.bundles ?? false,
 
         has_free_shipping_bar:
-          result.conversion.freeShipping.bar,
+          result.conversion?.freeShipping?.bar ?? false,
 
         has_countdown_timer:
-          result.conversion.urgency.countdownTimers,
+          result.conversion?.urgency?.countdownTimers ?? false,
+
+        has_stock_counter:
+          result.conversion?.urgency?.stockCounters ?? false,
+
+        has_limited_offer:
+          result.conversion?.urgency?.limitedOffers ?? false,
 
         has_email_capture:
-          result.conversion.emailCapture.present,
+          result.conversion?.emailCapture?.present ?? false,
 
         has_exit_intent:
-          result.conversion.exitIntent,
+          result.conversion?.exitIntent ?? false,
 
+        /* ================= TRUST ================= */
 
-        has_shop_pay:
-          result.trust.security.paymentIcons,
+        has_payment_icons:
+          result.trust?.security?.paymentIcons ?? false,
 
+        /* ================= SCORES ================= */
 
+        overall_score: result.scores?.overall ?? 0,
+        performance_score: result.scores?.performance ?? 0,
+        seo_score: result.scores?.seo ?? 0,
+        ux_score: result.scores?.ux ?? 0,
+        conversion_score: result.scores?.conversion ?? 0,
+        trust_score: result.scores?.trust ?? 0,
 
-        overall_score:
-          result.scores.overall,
+        /* ================= AI ================= */
 
-        performance_score:
-          result.scores.performance,
+        recommendations,
+        quick_wins: result.aiAnalysis?.quickWins || [],
+        long_term_improvements: result.recommendations?.high || [],
 
-        seo_score:
-          result.scores.seo,
+        ai_summary: result.aiAnalysis?.summary || null,
+        priority_actions: result.aiAnalysis?.priorityActions || [],
+        estimated_impact: result.aiAnalysis?.estimatedImpact || {},
 
-        ux_score:
-          result.scores.ux,
+        /* ================= RAW DATA ================= */
 
-        conversion_score:
-          result.scores.conversion,
+        raw_metrics: rawMetrics,
 
-        trust_score:
-          result.scores.trust,
+        engine_version: "1.0.0",
 
-
-        recommendations:
-          result.recommendations.critical,
-
-        quick_wins:
-          result.aiAnalysis.quickWins,
-
-        long_term_improvements:
-          result.recommendations.high,
-
-
-        ai_summary:
-          result.aiAnalysis.summary,
-
-        priority_actions:
-          result.aiAnalysis.priorityActions,
-
-        estimated_impact:
-          result.aiAnalysis.estimatedImpact,
-
-
-        raw_metrics: {
-          performance: result.performance
-        },
-
-
-        status: 'completed',
-
-        completed_at:
-          new Date().toISOString(),
-
-        updated_at:
-          new Date().toISOString()
+        status: "completed",
+        completed_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
 
       })
-      .eq('id', auditId)
+      .eq("id", auditId)
 
     if (error) throw error
-
-
 
     // =========================
     // INSERT ISSUES (BULK)
@@ -294,7 +301,9 @@ export class AuditDB {
 
   }
 
-
+  /* ===============================
+     GET AUDIT
+  =============================== */
 
   static async getAuditById(
     auditId: string
@@ -329,11 +338,14 @@ export class AuditDB {
 
     if (error) throw error
 
-    return data
 
+
+    return data
   }
 
-
+  /* ===============================
+     GET ISSUES
+  =============================== */
 
   static async getIssuesByAuditId(
     auditId: string
@@ -353,7 +365,6 @@ export class AuditDB {
     if (error) throw error
 
     return data || []
-
   }
 
 }

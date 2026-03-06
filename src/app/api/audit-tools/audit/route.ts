@@ -15,9 +15,11 @@ const auditSchema = z.object({
 })
 
 export async function POST(request: NextRequest) {
+
   let auditId: string | null = null
 
   try {
+
     const body = await request.json()
 
     const { email, storeUrl, name } = auditSchema.parse(body)
@@ -25,65 +27,67 @@ export async function POST(request: NextRequest) {
     /**
      * Create audit record
      */
-    const audit = await AuditDB.createAuditRecord(email, storeUrl, name)
+    const audit = await AuditDB.createAuditRecord(
+      email,
+      storeUrl,
+      name
+    )
 
     auditId = audit.id
 
     try {
-      /**
-       * Run full audit engine
-       */
+
       const result = await runCompleteAudit(storeUrl)
 
-      /**
-       * Save audit results
-       */
       await AuditDB.saveAuditResults(audit.id, result)
 
-      console.log("✅ Audit completed successfully")
+      const criticalIssues =
+        result.issues.filter(i => i.severity === "critical").length
+
+      const highIssues =
+        result.issues.filter(i => i.severity === "high").length
+
+      const mediumIssues =
+        result.issues.filter(i => i.severity === "medium").length
+
+      const lowIssues =
+        result.issues.filter(i => i.severity === "low").length
 
       await supabase
         .from("audits")
         .update({
-          status: "completed",
-          completed_at: new Date().toISOString()
+          critical_issues_count: criticalIssues,
+          high_issues_count: highIssues,
+          medium_issues_count: mediumIssues,
+          low_issues_count: lowIssues
         })
         .eq("id", audit.id)
 
-      /**
-       * Extract top 3 issues
-       */
       const topIssues = result?.issues?.slice(0, 3) || []
 
       const top_issue_1 = topIssues[0]?.title || ""
       const top_issue_2 = topIssues[1]?.title || ""
       const top_issue_3 = topIssues[2]?.title || ""
 
-      const criticalIssues =
-        result?.issues?.filter((issue: any) => issue.severity === "critical")
-          .length || 0
 
-      /**
-       * Fetch updated audit record
-       */
       const { data: updatedAudit } = await supabase
         .from("audits")
         .select("*")
         .eq("id", audit.id)
         .single()
 
-      /**
-       * Send Email via Brevo
-       */
+
       if (
         updatedAudit &&
         updatedAudit.status === "completed" &&
         !updatedAudit.is_email_sent
       ) {
+
         try {
+
           await addContactToBrevo({
             ...updatedAudit,
-            overall_score: result?.scores?.overall,
+            overall_score: result.scores.overall,
             critical_issues: criticalIssues,
             top_issue_1,
             top_issue_2,
@@ -96,8 +100,11 @@ export async function POST(request: NextRequest) {
             .eq("id", audit.id)
 
           console.log("📩 Email automation triggered")
+
         } catch (brevoError) {
+
           console.error("❌ Brevo integration failed:", brevoError)
+
         }
       }
 
@@ -126,6 +133,8 @@ export async function POST(request: NextRequest) {
         })
         .eq("id", audit.id)
 
+      console.error("❌ Audit engine failed:", debugMessage)
+
       return NextResponse.json(
         {
           success: false,
@@ -152,6 +161,7 @@ export async function POST(request: NextRequest) {
      * If audit record exists mark as failed
      */
     if (auditId) {
+
       await supabase
         .from("audits")
         .update({
@@ -160,6 +170,7 @@ export async function POST(request: NextRequest) {
           completed_at: new Date().toISOString()
         })
         .eq("id", auditId)
+
     }
 
     return NextResponse.json(
